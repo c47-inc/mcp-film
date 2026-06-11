@@ -2,10 +2,14 @@
 
 Everything after this list runs itself. ~20 minutes of human setup, once.
 
-## 1. Merge to main
+## 1. Make main the default branch
 
-Merge the initial branch into `main`. The deploy workflow runs on every push
-to `main`.
+`main` already exists with the full history. In **Settings → General →
+Default branch**, switch the default from `claude/cool-euler-dm96ws` to
+`main`, then delete the old `claude/*` branch from the Branches page.
+
+This matters: scheduled workflows (the daily curator, the weekly pulse) only
+run from the repo's default branch.
 
 ## 2. Enable GitHub Pages
 
