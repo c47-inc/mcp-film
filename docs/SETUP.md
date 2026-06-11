@@ -77,12 +77,25 @@ The `Release (npm + MCP Registry)` workflow does both in one click once two
 secrets exist. The package name `mcp-film` is unclaimed on npm (verified
 2026-06-11).
 
-1. **npm**: create a free account at npmjs.com → Access Tokens → Generate
-   (granular, packages: read/write) → add as repo secret `NPM_TOKEN`.
-2. **Registry domain proof**: add one more DNS TXT record on `@` for
+1. **npm — first publish from your machine** (npm's 2025 security rules
+   require an interactive OTP for a package's first publish):
+
+   ```sh
+   git clone https://github.com/c47-inc/mcp-film && cd mcp-film/packages/mcp-server
+   npm login          # browser/OTP flow
+   npm publish --access public   # enter the 2FA code when prompted
+   ```
+
+2. **npm — hand publishing to CI forever**: on npmjs.com open the new
+   `mcp-film` package → Settings → **Trusted Publisher** → GitHub Actions →
+   owner `c47-inc`, repository `mcp-film`, workflow `release.yml`. From then
+   on the Release workflow publishes via OIDC: no token, no OTP, no secret.
+3. **Registry domain proof**: add one more DNS TXT record on `@` for
    `mcp.film` (value provided separately — `v=MCPv1; k=ed25519; p=…`), and
    add the matching private key as repo secret `MCP_REGISTRY_KEY`.
-3. Actions → **Release (npm + MCP Registry)** → Run workflow.
+4. Actions → **Release (npm + MCP Registry)** → Run workflow. (The npm step
+   detects the version you already published and skips it; the registry step
+   runs.)
 
 Future releases: bump `version` in `packages/mcp-server/package.json`
 (an agent PR can do this), click Release again. The published package always

@@ -2,8 +2,12 @@
 # One click (workflow_dispatch) per release; bump the version in
 # packages/mcp-server/package.json first.
 #
-# Required secrets:
-#   NPM_TOKEN        — npm granular access token with publish rights
+# npm auth: TRUSTED PUBLISHING (OIDC) — no token, no OTP. One-time setup:
+# publish the first version locally (npm login + npm publish, with OTP),
+# then on npmjs.com → package mcp-film → Settings → Trusted Publisher →
+# GitHub Actions: owner c47-inc, repo mcp-film, workflow release.yml.
+#
+# Registry auth secret:
 #   MCP_REGISTRY_KEY — Ed25519 private key (64 hex chars) whose public half
 #                      is in the mcp.film DNS TXT record (v=MCPv1; k=ed25519; ...)
 #                      Registry step skips gracefully if unset.
@@ -14,7 +18,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write # npm provenance
+  id-token: write # npm trusted publishing (OIDC) + provenance
   issues: write
 
 jobs:
@@ -28,16 +32,17 @@ jobs:
           node-version: 22
           registry-url: "https://registry.npmjs.org"
 
+      - name: Upgrade npm (trusted publishing needs a recent CLI)
+        run: npm install -g npm@latest && npm --version
+
       - name: Build (refreshes registry snapshot + server.json)
         run: node build.mjs
 
-      - name: Publish to npm
+      - name: Publish to npm (OIDC trusted publishing)
         working-directory: packages/mcp-server
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           # Idempotent: a re-run after a partial release must not die here.
-          out=$(npm publish --access public --provenance 2>&1) && echo "$out" || {
+          out=$(npm publish --access public 2>&1) && echo "$out" || {
             echo "$out"
             echo "$out" | grep -qiE "previously published|EPUBLISHCONFLICT|cannot publish over" \
               && echo "This version is already on npm — continuing to registry step." \
