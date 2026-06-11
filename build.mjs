@@ -150,6 +150,33 @@ write("sitemap.xml", T.renderSitemap(ctx));
 write("robots.txt", T.renderRobots(ctx));
 write("feed.xml", T.renderFeed(ctx));
 
+// IndexNow key file (deploy workflow pings api.indexnow.org after publishing)
+if (site.indexnow_key) write(`${site.indexnow_key}.txt`, site.indexnow_key);
+
+// MCP discovery: the meta-MCP described in the official registry's
+// server.json shape, served both at /api/server.json and at the
+// SEP-2127 draft server-card location.
+const mcpPkg = readJson(path.join(ROOT, "packages/mcp-server/package.json"));
+const serverJson = {
+  $schema: "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  name: "film.mcp/directory",
+  title: "mcp.film directory",
+  description: "Search the curated directory of MCP servers for AI filmmaking, get install configs for any client, and plan a full production stack.",
+  version: mcpPkg.version,
+  websiteUrl: site.url,
+  repository: { url: `https://github.com/${site.github_repo}`, source: "github", subfolder: "packages/mcp-server" },
+  packages: [{
+    registryType: "npm",
+    registryBaseUrl: "https://registry.npmjs.org",
+    identifier: "mcp-film",
+    version: mcpPkg.version,
+    runtimeHint: "npx",
+    transport: { type: "stdio" },
+  }],
+};
+write("api/server.json", JSON.stringify(serverJson, null, 2));
+write(".well-known/mcp/server-card", JSON.stringify(serverJson, null, 2));
+
 // hosting glue (GitHub Pages)
 write("CNAME", site.domain + "\n");
 write(".nojekyll", "");

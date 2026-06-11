@@ -10,6 +10,7 @@ on:
     types: [opened, synchronize, labeled]
 
 permissions:
+  issues: write
   contents: write
   pull-requests: write
   actions: write
@@ -64,3 +65,21 @@ jobs:
         run: |
           gh pr comment ${{ github.event.pull_request.number }} \
             --body "🚧 This PR touches files outside \`data/\`, so the auto-merge gate is leaving it for a human. (Agent PRs may only self-merge data changes.)"
+      - name: Alert on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --label automation-failure --state open --search "${{ github.workflow }}" --json number -q '.[0].number' || true)
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body "Failed again: $url"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" \
+              --title "Automation failure: ${{ github.workflow }}" \
+              --label automation-failure \
+              --body "A scheduled/triggered run failed: $url
+
+          Likely causes: expired or unfunded ANTHROPIC_API_KEY, a revoked POSTHOG_API_KEY, a deprecated model ID, or an upstream action change. The site keeps serving either way — only self-updating is paused until this is fixed." \
+            || gh issue create --repo "$GITHUB_REPOSITORY" --title "Automation failure: ${{ github.workflow }}" --body "Run failed: $url"
+          fi

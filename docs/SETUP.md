@@ -45,9 +45,29 @@ approve pull requests** (needed by the agent workflows).
 ## 5. Create labels
 
 Create these issue/PR labels (Settings → Labels): `auto-data`, `submit`,
-`correction`, `curator-lead`.
+`correction`, `curator-lead`, `automation-failure`.
 
-## 6. Optional but recommended
+## 5b. Two settings that keep autonomy working
+
+- **Don't enable required PR reviews on `main`** (branch protection). The
+  auto-merge gate is the review for data-only changes; required human reviews
+  would freeze the self-update loop. The gate already refuses to merge
+  anything outside `data/`.
+- **Failure alarms**: every workflow files/updates an issue labeled
+  `automation-failure` when a run fails (expired key, deprecated model,
+  upstream change). Watch the repo so those reach your inbox — that issue
+  stream is the only thing you ever need to react to.
+
+## 6. Search engines (one-time, ~10 minutes)
+
+- **Google Search Console**: add the `mcp.film` domain property (DNS TXT
+  verification), then submit `https://mcp.film/sitemap.xml`.
+- **Bing Webmaster Tools**: import from Search Console (one click) — Bing
+  powers Copilot and several answer engines.
+- **IndexNow** is already automated: every deploy pings api.indexnow.org
+  (the key file is generated into the site root by the build).
+
+## 7. Optional but recommended
 
 - **Publish the meta-MCP to npm** so `npx -y mcp-film` works for everyone:
   `cd packages/mcp-server && npm publish` (after `node ../../build.mjs` to

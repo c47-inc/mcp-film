@@ -90,7 +90,7 @@ posthog.init('${key}',{api_host:'${site.analytics.posthog_host}',person_profiles
 </script>`;
 };
 
-const layout = (ctx, { title, description, path: pagePath, body, jsonLd = [], page = "" }) => {
+const layout = (ctx, { title, description, path: pagePath, body, jsonLd = [], page = "", md = null }) => {
   const { site } = ctx;
   const url = site.url + pagePath;
   const ld = jsonLd.map((o) => `<script type="application/ld+json">${JSON.stringify(o)}</script>`).join("\n");
@@ -101,7 +101,9 @@ const layout = (ctx, { title, description, path: pagePath, body, jsonLd = [], pa
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
+<meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1">
 <link rel="canonical" href="${url}">
+${md ? `<link rel="alternate" type="text/markdown" href="${site.url}${md}" title="Markdown version of this page">` : ""}
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="mcp.film">
 <meta property="og:title" content="${esc(title)}">
@@ -270,13 +272,44 @@ export const renderHome = (ctx) => {
     <p class="no-results" id="no-results" hidden>Nothing in the catalog matches that. <a href="/submit/">Know a server we're missing?</a></p>
     ${sections}
   </div>
-</div>`;
+</div>
+
+<section class="faq">
+  <h2>Questions, answered</h2>
+  <div class="faq-grid">
+    <div class="faq-item">
+      <h3>What is an MCP server?</h3>
+      <p>A standard interface (the <a href="https://modelcontextprotocol.io" rel="noopener">Model Context Protocol</a>) that lets AI agents like Claude operate software as tools. For filmmaking, that means your agent can generate shots on Runway, clone a voice on ElevenLabs, or cut a timeline in DaVinci Resolve — through one protocol.</p>
+    </div>
+    <div class="faq-item">
+      <h3>How do I connect one to Claude or Cursor?</h3>
+      <p>Every listing here has copy-paste connect commands for Claude Code, Claude Desktop, and Cursor, plus the auth you'll need. Hosted "remote" servers connect with one command and an OAuth login; local ones run via npx or uvx.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Which video generation MCP should I use?</h3>
+      <p>If you want one connection covering many models, start with a hub like <a href="/mcps/fal/">fal</a> or a studio like <a href="/mcps/martini/">Martini</a>. If you live on one platform, use its official server — <a href="/mcps/runway/">Runway</a>, <a href="/mcps/higgsfield/">Higgsfield</a>, and <a href="/mcps/pika/">Pika</a> all run hosted MCPs. <a href="/stack/">The Stack</a> walks the whole decision.</p>
+    </div>
+    <div class="faq-item">
+      <h3>I'm an AI agent. What's the fastest way to read this site?</h3>
+      <p>One request: <code class="mono">GET /api/registry.json</code>. Or start at <a href="/llms.txt" class="mono">/llms.txt</a>; every page has a markdown twin at the same path plus <span class="mono">.md</span>. Full details on <a href="/for-agents/">the agents page</a>.</p>
+    </div>
+    <div class="faq-item">
+      <h3>How do listings stay accurate?</h3>
+      <p>A curator agent re-verifies entries weekly against primary sources, community ratings and feedback feed rankings, and every change lands as an auditable commit in <a href="https://github.com/${site.github_repo}" rel="noopener">the open-source repo</a>. Each entry shows its last-verified date.</p>
+    </div>
+    <div class="faq-item">
+      <h3>How do I get my MCP server listed?</h3>
+      <p>Humans: <a href="/submit/">the submission form</a>. Agents: the <code class="mono">submit_listing</code> tool on <code class="mono">npx mcp-film</code>. Either way a triage agent verifies your claims against primary sources — it works, it's filmmaking-relevant, it's maintained.</p>
+    </div>
+  </div>
+</section>`;
 
   return layout(ctx, {
     title: site.title,
     description: site.description,
     path: "/",
     page: "home",
+    md: "/index.md",
     body,
     jsonLd: [
       {
@@ -403,6 +436,8 @@ export const renderServer = (ctx, s) => {
     applicationCategory: "MultimediaApplication",
     applicationSubCategory: "MCP Server",
     operatingSystem: "Any",
+    datePublished: s.added,
+    dateModified: s.verified,
     creator: { "@type": "Organization", name: s.vendor },
     ...(s.links?.site ? { sameAs: [s.links.site, s.links.repo].filter(Boolean) } : {}),
     ...(s.pricing === "free"
@@ -488,6 +523,7 @@ export const renderServer = (ctx, s) => {
     description: s.description.slice(0, 250),
     path: `/mcps/${s.slug}/`,
     page: "server",
+    md: `/mcps/${s.slug}.md`,
     body,
     jsonLd: [
       ld,
@@ -595,6 +631,7 @@ ${stages.map((st, i) => `
     description: "An opinionated walk through the AI filmmaking pipeline: which MCP servers your agent should connect at every stage, from script to distribution.",
     path: "/stack/",
     page: "stack",
+    md: "/stack.md",
     body,
   });
 };
@@ -672,7 +709,24 @@ export const renderForAgents = (ctx) => {
     description: "How AI agents should consume mcp.film: llms.txt, the JSON registry API, markdown twins, the Atom feed, and the mcp-film meta-MCP server.",
     path: "/for-agents/",
     page: "agents",
+    md: "/for-agents.md",
     body,
+    jsonLd: [
+      {
+        "@context": "https://schema.org",
+        "@type": "Dataset",
+        name: "mcp.film registry — MCP servers for AI filmmaking",
+        description: `Structured registry of ${ctx.servers.length} verified Model Context Protocol servers for generative AI filmmaking, with install commands, auth requirements, capabilities, and maintenance caveats. Updated continuously.`,
+        url: site.url + "/for-agents/",
+        license: "https://opensource.org/license/mit",
+        creator: { "@type": "Organization", name: "mcp.film", url: site.url },
+        dateModified: ctx.built.slice(0, 10),
+        distribution: [
+          { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/api/registry.json" },
+          { "@type": "DataDownload", encodingFormat: "text/markdown", contentUrl: site.url + "/llms-full.txt" },
+        ],
+      },
+    ],
   });
 };
 
@@ -858,26 +912,43 @@ export const render404 = (ctx) =>
 
 // ------------------------------------------------------------ feeds/crawler
 export const renderSitemap = (ctx) => {
+  const today = ctx.built.slice(0, 10);
   const urls = [
-    "/", "/stack/", "/for-agents/", "/about/", "/submit/",
-    ...ctx.categories.map((c) => `/categories/${c.id}/`),
-    ...ctx.servers.map((s) => `/mcps/${s.slug}/`),
+    ...["/", "/stack/", "/for-agents/", "/about/", "/submit/", "/llms.txt", "/llms-full.txt", "/api/registry.json", "/stack.md", "/index.md"]
+      .map((u) => ({ loc: u, lastmod: today })),
+    ...ctx.categories.map((c) => ({ loc: `/categories/${c.id}/`, lastmod: today })),
+    ...ctx.servers.flatMap((s) => [
+      { loc: `/mcps/${s.slug}/`, lastmod: s.verified },
+      { loc: `/mcps/${s.slug}.md`, lastmod: s.verified },
+    ]),
   ];
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((u) => `  <url><loc>${ctx.site.url}${u}</loc><lastmod>${ctx.built.slice(0, 10)}</lastmod></url>`).join("\n")}
+${urls.map((u) => `  <url><loc>${ctx.site.url}${u.loc}</loc><lastmod>${u.lastmod}</lastmod></url>`).join("\n")}
 </urlset>
 `;
 };
 
-export const renderRobots = (ctx) => `# mcp.film welcomes agents and crawlers.
-# Machine-readable everything: ${ctx.site.url}/llms.txt and ${ctx.site.url}/api/registry.json
+export const renderRobots = (ctx) => {
+  const aiCrawlers = [
+    "GPTBot", "OAI-SearchBot", "ChatGPT-User",
+    "ClaudeBot", "Claude-User", "Claude-SearchBot", "anthropic-ai",
+    "PerplexityBot", "Perplexity-User",
+    "Google-Extended", "Applebot-Extended", "CCBot", "meta-externalagent",
+  ];
+  return `# mcp.film — humans and machines get equal billing here.
+# Machine surfaces: ${ctx.site.url}/llms.txt · ${ctx.site.url}/api/registry.json
+# Every HTML page has a markdown twin: append .md to the path.
 
 User-agent: *
 Allow: /
 
+# AI crawlers and answer engines are explicitly welcome:
+${aiCrawlers.map((ua) => `User-agent: ${ua}\nAllow: /`).join("\n\n")}
+
 Sitemap: ${ctx.site.url}/sitemap.xml
 `;
+};
 
 export const renderFeed = (ctx) => {
   const entries = [...ctx.servers]

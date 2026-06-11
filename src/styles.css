@@ -448,6 +448,14 @@ img.avatar { object-fit: cover; background: var(--paper); }
 .agents-list li { margin: 0.5rem 0; line-height: 1.65; }
 .agents-list strong, .agents-doc strong { color: var(--ink); font-weight: 600; }
 
+/* ----------------------------------------------------------------- faq */
+.faq { margin: 4rem 0 2rem; padding-top: 2rem; border-top: 1px solid var(--hairline); }
+.faq h2 { font-size: 1.2rem; font-weight: 600; letter-spacing: -0.015em; margin: 0 0 1.4rem; }
+.faq-grid { display: grid; gap: 1.8rem 2.5rem; grid-template-columns: 1fr; }
+@media (min-width: 800px) { .faq-grid { grid-template-columns: 1fr 1fr; } }
+.faq-item h3 { font-size: 13.5px; font-weight: 600; margin: 0 0 0.35rem; letter-spacing: -0.005em; }
+.faq-item p { margin: 0; color: var(--ink-2); font-size: 13px; line-height: 1.65; }
+
 /* ------------------------------------------------------------- footer */
 .site-foot {
   margin-top: 4.5rem; border-top: 1px solid var(--hairline);

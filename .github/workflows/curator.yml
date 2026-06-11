@@ -9,6 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  issues: write
   contents: write
   pull-requests: write
 
@@ -42,18 +43,23 @@ jobs:
                "notes" if the caveats changed. If a server is dead or deprecated,
                update its notes to say so and point to the best alternative (do
                not delete entries without a replacement).
-            2. DISCOVER: search the web for MCP servers relevant to AI filmmaking
+            2. FILL GAPS: any entry whose install.claude_code, install.remote_url
+               and install.stdio_command are all null but which links to vendor
+               docs — fetch the docs and fill in the verified connect details
+               (the Martini entry shipped this way because its docs were
+               unreachable from the build environment).
+            3. DISCOVER: search the web for MCP servers relevant to AI filmmaking
                released or risen to prominence recently (video/image/audio
                generation, editing, upscaling, avatars, distribution). Add at most
                5 new entries that meet the bar in CONTRIBUTING.md, with honest
                notes. Never invent URLs or install commands — only include what
                you verified from primary sources.
-            3. LOGOS: for every entry you add, follow the "Vendor logos"
+            4. LOGOS: for every entry you add, follow the "Vendor logos"
                section of AGENTS.md — map the slug in data/logos/owners.json,
                run `node scripts/fetch-logos.mjs`, and commit the PNG unless
                it's a GitHub identicon.
-            4. VALIDATE: run `node build.mjs --validate-only` and fix any errors.
-            5. SHIP: create a branch named curator/<date>, commit ONLY changes
+            5. VALIDATE: run `node build.mjs --validate-only` and fix any errors.
+            6. SHIP: create a branch named curator/<date>, commit ONLY changes
                under data/ (never code, templates, or workflows), push it, and
                open a PR titled "Curator: <date>" labeled `auto-data` with a
                summary of what changed and why. Use `gh` with GITHUB_TOKEN.
@@ -65,3 +71,21 @@ jobs:
               describe it in the PR body instead of changing it.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Alert on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --label automation-failure --state open --search "${{ github.workflow }}" --json number -q '.[0].number' || true)
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body "Failed again: $url"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" \
+              --title "Automation failure: ${{ github.workflow }}" \
+              --label automation-failure \
+              --body "A scheduled/triggered run failed: $url
+
+          Likely causes: expired or unfunded ANTHROPIC_API_KEY, a revoked POSTHOG_API_KEY, a deprecated model ID, or an upstream action change. The site keeps serving either way — only self-updating is paused until this is fixed." \
+            || gh issue create --repo "$GITHUB_REPOSITORY" --title "Automation failure: ${{ github.workflow }}" --body "Run failed: $url"
+          fi

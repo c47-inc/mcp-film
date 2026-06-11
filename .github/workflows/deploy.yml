@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  issues: write
   contents: read
   pages: write
   id-token: write
@@ -37,3 +38,38 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+      - name: Ping IndexNow
+        if: success()
+        continue-on-error: true
+        run: |
+          curl -fsS -X POST "https://api.indexnow.org/indexnow" \
+            -H "Content-Type: application/json; charset=utf-8" \
+            -d '{
+              "host": "mcp.film",
+              "key": "c5a7c1c2002f38ba129f0f3d6fc99c73",
+              "keyLocation": "https://mcp.film/c5a7c1c2002f38ba129f0f3d6fc99c73.txt",
+              "urlList": [
+                "https://mcp.film/",
+                "https://mcp.film/stack/",
+                "https://mcp.film/for-agents/",
+                "https://mcp.film/sitemap.xml"
+              ]
+            }' || true
+      - name: Alert on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --label automation-failure --state open --search "${{ github.workflow }}" --json number -q '.[0].number' || true)
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body "Failed again: $url"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" \
+              --title "Automation failure: ${{ github.workflow }}" \
+              --label automation-failure \
+              --body "A scheduled/triggered run failed: $url
+
+          Likely causes: expired or unfunded ANTHROPIC_API_KEY, a revoked POSTHOG_API_KEY, a deprecated model ID, or an upstream action change. The site keeps serving either way — only self-updating is paused until this is fixed." \
+            || gh issue create --repo "$GITHUB_REPOSITORY" --title "Automation failure: ${{ github.workflow }}" --body "Run failed: $url"
+          fi
