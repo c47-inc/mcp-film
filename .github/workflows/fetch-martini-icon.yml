@@ -1,0 +1,33 @@
+# One-shot utility: fetch Martini's real icon into data/logos/martini.png.
+# Exists because the authoring sandbox couldn't reach martini.film directly.
+# Safe to delete after a successful run.
+name: Fetch Martini icon
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and verify
+        run: |
+          curl -fsSL --max-time 30 -o /tmp/icon.png "https://www.martini.film/icon.png"
+          file /tmp/icon.png | grep -qE "PNG|JPEG|Web/P" || { echo "not an image"; exit 1; }
+          if command -v convert >/dev/null; then
+            convert /tmp/icon.png -resize 512x512 data/logos/martini.png
+          else
+            cp /tmp/icon.png data/logos/martini.png
+          fi
+          ls -la data/logos/martini.png
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/logos/martini.png
+          git commit -m "Martini logo: official icon.png from martini.film"
+          git push
