@@ -17,6 +17,7 @@ claude mcp add mcp-film -- npx -y mcp-film
 | `list_film_categories` | All categories with pipeline stages and agent hints |
 | `get_install_config` | Copy-paste config for claude_code / claude_desktop / cursor |
 | `plan_film_stack` | Recommended servers for every pipeline stage, biased by your brief |
+| `submit_listing` | Propose a new server: validated, deduped against the live registry, returned as a ready-to-file GitHub issue payload (the mcp.film triage agent verifies before listing) |
 
 ## How it works
 

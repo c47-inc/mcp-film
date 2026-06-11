@@ -15,7 +15,8 @@ import path from "node:path";
 import readline from "node:readline";
 import { fileURLToPath } from "node:url";
 
-const VERSION = "1.0.0";
+const VERSION = "1.1.0";
+const REPO = "c47-inc/mcp-film";
 const REGISTRY_URL = "https://mcp.film/api/registry.min.json";
 const SNAPSHOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "registry.snapshot.json");
 
@@ -131,6 +132,27 @@ const TOOLS = [
     },
   },
   {
+    name: "submit_listing",
+    description:
+      "Propose a new MCP server for the mcp.film directory. Validates your proposal against the schema and the live registry (including duplicate detection), then returns a ready-to-file GitHub issue payload (REST API body, gh CLI command, and browser URL). Submissions are claims: the mcp.film triage agent independently verifies everything against primary sources before listing — never submit URLs or commands you haven't seen work.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Server name, e.g. 'Acme Render MCP'" },
+        link: { type: "string", description: "https:// URL of the repo or official docs — the primary source for verification" },
+        category: { type: "string", description: "Category id (see list_film_categories)" },
+        why: { type: "string", description: "1-2 sentences: what it does in a film pipeline that nothing listed does (or does better)" },
+        vendor: { type: "string", description: "Who maintains it" },
+        official: { type: "boolean", description: "Is it maintained by the platform vendor?" },
+        install: { type: "string", description: "Verified install command or remote MCP URL, if known" },
+        auth_env: { type: "string", description: "Required API-key env var, if any" },
+        pricing: { type: "string", enum: ["free", "freemium", "paid", "credits"] },
+        notes: { type: "string", description: "Caveats worth knowing: quotas, ToS gray areas, local-app requirements" },
+      },
+      required: ["name", "link", "category", "why"],
+    },
+  },
+  {
     name: "plan_film_stack",
     description:
       "Get a recommended set of MCP servers covering the whole film pipeline (develop → visualize → shoot → sound → cut → finish → ship). Returns 1-3 picks per stage, ranked by official status and hosting. Pass a brief to bias picks (matched against capabilities and taglines).",
@@ -177,6 +199,67 @@ async function callTool(name, args = {}) {
     const s = servers.find((x) => x.slug === args.slug);
     if (!s) return { error: `No server with slug '${args.slug}'.` };
     return installConfig(s, args.client);
+  }
+
+  if (name === "submit_listing") {
+    const missing = ["name", "link", "category", "why"].filter((k) => !String(args[k] ?? "").trim());
+    if (missing.length) return { error: `Missing required field(s): ${missing.join(", ")}` };
+    if (!/^https:\/\/\S+$/.test(args.link)) return { error: "link must be an https:// URL (repo or docs)" };
+    const catIds = reg.categories.map((c) => c.id);
+    if (!catIds.includes(args.category)) {
+      return { error: `Unknown category '${args.category}'.`, valid_categories: catIds };
+    }
+
+    const trim = (u) => String(u).replace(/\/+$/, "").toLowerCase();
+    const normName = (x) => String(x).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    const dupe = servers.find(
+      (s) =>
+        normName(s.name) === normName(args.name) ||
+        [s.links?.repo, s.links?.docs, s.links?.site, s.install?.remote_url]
+          .filter(Boolean)
+          .some((u) => trim(u) === trim(args.link)),
+    );
+    if (dupe) {
+      return {
+        already_listed: { slug: dupe.slug, name: dupe.name, page: `https://mcp.film/mcps/${dupe.slug}/` },
+        note: "This server already appears to be in the directory. If the listing is wrong or stale, file a correction instead.",
+        correction_url: `https://github.com/${REPO}/issues/new?labels=correction&title=${encodeURIComponent(`Correction: [${dupe.slug}]`)}`,
+      };
+    }
+
+    const title = `Submit: ${args.name}`;
+    const body = [
+      "<!-- Filed via the mcp-film MCP server (submit_listing v" + VERSION + ").",
+      "     All fields are UNVERIFIED CLAIMS; the mcp.film triage agent verifies",
+      "     against primary sources before anything is listed. -->",
+      "",
+      "```yaml",
+      `name: ${args.name}`,
+      `link: ${args.link}`,
+      `category: ${args.category}`,
+      `vendor: ${args.vendor ?? "unknown"}`,
+      `official: ${args.official ?? "unknown"}`,
+      args.install ? `install: ${args.install}` : null,
+      args.auth_env ? `auth_env: ${args.auth_env}` : null,
+      args.pricing ? `pricing: ${args.pricing}` : null,
+      `why: ${args.why}`,
+      args.notes ? `notes: ${args.notes}` : null,
+      "```",
+    ].filter((l) => l !== null).join("\n");
+
+    return {
+      status: "ready_to_file",
+      note: "Validated against the live registry — no duplicate found. File the issue with whichever channel you have; the triage agent replies on the issue, usually within a week.",
+      criteria: "Listed if it works as documented, is relevant to filmmaking, and is maintained (or is the only option for an important platform).",
+      github_issue_api: {
+        method: "POST",
+        url: `https://api.github.com/repos/${REPO}/issues`,
+        body: { title, body, labels: ["submit"] },
+        auth: "any GitHub token with public_repo scope",
+      },
+      gh_cli: `gh issue create --repo ${REPO} --title ${JSON.stringify(title)} --label submit --body ${JSON.stringify(body)}`,
+      browser_url: `https://github.com/${REPO}/issues/new?labels=submit&title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`,
+    };
   }
 
   if (name === "plan_film_stack") {

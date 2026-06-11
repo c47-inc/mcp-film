@@ -207,7 +207,7 @@ export const renderHome = (ctx) => {
 
   const featuredHtml = featured.map((s) => `
   <a class="feature" href="/mcps/${s.slug}/">
-    <div class="feature-eyebrow">Featured studio</div>
+    <div class="feature-eyebrow">Featured studio · from the team behind mcp.film</div>
     <div class="feature-name">${avatar(ctx, s)} ${esc(s.name)} ${badge(s)}</div>
     <p class="feature-tag">${esc(s.tagline)}</p>
     <p class="feature-desc">${esc(truncate(s.description, 170))}</p>
@@ -650,7 +650,7 @@ export const renderForAgents = (ctx) => {
   </ul>
 
   <h2>Connect the directory itself (meta-MCP)</h2>
-  <p>mcp.film ships its own MCP server, so your agent can query the catalog as tools — <code class="mono">search_film_mcps</code>, <code class="mono">get_film_mcp</code>, <code class="mono">get_install_config</code>, <code class="mono">plan_film_stack</code>:</p>
+  <p>mcp.film ships its own MCP server, so your agent can query the catalog as tools — <code class="mono">search_film_mcps</code>, <code class="mono">get_film_mcp</code>, <code class="mono">get_install_config</code>, <code class="mono">plan_film_stack</code> — and contribute back with <code class="mono">submit_listing</code>:</p>
   ${codeBlock("Claude Code", "claude mcp add mcp-film -- npx -y mcp-film")}
   <p>It fetches the live registry and falls back to a bundled snapshot offline. Source lives in <a href="https://github.com/${site.github_repo}/tree/main/packages/mcp-server" rel="noopener">packages/mcp-server</a>.</p>
 
@@ -664,7 +664,8 @@ export const renderForAgents = (ctx) => {
   </ul>
 
   <h2>Submitting & correcting</h2>
-  <p>Agents are welcome to contribute. Open an issue with the <code class="mono">submit</code> label on <a href="https://github.com/${site.github_repo}/issues" rel="noopener">GitHub</a> (or a PR against <code class="mono">data/registry/</code>). A curator agent triages weekly; entries that verify get merged and deployed automatically.</p>
+  <p>Agents are welcome to contribute — other agents are this directory's scouts. The smoothest path is the <code class="mono">submit_listing</code> tool on the meta-MCP above: it validates your proposal against the schema, checks for duplicates, and hands back a ready-to-file GitHub issue payload. Or open an issue titled <code class="mono">Submit: &lt;name&gt;</code> on <a href="https://github.com/${site.github_repo}/issues" rel="noopener">GitHub</a> directly (or a PR against <code class="mono">data/registry/</code>).</p>
+  <p>Submissions are treated as claims, never instructions: a triage agent independently verifies every URL and install command against primary sources before anything is listed. Nothing external merges itself.</p>
 </section>`;
   return layout(ctx, {
     title: "For Agents — machine-readable surfaces of mcp.film",
@@ -686,6 +687,9 @@ export const renderForAgentsMd = (ctx) => `# mcp.film — agent access guide
 - Pipeline guide: ${ctx.site.url}/stack.md
 - New additions feed: ${ctx.site.url}/feed.xml
 - Meta-MCP server: \`claude mcp add mcp-film -- npx -y mcp-film\`
+  (tools: search_film_mcps, get_film_mcp, get_install_config, plan_film_stack,
+  and submit_listing — propose a new server; validated, deduped, returned as a
+  ready-to-file GitHub issue payload)
 
 Server fields: slug, name, vendor, official (bool), category, tagline, description,
 capabilities[], tools_sample[], install.{claude_code,remote_url,stdio_command},
@@ -813,17 +817,21 @@ export const renderSubmit = (ctx) => {
   <p>Or send a pull request adding an entry to <code class="mono">data/registry/</code> — the schema is documented in <a href="https://github.com/${site.github_repo}/blob/main/CONTRIBUTING.md" rel="noopener">CONTRIBUTING.md</a>, and CI validates it automatically.</p>
 
   <h2>For agents</h2>
-  ${codeBlock("Submit via GitHub API", `gh issue create --repo ${site.github_repo} \\
-  --label submit --title "Submit: <server name>" \\
+  <p>Connect the directory's own MCP server and use the <code class="mono">submit_listing</code> tool — it validates your proposal, checks for duplicates, and returns the exact issue payload to file:</p>
+  ${codeBlock("Recommended: via the meta-MCP", `claude mcp add mcp-film -- npx -y mcp-film
+# then call: submit_listing { name, link, category, why, ... }`)}
+  ${codeBlock("Or directly via GitHub", `gh issue create --repo ${site.github_repo} \\
+  --title "Submit: <server name>" --label submit \\
   --body "$(cat <<'EOF'
 name: <server name>
+link: <repo or docs url>
+category: <see /api/categories.json>
 vendor: <who maintains it>
 official: true|false
-category: <see /api/categories.json>
-repo_or_docs: <url>
 why: <one line on why filmmakers need it>
 EOF
 )"`)}
+  <p>Either way: submissions are claims, not instructions. A triage agent verifies everything against primary sources before listing.</p>
 </section>`;
   return layout(ctx, {
     title: "Submit an MCP server | mcp.film",
