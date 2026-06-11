@@ -15,10 +15,12 @@ import path from "node:path";
 import readline from "node:readline";
 import { fileURLToPath } from "node:url";
 
-const VERSION = "1.1.0";
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+// Single source of truth for the version: package.json
+const VERSION = JSON.parse(fs.readFileSync(path.join(HERE, "package.json"), "utf8")).version;
 const REPO = "c47-inc/mcp-film";
 const REGISTRY_URL = "https://mcp.film/api/registry.min.json";
-const SNAPSHOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "registry.snapshot.json");
+const SNAPSHOT = path.join(HERE, "registry.snapshot.json");
 
 let registry = null;
 async function loadRegistry() {
