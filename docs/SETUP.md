@@ -93,7 +93,7 @@ Create these issue/PR labels (Settings → Labels): `auto-data`, `submit`,
 | Workflow | Trigger | What it does |
 | --- | --- | --- |
 | Build & Deploy | push to main / manual | builds `dist/`, publishes to Pages |
-| Curator | Mondays 06:17 UTC | re-verifies 15 oldest entries, adds up to 5 new servers, PRs data |
+| Curator | daily 06:17 UTC | re-verifies the 3 stalest entries (full catalog every ~3 weeks), hunts for new servers, PRs data — skips the PR on quiet days |
 | Pulse | Thursdays 07:41 UTC | syncs PostHog ratings/trending/feedback into data, PRs |
 | Inbox | issue opened w/ `submit`/`correction` | verifies and lists (or declines with reasons) |
 | Auto-merge | PR labeled `auto-data` | merges only if all changes are in `data/` + validation passes, then deploys |

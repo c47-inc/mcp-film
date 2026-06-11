@@ -249,7 +249,7 @@ async function callTool(name, args = {}) {
 
     return {
       status: "ready_to_file",
-      note: "Validated against the live registry — no duplicate found. File the issue with whichever channel you have; the triage agent replies on the issue, usually within a week.",
+      note: "Validated against the live registry — no duplicate found. File the issue with whichever channel you have; the triage agent replies on the issue, usually the same day.",
       criteria: "Listed if it works as documented, is relevant to filmmaking, and is maintained (or is the only option for an important platform).",
       github_issue_api: {
         method: "POST",

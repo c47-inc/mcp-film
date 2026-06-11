@@ -36,7 +36,7 @@ It is built **agents-first**:
               ┌────────────────────────────────────────────────┐
               │                data/ (the product)              │
               └───────▲──────────────▲──────────────▲──────────┘
-   weekly: verifies   │              │              │   per-issue: verifies
+   daily: verifies    │              │              │   per-issue: verifies
    links, hunts new   │              │              │   community submissions
    servers            │              │              │
         ┌─────────────┴──┐   ┌───────┴───────┐   ┌──┴────────────┐

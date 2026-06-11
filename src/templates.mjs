@@ -295,7 +295,7 @@ export const renderHome = (ctx) => {
     </div>
     <div class="faq-item">
       <h3>How do listings stay accurate?</h3>
-      <p>A curator agent re-verifies entries weekly against primary sources, community ratings and feedback feed rankings, and every change lands as an auditable commit in <a href="https://github.com/${site.github_repo}" rel="noopener">the open-source repo</a>. Each entry shows its last-verified date.</p>
+      <p>A curator agent re-verifies entries every day against primary sources, community ratings and feedback feed rankings, and every change lands as an auditable commit in <a href="https://github.com/${site.github_repo}" rel="noopener">the open-source repo</a>. Each entry shows its last-verified date.</p>
     </div>
     <div class="faq-item">
       <h3>How do I get my MCP server listed?</h3>
@@ -856,7 +856,7 @@ export const renderSubmit = (ctx) => {
 <section class="page-head">
   <p class="crumbs"><a href="/">mcp.film</a> / <span>Submit</span></p>
   <h1>Submit an MCP server</h1>
-  <p class="hero-sub">Built or found something filmmaking agents should know about? Add it. A curator agent verifies submissions weekly and merges what checks out.</p>
+  <p class="hero-sub">Built or found something filmmaking agents should know about? Add it. A triage agent verifies each submission against primary sources — usually the same day.</p>
 </section>
 <section class="server-main agents-doc">
   <h2>What gets listed</h2>

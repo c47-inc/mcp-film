@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for adding to the map. Three things get a server listed: **it works**, **it's relevant to filmmaking**, and **it's maintained** (or it's the only option for an important platform). An agent will verify and reply here — usually within a week.
+        Thanks for adding to the map. Three things get a server listed: **it works**, **it's relevant to filmmaking**, and **it's maintained** (or it's the only option for an important platform). An agent will verify and reply here — usually the same day.
   - type: input
     id: name
     attributes:
