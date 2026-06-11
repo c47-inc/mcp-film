@@ -72,10 +72,18 @@ console.log(`✓ data valid: ${servers.length} servers, ${categories.length} cat
 if (process.argv.includes("--validate-only")) process.exit(0);
 
 // ------------------------------------------------------------------ context
+const logosDir = path.join(DATA, "logos");
+const logos = new Set(
+  fs.existsSync(logosDir)
+    ? fs.readdirSync(logosDir).filter((f) => f.endsWith(".png")).map((f) => f.slice(0, -4))
+    : [],
+);
+
 const ctx = {
   site,
   categories,
   servers,
+  logos,
   ratings: ratings.ratings ?? {},
   trending: ratings.trending ?? [],
   built: new Date().toISOString(),
@@ -151,6 +159,12 @@ write("assets/styles.css", fs.readFileSync(path.join(ROOT, "src/styles.css"), "u
 write("assets/app.js", fs.readFileSync(path.join(ROOT, "src/app.js"), "utf8"));
 for (const f of fs.readdirSync(path.join(ROOT, "public"))) {
   fs.copyFileSync(path.join(ROOT, "public", f), path.join(DIST, "assets", f));
+}
+if (fs.existsSync(logosDir)) {
+  fs.mkdirSync(path.join(DIST, "assets/logos"), { recursive: true });
+  for (const f of fs.readdirSync(logosDir)) {
+    if (f.endsWith(".png")) fs.copyFileSync(path.join(logosDir, f), path.join(DIST, "assets/logos", f));
+  }
 }
 
 // snapshot of registry for the npx mcp-film fallback data

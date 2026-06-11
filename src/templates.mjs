@@ -171,6 +171,12 @@ const badge = (s) =>
 const remoteBadge = (s) =>
   s.install?.remote_url ? `<span class="tag" title="Hosted remote MCP — no local install">Remote</span>` : "";
 
+// Vendor logo tile (data/logos/<slug>.png) with monogram fallback.
+const avatar = (ctx, s) =>
+  ctx.logos?.has(s.slug)
+    ? `<img class="avatar" src="/assets/logos/${s.slug}.png" alt="" loading="lazy" decoding="async">`
+    : `<span class="avatar" aria-hidden="true">${esc(s.name[0].toUpperCase())}</span>`;
+
 // "Community (samuelgursky)" → "samuelgursky"; "Martini (C47)" → "Martini"
 const vendorShort = (v) => {
   const m = /^Community \((.+?)\)/.exec(v);
@@ -184,7 +190,7 @@ const card = (ctx, s) => {
     .filter(Boolean).join(" · ");
   return `<a class="card" href="/mcps/${s.slug}/" data-search="${esc([s.name, s.vendor, s.tagline, s.category, ...(s.capabilities ?? [])].join(" ").toLowerCase())}" data-cat="${s.category}">
   <div class="card-head">
-    <span class="avatar" aria-hidden="true">${esc(s.name[0].toUpperCase())}</span>
+    ${avatar(ctx, s)}
     <span class="card-id"><span class="card-name">${esc(s.name)}</span><span class="card-vendor">${esc(vendorShort(s.vendor))}</span></span>
     ${s.official ? `<span class="tag tag-official">Official</span>` : ""}
   </div>
@@ -202,7 +208,7 @@ export const renderHome = (ctx) => {
   const featuredHtml = featured.map((s) => `
   <a class="feature" href="/mcps/${s.slug}/">
     <div class="feature-eyebrow">Featured studio</div>
-    <div class="feature-name">${esc(s.name)} ${badge(s)}</div>
+    <div class="feature-name">${avatar(ctx, s)} ${esc(s.name)} ${badge(s)}</div>
     <p class="feature-tag">${esc(s.tagline)}</p>
     <p class="feature-desc">${esc(truncate(s.description, 170))}</p>
     <span class="feature-cta">Open the listing</span>
@@ -412,7 +418,7 @@ export const renderServer = (ctx, s) => {
 <section class="page-head">
   <p class="crumbs"><a href="/">mcp.film</a> / <a href="/categories/${s.category}/">${esc(cat?.name ?? s.category)}</a> / <span>${esc(s.name)}</span></p>
   <div class="server-title">
-    <span class="avatar" aria-hidden="true">${esc(s.name[0].toUpperCase())}</span>
+    ${avatar(ctx, s)}
     <h1>${esc(s.name)}</h1>
   </div>
   <p class="server-meta-line">${badge(s)}${remoteBadge(s)}<span>by ${esc(s.vendor)}</span><span>${PRICING_LABEL[s.pricing]}</span><span>verified ${nice(s.verified)}</span></p>

@@ -48,8 +48,12 @@ jobs:
                5 new entries that meet the bar in CONTRIBUTING.md, with honest
                notes. Never invent URLs or install commands — only include what
                you verified from primary sources.
-            3. VALIDATE: run `node build.mjs --validate-only` and fix any errors.
-            4. SHIP: create a branch named curator/<date>, commit ONLY changes
+            3. LOGOS: for every entry you add, follow the "Vendor logos"
+               section of AGENTS.md — map the slug in data/logos/owners.json,
+               run `node scripts/fetch-logos.mjs`, and commit the PNG unless
+               it's a GitHub identicon.
+            4. VALIDATE: run `node build.mjs --validate-only` and fix any errors.
+            5. SHIP: create a branch named curator/<date>, commit ONLY changes
                under data/ (never code, templates, or workflows), push it, and
                open a PR titled "Curator: <date>" labeled `auto-data` with a
                summary of what changed and why. Use `gh` with GITHUB_TOKEN.

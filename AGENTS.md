@@ -76,6 +76,19 @@ House style: write like a sharp film-tech editor, not a press release. Notes
 should say the inconvenient thing (e.g. "Suno has no official API — all
 wrappers are ToS gray areas"). That honesty is the brand.
 
+## Vendor logos
+
+Cards show a logo tile from `data/logos/<slug>.png` (GitHub org/user avatars,
+128px), with a monogram fallback when no file exists. When adding a server:
+
+1. Add a mapping to `data/logos/owners.json` — the GitHub org whose avatar is
+   the platform's brand mark for official servers, or the maintainer's account
+   for community ones. Use the service's brand org when it's the clearer
+   identity (e.g. Sora → `openai`, Blender MCP → `blender`).
+2. Run `node scripts/fetch-logos.mjs` and commit the PNG along with the data.
+3. If the avatar turns out to be an auto-generated GitHub identicon (blocky
+   symmetric pattern), delete the PNG — a monogram beats a placeholder.
+
 ## Voice & taste
 
 - Cinematic, dry, precise. No exclamation marks, no "game-changing".

@@ -276,6 +276,12 @@ button.chip-filter .count { font-family: var(--mono); font-size: 10.5px; color: 
   letter-spacing: -0.02em;
   user-select: none;
 }
+img.avatar { object-fit: cover; background: var(--paper); }
+.feature-name .avatar {
+  width: 38px; height: 38px; border-radius: 9px;
+  border-color: var(--inverse-line); background: var(--inverse-2);
+  align-self: center;
+}
 .card-id { display: flex; flex-direction: column; min-width: 0; flex: 1; }
 .card-name { font-weight: 550; font-size: 13.5px; letter-spacing: -0.008em; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .card-vendor { font-size: 11.5px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
