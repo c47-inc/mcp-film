@@ -80,6 +80,13 @@ code {
   margin-right: 5px; vertical-align: 1.5px;
 }
 
+/* page transitions: native cross-document crossfade where supported */
+@view-transition { navigation: auto; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.13s; }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+}
+
 /* ------------------------------------------------------------- header */
 .site-head {
   position: sticky; top: 0; z-index: 50;
@@ -88,8 +95,10 @@ code {
   height: 57px;
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(12px) saturate(1.5);
-  border-bottom: 1px solid var(--hairline);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.25s ease;
 }
+.site-head.is-scrolled { border-bottom-color: var(--hairline); }
 .brand { font-size: 14.5px; font-weight: 600; letter-spacing: -0.01em; display: inline-flex; align-items: center; gap: 8px; }
 .brand-dot { color: var(--ink-3); }
 .site-nav { display: flex; align-items: center; gap: clamp(0.2rem, 1vw, 0.45rem); }
@@ -109,7 +118,27 @@ code {
 main { max-width: 1200px; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 2.5rem); }
 
 /* --------------------------------------------------------------- hero */
-.hero { padding: clamp(3.5rem, 7vw, 5.5rem) 0 clamp(2rem, 4vw, 3rem); }
+.hero { position: relative; padding: clamp(3.5rem, 7vw, 5.5rem) 0 clamp(2rem, 4vw, 3rem); }
+.hero-canvas {
+  /* canvas is a replaced element: inset alone won't stretch it */
+  position: absolute; top: -57px; left: calc(50% - 50vw);
+  width: 100vw; height: calc(100% + 57px);
+  pointer-events: none; z-index: -1;
+}
+body { overflow-x: clip; }
+.hero-inner { position: relative; }
+.hero-ticker {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin: 1.6rem 0 0; padding: 5px 12px;
+  border: 1px solid var(--hairline); border-radius: 999px;
+  font-family: var(--mono); font-size: 11px; color: var(--ink-3);
+  background: color-mix(in srgb, var(--paper) 70%, transparent);
+}
+.tick-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: tickpulse 2.4s ease-in-out infinite; }
+@keyframes tickpulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.tick-text { transition: opacity 0.35s ease; }
+.tick-text.is-fading { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .tick-dot { animation: none; } }
 .hero-eyebrow { margin: 0 0 1.3rem; display: flex; align-items: center; gap: 7px; }
 .hero-eyebrow .dot { color: var(--green); font-size: 8px; }
 h1 {
@@ -232,6 +261,7 @@ button.chip-filter {
 }
 button.chip-filter:hover { background: var(--fill); color: var(--ink); }
 button.chip-filter.is-on { background: var(--fill); color: var(--ink); font-weight: 550; }
+button.chip-filter.is-spy { background: var(--fill); color: var(--ink); }
 button.chip-filter .count { font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); }
 @media (max-width: 999px) {
   .dir-nav { flex-direction: row; flex-wrap: wrap; gap: 4px; }

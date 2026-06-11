@@ -71,17 +71,25 @@ Create these issue/PR labels (Settings → Labels): `auto-data`, `submit`,
 - **IndexNow** is already automated: every deploy pings api.indexnow.org
   (the key file is generated into the site root by the build).
 
-## 7. Optional but recommended
+## 7. Publishing the meta-MCP (npm + official MCP Registry)
 
-- **Publish the meta-MCP to npm** so `npx -y mcp-film` works for everyone:
-  `cd packages/mcp-server && npm publish` (after `node ../../build.mjs` to
-  refresh the snapshot). The package name `mcp-film` must be available or
-  adjusted.
-- **Publish to the official MCP Registry** (registry.modelcontextprotocol.io)
-  with the `mcp-publisher` CLI — the package.json already carries
-  `"mcpName": "film.mcp/directory"`. Domain verification wants a DNS TXT
-  record or `/.well-known/mcp-registry-auth` (the curator agent can be asked
-  to wire this up later).
+The `Release (npm + MCP Registry)` workflow does both in one click once two
+secrets exist. The package name `mcp-film` is unclaimed on npm (verified
+2026-06-11).
+
+1. **npm**: create a free account at npmjs.com → Access Tokens → Generate
+   (granular, packages: read/write) → add as repo secret `NPM_TOKEN`.
+2. **Registry domain proof**: add one more DNS TXT record on `@` for
+   `mcp.film` (value provided separately — `v=MCPv1; k=ed25519; p=…`), and
+   add the matching private key as repo secret `MCP_REGISTRY_KEY`.
+3. Actions → **Release (npm + MCP Registry)** → Run workflow.
+
+Future releases: bump `version` in `packages/mcp-server/package.json`
+(an agent PR can do this), click Release again. The published package always
+fetches the live registry at runtime, so data updates never require a
+re-release — only tool changes do.
+
+## 8. Optional but recommended
 - **Analytics segmentation:** site events go to the existing PostHog "Martini"
   project under `mcpfilm_*` event names with `$host = mcp.film`. If you'd
   rather isolate them, create a dedicated PostHog project and swap

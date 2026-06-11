@@ -1,0 +1,64 @@
+# Release: publish the meta-MCP to npm, then to the official MCP Registry.
+# One click (workflow_dispatch) per release; bump the version in
+# packages/mcp-server/package.json first.
+#
+# Required secrets:
+#   NPM_TOKEN        — npm granular access token with publish rights
+#   MCP_REGISTRY_KEY — Ed25519 private key (64 hex chars) whose public half
+#                      is in the mcp.film DNS TXT record (v=MCPv1; k=ed25519; ...)
+#                      Registry step skips gracefully if unset.
+name: Release (npm + MCP Registry)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # npm provenance
+  issues: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Build (refreshes registry snapshot + server.json)
+        run: node build.mjs
+
+      - name: Publish to npm
+        working-directory: packages/mcp-server
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --provenance
+
+      - name: Publish to the official MCP Registry
+        env:
+          MCP_REGISTRY_KEY: ${{ secrets.MCP_REGISTRY_KEY }}
+        run: |
+          if [ -z "$MCP_REGISTRY_KEY" ]; then
+            echo "MCP_REGISTRY_KEY not set — skipping registry publish." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
+          cp dist/api/server.json server.json
+          ./mcp-publisher login dns --domain mcp.film --private-key "$MCP_REGISTRY_KEY"
+          ./mcp-publisher publish
+          echo "Published film.mcp/directory to registry.modelcontextprotocol.io" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Alert on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          gh issue create --repo "$GITHUB_REPOSITORY" \
+            --title "Automation failure: ${{ github.workflow }}" \
+            --label automation-failure \
+            --body "Release run failed: $url — check NPM_TOKEN validity, version bump (npm rejects re-publishing the same version), or MCP_REGISTRY_KEY/DNS TXT mismatch." \
+          || gh issue create --repo "$GITHUB_REPOSITORY" --title "Automation failure: ${{ github.workflow }}" --body "Release run failed: $url"

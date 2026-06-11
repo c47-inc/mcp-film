@@ -113,6 +113,94 @@
     });
   }
 
+  // ------------------------------------------------------------- polish
+  // Functional micro-interactions only. Everything here is progressive
+  // enhancement: the static HTML (what agents read) is complete without it.
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // header earns its hairline on scroll
+  const head = document.querySelector(".site-head");
+  if (head) {
+    const onScroll = () => head.classList.toggle("is-scrolled", scrollY > 10);
+    addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  }
+
+  // hero: pointer-reactive dot grid (fine pointers only, monochrome, faint)
+  const canvas = document.querySelector(".hero-canvas");
+  if (canvas && !reduced && matchMedia("(pointer: fine)").matches) {
+    const g = canvas.getContext("2d");
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    const GAP = 26, RADIUS = 130;
+    let dots = [], px = -1e4, py = -1e4, raf = null;
+    const draw = () => {
+      raf = null;
+      const w = canvas.width / dpr, h = canvas.height / dpr;
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      g.clearRect(0, 0, w, h);
+      g.fillStyle = "#0d0d0d";
+      for (const [x, y] of dots) {
+        const t = Math.max(0, 1 - Math.hypot(x - px, y - py) / RADIUS);
+        g.globalAlpha = 0.045 + t * 0.12;
+        g.beginPath();
+        g.arc(x, y, 1 + t * 0.6, 0, 7);
+        g.fill();
+      }
+    };
+    const queue = () => { if (!raf) raf = requestAnimationFrame(draw); };
+    const size = () => {
+      const r = canvas.getBoundingClientRect();
+      canvas.width = r.width * dpr;
+      canvas.height = r.height * dpr;
+      dots = [];
+      for (let x = GAP / 2; x < r.width; x += GAP)
+        for (let y = GAP / 2; y < r.height; y += GAP) dots.push([x, y]);
+      queue();
+    };
+    addEventListener("mousemove", (e) => {
+      const r = canvas.getBoundingClientRect();
+      if (e.clientY > r.bottom + RADIUS) return;
+      px = e.clientX - r.left;
+      py = e.clientY - r.top;
+      queue();
+    }, { passive: true });
+    addEventListener("resize", size, { passive: true });
+    size();
+  }
+
+  // hero: ops ticker — real facts from the last build, gently rotating
+  const ticker = document.querySelector(".hero-ticker[data-ticker]");
+  if (ticker && !reduced) {
+    try {
+      const items = JSON.parse(ticker.dataset.ticker);
+      const txt = ticker.querySelector(".tick-text");
+      let i = 0;
+      if (items.length > 1 && txt) {
+        setInterval(() => {
+          txt.classList.add("is-fading");
+          setTimeout(() => {
+            i = (i + 1) % items.length;
+            txt.textContent = items[i];
+            txt.classList.remove("is-fading");
+          }, 360);
+        }, 4200);
+      }
+    } catch { /* ticker stays static */ }
+  }
+
+  // directory rail: scrollspy (only while no category filter is active)
+  if (sections.length && filters.length && "IntersectionObserver" in window) {
+    const io = new IntersectionObserver((entries) => {
+      if (activeCat) return;
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        const id = e.target.dataset.catSection;
+        filters.forEach((b) => b.classList.toggle("is-spy", b.dataset.filter === id));
+      }
+    }, { rootMargin: "-15% 0px -75% 0px" });
+    sections.forEach((s) => io.observe(s));
+  }
+
   // --------------------------------------------- outbound + detail signal
   document.addEventListener("click", (e) => {
     const a = e.target.closest("a[href]");

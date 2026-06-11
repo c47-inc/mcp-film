@@ -234,6 +234,8 @@ export const renderHome = (ctx) => {
 
   const body = `
 <section class="hero">
+  <canvas class="hero-canvas" aria-hidden="true"></canvas>
+  <div class="hero-inner">
   <p class="hero-eyebrow"><span class="dot">●</span> The MCP directory for AI filmmaking</p>
   <h1>Every tool your agent needs to make a film.</h1>
   <p class="hero-sub">A curated directory of <strong>Model Context Protocol</strong> servers across the production stack: video models, voices, scores, edit bays, finishing suites, and the pipes to ship it. Verified by hand and by agent, updated continuously.</p>
@@ -242,6 +244,14 @@ export const renderHome = (ctx) => {
     <a class="btn" href="/stack/">The AI Film Stack</a>
   </div>
   <p class="hero-stats"><span><b>${ctx.servers.length}</b> servers</span><span><b>${ctx.officialCount}</b> official</span><span><b>${ctx.remoteCount}</b> hosted remote</span><span><b>${categories.length}</b> categories</span><span><b>${nice(ctx.built.slice(0, 10))}</b> last verified</span></p>
+  <p class="hero-ticker" data-ticker='${esc(JSON.stringify([
+    `registry rebuilt ${nice(ctx.built.slice(0, 10))} · ${ctx.servers.length} servers`,
+    "curator agent verifies listings daily · 06:17 utc",
+    `${ctx.officialCount} vendor-maintained · ${ctx.remoteCount} hosted remote`,
+    "every page has a machine twin · /llms.txt",
+    "community ratings fold into rankings weekly",
+  ]))}'><span class="tick-dot" aria-hidden="true"></span><span class="tick-text">registry rebuilt ${nice(ctx.built.slice(0, 10))} · ${ctx.servers.length} servers</span></p>
+  </div>
 </section>
 
 <section class="featured-row">${featuredHtml}
