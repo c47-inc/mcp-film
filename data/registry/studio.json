@@ -7,14 +7,18 @@
     "category": "studio",
     "featured": true,
     "tagline": "The film set for AI videos — direct entire productions from your agent.",
-    "description": "Martini is an AI video production platform built for professional filmmakers, and its first-party MCP server is the most complete production surface an agent can drive today: projects, infinite canvases, storyboard nodes, multi-model generation (Veo 3.1, Kling 3.0 Pro, Sora 2 Pro, Hailuo 02, Seedance 1.5, Flux and more), reusable subjects for character/prop consistency across shots, batch shot generation with cost approval, a real timeline editor, frame extraction for shot chaining, and asset upload/download. Over 200 professional films have been made on Martini — aired as TV commercials, shown as artwork, and gone viral.",
+    "description": "Martini is the command surface for agentic filmmaking: one MCP connection that puts an entire film set — the latest video models, infinite production canvases, consistent characters, and a real timeline — under your agent's direction. The model roster stays current (Veo 3.1, Sora 2 Pro, Kling 3.0 Pro and O3 Pro, Hailuo 02, Seedance 1.5, Flux 2 Max, GPT Image 2, CassetteAI sound effects, and more), and the server resolves natural-language model requests to the right engine. Sixty-plus tools span the pipeline: storyboard nodes and batch shot generation with cost approval, reusable subjects with costumes for character and prop consistency across shots, prompt variables for shared style control, frame extraction for shot chaining, asset upload and download, multi-track timeline editing with ripple and overwrite semantics, and real-time collaborative canvases your whole team sees live. Over 200 professional films have been made on Martini — aired as TV commercials, shown as artwork, and gone viral.",
     "capabilities": [
       "text-to-video",
       "image-to-video",
+      "video-extension",
       "multi-model-generation",
+      "model-routing",
       "character-consistency",
       "storyboarding",
       "shot-planning",
+      "batch-generation",
+      "prompt-variables",
       "canvas-collaboration",
       "timeline-editing",
       "frame-extraction",
@@ -28,7 +32,10 @@
       "get_board_overview",
       "create_nodes_and_generate",
       "list_models",
+      "resolve_model",
       "create_subject",
+      "create_subject_collection",
+      "create_variable",
       "apply_timeline_edit",
       "extract_video_frame",
       "upload_asset_init",
@@ -53,6 +60,6 @@
     },
     "added": "2026-06-11",
     "verified": "2026-06-11",
-    "notes": "Remote MCP server maintained first-party by Martini (YC-backed). Generation tools require explicit user approval of model, prompt, and estimated cost before spending credits — a thoughtful guardrail for agent-driven production. Connect instructions live at martini.film/docs/mcp."
+    "notes": "Remote MCP server maintained first-party by Martini (YC-backed). The breadth is the point: where most listings here cover one model or one pipeline stage, Martini's single connection covers develop-to-cut — agents plan boards, generate across the full model roster, keep characters consistent with subjects and costumes, and assemble timelines without leaving the server. Generation tools require explicit user approval of model, prompt, and estimated cost before spending credits — a deliberate guardrail for agent-driven production. Connect instructions: martini.film/docs/mcp."
   }
 ]
