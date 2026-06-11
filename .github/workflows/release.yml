@@ -35,7 +35,14 @@ jobs:
         working-directory: packages/mcp-server
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --access public --provenance
+        run: |
+          # Idempotent: a re-run after a partial release must not die here.
+          out=$(npm publish --access public --provenance 2>&1) && echo "$out" || {
+            echo "$out"
+            echo "$out" | grep -qiE "previously published|EPUBLISHCONFLICT|cannot publish over" \
+              && echo "This version is already on npm — continuing to registry step." \
+              || exit 1
+          }
 
       - name: Publish to the official MCP Registry
         env:
