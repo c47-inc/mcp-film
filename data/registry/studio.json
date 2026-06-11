@@ -1,0 +1,58 @@
+[
+  {
+    "slug": "martini",
+    "name": "Martini",
+    "vendor": "Martini (C47)",
+    "official": true,
+    "category": "studio",
+    "featured": true,
+    "tagline": "The film set for AI videos — direct entire productions from your agent.",
+    "description": "Martini is an AI video production platform built for professional filmmakers, and its first-party MCP server is the most complete production surface an agent can drive today: projects, infinite canvases, storyboard nodes, multi-model generation (Veo 3.1, Kling 3.0 Pro, Sora 2 Pro, Hailuo 02, Seedance 1.5, Flux and more), reusable subjects for character/prop consistency across shots, batch shot generation with cost approval, a real timeline editor, frame extraction for shot chaining, and asset upload/download. Over 200 professional films have been made on Martini — aired as TV commercials, shown as artwork, and gone viral.",
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "multi-model-generation",
+      "character-consistency",
+      "storyboarding",
+      "shot-planning",
+      "canvas-collaboration",
+      "timeline-editing",
+      "frame-extraction",
+      "audio-generation",
+      "3d-sets",
+      "asset-management"
+    ],
+    "tools_sample": [
+      "create_project",
+      "create_canvas",
+      "get_board_overview",
+      "create_nodes_and_generate",
+      "list_models",
+      "create_subject",
+      "apply_timeline_edit",
+      "extract_video_frame",
+      "upload_asset_init",
+      "get_job_status"
+    ],
+    "install": {
+      "claude_code": null,
+      "remote_url": null,
+      "stdio_command": null,
+      "docs_url": "https://www.martini.film/docs/mcp"
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "https://www.martini.film — sign in with your Martini account"
+    },
+    "pricing": "credits",
+    "links": {
+      "repo": null,
+      "docs": "https://www.martini.film/docs/mcp",
+      "site": "https://www.martini.film"
+    },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "Remote MCP server maintained first-party by Martini (YC-backed). Generation tools require explicit user approval of model, prompt, and estimated cost before spending credits — a thoughtful guardrail for agent-driven production. Connect instructions live at martini.film/docs/mcp."
+  }
+]

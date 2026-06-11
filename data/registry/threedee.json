@@ -1,0 +1,140 @@
+[
+  {
+    "slug": "blender",
+    "name": "Blender MCP",
+    "vendor": "Community (ahujasid)",
+    "official": false,
+    "category": "3d-vfx",
+    "featured": false,
+    "tagline": "The canonical Blender MCP — model, texture, and assemble 3D scenes by prompt.",
+    "description": "Two-way bridge between AI agents and Blender: inspect scenes, create/modify objects and materials, and execute arbitrary Python in Blender. With Poly Haven, Sketchfab, and Hyper3D Rodin integrations, an agent can pull assets and build previz sets or full shots.",
+    "capabilities": ["3d-scene-control", "asset-import", "python-scripting", "render", "previz"],
+    "tools_sample": ["execute_blender_code"],
+    "install": {
+      "claude_code": "claude mcp add blender -- uvx blender-mcp",
+      "remote_url": null,
+      "stdio_command": "uvx blender-mcp"
+    },
+    "auth": { "type": "local-app", "env_var": null, "key_url": "Requires Blender 3.0+ running with the bundled addon installed and its socket server started" },
+    "pricing": "free",
+    "links": { "repo": "https://github.com/ahujasid/blender-mcp", "docs": null, "site": null },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "22.6k stars — by far the most popular DCC MCP; v1.5.5, pushed Jun 2026, MIT. execute_blender_code runs arbitrary Python — save your work first. Telemetry on by default (disable via DISABLE_TELEMETRY). Asset integrations: Poly Haven (free), Sketchfab, Hyper3D Rodin."
+  },
+  {
+    "slug": "unreal-engine",
+    "name": "Unreal Engine MCP",
+    "vendor": "Community (Flopperam)",
+    "official": false,
+    "category": "3d-vfx",
+    "featured": false,
+    "tagline": "Control Unreal Engine 5.5+ scenes and Blueprints by natural language.",
+    "description": "MCP for UE 5.5-5.7 with two modes: a hosted 'Flop MCP' (50+ tools, streamable HTTP) and an open-source local Python server + C++ plugin. Agents can build worlds, author Blueprints, place actors, and set materials and physics — useful for virtual production and previz.",
+    "capabilities": ["3d-scene-control", "blueprint-authoring", "world-building", "virtual-production"],
+    "tools_sample": ["bp_create", "bp_variable", "bp_nodes", "create_town", "create_castle"],
+    "install": {
+      "claude_code": null,
+      "remote_url": "https://agent.flopperam.com/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "api_key", "env_var": null, "key_url": "https://flopperam.com/account (hosted mode); local mode is free but requires compiling the bundled UnrealMCP C++ plugin" },
+    "pricing": "freemium",
+    "links": { "repo": "https://github.com/flopperam/unreal-engine-mcp", "docs": null, "site": "https://flopperam.com" },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "1k+ stars, MIT, actively maintained (May 2026). Landscape note: chongdashu/unreal-mcp is the most-starred (1.9k) but inactive since Apr 2025; ChiR24/Unreal_mcp (699 stars, active Jun 2026) is another option."
+  },
+  {
+    "slug": "houdini",
+    "name": "Houdini MCP",
+    "vendor": "Community (capoomgit)",
+    "official": false,
+    "category": "3d-vfx",
+    "featured": false,
+    "tagline": "Drive SideFX Houdini nodes and procedural FX from your agent.",
+    "description": "Connects Houdini to MCP clients via a Python plugin and a bridge script: create and wire nodes, build assets, and execute code through natural language. Opens Houdini's procedural FX and sim toolset to agent-driven workflows.",
+    "capabilities": ["3d-scene-control", "procedural-fx", "node-graph-authoring", "python-scripting"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": null,
+      "remote_url": null,
+      "stdio_command": null
+    },
+    "auth": { "type": "local-app", "env_var": null, "key_url": "Requires Houdini running with the plugin installed (TCP on localhost:9876)" },
+    "pricing": "free",
+    "links": { "repo": "https://github.com/capoomgit/houdini-mcp", "docs": null, "site": null },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "224 stars, MIT, active Jun 2026 but early-stage. Manual install (copy plugin into Houdini scripts dir). Alternatives: healkeiser/fxhoudinimcp. For Cinema 4D, the leading equivalent is ttiimmaacc/cinema4d-mcp (87 stars, early-stage, C4D 2024+, MoGraph/Redshift tools)."
+  },
+  {
+    "slug": "comfyui-artokun",
+    "name": "ComfyUI MCP (Claude Code plugin)",
+    "vendor": "Community (artokun)",
+    "official": false,
+    "category": "3d-vfx",
+    "featured": false,
+    "tagline": "Run and debug ComfyUI workflows from Claude Code — generate, validate, manage VRAM.",
+    "description": "TypeScript MCP server + Claude Code plugin for ComfyUI: execute and validate workflows, visualize node graphs, search and download models, and manage GPU memory. The glue for agentic VFX pipelines built on ComfyUI (img2img cleanup, style passes, video nodes).",
+    "capabilities": ["workflow-execution", "image-generation", "vfx-pipeline", "model-management"],
+    "tools_sample": ["generate_image", "enqueue_workflow", "visualize_workflow", "search_models", "validate_workflow", "clear_vram"],
+    "install": {
+      "claude_code": "claude plugin install comfyui-mcp",
+      "remote_url": null,
+      "stdio_command": "npx -y comfyui-mcp"
+    },
+    "auth": { "type": "local-app", "env_var": null, "key_url": "Requires ComfyUI running (auto-detects ports 8188/8000, or --comfyui-url for remote)" },
+    "pricing": "free",
+    "links": { "repo": "https://github.com/artokun/comfyui-mcp", "docs": null, "site": null },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "142 stars, v0.9.4 (Jun 2026), MIT, very active; needs Node >=22. Most-starred Python alternative: joenorton/comfyui-mcp-server (350 stars); comfy-pilot (207 stars) focuses on workflow editing."
+  },
+  {
+    "slug": "tripo",
+    "name": "Tripo MCP",
+    "vendor": "Tripo (VAST AI Research)",
+    "official": true,
+    "category": "3d-vfx",
+    "featured": false,
+    "tagline": "Official Tripo MCP — text-to-3D assets generated and imported into Blender.",
+    "description": "VAST's official MCP server generates 3D assets from natural language via the Tripo API and imports them into Blender through the Tripo Blender addon. Quick path from prompt to set-dressing props and previz geometry.",
+    "capabilities": ["3d-generation", "text-to-3d", "asset-import", "blender-integration"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add tripo -- uvx tripo-mcp",
+      "remote_url": null,
+      "stdio_command": "uvx tripo-mcp"
+    },
+    "auth": { "type": "api_key", "env_var": null, "key_url": "https://platform.tripo3d.ai" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/VAST-AI-Research/tripo-mcp", "docs": null, "site": "https://www.tripo3d.ai" },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "Official, 186 stars — but ALPHA and slow-moving (last release Apr 2025). Currently scoped to Blender-addon integration (requires the separate Tripo AI Blender Addon). Multi-provider community alternative: mordor-forge/trident-mcp (Tripo+Meshy+Rodin)."
+  },
+  {
+    "slug": "meshy",
+    "name": "Meshy MCP Server",
+    "vendor": "Meshy AI",
+    "official": true,
+    "category": "3d-vfx",
+    "featured": false,
+    "tagline": "Official Meshy MCP — generate, retexture, rig, and animate 3D models via API.",
+    "description": "Meshy's official MCP server with 20 tools spanning text/image-to-3D generation, remeshing, retexturing, rigging, animation, and task management. For filmmakers it turns character and prop creation — including rigged, animatable assets — into an agent call.",
+    "capabilities": ["3d-generation", "text-to-3d", "rigging", "animation", "retexturing"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": null,
+      "remote_url": null,
+      "stdio_command": "npx add-mcp @meshy-ai/meshy-mcp-server --env MESHY_API_KEY=msy_YOUR_API_KEY"
+    },
+    "auth": { "type": "api_key", "env_var": "MESHY_API_KEY", "key_url": "https://www.meshy.ai/settings/api" },
+    "pricing": "paid",
+    "links": { "repo": "https://github.com/meshy-dev/meshy-mcp-server", "docs": null, "site": "https://www.meshy.ai" },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "Official (meshy-dev org), v0.3.0 (May 2026), MIT, TypeScript; vendor-maintained. Supports stdio and HTTP transports. API access requires a Meshy Pro plan or higher."
+  }
+]

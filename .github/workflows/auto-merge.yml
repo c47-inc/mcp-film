@@ -1,0 +1,66 @@
+# The gate: deterministic auto-merge for agent-authored PRs.
+# A PR labeled `auto-data` merges itself only if EVERY changed file lives
+# under data/ — agents never get to self-merge code, templates, or workflows.
+# After merging, it kicks the deploy workflow (GITHUB_TOKEN merges don't
+# trigger `push` events, but workflow_dispatch is exempt from that rule).
+name: Auto-merge data PRs
+
+on:
+  pull_request:
+    types: [opened, synchronize, labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+jobs:
+  gate:
+    if: contains(github.event.pull_request.labels.*.name, 'auto-data')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check changed paths are data-only
+        id: paths
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          files=$(gh pr view ${{ github.event.pull_request.number }} --json files -q '.files[].path')
+          echo "$files"
+          bad=$(echo "$files" | grep -vE '^data/' || true)
+          if [ -n "$bad" ]; then
+            echo "Non-data files changed — leaving for human review:"
+            echo "$bad"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Validate data
+        if: steps.paths.outputs.ok == 'true'
+        run: node build.mjs --validate-only
+      - name: Full build smoke test
+        if: steps.paths.outputs.ok == 'true'
+        run: node build.mjs
+      - name: Merge
+        if: steps.paths.outputs.ok == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr merge ${{ github.event.pull_request.number }} --squash --delete-branch
+      - name: Trigger deploy
+        if: steps.paths.outputs.ok == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run deploy.yml --ref main
+      - name: Flag for human review
+        if: steps.paths.outputs.ok == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} \
+            --body "🚧 This PR touches files outside \`data/\`, so the auto-merge gate is leaving it for a human. (Agent PRs may only self-merge data changes.)"

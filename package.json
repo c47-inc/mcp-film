@@ -1,0 +1,17 @@
+{
+  "name": "mcp-film",
+  "version": "1.0.0",
+  "description": "mcp.film — the agent-first directory of MCP servers for AI filmmaking. Zero-dependency static site generator.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "node build.mjs",
+    "validate": "node build.mjs --validate-only",
+    "dev": "node build.mjs && node scripts/serve.mjs",
+    "test": "node build.mjs --validate-only"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

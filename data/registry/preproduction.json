@@ -1,0 +1,48 @@
+[
+  {
+    "slug": "penshot",
+    "name": "PenShot (story-shot-agent)",
+    "vendor": "Community (neopen)",
+    "official": false,
+    "category": "story-preproduction",
+    "featured": false,
+    "tagline": "Breaks screenplays into shot lists and generates Sora/Veo/Runway-ready video prompts.",
+    "description": "An LLM-powered agent that parses scripts in any format, performs shot-by-shot breakdowns, and emits coherent text-to-video prompts with cross-shot character consistency. Runs as an MCP server, Python SDK, REST API, or LangGraph node — the missing link between a screenplay and a generation pipeline.",
+    "capabilities": ["screenplay-parsing", "shot-breakdown", "storyboard-scripts", "t2v-prompt-generation", "character-consistency"],
+    "tools_sample": ["breakdown_script", "get_task_result"],
+    "install": {
+      "claude_code": "claude mcp add penshot -- python -m penshot.mcp_server (after pip install penshot)",
+      "remote_url": null,
+      "stdio_command": "python -m penshot.mcp_server"
+    },
+    "auth": { "type": "api_key", "env_var": null, "key_url": "Bring your own LLM API key for the underlying agent (per its docs)" },
+    "pricing": "free",
+    "links": { "repo": "https://github.com/neopen/story-shot-agent", "docs": "https://pengline.cn", "site": null },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "94 stars, actively updated (Jun 2026); docs are bilingual Chinese/English. Directory finding: no dedicated MCP exists for Final Draft, Celtx, WriterDuet, or Fountain as of June 2026 — script writing itself is best done with your agent directly (Fountain is plain text), stored via the Notion or Google Drive MCPs."
+  },
+  {
+    "slug": "miro",
+    "name": "Miro MCP",
+    "vendor": "Miro",
+    "official": true,
+    "category": "story-preproduction",
+    "featured": false,
+    "tagline": "Official Miro MCP — build and read storyboards, frames, and planning boards via AI.",
+    "description": "Miro's hosted MCP server (public beta) lets agents create and read board content: frames, sticky notes, shapes, text, cards, docs, tables, and diagrams, plus retrieve images and resolve comments. A strong fit for storyboard layouts, shot-planning walls, and mood boards your whole team can see.",
+    "capabilities": ["storyboarding", "board-creation", "diagrams", "mood-boards", "comments", "image-retrieval"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http miro https://mcp.miro.com/",
+      "remote_url": "https://mcp.miro.com/",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth 2.1 browser flow, per-team authorization" },
+    "pricing": "freemium",
+    "links": { "repo": "https://github.com/miroapp/miro-ai", "docs": "https://developers.miro.com/docs/miro-mcp", "site": "https://miro.com/ai/mcp/" },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "Public beta; also installable as a Claude Code plugin (/plugin install miro@miro-ai). Tool schemas live at developers.miro.com — the server itself is the source of truth. Enterprise plans add admin controls."
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "domain": "mcp.film",
+  "url": "https://mcp.film",
+  "title": "mcp.film — The MCP Directory for AI Filmmaking",
+  "tagline": "Every tool your agent needs to make a film.",
+  "description": "A curated, agent-readable directory of the best Model Context Protocol (MCP) servers for generative AI filmmaking — video generation, voice, music, editing, upscaling, distribution, and the full production stack.",
+  "analytics": {
+    "posthog_key": "phc_wunh6e086zbhndI62y3LEHy6oApowsMqJ1joyJs0Xfh",
+    "posthog_host": "https://us.i.posthog.com"
+  },
+  "github_repo": "c47-inc/mcp-film",
+  "sponsor": {
+    "name": "Martini",
+    "url": "https://www.martini.film",
+    "blurb": "mcp.film is maintained by the team behind Martini, the film set for AI videos."
+  }
+}

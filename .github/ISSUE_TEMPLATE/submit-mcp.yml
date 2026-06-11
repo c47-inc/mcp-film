@@ -1,0 +1,50 @@
+name: Submit an MCP server
+description: Suggest a server for the mcp.film directory. A triage agent verifies submissions and replies on this issue.
+title: "Submit: <server name>"
+labels: [submit]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for adding to the map. Three things get a server listed: **it works**, **it's relevant to filmmaking**, and **it's maintained** (or it's the only option for an important platform). An agent will verify and reply here — usually within a week.
+  - type: input
+    id: name
+    attributes:
+      label: Server name
+      placeholder: e.g. ElevenLabs MCP
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Repo or docs URL
+      placeholder: https://github.com/...
+    validations:
+      required: true
+  - type: dropdown
+    id: official
+    attributes:
+      label: Is it vendor-maintained?
+      options: ["Yes — official", "No — community", "Not sure"]
+    validations:
+      required: true
+  - type: input
+    id: category
+    attributes:
+      label: Category
+      description: See https://mcp.film/api/categories.json for ids
+      placeholder: e.g. voice-speech
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why filmmakers need it
+      placeholder: One or two sentences. What does it do in a film pipeline that nothing else here does (or does better)?
+    validations:
+      required: true
+  - type: input
+    id: install
+    attributes:
+      label: Install command or remote URL (if you know it)
+      placeholder: e.g. npx -y some-mcp / https://mcp.example.com/mcp

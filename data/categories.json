@@ -1,0 +1,137 @@
+[
+  {
+    "id": "studio",
+    "name": "Full-Stack AI Studios",
+    "short": "Studios",
+    "icon": "clapper",
+    "stage": "shoot",
+    "blurb": "End-to-end AI film production platforms — generate, organize, and finish entire productions from one MCP connection.",
+    "agent_hint": "Start here if you want one connection that covers generation, character consistency, shot organization, and editing."
+  },
+  {
+    "id": "video-generation",
+    "name": "Video Generation",
+    "short": "Video",
+    "icon": "camera",
+    "stage": "shoot",
+    "blurb": "Text-to-video and image-to-video models — the virtual cameras of AI filmmaking.",
+    "agent_hint": "Use these to generate shots. Check duration limits, resolution, and whether image-to-video is supported for shot continuity."
+  },
+  {
+    "id": "image-generation",
+    "name": "Image Generation",
+    "short": "Image",
+    "icon": "frame",
+    "stage": "visualize",
+    "blurb": "Stills, concept frames, storyboards, and start frames for image-to-video pipelines.",
+    "agent_hint": "Generate keyframes and reference images here, then feed them to video models as start/end frames."
+  },
+  {
+    "id": "model-hub",
+    "name": "Model Hubs",
+    "short": "Hubs",
+    "icon": "grid",
+    "stage": "shoot",
+    "blurb": "Aggregators exposing hundreds of hosted models — video, image, and audio — through a single MCP connection.",
+    "agent_hint": "One key, many models. Best when you need a model that has no first-party MCP server."
+  },
+  {
+    "id": "voice-speech",
+    "name": "Voice & Dialogue",
+    "short": "Voice",
+    "icon": "mic",
+    "stage": "sound",
+    "blurb": "Text-to-speech, voice cloning, and emotionally directed performance for dialogue and narration.",
+    "agent_hint": "For dialogue and narration. Look for voice cloning if you need character consistency across scenes."
+  },
+  {
+    "id": "music",
+    "name": "Music & Score",
+    "short": "Music",
+    "icon": "note",
+    "stage": "sound",
+    "blurb": "Generative soundtracks, songs, and score composition.",
+    "agent_hint": "Score and songs. Mind licensing terms — some services are unofficial wrappers without commercial-rights guarantees."
+  },
+  {
+    "id": "sound-design",
+    "name": "Sound Design & SFX",
+    "short": "SFX",
+    "icon": "wave",
+    "stage": "sound",
+    "blurb": "Sound effects generation, library search, and audio cleanup for the final mix.",
+    "agent_hint": "Foley and ambience. Combine generative SFX with licensed-library search for the best coverage."
+  },
+  {
+    "id": "transcription",
+    "name": "Transcription & Captions",
+    "short": "Captions",
+    "icon": "text",
+    "stage": "cut",
+    "blurb": "Speech-to-text, diarization, and dialogue logging for edits, subtitles, and accessibility.",
+    "agent_hint": "Transcribe dailies and generate caption files. Diarization matters for multi-character scenes."
+  },
+  {
+    "id": "editing-post",
+    "name": "Editing & Post",
+    "short": "Edit",
+    "icon": "scissors",
+    "stage": "cut",
+    "blurb": "NLE control (DaVinci Resolve, Premiere), programmatic editing, ffmpeg, and render pipelines.",
+    "agent_hint": "Assemble and cut. Local NLE servers need the app running on the same machine as your agent."
+  },
+  {
+    "id": "enhancement",
+    "name": "Upscaling & Enhancement",
+    "short": "Finish",
+    "icon": "sparkle",
+    "stage": "finish",
+    "blurb": "Video upscaling, frame interpolation, denoising, and image enhancement — the finishing suite.",
+    "agent_hint": "Final-quality pass. Upscale delivery masters, not working files — it is slow and credit-hungry."
+  },
+  {
+    "id": "3d-vfx",
+    "name": "3D, Worlds & VFX",
+    "short": "3D/VFX",
+    "icon": "cube",
+    "stage": "shoot",
+    "blurb": "Blender, game engines, 3D asset generation, and node-based VFX workflows.",
+    "agent_hint": "Build sets, props, and previs. Most of these control a local app that must be running."
+  },
+  {
+    "id": "avatars-performance",
+    "name": "Avatars & Performance",
+    "short": "Avatars",
+    "icon": "person",
+    "stage": "shoot",
+    "blurb": "Talking avatars, lip-sync, and digital performers.",
+    "agent_hint": "Presenter-style and character performance video. Check lip-sync language support."
+  },
+  {
+    "id": "story-preproduction",
+    "name": "Story & Pre-Production",
+    "short": "Story",
+    "icon": "book",
+    "stage": "develop",
+    "blurb": "Screenwriting, storyboarding, and planning tools for the development phase.",
+    "agent_hint": "Develop the script and boards before spending generation credits."
+  },
+  {
+    "id": "distribution",
+    "name": "Review & Distribution",
+    "short": "Ship",
+    "icon": "send",
+    "stage": "ship",
+    "blurb": "Publishing to YouTube and Vimeo, review and approval, and video hosting infrastructure.",
+    "agent_hint": "Get the film out. Upload servers usually need OAuth set up once by a human."
+  },
+  {
+    "id": "production-ops",
+    "name": "Production Ops",
+    "short": "Ops",
+    "icon": "board",
+    "stage": "ship",
+    "blurb": "Production tracking, asset management, and file storage for film teams.",
+    "agent_hint": "The production office: trackers, docs, and media storage your agent can read and write."
+  }
+]

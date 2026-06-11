@@ -1,0 +1,117 @@
+[
+  {
+    "slug": "airtable",
+    "name": "Airtable MCP Server",
+    "vendor": "Airtable",
+    "official": true,
+    "category": "production-ops",
+    "featured": false,
+    "tagline": "Official hosted Airtable MCP: query, create, and update production-tracking bases.",
+    "description": "Airtable's official remote MCP server lets agents search bases, read schemas, filter/sort records, create and update rows, and read interface pages — ideal for shot trackers, casting sheets, asset libraries, and budgets. OAuth via Dynamic Client Registration (or a personal access token), and it enforces each user's existing Airtable permissions.",
+    "capabilities": ["base-search", "schema-inspection", "record-crud", "record-search", "comments", "table-creation", "interface-pages"],
+    "tools_sample": ["search_bases", "list_tables_for_base", "get_table_schema", "list_records_for_table", "search_records", "create_records_for_table", "update_records_for_table", "create_table"],
+    "install": {
+      "claude_code": "claude mcp add --transport http airtable https://mcp.airtable.com/mcp",
+      "remote_url": "https://mcp.airtable.com/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth browser flow (primary); PATs also supported at https://airtable.com/create/tokens" },
+    "pricing": "freemium",
+    "links": { "repo": null, "docs": "https://support.airtable.com/docs/using-the-airtable-mcp-server", "site": "https://www.airtable.com" },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "Tool names verified directly against the live official server. Permissions-aware (read-only access stays read-only via MCP). Community stdio alternative: domdomegg/airtable-mcp-server (447 stars, npx airtable-mcp-server with a PAT)."
+  },
+  {
+    "slug": "notion",
+    "name": "Notion MCP",
+    "vendor": "Notion",
+    "official": true,
+    "category": "production-ops",
+    "featured": false,
+    "tagline": "Notion's hosted MCP: search, read, and write docs, wikis, and databases via OAuth.",
+    "description": "Notion's official hosted MCP server gives agents OAuth-scoped access to a workspace: semantic search (including connected Slack/Drive/Jira with Notion AI), fetch pages and databases, and create/update content using AI-native, Markdown-first tools. The natural home for script drafts, beat sheets, character bibles, and shot lists an agent can read and update.",
+    "capabilities": ["workspace-search", "page-crud", "database-crud", "comments", "markdown-first"],
+    "tools_sample": ["notion-search", "notion-fetch", "notion-create-pages", "notion-update-page", "notion-create-database", "notion-create-comment"],
+    "install": {
+      "claude_code": "claude mcp add --transport http notion https://mcp.notion.com/mcp",
+      "remote_url": "https://mcp.notion.com/mcp",
+      "stdio_command": "npx -y @notionhq/notion-mcp-server"
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "One-click OAuth at mcp.notion.com; local server uses a NOTION_TOKEN integration token instead" },
+    "pricing": "freemium",
+    "links": { "repo": "https://github.com/makenotion/notion-mcp-server", "docs": "https://developers.notion.com/guides/mcp/get-started-with-mcp", "site": "https://www.notion.com" },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "~18 tools on the hosted server (SSE fallback at mcp.notion.com/sse). The open-source local repo (4.4k stars) is explicitly deprioritized by Notion — prefer the hosted URL. Cross-connector search requires a Notion AI / Business plan."
+  },
+  {
+    "slug": "google-drive",
+    "name": "Google Drive MCP",
+    "vendor": "Google",
+    "official": true,
+    "category": "production-ops",
+    "featured": false,
+    "tagline": "Google's official remote Drive MCP: search, read, and create files with Workspace governance.",
+    "description": "A first-party hosted MCP endpoint from the Drive API team that lets agents search files, read content as a natural-language representation, retrieve metadata, and create/download files — inheriting the user's Drive permissions and Workspace data governance. The production file server for dailies, exports, and shared media.",
+    "capabilities": ["file-search", "file-read", "file-create", "metadata", "permission-aware"],
+    "tools_sample": ["search_files", "read_file_content"],
+    "install": {
+      "claude_code": "claude mcp add --transport http google-drive https://drivemcp.googleapis.com/mcp/v1",
+      "remote_url": "https://drivemcp.googleapis.com/mcp/v1",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Bring your own Google Cloud OAuth client (consent screen + client ID/secret) — see the configure-mcp-server guide" },
+    "pricing": "freemium",
+    "links": { "repo": null, "docs": "https://developers.google.com/workspace/drive/api/guides/configure-mcp-server", "site": "https://drive.google.com" },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "Part of the Google Workspace Developer Preview Program — flag as preview. The old Anthropic reference gdrive server is archived; don't use it. Broader community alternative covering Docs/Sheets/Slides/Gmail too: taylorwilsdon/google_workspace_mcp (2.6k stars, very active, uvx workspace-mcp)."
+  },
+  {
+    "slug": "dropbox",
+    "name": "Dropbox MCP Server",
+    "vendor": "Dropbox",
+    "official": true,
+    "category": "production-ops",
+    "featured": false,
+    "tagline": "Dropbox's official remote MCP (beta) for dailies, footage folders, and file ops.",
+    "description": "Dropbox's hosted MCP server (beta) connects agents to Dropbox files and folders with OAuth: list, search, upload, download, move, copy, delete, and share, plus content fetch for drafting and summarization. Supports Dynamic Client Registration for trusted clients like Claude and Cursor.",
+    "capabilities": ["file-search", "upload-download", "file-ops", "sharing-links", "content-fetch"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http dropbox https://mcp.dropbox.com/mcp",
+      "remote_url": "https://mcp.dropbox.com/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Dropbox OAuth consent via mcp.dropbox.com" },
+    "pricing": "freemium",
+    "links": { "repo": null, "docs": "https://help.dropbox.com/integrations/connect-dropbox-mcp-server", "site": "https://www.dropbox.com" },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "Beta; exact tool names not published on the public help page. A separate official Dash MCP exists for enterprise search (dropbox/mcp-server-dash). Community Go alternative for classic file access: ngs/dropbox-mcp-server (brew install dropbox-mcp-server)."
+  },
+  {
+    "slug": "google-workspace",
+    "name": "Google Workspace MCP",
+    "vendor": "Community (taylorwilsdon)",
+    "official": false,
+    "category": "production-ops",
+    "featured": false,
+    "tagline": "Full Google Workspace control — Drive, Docs, Sheets, Slides, Gmail, Calendar and more.",
+    "description": "The most comprehensive community Workspace MCP, covering 12 Google services with OAuth 2.0/2.1 multi-user support and tool tiers. For film teams: Drive media file search/read/share plus Docs (scripts), Sheets (budgets and shot lists), Slides (pitch decks), Gmail, and Calendar — one server for the whole production office.",
+    "capabilities": ["drive-files", "docs", "sheets", "slides", "gmail", "calendar", "permissions"],
+    "tools_sample": ["search_drive_files", "get_drive_file_content", "create_drive_file", "create_doc", "modify_sheet_values", "send_gmail_message", "manage_event"],
+    "install": {
+      "claude_code": "claude mcp add google-workspace -e GOOGLE_OAUTH_CLIENT_ID=YOUR_ID -e GOOGLE_OAUTH_CLIENT_SECRET=YOUR_SECRET -- uvx workspace-mcp --tool-tier core",
+      "remote_url": null,
+      "stdio_command": "uvx workspace-mcp --tool-tier core"
+    },
+    "auth": { "type": "oauth", "env_var": "GOOGLE_OAUTH_CLIENT_ID", "key_url": "OAuth client from Google Cloud Console (https://console.cloud.google.com/apis/credentials)" },
+    "pricing": "free",
+    "links": { "repo": "https://github.com/taylorwilsdon/google_workspace_mcp", "docs": null, "site": null },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "2.6k stars, 87 releases, MIT, very active. Tool tiers keep the context small (--tool-tier core). npx-only Drive-focused alternative: piotr-agier/google-drive-mcp (166 stars, Apr 2026)."
+  }
+]

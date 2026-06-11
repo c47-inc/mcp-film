@@ -1,0 +1,94 @@
+[
+  {
+    "slug": "heygen",
+    "name": "HeyGen Remote MCP",
+    "vendor": "HeyGen",
+    "official": true,
+    "category": "avatars-performance",
+    "featured": false,
+    "tagline": "Hosted MCP for avatar videos, lipsync, and 175-language video translation.",
+    "description": "HeyGen's official hosted MCP endpoint lets agents create and manage HeyGen videos with no local install and no API key — auth is a one-time OAuth flow tied to your HeyGen account. Covers Video Agent one-prompt generation, video translation (audio-only or lip-synced, 175+ languages), lipsync jobs, and Photo Avatar / Digital Twin creation, using any custom avatar or voice in your account.",
+    "capabilities": ["avatar-video", "lip-sync", "video-translation", "digital-twin", "voice-library"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http heygen https://mcp.heygen.com/mcp/v1/",
+      "remote_url": "https://mcp.heygen.com/mcp/v1/",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "One-time browser OAuth tied to your HeyGen account" },
+    "pricing": "credits",
+    "links": { "repo": null, "docs": "https://developers.heygen.com/mcp/overview", "site": "https://www.heygen.com/model-context-protocol" },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "Available on all HeyGen plans; generation consumes plan credits. HeyGen's legacy stdio package (heygen-mcp) is abandoned — the repo 404s; the maintained community fork is sbroenne/heygen-mcp (uvx heygen-mcp-sbroenne with HEYGEN_API_KEY) if you need a local server. HeyGen also ships official Agent Skills (heygen-com/skills)."
+  },
+  {
+    "slug": "hedra",
+    "name": "Hedra MCP Server",
+    "vendor": "Community (pasie15)",
+    "official": false,
+    "category": "avatars-performance",
+    "featured": false,
+    "tagline": "Character-3 talking-avatar video, TTS, and image generation through Hedra's API.",
+    "description": "Node MCP server for Hedra's generation API: lip-synced character video from an image plus audio (Character-3), text-to-speech, image generation, and asset/credit management. Also routes to third-party models available in Hedra Studio (Veo 3.1, Sora 2, Kling, MiniMax).",
+    "capabilities": ["avatar-video", "lip-sync", "tts", "text-to-image", "asset-management"],
+    "tools_sample": ["generate_video", "generate_video_with_tts", "generate_text_to_speech", "generate_image", "upload_asset", "get_generation_status", "get_credits"],
+    "install": {
+      "claude_code": "claude mcp add hedra -e HEDRA_API_KEY=YOUR_KEY -- npx -y mcp-server-hedra",
+      "remote_url": null,
+      "stdio_command": "npx -y mcp-server-hedra"
+    },
+    "auth": { "type": "api_key", "env_var": "HEDRA_API_KEY", "key_url": "https://www.hedra.com/api-profile (requires Creator plan or above)" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/pasie15/mcp-server-hedra", "docs": "https://www.hedra.com/docs/pages/developer/getting_started/quickstart", "site": "https://www.hedra.com" },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "New (Feb 2026), MIT, minimal adoption so far; no official Hedra MCP exists. Requires Node 18+. Hedra API access requires a paid Creator plan and API credits."
+  },
+  {
+    "slug": "tavus",
+    "name": "Tavus MCP",
+    "vendor": "Community (rakeshdavid)",
+    "official": false,
+    "category": "avatars-performance",
+    "featured": false,
+    "tagline": "Phoenix replicas, persona videos, lipsync, and conversational AI via the Tavus API.",
+    "description": "Comprehensive community MCP server exposing 25 tools across the full Tavus API: Phoenix replica (digital twin) training, persona management, video generation, real-time conversational video (CVI), lipsync, and speech synthesis. Tavus has no first-party MCP server; this is the most complete open implementation.",
+    "capabilities": ["digital-twin", "avatar-video", "conversational-video", "lip-sync", "tts"],
+    "tools_sample": ["create_replica", "generate_video", "create_conversation", "create_persona", "create_lipsync", "generate_speech"],
+    "install": {
+      "claude_code": null,
+      "remote_url": null,
+      "stdio_command": "Build from source: clone rakeshdavid/Tavus-MCP, npm install && npm run build, then run node build/index.js with TAVUS_API_KEY"
+    },
+    "auth": { "type": "api_key", "env_var": "TAVUS_API_KEY", "key_url": "https://platform.tavus.io" },
+    "pricing": "freemium",
+    "links": { "repo": "https://github.com/rakeshdavid/Tavus-MCP", "docs": "https://docs.tavus.io", "site": "https://www.tavus.io" },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "Install caveat: the README's npm package (tavus-mcp) is NOT actually on npm — install from source or via Smithery. Tavus free developer plan: ~25 min conversational video + 5 min generation. Built on an old MCP SDK version."
+  },
+  {
+    "slug": "d-id",
+    "name": "D-ID MCP Server",
+    "vendor": "D-ID",
+    "official": true,
+    "category": "avatars-performance",
+    "featured": false,
+    "tagline": "D-ID's hosted MCP connecting agents to the D-ID API and docs for avatar video.",
+    "description": "D-ID hosts an official remote MCP server on its developer docs that lets MCP clients interact with the D-ID API and its documentation for talking-avatar and Agents workflows. D-ID also publishes llms.txt for agent consumption.",
+    "capabilities": ["avatar-video", "talking-head", "docs-search", "agents-api"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http d-id https://docs.d-id.com/mcp",
+      "remote_url": "https://docs.d-id.com/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "api_key", "env_var": null, "key_url": "https://docs.d-id.com/docs/api-keys (D-ID Studio; credits required for API calls)" },
+    "pricing": "freemium",
+    "links": { "repo": null, "docs": "https://docs.d-id.com/docs/mcp", "site": "https://www.d-id.com" },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "Docs-platform-hosted (ReadMe-powered) remote MCP; exact tool list not published openly. Landscape note: Synthesia has no official MCP as of June 2026 (only marginal community wrappers and generic Zapier/viaSocket gateways)."
+  }
+]

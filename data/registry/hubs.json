@@ -1,0 +1,94 @@
+[
+  {
+    "slug": "fal",
+    "name": "fal MCP Server",
+    "vendor": "fal.ai",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "One hosted endpoint to search, run and chain 1,000+ image, video and audio models.",
+    "description": "fal's official stateless MCP server gives agents the entire fal platform: discover models, read schemas and pricing, run inference, submit async jobs and upload files. For filmmakers it is the broadest single gateway — Veo, Kling, LTX-2, Hailuo, FLUX, Ideogram, plus audio like Stable Audio 2.5, CassetteAI SFX and Beatoven — behind one connector.",
+    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "image-editing", "music", "sfx", "tts", "transcription", "model-search", "file-upload", "async-jobs"],
+    "tools_sample": ["search_models", "get_model_schema", "get_pricing", "run_model", "submit_job", "check_job"],
+    "install": {
+      "claude_code": "claude mcp add --transport http fal https://mcp.fal.ai/mcp --header \"Authorization: Bearer YOUR_FAL_KEY\"",
+      "remote_url": "https://mcp.fal.ai/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "api_key", "env_var": "FAL_KEY", "key_url": "fal.ai dashboard → API Keys (sent as Authorization: Bearer header, never stored server-side)" },
+    "pricing": "credits",
+    "links": { "repo": null, "docs": "https://docs.fal.ai/model-apis/mcp", "site": "https://fal.ai" },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "Hosted and fully stateless; the MCP itself is free, you pay standard fal per-run pricing. Arguably the best single 'everything' server for a generative film pipeline, and the practical MCP route to models with no first-party server (LTX-2, Stable Audio, CassetteAI, Beatoven)."
+  },
+  {
+    "slug": "replicate",
+    "name": "Replicate MCP Server",
+    "vendor": "Replicate",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "Official remote MCP for discovering and running thousands of models on Replicate.",
+    "description": "Replicate's official MCP server (remote, plus a self-hostable npm package auto-generated from their HTTP API) lets agents search, compare and run any Replicate model — Veo, Kling, Wan, FLUX, SDXL, LTX and more. Experimental 'code mode' lets the model write sandboxed TypeScript against the Replicate SDK for faster multi-step chains.",
+    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "model-search", "predictions", "upscaling"],
+    "tools_sample": ["search_models", "create_predictions", "list_hardware"],
+    "install": {
+      "claude_code": "claude mcp add --transport sse replicate https://mcp.replicate.com/sse",
+      "remote_url": "https://mcp.replicate.com/sse",
+      "stdio_command": "npx replicate-mcp"
+    },
+    "auth": { "type": "api_key", "env_var": "REPLICATE_API_TOKEN", "key_url": "https://replicate.com/account/api-tokens (remote server stores token via web auth flow)" },
+    "pricing": "paid",
+    "links": { "repo": "https://github.com/replicate/replicate-mcp-code-mode", "docs": "https://replicate.com/docs/reference/mcp", "site": "https://mcp.replicate.com" },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "Remote server recommended; check mcp.replicate.com for the current endpoint (SSE at launch, streamable-HTTP may follow). The npm package tracks the full HTTP API and is auto-updated. Also a strong route to upscalers (Real-ESRGAN, Topaz-style models) with no first-party MCP."
+  },
+  {
+    "slug": "comfyui",
+    "name": "ComfyUI MCP",
+    "vendor": "Community (shawnrushefsky)",
+    "official": false,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "Drive a local ComfyUI: 40+ tools for image, video, audio and 3D workflows.",
+    "description": "Connects agents to a local or remote ComfyUI instance with 40+ tools for running, validating, composing and managing node workflows, plus 70+ bundled example workflows (FLUX, SDXL, SD3.5, ControlNet, LTX-Video, Mochi, AnimateDiff, Stable Audio). The free/local route for filmmakers who own GPUs and want full pipeline control, including open video models.",
+    "capabilities": ["text-to-image", "image-to-image", "text-to-video", "audio-generation", "3d-generation", "workflow-execution", "local-inference"],
+    "tools_sample": ["run_workflow", "validate_workflow", "search_templates", "get_example_workflow", "build_node", "list_models", "get_queue", "recommend_workflow"],
+    "install": {
+      "claude_code": null,
+      "remote_url": null,
+      "stdio_command": "docker run -i --rm --pull always -e COMFYUI_URL=http://host.docker.internal:8000 ghcr.io/shawnrushefsky/comfyui-mcp:latest"
+    },
+    "auth": { "type": "none", "env_var": "COMFYUI_URL", "key_url": "Points at your own ComfyUI instance (default port 8188) — no cloud account needed" },
+    "pricing": "free",
+    "links": { "repo": "https://github.com/shawnrushefsky/comfyui-mcp", "docs": null, "site": "https://www.comfy.org" },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "MIT; the most comprehensive ComfyUI MCP. Notable alternatives: artokun/comfyui-mcp (Claude Code plugin with slash commands/skills) and joenorton/comfyui-mcp-server (lightweight Python). Requires you to run ComfyUI yourself."
+  },
+  {
+    "slug": "piapi",
+    "name": "PiAPI MCP Server",
+    "vendor": "Community (PiAPI)",
+    "official": false,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "Midjourney in an agent — plus Kling, Luma, Hunyuan, Wan, Suno/Udio via PiAPI.",
+    "description": "TypeScript MCP server over PiAPI's unified API, best known as the practical Midjourney route since Midjourney has no public API or official MCP. Also covers FLUX, Kling video and effects, Luma Dream Machine, Hunyuan/Skyreels/Wan video, Trellis 3D and Suno/Udio music — a budget multi-model hub for film agents.",
+    "capabilities": ["text-to-image", "midjourney", "text-to-video", "image-to-video", "music", "3d-generation"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": null,
+      "remote_url": null,
+      "stdio_command": null
+    },
+    "auth": { "type": "api_key", "env_var": "PIAPI_API_KEY", "key_url": "https://piapi.ai (workspace → key management)" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/apinetwork/piapi-mcp-server", "docs": "https://piapi.ai/docs", "site": "https://piapi.ai" },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "MIT, 70 stars; install is clone + npm build. Caveats: unofficial Midjourney access (ToS gray area) and long video jobs can exceed MCP client timeouts — raise timeouts. Hosted Midjourney alternative: AceDataCloud/MidjourneyMCP."
+  }
+]

@@ -1,0 +1,94 @@
+[
+  {
+    "slug": "flux-bfl",
+    "name": "FLUX MCP",
+    "vendor": "Black Forest Labs",
+    "official": true,
+    "category": "image-generation",
+    "featured": false,
+    "tagline": "Official BFL server: FLUX.2 text-to-image, editing, multi-reference and variations.",
+    "description": "Black Forest Labs' official hosted MCP exposes the FLUX.2 toolkit — generation, image editing, multi-reference composition, variations and history — with automatic routing to the right model (Klein for sub-second drafts up to Max for production assets). For filmmakers it is a top-tier stills, concept-art and frame-editing engine inside any agent.",
+    "capabilities": ["text-to-image", "image-editing", "multi-reference-composition", "variations", "generation-history"],
+    "tools_sample": ["generate_image", "generate_variations", "get_history", "get_credits"],
+    "install": {
+      "claude_code": "claude mcp add --transport http flux https://mcp.bfl.ai",
+      "remote_url": "https://mcp.bfl.ai",
+      "stdio_command": "npx -y mcp-remote https://mcp.bfl.ai"
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth-only: sign in with your BFL account and pick a billing org; tokens auto-refresh" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/black-forest-labs/flux-mcp", "docs": "https://docs.bfl.ml/api_integration/mcp_integration", "site": "https://bfl.ai" },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "Models: flux2_pro_preview (default), flux2_max, flux2_klein variants, flux2_flex (typography). generate_image batches 1-8 images in parallel. Pricing at bfl.ai/pricing."
+  },
+  {
+    "slug": "recraft",
+    "name": "Recraft MCP Server",
+    "vendor": "Recraft",
+    "official": true,
+    "category": "image-generation",
+    "featured": false,
+    "tagline": "Official Recraft server: raster + vector image gen, styles, upscale, backgrounds.",
+    "description": "Recraft's official MCP server (remote endpoint or local npm package) covers text-to-image and image-to-image in raster and SVG, custom style creation, vectorization, background removal/replacement and two upscalers. Uniquely useful for film work needing brand-consistent styles, title/poster art and clean vector assets.",
+    "capabilities": ["text-to-image", "image-to-image", "vectorization", "style-creation", "background-removal", "upscaling"],
+    "tools_sample": ["generate_image", "image_to_image", "create_style", "vectorize_image", "remove_background", "replace_background", "crisp_upscale", "creative_upscale"],
+    "install": {
+      "claude_code": "claude mcp add recraft -e RECRAFT_API_KEY=YOUR_KEY -- npx -y @recraft-ai/mcp-recraft-server@latest",
+      "remote_url": "https://mcp.recraft.ai/mcp",
+      "stdio_command": "npx -y @recraft-ai/mcp-recraft-server@latest"
+    },
+    "auth": { "type": "api_key", "env_var": "RECRAFT_API_KEY", "key_url": "https://www.recraft.ai/profile/api (buy API units, generate key)" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/recraft-ai/mcp-recraft-server", "docs": "https://www.recraft.ai/docs/mcp-reference/getting-started", "site": "https://www.recraft.ai/blog/recraft-mcp" },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "v1.6.5; per-image API pricing roughly $0.04-$0.08, vectorize $0.01, creative upscale $0.25. Local mode supports IMAGE_STORAGE_DIRECTORY for saving outputs to disk."
+  },
+  {
+    "slug": "stability-ai",
+    "name": "Stability AI MCP Server",
+    "vendor": "Community (tadasant)",
+    "official": false,
+    "category": "image-generation",
+    "featured": false,
+    "tagline": "Stability platform API as 12 MCP tools: SD3.5 gen, inpaint, outpaint, upscale.",
+    "description": "Community wrapper for Stability AI's hosted REST API: SD3.5 and Core generation plus a deep editing kit — outpainting, search-and-replace, search-and-recolor, background replace with relighting, sketch/style/structure control and fast or creative 4x upscaling. A capable, cheap stills and plate-fixing tool for film agents.",
+    "capabilities": ["text-to-image", "inpainting", "outpainting", "background-removal", "relighting", "style-structure-control", "upscaling"],
+    "tools_sample": ["generate-image", "generate-image-sd35", "outpaint", "search-and-replace", "search-and-recolor", "remove-background", "replace-background-and-relight", "upscale-creative"],
+    "install": {
+      "claude_code": "claude mcp add stability -e STABILITY_AI_API_KEY=YOUR_KEY -- npx -y mcp-server-stability-ai",
+      "remote_url": null,
+      "stdio_command": "npx -y mcp-server-stability-ai"
+    },
+    "auth": { "type": "api_key", "env_var": "STABILITY_AI_API_KEY", "key_url": "https://platform.stability.ai/account/keys (25 free credits, then $0.01/credit)" },
+    "pricing": "freemium",
+    "links": { "repo": "https://github.com/tadasant/mcp-server-stability-ai", "docs": null, "site": null },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "MIT, 83 stars; not affiliated with Stability AI (no official Stability MCP exists). Last release Mar 2025 — aging but the API surface it wraps is stable; per-tool costs $0.01-$0.25."
+  },
+  {
+    "slug": "ideogram",
+    "name": "Ideogram MCP Server",
+    "vendor": "Community (Sunwood AI Labs)",
+    "official": false,
+    "category": "image-generation",
+    "featured": false,
+    "tagline": "Ideogram 3.0 text-to-image with magic prompt and style refs — strongest text-in-image.",
+    "description": "Community server for the Ideogram API with Ideogram 3.0 support: magic prompt modes, style references, negative prompts, seeds, 15 aspect ratios and batch generation of up to 8 images. Filmmaker-relevant for title cards, posters and any frame where legible rendered text matters.",
+    "capabilities": ["text-to-image", "magic-prompt", "style-reference", "batch-generation"],
+    "tools_sample": ["generate_image"],
+    "install": {
+      "claude_code": "claude mcp add ideogram -e IDEOGRAM_API_KEY=YOUR_KEY -- npx @sunwood-ai-labs/ideagram-mcp-server",
+      "remote_url": null,
+      "stdio_command": "npx @sunwood-ai-labs/ideagram-mcp-server"
+    },
+    "auth": { "type": "api_key", "env_var": "IDEOGRAM_API_KEY", "key_url": "Ideogram account → API settings (ideogram.ai)" },
+    "pricing": "paid",
+    "links": { "repo": "https://github.com/sunwood-ai-labs/ideagram-mcp-server", "docs": null, "site": "https://ideogram.ai" },
+    "added": "2026-06-11",
+    "verified": "2026-06-11",
+    "notes": "MIT, small; note the 'ideagram' typo in the package/repo name. No official Ideogram MCP exists; Ideogram v3 is also reachable via the fal and Replicate hub MCPs if you want fewer connectors."
+  }
+]
