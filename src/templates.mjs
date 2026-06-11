@@ -123,7 +123,7 @@ ${posthogSnippet(site)}
 </head>
 <body data-page="${page}">
 <header class="site-head">
-  <a class="brand" href="/"><svg class="brand-mark" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><rect width="18" height="18" rx="4.5" fill="#0d0d0d"/><rect x="3.5" y="8" width="11" height="1.6" rx="0.8" fill="#fff"/><rect x="3.5" y="11.2" width="7" height="1.6" rx="0.8" fill="#fff" opacity=".55"/></svg><span>mcp<span class="brand-dot">.</span>film</span></a>
+  <a class="brand" href="/"><svg class="brand-mark" width="18" height="18" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="15" fill="#0d0d0d"/><rect x="11" y="15.5" width="9" height="9" rx="2.5" fill="#fff" opacity=".58"/><rect x="11" y="39.5" width="9" height="9" rx="2.5" fill="#fff" opacity=".58"/><rect x="26.5" y="15.5" width="27" height="33" rx="5" fill="#fff"/></svg><span>mcp<span class="brand-dot">.</span>film</span></a>
   <nav class="site-nav">
     <a href="/#directory">Directory</a>
     <a href="/stack/">The Stack</a>
