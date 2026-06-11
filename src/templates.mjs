@@ -103,27 +103,26 @@ const layout = (ctx, { title, description, path: pagePath, body, jsonLd = [], pa
 <meta property="og:url" content="${url}">
 <meta property="og:image" content="${site.url}/assets/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#0a0a0e">
+<meta name="theme-color" content="#ffffff">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <link rel="alternate" type="application/atom+xml" title="New MCP servers" href="/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/styles.css">
 ${ld}
 ${posthogSnippet(site)}
 </head>
 <body data-page="${page}">
-<div class="grain" aria-hidden="true"></div>
 <header class="site-head">
-  <a class="brand" href="/"><svg class="brand-mark" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 8.5 19.5 4l1 3.5L4 12z" fill="currentColor"/><rect x="3" y="12" width="18" height="8" rx="1.5" fill="currentColor" opacity=".55"/></svg>mcp<span class="brand-dot">.</span>film</a>
+  <a class="brand" href="/"><svg class="brand-mark" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><rect width="18" height="18" rx="4.5" fill="#0d0d0d"/><rect x="3.5" y="8" width="11" height="1.6" rx="0.8" fill="#fff"/><rect x="3.5" y="11.2" width="7" height="1.6" rx="0.8" fill="#fff" opacity=".55"/></svg><span>mcp<span class="brand-dot">.</span>film</span></a>
   <nav class="site-nav">
     <a href="/#directory">Directory</a>
     <a href="/stack/">The Stack</a>
     <a href="/for-agents/">For Agents</a>
-    <a href="/submit/">Submit</a>
     <a href="/about/">About</a>
     <a class="nav-gh" href="https://github.com/${site.github_repo}" rel="noopener">GitHub</a>
+    <a class="nav-cta" href="/submit/">Submit</a>
   </nav>
 </header>
 <main>
@@ -217,19 +216,18 @@ export const renderHome = (ctx) => {
 
   const body = `
 <section class="hero">
-  <div class="hero-frame">
-    <p class="hero-eyebrow">A field guide for filmmaking agents · ${ctx.servers.length} servers · ${ctx.officialCount} official</p>
-    <h1>Every tool your agent needs<br>to make a film.</h1>
-    <p class="hero-sub">The curated directory of <strong>Model Context Protocol</strong> servers for AI filmmaking — video models, voices, scores, edit bays, finishing suites, and the pipes to ship it. Verified by hand and by agent, updated continuously.</p>
-    <div class="search-wrap">
-      <input id="search" type="search" placeholder="Search the stack — try “upscale”, “voice cloning”, “Veo”…" autocomplete="off" aria-label="Search servers">
-      <kbd>/</kbd>
-    </div>
-    <div class="chip-nav" id="chip-nav">
-      <button class="chip chip-filter is-on" data-filter="">All</button>
-      ${categories.map((c) => `<button class="chip chip-filter" data-filter="${c.id}">${esc(c.short)}</button>`).join("")}
-    </div>
+  <p class="hero-eyebrow"><span class="dot">●</span> The MCP directory for AI filmmaking</p>
+  <h1>Every tool your agent needs to make a film.</h1>
+  <p class="hero-sub">A curated directory of <strong>Model Context Protocol</strong> servers across the full production stack — video models, voices, scores, edit bays, finishing suites, and the pipes to ship it. Verified by hand and by agent, updated continuously.</p>
+  <div class="search-wrap">
+    <input id="search" type="search" placeholder="Search — try “upscale”, “voice cloning”, “Veo”" autocomplete="off" aria-label="Search servers">
+    <kbd>/</kbd>
   </div>
+  <div class="chip-nav" id="chip-nav">
+    <button class="chip chip-filter is-on" data-filter="">All</button>
+    ${categories.map((c) => `<button class="chip chip-filter" data-filter="${c.id}">${esc(c.short)}</button>`).join("")}
+  </div>
+  <p class="hero-stats"><span><b>${ctx.servers.length}</b> servers</span><span><b>${ctx.officialCount}</b> official</span><span><b>${ctx.remoteCount}</b> hosted remote</span><span><b>${categories.length}</b> categories</span></p>
 </section>
 
 <section class="featured-row">${featuredHtml}
@@ -815,11 +813,11 @@ export const render404 = (ctx) =>
     path: "/404.html",
     page: "404",
     body: `
-<section class="hero"><div class="hero-frame">
-  <p class="hero-eyebrow">Reel missing</p>
-  <h1>404 — this frame didn't render.</h1>
+<section class="hero">
+  <p class="hero-eyebrow">404</p>
+  <h1>This frame didn't render.</h1>
   <p class="hero-sub">Try the <a href="/#directory">directory</a>, <a href="/stack/">the stack guide</a>, or <span class="mono">/api/registry.json</span> if you're an agent.</p>
-</div></section>`,
+</section>`,
   });
 
 // ------------------------------------------------------------ feeds/crawler

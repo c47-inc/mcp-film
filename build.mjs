@@ -10,7 +10,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as T from "./src/templates.mjs";
-import { renderOgPng } from "./scripts/og.mjs";
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const DATA = path.join(ROOT, "data");
@@ -153,9 +152,6 @@ write("assets/app.js", fs.readFileSync(path.join(ROOT, "src/app.js"), "utf8"));
 for (const f of fs.readdirSync(path.join(ROOT, "public"))) {
   fs.copyFileSync(path.join(ROOT, "public", f), path.join(DIST, "assets", f));
 }
-
-// social card — generated pixel-art PNG, zero dependencies
-write("assets/og.png", renderOgPng());
 
 // snapshot of registry for the npx mcp-film fallback data
 fs.mkdirSync(path.join(ROOT, "packages/mcp-server"), { recursive: true });
