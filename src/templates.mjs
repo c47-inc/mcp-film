@@ -19,6 +19,12 @@ const nice = (iso) =>
 
 const PRICING_LABEL = { free: "free", freemium: "freemium", paid: "paid", credits: "credits" };
 
+const truncate = (s, n) => {
+  if (s.length <= n) return s;
+  const cut = s.slice(0, n).replace(/\s+\S*$/, "");
+  return cut + "…";
+};
+
 const catById = (ctx, id) => ctx.categories.find((c) => c.id === id);
 
 // A command is copy-pastable only if it has no prose in it.
@@ -108,7 +114,7 @@ const layout = (ctx, { title, description, path: pagePath, body, jsonLd = [], pa
 <link rel="alternate" type="application/atom+xml" title="New MCP servers" href="/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/styles.css">
 ${ld}
 ${posthogSnippet(site)}
@@ -159,28 +165,31 @@ ${body}
 // -------------------------------------------------------------------- cards
 const badge = (s) =>
   s.official
-    ? `<span class="badge badge-official" title="Maintained by the platform vendor">official</span>`
-    : `<span class="badge badge-community" title="Community-maintained">community</span>`;
+    ? `<span class="tag tag-official" title="Maintained by the platform vendor">Official</span>`
+    : `<span class="tag" title="Community-maintained">Community</span>`;
 
 const remoteBadge = (s) =>
-  s.install?.remote_url ? `<span class="badge badge-remote" title="Hosted remote MCP — no local install">remote</span>` : "";
+  s.install?.remote_url ? `<span class="tag" title="Hosted remote MCP — no local install">Remote</span>` : "";
 
-const stars = (avg) => {
-  const full = Math.round(avg);
-  return "★".repeat(full) + "☆".repeat(5 - full);
+// "Community (samuelgursky)" → "samuelgursky"; "Martini (C47)" → "Martini"
+const vendorShort = (v) => {
+  const m = /^Community \((.+?)\)/.exec(v);
+  return m ? m[1] : v.replace(/\s*\(.*\)$/, "");
 };
 
 const card = (ctx, s) => {
   const r = ratingFor(ctx, s.slug);
-  const caps = (s.capabilities ?? []).slice(0, 3);
+  const caps = (s.capabilities ?? []).slice(0, 2).join(" · ");
+  const extra = [s.install?.remote_url ? "remote" : null, PRICING_LABEL[s.pricing] ?? s.pricing]
+    .filter(Boolean).join(" · ");
   return `<a class="card" href="/mcps/${s.slug}/" data-search="${esc([s.name, s.vendor, s.tagline, s.category, ...(s.capabilities ?? [])].join(" ").toLowerCase())}" data-cat="${s.category}">
-  <div class="card-top"><span class="card-name">${esc(s.name)}</span><span class="card-badges">${badge(s)}${remoteBadge(s)}</span></div>
-  <p class="card-tag">${esc(s.tagline)}</p>
-  <div class="card-meta">
-    ${caps.map((c) => `<span class="chip">${esc(c)}</span>`).join("")}
-    <span class="chip chip-dim">${PRICING_LABEL[s.pricing] ?? esc(s.pricing)}</span>
-    ${r ? `<span class="card-stars" title="${r.avg.toFixed(1)} from ${r.votes} ratings">${stars(r.avg)}</span>` : ""}
+  <div class="card-head">
+    <span class="avatar" aria-hidden="true">${esc(s.name[0].toUpperCase())}</span>
+    <span class="card-id"><span class="card-name">${esc(s.name)}</span><span class="card-vendor">${esc(vendorShort(s.vendor))}</span></span>
+    ${s.official ? `<span class="tag tag-official">Official</span>` : ""}
   </div>
+  <p class="card-tag">${esc(s.tagline)}</p>
+  <div class="card-meta"><span class="card-caps">${esc(caps)}</span><span class="card-extra">${esc(extra)}${r ? ` · ★ ${r.avg.toFixed(1)}` : ""}</span></div>
 </a>`;
 };
 
@@ -193,10 +202,10 @@ export const renderHome = (ctx) => {
   const featuredHtml = featured.map((s) => `
   <a class="feature" href="/mcps/${s.slug}/">
     <div class="feature-eyebrow">Featured studio</div>
-    <div class="feature-name">${esc(s.name)} <span class="card-badges">${badge(s)}</span></div>
+    <div class="feature-name">${esc(s.name)} ${badge(s)}</div>
     <p class="feature-tag">${esc(s.tagline)}</p>
-    <p class="feature-desc">${esc(s.description.split(". ").slice(0, 2).join(". "))}.</p>
-    <span class="feature-cta">Open the listing →</span>
+    <p class="feature-desc">${esc(truncate(s.description, 170))}</p>
+    <span class="feature-cta">Open the listing</span>
   </a>`).join("");
 
   const sections = categories
@@ -206,7 +215,8 @@ export const renderHome = (ctx) => {
       return `
 <section class="cat-section" id="${cat.id}" data-cat-section="${cat.id}">
   <div class="cat-head">
-    <h2><a href="/categories/${cat.id}/">${esc(cat.name)}</a> <span class="cat-count">${list.length}</span></h2>
+    <h2><a href="/categories/${cat.id}/">${esc(cat.name)}</a></h2>
+    <span class="cat-count">${list.length}</span>
     <p class="cat-blurb">${esc(cat.blurb)}</p>
   </div>
   <div class="grid">${list.map((s) => card(ctx, s)).join("")}</div>
@@ -218,16 +228,12 @@ export const renderHome = (ctx) => {
 <section class="hero">
   <p class="hero-eyebrow"><span class="dot">●</span> The MCP directory for AI filmmaking</p>
   <h1>Every tool your agent needs to make a film.</h1>
-  <p class="hero-sub">A curated directory of <strong>Model Context Protocol</strong> servers across the full production stack — video models, voices, scores, edit bays, finishing suites, and the pipes to ship it. Verified by hand and by agent, updated continuously.</p>
-  <div class="search-wrap">
-    <input id="search" type="search" placeholder="Search — try “upscale”, “voice cloning”, “Veo”" autocomplete="off" aria-label="Search servers">
-    <kbd>/</kbd>
+  <p class="hero-sub">A curated directory of <strong>Model Context Protocol</strong> servers across the production stack: video models, voices, scores, edit bays, finishing suites, and the pipes to ship it. Verified by hand and by agent, updated continuously.</p>
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="#directory">Browse the directory</a>
+    <a class="btn" href="/stack/">The AI Film Stack</a>
   </div>
-  <div class="chip-nav" id="chip-nav">
-    <button class="chip chip-filter is-on" data-filter="">All</button>
-    ${categories.map((c) => `<button class="chip chip-filter" data-filter="${c.id}">${esc(c.short)}</button>`).join("")}
-  </div>
-  <p class="hero-stats"><span><b>${ctx.servers.length}</b> servers</span><span><b>${ctx.officialCount}</b> official</span><span><b>${ctx.remoteCount}</b> hosted remote</span><span><b>${categories.length}</b> categories</span></p>
+  <p class="hero-stats"><span><b>${ctx.servers.length}</b> servers</span><span><b>${ctx.officialCount}</b> official</span><span><b>${ctx.remoteCount}</b> hosted remote</span><span><b>${categories.length}</b> categories</span><span><b>${nice(ctx.built.slice(0, 10))}</b> last verified</span></p>
 </section>
 
 <section class="featured-row">${featuredHtml}
@@ -235,13 +241,29 @@ export const renderHome = (ctx) => {
     <div class="feature-eyebrow">For agents</div>
     <p>This site is machine-first. One request gets you everything:</p>
     <pre class="mono">curl -s ${site.url}/api/registry.json</pre>
-    <p>Or start at <a href="/llms.txt" class="mono">/llms.txt</a> · <a href="/for-agents/">full agent docs →</a></p>
+    <p>Or start at <a href="/llms.txt" class="mono">/llms.txt</a> · <a href="/for-agents/">full agent docs</a></p>
   </div>
 </section>
 
-<div id="directory">
-<p class="no-results" id="no-results" hidden>Nothing in the catalog matches that — <a href="/submit/">know a server we're missing?</a></p>
-${sections}
+<div class="directory" id="directory">
+  <aside class="dir-side">
+    <div class="search-wrap">
+      <input id="search" type="search" placeholder="Search servers" autocomplete="off" aria-label="Search servers">
+      <kbd>/</kbd>
+    </div>
+    <p class="label">Categories</p>
+    <nav class="dir-nav" id="chip-nav" aria-label="Filter by category">
+      <button class="chip-filter is-on" data-filter="">All servers <span class="count">${servers.length}</span></button>
+      ${categories.map((c) => {
+        const n = byCat(c.id).length;
+        return n ? `<button class="chip-filter" data-filter="${c.id}">${esc(c.name)} <span class="count">${n}</span></button>` : "";
+      }).join("")}
+    </nav>
+  </aside>
+  <div class="dir-main">
+    <p class="no-results" id="no-results" hidden>Nothing in the catalog matches that. <a href="/submit/">Know a server we're missing?</a></p>
+    ${sections}
+  </div>
 </div>`;
 
   return layout(ctx, {
@@ -390,10 +412,10 @@ export const renderServer = (ctx, s) => {
 <section class="page-head">
   <p class="crumbs"><a href="/">mcp.film</a> / <a href="/categories/${s.category}/">${esc(cat?.name ?? s.category)}</a> / <span>${esc(s.name)}</span></p>
   <div class="server-title">
+    <span class="avatar" aria-hidden="true">${esc(s.name[0].toUpperCase())}</span>
     <h1>${esc(s.name)}</h1>
-    <span class="card-badges">${badge(s)}${remoteBadge(s)}<span class="chip chip-dim">${PRICING_LABEL[s.pricing]}</span></span>
   </div>
-  <p class="server-vendor">by ${esc(s.vendor)} · verified ${nice(s.verified)}</p>
+  <p class="server-meta-line">${badge(s)}${remoteBadge(s)}<span>by ${esc(s.vendor)}</span><span>${PRICING_LABEL[s.pricing]}</span><span>verified ${nice(s.verified)}</span></p>
   <p class="server-tag">${esc(s.tagline)}</p>
   <div class="rate" data-slug="${s.slug}">
     <span class="rate-label">Rate it:</span>
@@ -426,7 +448,7 @@ export const renderServer = (ctx, s) => {
   <aside class="server-side">
     <div class="side-box">
       <p class="foot-h">Capabilities</p>
-      <div class="chips">${(s.capabilities ?? []).map((c) => `<span class="chip">${esc(c)}</span>`).join("")}</div>
+      <p class="side-caps">${(s.capabilities ?? []).map(esc).join(" · ")}</p>
     </div>
     <div class="side-box">
       <p class="foot-h">Links</p>
@@ -557,7 +579,7 @@ ${stages.map((st, i) => `
   <div class="stage-cat">
     <h3><a href="/categories/${g.cat.id}/">${esc(g.cat.name)}</a></h3>
     <ul class="stage-list">
-      ${g.servers.map((s) => `<li><a href="/mcps/${s.slug}/">${esc(s.name)}</a>${s.official ? ' <span class="badge badge-official">official</span>' : ""} — ${esc(s.tagline)}</li>`).join("")}
+      ${g.servers.map((s) => `<li><a href="/mcps/${s.slug}/">${esc(s.name)}</a>${s.official ? ' <span class="tag tag-official">Official</span>' : ""} — ${esc(s.tagline)}</li>`).join("")}
     </ul>
   </div>`).join("")}
 </section>`).join("")}`;
