@@ -181,6 +181,15 @@ write(".well-known/mcp/server-card", JSON.stringify(serverJson, null, 2));
 write("CNAME", site.domain + "\n");
 write(".nojekyll", "");
 
+// Cloudflare Pages glue. When deployed to Cloudflare Pages, _worker.js runs in
+// advanced mode and records server-side request analytics for agent/API traffic
+// that browser JavaScript cannot see. GitHub Pages simply serves it as a file.
+const edgeWorker = fs
+  .readFileSync(path.join(ROOT, "src/edge-analytics-worker.js"), "utf8")
+  .replaceAll("__MCPFILM_POSTHOG_KEY__", site.analytics?.posthog_key ?? "")
+  .replaceAll("__MCPFILM_POSTHOG_HOST__", site.analytics?.posthog_host ?? "https://us.i.posthog.com");
+write("_worker.js", edgeWorker);
+
 // static assets
 write("assets/styles.css", fs.readFileSync(path.join(ROOT, "src/styles.css"), "utf8"));
 write("assets/app.js", fs.readFileSync(path.join(ROOT, "src/app.js"), "utf8"));

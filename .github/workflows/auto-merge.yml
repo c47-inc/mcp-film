@@ -20,12 +20,20 @@ jobs:
     if: contains(github.event.pull_request.labels.*.name, 'auto-data')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
+      - name: Check token write permissions
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          perm=$(gh api repos/$GITHUB_REPOSITORY/actions/permissions/workflow -q '.default_workflow_permissions' || echo unknown)
+          if [ "$perm" != "write" ]; then
+            echo "::warning::Repository default workflow permission is '$perm'. This workflow requests explicit write scopes, but org-level read-only policy can still block autonomous merges."
+          fi
       - name: Check changed paths are data-only
         id: paths
         env:

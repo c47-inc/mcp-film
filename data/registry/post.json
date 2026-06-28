@@ -92,6 +92,52 @@
     "notes": "134 stars, pushed May 2026 — the best-maintained ffmpeg MCP (egoist/ffmpeg-mcp is dormant since Mar 2025). Caveat: README states macOS only. Cross-platform lighter alternatives: kevinwatt/ffmpeg-mcp-lite and KyaniteLabs/mcp-video (guardrailed, active Jun 2026)."
   },
   {
+    "slug": "mcp-video",
+    "name": "mcp-video",
+    "vendor": "Community (KyaniteLabs)",
+    "official": false,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Guardrailed local video editing MCP with FFmpeg, subtitles, QC, SFX and Hyperframes.",
+    "description": "KyaniteLabs' mcp-video wraps FFmpeg and adjacent media tools behind typed, preflighted MCP operations. For filmmaker agents it is the safer local post bench: inspect clips, trim and merge, burn captions, normalize audio, render variants, create thumbnails, run release checkpoints, and fail early when an edit would produce bad media.",
+    "capabilities": ["transcode", "trim-concat", "captioning", "audio-normalization", "quality-check", "repurposing", "hyperframes", "local-post"],
+    "tools_sample": ["search_tools", "video_info", "video_trim", "video_merge", "video_subtitles", "video_normalize_audio", "video_release_checkpoint", "video_repurpose", "hyperframes_render", "video_quality_check"],
+    "install": {
+      "claude_code": "claude mcp add mcp-video -- uvx --from mcp-video mcp-video",
+      "remote_url": null,
+      "stdio_command": "uvx --from mcp-video mcp-video"
+    },
+    "auth": { "type": "none", "env_var": null, "key_url": null },
+    "pricing": "free",
+    "links": { "repo": "https://github.com/KyaniteLabs/mcp-video", "docs": "https://kyanitelabs.github.io/mcp-video/", "site": "https://pypi.org/project/mcp-video/" },
+    "added": "2026-06-28",
+    "verified": "2026-06-28",
+    "notes": "Apache-2.0, PyPI mcp-video 1.5.1, Python >=3.11, listed in the official MCP Registry. Core editing needs FFmpeg on PATH; optional AI features pull in heavy extras (Whisper, demucs, upscalers), so install only the extras you actually need."
+  },
+  {
+    "slug": "vibeframe",
+    "name": "VibeFrame",
+    "vendor": "VibeFrame (vericontext)",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "CLI-first video workflow runtime with an MCP surface for briefs-to-renders.",
+    "description": "VibeFrame is an agentic video workflow runtime: a coding agent turns a brief into storyboard files, generated assets, Hyperframes scenes, reviewed renders, and final MP4s. Its MCP server exposes the same engine as typed tools for project init, build, render, generation, editing, audio, detection, inspection, and timeline operations, with dry runs and cost gates for paid providers.",
+    "capabilities": ["storyboard-to-video", "cloud-render", "text-to-video", "image-to-video", "captioning", "audio-generation", "quality-review", "cost-gates"],
+    "tools_sample": ["project_list", "init", "build", "render", "generate_image", "generate_video", "edit_caption", "audio_duck", "inspect_review", "timeline_create"],
+    "install": {
+      "claude_code": "claude mcp add vibeframe --scope project -- npx -y @vibeframe/mcp-server",
+      "remote_url": null,
+      "stdio_command": "npx -y @vibeframe/mcp-server"
+    },
+    "auth": { "type": "api_key", "env_var": "FAL_API_KEY", "key_url": "Provider keys are bring-your-own: FAL_API_KEY, OPENAI_API_KEY, GOOGLE_API_KEY, ELEVENLABS_API_KEY and others depending on the models you enable." },
+    "pricing": "freemium",
+    "links": { "repo": "https://github.com/vericontext/vibeframe", "docs": "https://github.com/vericontext/vibeframe#readme", "site": "https://vibeframe.ai" },
+    "added": "2026-06-28",
+    "verified": "2026-06-28",
+    "notes": "MIT, npm @vibeframe/mcp-server 0.113.11. Requires Node 20+, FFmpeg, and Chrome/Chromium; AI generation bills whichever provider keys you wire in. The project warns that the CLI is the stable runtime and MCP is the host surface, so shell-capable agents may prefer direct `vibe` commands for long builds."
+  },
+  {
     "slug": "remotion",
     "name": "Remotion MCP",
     "vendor": "Remotion",

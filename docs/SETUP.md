@@ -11,13 +11,38 @@ Default branch**, switch the default from `claude/cool-euler-dm96ws` to
 This matters: scheduled workflows (the daily curator, the weekly pulse) only
 run from the repo's default branch.
 
-## 2. Enable GitHub Pages
+## 2. Enable GitHub Pages fallback
 
 Repo **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 Then run the **Build & Deploy** workflow once (Actions tab → Build & Deploy →
 Run workflow) and confirm the site is live at the `*.github.io` URL.
 
-## 3. Point mcp.film at GitHub Pages
+GitHub Pages is still useful as a fallback, but it cannot expose request-level
+logs for `/llms.txt`, markdown, JSON, and other agent-readable surfaces.
+
+## 3. Primary hosting for agent traffic: Cloudflare Pages
+
+Use Cloudflare Pages if you want to know how much agent traffic the directory
+gets. The build now emits `dist/_worker.js`, a Cloudflare Pages advanced-mode
+worker that records `mcpfilm_edge_request` events into PostHog before serving
+the static site.
+
+Cloudflare Pages settings:
+
+| Setting | Value |
+| --- | --- |
+| Repository | `c47-inc/mcp-film` |
+| Production branch | `main` |
+| Build command | `node build.mjs` |
+| Build output directory | `dist` |
+| Root directory | `/` |
+
+Add `mcp.film` as the custom domain on the Cloudflare Pages project. Add a
+secret `ANALYTICS_SALT` in Pages settings so approximate unique agent counts
+are hashed with a private salt. See [`docs/ANALYTICS.md`](ANALYTICS.md) for the
+event fields and HogQL queries.
+
+## 3b. If staying on GitHub Pages, point mcp.film there
 
 At your DNS provider for `mcp.film`:
 
@@ -45,6 +70,16 @@ check, and tick **Enforce HTTPS**. (The build already emits the `CNAME` file.)
 Also check **Settings → Actions → General → Workflow permissions**: set
 **Read and write permissions** and allow GitHub Actions to **create and
 approve pull requests** (needed by the agent workflows).
+
+After a deleted repo is recreated, these secrets are empty again. The workflows
+now skip cleanly with a job-summary note when required secrets are missing, but
+they will not self-update until `ANTHROPIC_API_KEY` is restored.
+
+If GitHub refuses to enable repository-level write permissions with "Write
+permissions for workflows are disabled by the organization", fix it at the org
+level first: **Organization settings → Actions → General → Workflow
+permissions → Read and write permissions**. The CLI equivalent requires a token
+with `admin:org`.
 
 ## 5. Create labels
 
@@ -119,6 +154,6 @@ re-release — only tool changes do.
 | --- | --- | --- |
 | Build & Deploy | push to main / manual | builds `dist/`, publishes to Pages |
 | Curator | daily 06:17 UTC | re-verifies the 3 stalest entries (full catalog every ~3 weeks), hunts for new servers, PRs data — skips the PR on quiet days |
-| Pulse | Thursdays 07:41 UTC | syncs PostHog ratings/trending/feedback into data, PRs |
+| Pulse | Thursdays 07:41 UTC | syncs PostHog ratings/trending/feedback into data, summarizes edge traffic in the PR, PRs |
 | Inbox | issue opened w/ `submit`/`correction` | verifies and lists (or declines with reasons) |
 | Auto-merge | PR labeled `auto-data` | merges only if all changes are in `data/` + validation passes, then deploys |

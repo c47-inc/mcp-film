@@ -92,6 +92,29 @@
     "notes": "Part of Pika's 2026 pivot to an agent platform. Skill-driven workflows (podcast/explainer/UGC) make it strong for templated content; per-tool documentation is thinner than Runway or fal."
   },
   {
+    "slug": "pixverse",
+    "name": "PixVerse MCP",
+    "vendor": "PixVerse AI",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Official PixVerse video MCP: text/video, image animation, transitions, lip-sync and SFX.",
+    "description": "PixVerse's vendor-owned MCP server exposes its video-generation API through uvx for Claude, Cursor and other MCP clients. It covers text-to-video, image-to-video, video extension, two-image transitions, lip-sync, generated sound effects, and v4.5 fusion scenes, giving filmmaker agents a direct route to PixVerse's shot tools without browser automation.",
+    "capabilities": ["text-to-video", "image-to-video", "video-extension", "transitions", "lip-sync", "sound-effects", "asset-upload"],
+    "tools_sample": ["capabilities_overview", "text_to_video", "image_to_video", "transition_video", "extend_video", "lip_sync_video", "sound_effect_video", "fusion_video", "upload_image", "get_video_status"],
+    "install": {
+      "claude_code": "claude mcp add pixverse -e PIXVERSE_API_KEY=YOUR_KEY -- uvx pixverse-mcp",
+      "remote_url": null,
+      "stdio_command": "uvx pixverse-mcp"
+    },
+    "auth": { "type": "api_key", "env_var": "PIXVERSE_API_KEY", "key_url": "https://platform.pixverse.ai" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/PixVerseAI/PixVerse-MCP", "docs": "https://docs.platform.pixverse.ai/how-to-get-api-key-882968m0", "site": "https://platform.pixverse.ai" },
+    "added": "2026-06-28",
+    "verified": "2026-06-28",
+    "notes": "Official MIT repo, PyPI pixverse-mcp 0.2.2. README says Python 3.10+, but the published package metadata requires Python >=3.12; use a current uv/uvx runtime. PixVerse API credits are separate from consumer app credits."
+  },
+  {
     "slug": "google-genmedia",
     "name": "Google GenMedia MCP",
     "vendor": "Google Cloud",
