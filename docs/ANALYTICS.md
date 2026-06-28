@@ -30,6 +30,13 @@ Then add `mcp.film` as a custom domain on the Pages project and move DNS to
 Cloudflare if it is not already there. Cloudflare Pages will run the generated
 `_worker.js` before serving static assets.
 
+For the apex domain, delete any old GitHub Pages `A`/`AAAA` records for
+`mcp.film`, then create a proxied `CNAME` record:
+
+| Type | Name | Target | Proxy |
+| --- | --- | --- | --- |
+| `CNAME` | `@` | `mcp-film.pages.dev` | Proxied |
+
 If the project was created by `wrangler pages project create`, it is a direct
 upload project and will not automatically build from GitHub. Add
 `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` to GitHub Actions secrets so

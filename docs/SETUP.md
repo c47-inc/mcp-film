@@ -42,6 +42,13 @@ secret `ANALYTICS_SALT` in Pages settings so approximate unique agent counts
 are hashed with a private salt. See [`docs/ANALYTICS.md`](ANALYTICS.md) for the
 event fields and HogQL queries.
 
+In **Cloudflare → mcp.film → DNS → Records**, remove the old GitHub Pages
+`A`/`AAAA` records for `@`, then add:
+
+| Type | Name | Target | Proxy |
+| --- | --- | --- | --- |
+| `CNAME` | `@` | `mcp-film.pages.dev` | Proxied |
+
 ## 3b. If staying on GitHub Pages, point mcp.film there
 
 At your DNS provider for `mcp.film`:
