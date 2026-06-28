@@ -30,6 +30,12 @@ Then add `mcp.film` as a custom domain on the Pages project and move DNS to
 Cloudflare if it is not already there. Cloudflare Pages will run the generated
 `_worker.js` before serving static assets.
 
+If the project was created by `wrangler pages project create`, it is a direct
+upload project and will not automatically build from GitHub. Add
+`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` to GitHub Actions secrets so
+`.github/workflows/deploy.yml` can deploy `dist/` to Cloudflare after every
+push to `main`.
+
 ## Cloudflare variables
 
 The worker can run with the public PostHog project token already embedded from

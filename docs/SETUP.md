@@ -66,6 +66,8 @@ check, and tick **Enforce HTTPS**. (The build already emits the `CNAME` file.)
 | --- | --- | --- |
 | `ANTHROPIC_API_KEY` | curator, pulse, inbox agents | An Anthropic API key. Without it, the site still deploys — it just stops self-updating. |
 | `POSTHOG_API_KEY` | pulse (ratings/feedback sync) | A PostHog **personal API key** with *query read* access to project 292112 (us.posthog.com → Settings → Personal API keys). Optional; pulse skips gracefully without it. |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare Pages deploy | API token with Cloudflare Pages edit access for the C47 account. Required for GitHub pushes to deploy to Cloudflare. |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Pages deploy | `2cdfec7e71db16b4ca131ba1f66454e9`. Required with `CLOUDFLARE_API_TOKEN`. |
 
 Also check **Settings → Actions → General → Workflow permissions**: set
 **Read and write permissions** and allow GitHub Actions to **create and
