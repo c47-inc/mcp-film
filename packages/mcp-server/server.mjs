@@ -22,9 +22,11 @@ const REPO = "c47-inc/mcp-film";
 const REGISTRY_URL = "https://mcp.film/api/registry.min.json";
 const PLAYBOOKS_URL = "https://mcp.film/api/playbooks.json";
 const RECOMMENDATIONS_URL = "https://mcp.film/api/recommendations.json";
+const PULSE_URL = "https://mcp.film/api/pulse.json";
 const SNAPSHOT = path.join(HERE, "registry.snapshot.json");
 const PLAYBOOKS_SNAPSHOT = path.join(HERE, "playbooks.snapshot.json");
 const RECOMMENDATIONS_SNAPSHOT = path.join(HERE, "recommendations.snapshot.json");
+const PULSE_SNAPSHOT = path.join(HERE, "pulse.snapshot.json");
 
 let registry = null;
 async function loadRegistry() {
@@ -72,6 +74,22 @@ async function loadRecommendations() {
   recommendations = JSON.parse(fs.readFileSync(RECOMMENDATIONS_SNAPSHOT, "utf8"));
   recommendations._source = "bundled snapshot";
   return recommendations;
+}
+
+let pulse = null;
+async function loadPulse() {
+  if (pulse) return pulse;
+  try {
+    const res = await fetch(PULSE_URL, { signal: AbortSignal.timeout(5000) });
+    if (res.ok) {
+      pulse = await res.json();
+      pulse._source = "live";
+      return pulse;
+    }
+  } catch { /* offline — fall through to snapshot */ }
+  pulse = JSON.parse(fs.readFileSync(PULSE_SNAPSHOT, "utf8"));
+  pulse._source = "bundled snapshot";
+  return pulse;
 }
 
 const compact = (s) => ({
@@ -338,6 +356,21 @@ const TOOLS = [
     },
   },
   {
+    name: "get_catalog_pulse",
+    description:
+      "Get the mcp.film operating pulse: catalog freshness, demand signals, curator agenda, Martini growth checks, and machine-readable surfaces. Use this before deciding what to update next.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        section: {
+          type: "string",
+          enum: ["all", "summary", "demand_signals", "curator_agenda", "martini_growth_checks", "verification_queue", "machine_surfaces"],
+          description: "Optional top-level pulse section. Default all.",
+        },
+      },
+    },
+  },
+  {
     name: "list_film_playbooks",
     description:
       "List mcp.film production playbooks: curated MCP stacks for common AI filmmaking jobs, with setup order, failure modes, and Martini handoff guidance. Use get_film_playbook for full steps and auth gates.",
@@ -469,6 +502,19 @@ async function callTool(name, args = {}) {
 
   if (name === "list_client_profiles") {
     return clientProfiles();
+  }
+
+  if (name === "get_catalog_pulse") {
+    const currentPulse = await loadPulse();
+    const section = args.section || "all";
+    if (section === "all") return currentPulse;
+    if (!(section in currentPulse)) {
+      return {
+        error: `No pulse section '${section}'.`,
+        valid_sections: ["all", "summary", "demand_signals", "curator_agenda", "martini_growth_checks", "verification_queue", "machine_surfaces"],
+      };
+    }
+    return { section, source: currentPulse._source, value: currentPulse[section] };
   }
 
   if (name === "submit_listing") {

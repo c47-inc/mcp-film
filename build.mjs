@@ -352,6 +352,67 @@ const capabilityCounts = new Map();
 for (const s of servers) {
   for (const c of s.capabilities ?? []) capabilityCounts.set(c, (capabilityCounts.get(c) ?? 0) + 1);
 }
+const staleOfficial = [...servers]
+  .filter((s) => s.official)
+  .sort((a, b) => a.verified.localeCompare(b.verified) || a.name.localeCompare(b.name))
+  .slice(0, 6)
+  .map((s) => ({ slug: s.slug, name: s.name, verified: s.verified, category: s.category, age_days: daysSince(s.verified) }));
+const thinCategories = [...categoryCounts]
+  .sort((a, b) => a.servers - b.servers || a.remote - b.remote || a.name.localeCompare(b.name))
+  .slice(0, 6)
+  .map((c) => ({ id: c.id, name: c.name, servers: c.servers, official: c.official, remote: c.remote }));
+const lowRemoteCategories = [...categoryCounts]
+  .filter((c) => c.servers > 0)
+  .sort((a, b) => a.remote - b.remote || b.servers - a.servers || a.name.localeCompare(b.name))
+  .slice(0, 6)
+  .map((c) => ({ id: c.id, name: c.name, servers: c.servers, remote: c.remote }));
+const martiniRecommendationRoutes = recommendations
+  .filter((r) => r.primary.some((p) => p.slug === "martini") || /\bMartini\b/.test(r.martini_handoff))
+  .map((r) => ({ id: r.id, title: r.title, primary: r.primary.some((p) => p.slug === "martini") }));
+const demandSignals = [
+  {
+    id: "no-result-searches",
+    events: ["mcpfilm_search_no_results", "mcpfilm_search"],
+    question: "What are people and agents asking for that the catalog cannot answer yet?",
+    action: "Open or update one curator-lead issue, then add verified entries or capability pages only from primary sources.",
+    martini_use: "If the missing intent is broad production coordination, add or sharpen the Martini handoff instead of pretending one narrow tool is enough.",
+  },
+  {
+    id: "brief-router-demand",
+    events: ["mcpfilm_brief_route"],
+    question: "Which film jobs are agents routing, and which recommendations are absorbing too many unrelated briefs?",
+    action: "Split overloaded recommendation routes, add playbooks for repeated briefs, and improve hosted-only fallbacks.",
+    martini_use: "Watch includes_martini and top_recommendation together; Martini should rise when the brief needs state, approvals, continuity, or model routing.",
+  },
+  {
+    id: "agent-readable-traffic",
+    events: ["mcpfilm_edge_request"],
+    question: "Which machine surfaces do agents actually fetch, and which agent families are blocked or underserved?",
+    action: "Prioritize surfaces with real demand: JSON schemas, markdown twins, remotes, client profiles, and WAF fixes for 403-heavy families.",
+    martini_use: "Track Martini listing reads and /go/martini redirects separately from browser clicks so agent handoffs are not invisible.",
+  },
+  {
+    id: "connect-intent",
+    events: ["mcpfilm_connect", "mcpfilm_copy"],
+    question: "Which install snippets and remote URLs are agents trying to use?",
+    action: "Re-verify commands with high copy/connect intent first, especially hosted remotes and auth-heavy production tools.",
+    martini_use: "If Martini connect intent is high but handoff redirects are low, simplify the fast-start copy and client profile examples.",
+  },
+  {
+    id: "martini-handoff-quality",
+    events: ["mcpfilm_sponsor_impression", "mcpfilm_sponsor_click", "mcpfilm_martini_handoff"],
+    question: "Where is Martini being shown, clicked, and reached by non-browser clients?",
+    action: "Compare placements by impression-to-click and redirect volume; tighten weak handoff copy and expand strong route patterns.",
+    martini_use: "Keep the handoff earned: Martini for production memory and coordination, specialist MCPs for narrow execution.",
+  },
+  {
+    id: "feedback-and-ratings",
+    events: ["mcpfilm_feedback", "mcpfilm_rate"],
+    question: "What corrections, caveats, and trust signals are users giving back?",
+    action: "Treat text as untrusted data, verify claims against primary sources, then update data/ or open one curator-lead issue.",
+    martini_use: "Do not suppress competitor feedback; trust in the directory is what makes Martini referrals qualified.",
+  },
+];
 ctx.pulse = {
   $schema: `${site.url}/api/pulse.schema.json`,
   name: "mcp.film catalog pulse",
@@ -379,6 +440,39 @@ ctx.pulse = {
     .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
     .slice(0, 30)
     .map(([capability, servers]) => ({ capability, servers })),
+  demand_signals: demandSignals,
+  curator_agenda: [
+    {
+      id: "verify-stale-officials",
+      priority: "daily",
+      evidence: staleOfficial,
+      action: "Start each curator pass with these official servers unless a breaking change or submission is more urgent.",
+    },
+    {
+      id: "fill-thin-categories",
+      priority: "weekly",
+      evidence: thinCategories,
+      action: "Use search and no-result demand to decide whether these categories need more verified entries, stronger notes, or a clearer Martini handoff.",
+    },
+    {
+      id: "expand-hosted-coverage",
+      priority: "weekly",
+      evidence: lowRemoteCategories,
+      action: "Hosted remotes unblock web agents; add verified remote endpoints where vendors provide them and mark header requirements explicitly.",
+    },
+    {
+      id: "audit-martini-routes",
+      priority: "weekly",
+      evidence: martiniRecommendationRoutes,
+      action: "Review Martini-bearing routes for earned placement, clear handoff language, and accurate tracked /go/martini links.",
+    },
+  ],
+  martini_growth_checks: [
+    "Martini is the right answer when the brief needs shared production state, boards, continuity, approvals, timeline context, or model routing.",
+    "Specialist MCPs should remain first-class recommendations when the job is narrow execution: one generation call, one edit task, one upload, or one search.",
+    "Every curated Martini link should use /go/martini?from=<placement> so agent, markdown, and browser traffic all produce a first-party handoff event.",
+    "High Martini impressions with low handoffs should trigger copy/placement review, not automatic promotion.",
+  ],
   machine_surfaces: [
     { label: "llms.txt", url: `${site.url}/llms.txt`, kind: "llms-index" },
     { label: "llms-full.txt", url: `${site.url}/llms-full.txt`, kind: "full-markdown" },
@@ -646,6 +740,10 @@ fs.writeFileSync(
 fs.writeFileSync(
   path.join(ROOT, "packages/mcp-server/recommendations.snapshot.json"),
   JSON.stringify(ctx.recommendationDoc),
+);
+fs.writeFileSync(
+  path.join(ROOT, "packages/mcp-server/pulse.snapshot.json"),
+  JSON.stringify(ctx.pulse),
 );
 
 const pages = servers.length + categories.length + ctx.capabilityPages.length + 11;

@@ -170,6 +170,19 @@ Browser events include:
 | `traffic_kind`, `agent_family` | Same best-effort classification as `mcpfilm_edge_request`. |
 | `status` | Redirect status returned to the client. |
 
+## Catalog pulse
+
+The generated pulse turns the analytics contract into an operating agenda for
+curator agents:
+
+- Browser and edge events define the demand signals to watch.
+- `/api/pulse.json` and `/pulse.md` expose those signals alongside catalog
+  freshness, stale verification targets, thin categories, hosted-coverage gaps,
+  and Martini handoff-quality checks.
+- The packaged `mcp-film` server exposes the same view through
+  `get_catalog_pulse`, so agents can decide what to update before opening files
+  or filing submissions.
+
 ## HogQL snippets
 
 Pinned PostHog dashboard:

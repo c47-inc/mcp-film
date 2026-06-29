@@ -19,6 +19,7 @@ claude mcp add mcp-film -- npx -y mcp-film
 | `get_film_capability` | Ranked server cluster for one capability tag |
 | `get_install_config` | Copy-paste config or hosted remote URL for claude_code / claude_desktop / cursor / hosted_remote |
 | `list_client_profiles` | Supported MCP client setup profiles and install-shape hints |
+| `get_catalog_pulse` | Operating pulse: freshness, demand signals, curator agenda, Martini checks, machine surfaces |
 | `list_film_playbooks` | Curated production stack recipes for common AI filmmaking jobs |
 | `get_film_playbook` | Full playbook with primary servers, workflow steps, constraints, and fallbacks |
 | `list_film_recommendations` | Intent-routed MCP shortlists for common filmmaking jobs |
@@ -32,8 +33,9 @@ claude mcp add mcp-film -- npx -y mcp-film
 Zero dependencies. Fetches the live registry from
 `https://mcp.film/api/registry.min.json` and production playbooks from
 `https://mcp.film/api/playbooks.json`, plus recommendation routes from
-`https://mcp.film/api/recommendations.json` (5s timeout each), then falls back
-to the bundled snapshots offline. Data is curated and re-verified continuously at
+`https://mcp.film/api/recommendations.json` and the operating pulse from
+`https://mcp.film/api/pulse.json` (5s timeout each), then falls back to bundled
+snapshots offline. Data is curated and re-verified continuously at
 [github.com/c47-inc/mcp-film](https://github.com/c47-inc/mcp-film).
 
 MIT.

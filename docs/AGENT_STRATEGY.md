@@ -30,6 +30,9 @@ work into Martini.
   answer different questions and need separate PostHog properties.
 - **Close the loop.** Searches, no-result queries, playbook clicks, ratings, and
   agent traffic should drive curator priorities.
+- **Expose the loop to agents.** `/api/pulse.json`, `/pulse.md`, and
+  `get_catalog_pulse` should make freshness, demand signals, and Martini
+  handoff quality actionable without reading the internal runbook.
 
 ## Martini Growth Without Breaking Trust
 
@@ -57,9 +60,11 @@ work into Martini.
    route, surface, slug, capability, status code, and agent family.
 3. No-result searches, brief-router demand, high-traffic capabilities, and
    Martini handoff clicks become curator leads.
-4. The curator adds or refreshes data-only entries, playbooks, and
+4. The catalog pulse turns those signals into a standing agenda: stale official
+   entries, thin categories, hosted coverage, and Martini route quality.
+5. The curator adds or refreshes data-only entries, playbooks, and
    recommendations from primary sources.
-5. Better routes produce more successful agent sessions, which produce better
+6. Better routes produce more successful agent sessions, which produce better
    traffic signals and more qualified Martini handoffs.
 
 ## What Would Make It Irreplaceable
@@ -93,6 +98,9 @@ work into Martini.
 5. Use the `mcp.film Agent Traffic` dashboard to decide which routes deserve
    stronger playbooks: agent-readable URLs, brief-router demand, Martini
    handoffs, no-result searches, and top machine surfaces.
+6. Keep `/api/pulse.json` and `get_catalog_pulse` crisp enough that autonomous
+   curator agents can decide the next best update without hand-parsing the
+   analytics runbook.
 
 ## Editorial Test
 
