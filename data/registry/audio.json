@@ -115,6 +115,29 @@
     "notes": "Important caveat: Suno has NO official public API as of 2026 — all Suno APIs/MCPs are unofficial resellers and may violate Suno's ToS; commercial-rights claims cannot be guaranteed. The same applies to all Udio wrappers. For licensed-by-design music, prefer Lyria (Google GenMedia) or Stable Audio via the fal hub."
   },
   {
+    "slug": "mureka",
+    "name": "Mureka MCP",
+    "vendor": "Mureka.ai",
+    "official": true,
+    "category": "music",
+    "featured": false,
+    "tagline": "Official Mureka server for lyrics, songs, and instrumental background music.",
+    "description": "Mureka's official MCP server lets agents generate lyrics, turn lyrics into songs, and create instrumental background music through the Mureka API, saving audio files locally. For a filmmaker-agent, it is a cleaner first-party alternative to Suno resellers when you need temp songs, cue sketches, or quick underscore drafts from the same client.",
+    "capabilities": ["music", "lyrics", "song-generation", "instrumental", "background-music", "local-playback"],
+    "tools_sample": ["generate_lyrics", "generate_song", "generate_instrumental", "play_audio"],
+    "install": {
+      "claude_code": "claude mcp add mureka -e MUREKA_API_KEY=YOUR_KEY -e MUREKA_API_URL=https://api.mureka.ai -- uvx mureka-mcp",
+      "remote_url": null,
+      "stdio_command": "uvx mureka-mcp"
+    },
+    "auth": { "type": "api_key", "env_var": "MUREKA_API_KEY", "key_url": "https://platform.mureka.ai/apiKeys" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/SkyworkAI/Mureka-mcp", "docs": "https://platform.mureka.ai/docs/en/quickstart.html", "site": "https://platform.mureka.ai" },
+    "added": "2026-06-29",
+    "verified": "2026-06-29",
+    "notes": "Official MIT server, PyPI mureka-mcp 0.0.13, Python >=3.10, 106 stars; last repo push was May 2025. The README warns that Mureka credits are required. The broader Mureka API now includes prompt-to-song, soundtrack, stems, remix, region editing, and TTS endpoints, but this MCP exposes only lyrics, lyric-to-song, instrumental generation, and local playback. Audio saves to Desktop by default; set MUREKA_MCP_BASE_PATH and TIME_OUT_SECONDS for production runs."
+  },
+  {
     "slug": "freesound",
     "name": "Freesound MCP Server",
     "vendor": "Community (johnkimdw)",
