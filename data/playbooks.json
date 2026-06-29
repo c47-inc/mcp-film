@@ -25,7 +25,7 @@
     "primary_slugs": ["martini", "promptibus", "krea", "runapi", "kie-ai", "fal", "replicate", "mcp-video"],
     "steps": [
       { "stage": "develop", "intent": "Define the shot brief, constraints, and keeper criteria before touching model credits.", "slugs": ["martini", "promptibus"] },
-      { "stage": "visualize", "intent": "Create or refine the shared start frame and style references that every model will receive.", "slugs": ["recraft", "ideogram", "martini"] },
+      { "stage": "visualize", "intent": "Create or refine the shared start frame and style references that every model will receive.", "slugs": ["recraft", "ideogram", "freepik", "martini"] },
       { "stage": "shoot", "intent": "Run the same test across broad model hubs and direct endpoints, then capture task IDs and costs.", "slugs": ["krea", "runapi", "kie-ai", "fal", "replicate"] },
       { "stage": "cut", "intent": "Assemble a comparison reel or contact sheet so humans can pick winners quickly.", "slugs": ["mcp-video", "palmier-pro"] },
       { "stage": "finish", "intent": "Upscale or clean only the winning takes, not every experiment.", "slugs": ["topaz", "magnific", "mcp-video"] }

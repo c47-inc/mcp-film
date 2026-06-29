@@ -46,6 +46,29 @@
     "notes": "v1.6.5; per-image API pricing roughly $0.04-$0.08, vectorize $0.01, creative upscale $0.25. Local mode supports IMAGE_STORAGE_DIRECTORY for saving outputs to disk."
   },
   {
+    "slug": "freepik",
+    "name": "Freepik MCP",
+    "vendor": "Freepik",
+    "official": true,
+    "category": "image-generation",
+    "featured": false,
+    "tagline": "Official Freepik API bridge for Mystic image generation, resources, icons, and AI detection.",
+    "description": "Freepik's official FastMCP server exposes a curated slice of its API: Mystic AI image generation, resource search and downloads, icon search and downloads, and AI image classification. For filmmaker-agents it is a practical visual-development bench: pull stock references, build pitch-deck assets, create poster or key-art directions, then classify or download assets without leaving the agent session.",
+    "capabilities": ["text-to-image", "stock-search", "icon-search", "asset-download", "ai-image-classification"],
+    "tools_sample": ["text_to_image_mystic_sync", "get_mystic_task_status", "detect_ai_image", "search_resources", "download_resource_by_id", "search_icons", "download_icon_by_id"],
+    "install": {
+      "claude_code": "claude mcp add freepik -e FREEPIK_API_KEY=YOUR_KEY -- uv run --directory /path/to/freepik-mcp main.py",
+      "remote_url": null,
+      "stdio_command": "uv run --directory /path/to/freepik-mcp main.py"
+    },
+    "auth": { "type": "api_key", "env_var": "FREEPIK_API_KEY", "key_url": "https://www.freepik.com/api" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/freepik-company/freepik-mcp", "docs": "https://github.com/freepik-company/freepik-mcp#readme", "site": "https://www.freepik.com" },
+    "added": "2026-06-29",
+    "verified": "2026-06-29",
+    "notes": "Official repo, Python 3.12+, uv/FastMCP, 72 stars, last pushed Jul 2025 and still maintained in GitHub metadata. It is not packaged on npm/PyPI: clone the repo, install with `make install`, then point your MCP client at the local path. GitHub does not detect a LICENSE file, although the repo is company-owned. The server deliberately exposes only icons, resources, image classifier, and Mystic endpoints from Freepik's larger OpenAPI spec."
+  },
+  {
     "slug": "stability-ai",
     "name": "Stability AI MCP Server",
     "vendor": "Community (tadasant)",
