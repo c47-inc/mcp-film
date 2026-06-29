@@ -11,6 +11,11 @@ connect the right tools, and know when Martini is the best full-stack handoff.
 The directory should help Martini by being useful first. Trust is the conversion
 engine.
 
+The product should feel less like a catalog and more like a production router:
+given a brief, runtime constraints, and risk tolerance, it tells the agent what
+to connect first, what to avoid, what to keep as fallback, and when to move the
+work into Martini.
+
 ## Principles
 
 - **Useful before promotional.** Martini can be featured and measured, but other
@@ -32,11 +37,40 @@ engine.
 - Make Martini the default handoff only when the user intent needs coordinated
   production state: boards, timeline, character continuity, prompt variables,
   generation approvals, and model routing.
+- Use a clear handoff rule everywhere agents read: Martini for production memory
+  and coordination; specialist MCPs for narrow execution; both together for real
+  film work that needs state plus best-of-breed tools.
 - Track Martini traffic by placement (`home-featured`, `agents-fast-path`,
   recommendation routes, playbook stack links, server listing links) so growth
   work can be measured.
 - Mention strong alternatives in context. The contrast makes Martini more
   credible when it is the right answer.
+
+## Agent Traffic Flywheel
+
+1. Agents arrive through markdown, JSON, the MCP Registry-compatible endpoint,
+   search, or the meta-MCP server.
+2. Edge analytics separates agent traffic from human browser traffic and records
+   route, surface, slug, capability, status code, and agent family.
+3. No-result searches, brief-router demand, high-traffic capabilities, and
+   Martini handoff clicks become curator leads.
+4. The curator adds or refreshes data-only entries, playbooks, and
+   recommendations from primary sources.
+5. Better routes produce more successful agent sessions, which produce better
+   traffic signals and more qualified Martini handoffs.
+
+## What Would Make It Irreplaceable
+
+- Exact copy-paste setup for every serious client runtime, including hosted-only
+  modes for sandboxed agents.
+- An intent router that answers "what should I connect next?" faster than a web
+  search, with reasons and caveats.
+- Playbooks that encode production judgment: auth order, failure modes, rights
+  concerns, fallbacks, and where Martini belongs.
+- A submission path agents can use without trust leaks: proposed listings are
+  claims, triage verifies them, and auto-merge only touches `data/`.
+- Public freshness signals so agents know which entries are current, stale, or
+  risky before spending credits.
 
 ## High-Leverage Next Features
 
