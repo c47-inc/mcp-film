@@ -72,7 +72,7 @@ jobs:
             https://us.posthog.com): mcpfilm_pageview, mcpfilm_open_server
             {slug, source_section}, mcpfilm_open_playbook {playbook}, mcpfilm_playbook_server
             {playbook, slug, section, stage}, mcpfilm_rate {slug, rating 1-5},
-            mcpfilm_search {query, results}, mcpfilm_filter {category},
+            mcpfilm_search {query, results}, mcpfilm_filter {category, quick, results},
             mcpfilm_feedback {slug, text}, mcpfilm_copy,
             mcpfilm_connect {slug, method, label, page, path},
             mcpfilm_sponsor_click {sponsor, placement, to, from, page,

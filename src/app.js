@@ -24,7 +24,9 @@
   const sections = [...document.querySelectorAll("[data-cat-section]")];
   const noResults = document.getElementById("no-results");
   const filters = [...document.querySelectorAll(".chip-filter")];
+  const quickFilters = [...document.querySelectorAll(".quick-filter[data-quick-filter]")];
   let activeCat = "";
+  const activeQuick = new Set();
 
   const applyFilter = () => {
     const q = (search?.value ?? "").trim().toLowerCase();
@@ -32,7 +34,9 @@
     for (const card of cards) {
       const hit =
         (!q || card.dataset.search.includes(q)) &&
-        (!activeCat || card.dataset.cat === activeCat);
+        (!activeCat || card.dataset.cat === activeCat) &&
+        (!activeQuick.has("official") || card.dataset.official === "true") &&
+        (!activeQuick.has("remote") || card.dataset.remote === "true");
       card.hidden = !hit;
       if (hit) shown++;
     }
@@ -68,7 +72,19 @@
       activeCat = btn.dataset.filter;
       filters.forEach((b) => b.classList.toggle("is-on", b === btn));
       applyFilter();
-      if (activeCat) ph("mcpfilm_filter", { category: activeCat });
+      ph("mcpfilm_filter", { category: activeCat || null, quick: [...activeQuick], results: cards.filter((c) => !c.hidden).length });
+    });
+  }
+
+  for (const btn of quickFilters) {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.quickFilter;
+      if (activeQuick.has(key)) activeQuick.delete(key);
+      else activeQuick.add(key);
+      btn.classList.toggle("is-on", activeQuick.has(key));
+      btn.setAttribute("aria-pressed", String(activeQuick.has(key)));
+      applyFilter();
+      ph("mcpfilm_filter", { category: activeCat || null, quick: [...activeQuick], results: cards.filter((c) => !c.hidden).length });
     });
   }
 

@@ -117,7 +117,7 @@ Browser events include:
 | --- | --- |
 | `mcpfilm_pageview` | `path`, `page` |
 | `mcpfilm_search` | `query`, `results` |
-| `mcpfilm_filter` | `category` |
+| `mcpfilm_filter` | `category`, `quick`, `results` |
 | `mcpfilm_open_server` | `slug`, `from`, optional `source_section`, `playbook`, `playbook_section`, `playbook_stage` |
 | `mcpfilm_open_playbook` | `playbook`, `from` |
 | `mcpfilm_playbook_server` | `slug`, `playbook`, `section`, `stage` |

@@ -99,12 +99,17 @@ code {
   transition: border-color 0.25s ease;
 }
 .site-head.is-scrolled { border-bottom-color: var(--hairline); }
-.brand { font-size: 14.5px; font-weight: 600; letter-spacing: 0; display: inline-flex; align-items: center; gap: 8px; }
+.brand { font-size: 14.5px; font-weight: 600; letter-spacing: 0; display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; white-space: nowrap; }
 .brand-dot { color: var(--ink-3); }
-.site-nav { display: flex; align-items: center; gap: clamp(0.2rem, 1vw, 0.45rem); }
+.site-nav {
+  display: flex; align-items: center; justify-content: flex-end; gap: clamp(0.2rem, 1vw, 0.45rem);
+  flex: 1 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none;
+}
+.site-nav::-webkit-scrollbar { display: none; }
 .site-nav a {
   font-size: 13px; font-weight: 500; color: var(--ink-2);
   padding: 6px 10px; border-radius: 7px;
+  flex: 0 0 auto;
   transition: background 0.12s, color 0.12s;
 }
 .site-nav a:hover { color: var(--ink); background: var(--fill); }
@@ -114,6 +119,9 @@ code {
 }
 .site-nav .nav-cta:hover { background: #2e2e33; color: var(--paper); }
 .nav-gh { color: var(--ink-3); }
+@media (max-width: 720px) {
+  .site-nav { justify-content: flex-start; }
+}
 
 main { max-width: 1200px; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 2.5rem); }
 
@@ -125,7 +133,7 @@ main { max-width: 1200px; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 2.5rem)
   width: 100vw; height: calc(100% + 57px);
   pointer-events: none; z-index: -1;
 }
-body { overflow-x: clip; }
+html, body { overflow-x: clip; }
 .hero-inner { position: relative; }
 .hero-ticker {
   display: inline-flex; align-items: center; gap: 8px;
@@ -181,13 +189,14 @@ h1 {
 .featured-row {
   display: grid; gap: 0;
   grid-template-columns: 1fr;
+  min-width: 0;
   margin: clamp(1rem, 2.5vw, 2rem) 0 0;
   background: var(--inverse);
   border-radius: var(--r-lg);
   overflow: hidden;
 }
 @media (min-width: 880px) { .featured-row { grid-template-columns: 5fr 4fr; } }
-.feature { display: block; padding: clamp(1.5rem, 3vw, 2.2rem); color: var(--inverse-ink); }
+.feature { display: block; min-width: 0; padding: clamp(1.5rem, 3vw, 2.2rem); color: var(--inverse-ink); }
 .feature:hover { background: var(--inverse-2); }
 .feature-eyebrow { color: var(--inverse-dim); margin: 0 0 0.9rem; }
 .feature-name {
@@ -202,6 +211,7 @@ h1 {
 .feature-cta::after { content: " →"; color: var(--inverse-dim); }
 
 .agent-callout {
+  min-width: 0;
   padding: clamp(1.5rem, 3vw, 2.2rem);
   border-top: 1px solid var(--inverse-line);
   color: var(--inverse-dim); font-size: 13px;
@@ -254,22 +264,34 @@ h1 {
   border-radius: 4px; padding: 1px 6px;
 }
 .dir-side .label { margin: 0.4rem 0 0.1rem; }
+.quick-filters {
+  display: flex; flex-direction: column; gap: 4px;
+  border: 1px solid var(--hairline); border-radius: var(--r);
+  padding: 6px; background: var(--paper-dim);
+}
 .dir-nav { display: flex; flex-direction: column; gap: 1px; }
-button.chip-filter {
+button.chip-filter,
+button.quick-filter {
   display: flex; justify-content: space-between; align-items: center; gap: 8px;
   font: inherit; font-size: 13px; font-weight: 450; text-align: left;
   color: var(--ink-2); background: none; border: 0;
   border-radius: 7px; padding: 5.5px 9px; cursor: pointer;
   transition: background 0.1s, color 0.1s;
 }
-button.chip-filter:hover { background: var(--fill); color: var(--ink); }
-button.chip-filter.is-on { background: var(--fill); color: var(--ink); font-weight: 550; }
+button.chip-filter:hover,
+button.quick-filter:hover { background: var(--fill); color: var(--ink); }
+button.chip-filter.is-on,
+button.quick-filter.is-on { background: var(--fill); color: var(--ink); font-weight: 550; }
 button.chip-filter.is-spy { background: var(--fill); color: var(--ink); }
-button.chip-filter .count { font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); }
+button.chip-filter .count,
+button.quick-filter .count { font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); }
 @media (max-width: 999px) {
+  .quick-filters { flex-direction: row; flex-wrap: wrap; border: 0; padding: 0; background: none; }
   .dir-nav { flex-direction: row; flex-wrap: wrap; gap: 4px; }
-  button.chip-filter { border: 1px solid var(--hairline); border-radius: 999px; padding: 4px 12px; }
-  button.chip-filter .count { display: none; }
+  button.chip-filter,
+  button.quick-filter { border: 1px solid var(--hairline); border-radius: 999px; padding: 4px 12px; }
+  button.chip-filter .count,
+  button.quick-filter .count { display: none; }
 }
 
 /* sections inside the grid column */

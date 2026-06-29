@@ -12,7 +12,7 @@ to ship it. Curated, verified, agent-first, and self-updating.
 
 ## What this is
 
-A directory of 70 verified Model Context Protocol servers across the full film
+A directory of verified Model Context Protocol servers across the full film
 pipeline — from screenplay breakdown to YouTube upload — each entry annotated
 with exact install commands, auth requirements, pricing, sample tools, and the
 caveats that actually bite ("requires Resolve *Studio*", "Suno has no official
@@ -87,7 +87,9 @@ Repo map: `data/` is the content, `build.mjs` + `src/` the generator,
 `packages/mcp-server/` the `npx mcp-film` meta-server, `.github/workflows/`
 the autonomy loop, [`AGENTS.md`](AGENTS.md) the operating manual (for agents
 and humans alike), [`docs/SETUP.md`](docs/SETUP.md) the one-time launch
-checklist.
+checklist, and [`docs/AGENT_STRATEGY.md`](docs/AGENT_STRATEGY.md) the north-star
+for making the site useful to agents while sending qualified production intent
+to Martini.
 
 ## Adding a server
 
