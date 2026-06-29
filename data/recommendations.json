@@ -83,6 +83,7 @@
       { "slug": "twelvelabs", "role": "semantic-video-search", "why": "Indexes, searches, summarizes, and analyzes video libraries for moment retrieval." },
       { "slug": "frameio", "role": "review-workflow", "why": "Frame.io review comments, shares, versions, uploads, metadata, and webhooks." },
       { "slug": "google-drive", "role": "source-library", "why": "Hosted file search and access for governed Workspace footage folders." },
+      { "slug": "cloudinary-assets", "role": "media-asset-layer", "why": "Official hosted/local MCP for uploading, searching, transforming, archiving, and delivering image/video assets." },
       { "slug": "palmier-pro", "role": "timeline-assembly", "why": "Agent-operable timeline editing and media search for trailer assembly." },
       { "slug": "mux", "role": "video-hosting", "why": "Official video hosting, asset upload, playback IDs, analytics, and webhooks." }
     ],
@@ -137,7 +138,8 @@
       { "slug": "krea", "role": "hosted-model-workbench", "why": "Hosted MCP for image/video models, schemas, uploads, and job widgets." },
       { "slug": "canva", "role": "hosted-campaign-collateral", "why": "Hosted OAuth MCP for design generation, campaign assets, comments, and exports." },
       { "slug": "airtable", "role": "hosted-production-db", "why": "Hosted production tracking and schema-aware base operations." },
-      { "slug": "google-drive", "role": "hosted-files", "why": "Official remote file search, read, create, and governance-aware access." }
+      { "slug": "google-drive", "role": "hosted-files", "why": "Official remote file search, read, create, and governance-aware access." },
+      { "slug": "cloudinary-assets", "role": "hosted-media-assets", "why": "Streamable HTTP endpoint for media uploads, search, transformations, archives, and CDN-ready asset delivery." }
     ],
     "fallback_slugs": ["higgsfield", "pika", "recraft", "replicate", "dropbox"],
     "playbook_id": "commercial-sprint"

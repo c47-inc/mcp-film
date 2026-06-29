@@ -92,6 +92,30 @@
     "notes": "Beta; exact tool names not published on the public help page. A separate official Dash MCP exists for enterprise search (dropbox/mcp-server-dash). Community Go alternative for classic file access: ngs/dropbox-mcp-server (brew install dropbox-mcp-server)."
   },
   {
+    "slug": "cloudinary-assets",
+    "name": "Cloudinary Asset Management MCP",
+    "vendor": "Cloudinary",
+    "official": true,
+    "category": "production-ops",
+    "featured": false,
+    "tagline": "Official Cloudinary MCP for uploading, organizing, searching, and transforming media assets.",
+    "description": "Cloudinary's official Asset Management MCP gives agents a media backlot: upload images, videos, and files; search and organize assets; apply Cloudinary transformations; and generate archives for delivery. For film pipelines, it is the missing bridge between generated takes, campaign assets, review exports, and CDN-ready versions.",
+    "capabilities": ["asset-management", "media-upload", "media-search", "video-assets", "image-transforms", "video-transforms", "cdn-delivery", "archive-generation", "mcp-ui-apps"],
+    "tools_sample": ["transform-asset", "get-tx-reference", "list_tools", "describe_tool_input", "execute_tool", "list_scopes"],
+    "install": {
+      "claude_code": "claude mcp add cloudinary-assets -e CLOUDINARY_CLOUD_NAME=YOUR_CLOUD -e CLOUDINARY_API_KEY=YOUR_KEY -e CLOUDINARY_API_SECRET=YOUR_SECRET -- npx -y @cloudinary/asset-management-mcp start",
+      "remote_url": "https://asset-management.mcp.cloudinary.com/mcp",
+      "remote_headers": ["cloudinary-cloud-name", "cloudinary-api-key", "cloudinary-api-secret"],
+      "stdio_command": "npx -y @cloudinary/asset-management-mcp start"
+    },
+    "auth": { "type": "api_key", "env_var": "CLOUDINARY_URL", "key_url": "Cloudinary Dashboard → Settings → Access Keys; remote endpoint expects cloudinary-cloud-name, cloudinary-api-key, and cloudinary-api-secret headers" },
+    "pricing": "freemium",
+    "links": { "repo": "https://github.com/cloudinary/asset-management-mcp", "docs": "https://cloudinary.com/documentation/cloudinary_llm_mcp", "site": "https://cloudinary.com" },
+    "added": "2026-06-29",
+    "verified": "2026-06-29",
+    "notes": "npm @cloudinary/asset-management-mcp 0.9.3, official, published May 25 2026. The hosted Streamable HTTP endpoint is listed in server.json but requires Cloudinary credential headers, so many clients will use stdio with env vars instead. Node 20+ is recommended for local use. Cloudinary also publishes separate official MCPs for analysis, structured metadata, and environment configuration; this listing picks the broad asset-management server as the filmmaker-facing entry."
+  },
+  {
     "slug": "google-workspace",
     "name": "Google Workspace MCP",
     "vendor": "Community (taylorwilsdon)",

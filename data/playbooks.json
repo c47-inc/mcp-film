@@ -126,12 +126,12 @@
     ],
     "martini_handoff": "Use Martini when archive pulls become new production boards, generated bridge shots, campaign variants, or a trailer package that must preserve approvals and context.",
     "constraints": ["Index only footage you are allowed to process.", "Keep human review before publishing public cuts.", "Avoid re-transcribing media already indexed."],
-    "primary_slugs": ["twelvelabs", "frameio", "google-drive", "dropbox", "palmier-pro", "mux", "vimeo"],
+    "primary_slugs": ["twelvelabs", "frameio", "google-drive", "dropbox", "cloudinary-assets", "palmier-pro", "mux", "vimeo"],
     "steps": [
-      { "stage": "develop", "intent": "Collect footage sources and production notes.", "slugs": ["google-drive", "dropbox", "frameio"] },
+      { "stage": "develop", "intent": "Collect footage sources, media asset libraries, and production notes.", "slugs": ["google-drive", "dropbox", "cloudinary-assets", "frameio"] },
       { "stage": "cut", "intent": "Search semantic video moments, transcripts, and media bins before assembling.", "slugs": ["twelvelabs", "palmier-pro", "deepgram"] },
       { "stage": "finish", "intent": "Create clean review exports and delivery variants.", "slugs": ["mcp-video", "topaz"] },
-      { "stage": "ship", "intent": "Host the cut, collect review feedback, and update metadata.", "slugs": ["mux", "vimeo", "youtube-yutu"] }
+      { "stage": "ship", "intent": "Host the cut, transform delivery assets, collect review feedback, and update metadata.", "slugs": ["cloudinary-assets", "mux", "vimeo", "youtube-yutu"] }
     ],
     "fallback_slugs": ["premiere-pro", "davinci-resolve", "youtube-data"]
   },

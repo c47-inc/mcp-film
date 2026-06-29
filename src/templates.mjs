@@ -48,15 +48,20 @@ const capabilityMdLink = (ctx, id) =>
 const cmdLike = (cmd) =>
   typeof cmd === "string" && !cmd.includes("(") && !/\bafter\b|\bclone\b|\bthen\b/i.test(cmd);
 
+const remoteHeaders = (s) =>
+  Array.isArray(s.install?.remote_headers) ? s.install.remote_headers.filter(Boolean) : [];
+
+const remoteNeedsHeaders = (s) => remoteHeaders(s).length > 0;
+
 export const claudeCodeCmd = (s) => {
   if (s.install?.claude_code && cmdLike(s.install.claude_code)) return s.install.claude_code;
-  if (s.install?.remote_url) return `claude mcp add --transport http ${s.slug} ${s.install.remote_url}`;
+  if (s.install?.remote_url && !remoteNeedsHeaders(s)) return `claude mcp add --transport http ${s.slug} ${s.install.remote_url}`;
   if (cmdLike(s.install?.stdio_command)) return `claude mcp add ${s.slug} -- ${s.install.stdio_command}`;
   return null;
 };
 
 const desktopConfig = (s) => {
-  if (s.install?.remote_url) {
+  if (s.install?.remote_url && !remoteNeedsHeaders(s)) {
     return JSON.stringify(
       { mcpServers: { [s.slug]: { command: "npx", args: ["-y", "mcp-remote", s.install.remote_url] } } },
       null, 2);
@@ -70,7 +75,7 @@ const desktopConfig = (s) => {
 };
 
 const cursorConfig = (s) => {
-  if (s.install?.remote_url) {
+  if (s.install?.remote_url && !remoteNeedsHeaders(s)) {
     return JSON.stringify({ mcpServers: { [s.slug]: { url: s.install.remote_url } } }, null, 2);
   }
   const cmd = s.install?.stdio_command;
@@ -92,6 +97,7 @@ export const clientProfilesFor = (ctx) => {
     auth_type: s.auth?.type ?? null,
     required_env: s.auth?.env_var ?? null,
     remote_url: s.install?.remote_url ?? null,
+    remote_headers: remoteHeaders(s),
     claude_code: claudeCodeCmd(s),
     claude_desktop: desktopConfig(s) ? JSON.parse(desktopConfig(s)) : null,
     cursor: cursorConfig(s) ? JSON.parse(cursorConfig(s)) : null,
@@ -779,6 +785,9 @@ export const renderServer = (ctx, s) => {
   const connect = [];
   if (s.install?.remote_url) {
     connect.push(codeBlock("Remote endpoint (Streamable HTTP)", s.install.remote_url, "txt", { "copy-kind": "connect", "copy-method": "remote_url", "copy-slug": s.slug }));
+    if (remoteNeedsHeaders(s)) {
+      connect.push(`<p class="connect-note">Remote headers required: ${remoteHeaders(s).map((h) => `<code class="mono">${esc(h)}</code>`).join(", ")}. Use the local stdio command when your client cannot attach custom MCP headers.</p>`);
+    }
   }
   if (cc) connect.push(codeBlock("Claude Code", cc, "sh", { "copy-kind": "connect", "copy-method": "claude_code", "copy-slug": s.slug }));
   else if (docsUrl) connect.push(`<p class="connect-note">Connection is set up through the vendor's flow — follow the <a href="${esc(docsUrl)}" rel="noopener">official connect instructions</a>.</p>`);
@@ -934,7 +943,10 @@ export const renderServerMd = (ctx, s) => {
     "## Connect",
     "",
   ];
-  if (s.install?.remote_url) lines.push(`- Remote endpoint: \`${s.install.remote_url}\``);
+  if (s.install?.remote_url) {
+    lines.push(`- Remote endpoint: \`${s.install.remote_url}\``);
+    if (remoteNeedsHeaders(s)) lines.push(`- Remote headers required: ${remoteHeaders(s).map((h) => `\`${h}\``).join(", ")}`);
+  }
   if (cc) lines.push("- Claude Code: `" + cc + "`");
   if (s.install?.stdio_command) lines.push(`- Local: \`${s.install.stdio_command}\``);
   if (!s.install?.remote_url && !cc && !s.install?.stdio_command) {
@@ -1456,6 +1468,7 @@ export const renderRemotes = (ctx) => {
   const rows = remotes.map((s) => {
     const cat = catById(ctx, s.category);
     const cc = claudeCodeCmd(s);
+    const headers = remoteHeaders(s);
     return `
   <article class="remote-row">
     <div class="remote-ident">
@@ -1469,6 +1482,7 @@ export const renderRemotes = (ctx) => {
     <div class="remote-connect">
       <span class="label">Endpoint</span>
       <code class="mono">${esc(s.install.remote_url)}</code>
+      ${headers.length ? `<p class="remote-auth">Headers: ${headers.map((h) => `<code class="mono">${esc(h)}</code>`).join(" ")}</p>` : ""}
     </div>
     <div class="remote-connect">
       <span class="label">Claude Code</span>
@@ -1542,6 +1556,7 @@ export const renderRemotesMd = (ctx) => {
   for (const s of remotes) {
     const cat = catById(ctx, s.category);
     const cc = claudeCodeCmd(s);
+    const headers = remoteHeaders(s);
     lines.push(
       `## ${s.name}`,
       "",
@@ -1561,6 +1576,7 @@ export const renderRemotesMd = (ctx) => {
       "```",
       "",
     );
+    if (headers.length) lines.push(`Required headers: ${headers.map((h) => `\`${h}\``).join(", ")}`, "");
     if (cc) {
       lines.push("Claude Code:", "", "```sh", cc, "```", "");
     }
@@ -1584,7 +1600,7 @@ export const renderForAgents = (ctx) => {
 <section class="server-main agents-doc">
   <h2>The one-request answer</h2>
   ${codeBlock("Everything: all servers, categories, ratings", `curl -s ${site.url}/api/registry.json`)}
-  <p>Stable JSON, regenerated on every site build. Fields per server: <code class="mono">slug, name, vendor, official, category, tagline, description, capabilities, tools_sample, install.{claude_code, remote_url, stdio_command}, auth, pricing, links, added, verified, notes</code>.</p>
+  <p>Stable JSON, regenerated on every site build. Fields per server: <code class="mono">slug, name, vendor, official, category, tagline, description, capabilities, tools_sample, install.{claude_code, remote_url, remote_headers, stdio_command}, auth, pricing, links, added, verified, notes</code>.</p>
 
   <h2>Fast paths for common agent jobs</h2>
   <ul class="agents-list">
@@ -1644,6 +1660,7 @@ export const renderForAgents = (ctx) => {
   <ul class="agents-list">
     <li><strong>official: true</strong> means the platform vendor maintains it. Prefer these.</li>
     <li><strong>install.remote_url</strong> means hosted Streamable HTTP — no local process, usually OAuth.</li>
+    <li><strong>install.remote_headers</strong> names custom headers a hosted remote requires; use stdio when your client cannot attach them.</li>
     <li><strong>auth.env_var</strong> names the key your runtime needs before connecting.</li>
     <li><strong>notes</strong> carry the caveats that bite agents: quota limits, ToS gray areas, local-app requirements.</li>
     <li><strong>verified</strong> is the date a human-or-agent last confirmed the server works as listed.</li>
@@ -1758,7 +1775,7 @@ Martini handoff rule:
   sound, review, and publishing.
 
 Server fields: slug, name, vendor, official (bool), category, tagline, description,
-capabilities[], tools_sample[], install.{claude_code,remote_url,stdio_command},
+capabilities[], tools_sample[], install.{claude_code,remote_url,remote_headers,stdio_command},
 auth.{type,env_var,key_url}, pricing (free|freemium|paid|credits), links, added,
 verified (last confirmed working), notes (caveats worth reading).
 

@@ -61,6 +61,12 @@ for (const s of servers) {
     if (s[d] && !/^\d{4}-\d{2}-\d{2}$/.test(s[d])) errors.push(`${where}: "${d}" must be YYYY-MM-DD`);
   }
   if (s.install?.remote_url && !isUrl(s.install.remote_url)) errors.push(`${where}: remote_url must be https`);
+  if (s.install?.remote_headers !== undefined) {
+    if (!Array.isArray(s.install.remote_headers) || s.install.remote_headers.some((h) => typeof h !== "string" || !h.trim())) {
+      errors.push(`${where}: install.remote_headers must be an array of non-empty header names`);
+    }
+    if (!s.install?.remote_url) errors.push(`${where}: install.remote_headers requires remote_url`);
+  }
   for (const [k, v] of Object.entries(s.links ?? {})) {
     if (v !== null && !isUrl(v)) errors.push(`${where}: links.${k} must be https or null`);
   }
@@ -198,6 +204,7 @@ const remoteSummary = (s) => {
     stage: cat?.stage ?? null,
     tagline: s.tagline,
     remote_url: s.install.remote_url,
+    remote_headers: s.install.remote_headers ?? [],
     claude_code: T.claudeCodeCmd(s),
     auth: s.auth,
     pricing: s.pricing,
@@ -430,7 +437,7 @@ ctx.clientProfilesSchema = {
       type: "array",
       items: {
         type: "object",
-        required: ["slug", "name", "official", "remote", "auth_type", "remote_url", "claude_code", "claude_desktop", "cursor", "docs"],
+        required: ["slug", "name", "official", "remote", "auth_type", "remote_url", "remote_headers", "claude_code", "claude_desktop", "cursor", "docs"],
         properties: {
           slug: { type: "string" },
           name: { type: "string" },
@@ -439,6 +446,7 @@ ctx.clientProfilesSchema = {
           auth_type: { type: ["string", "null"] },
           required_env: { type: ["string", "null"] },
           remote_url: { type: ["string", "null"], format: "uri" },
+          remote_headers: { type: "array", items: { type: "string" } },
           claude_code: { type: ["string", "null"] },
           claude_desktop: { type: ["object", "null"] },
           cursor: { type: ["object", "null"] },

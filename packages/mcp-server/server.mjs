@@ -151,20 +151,28 @@ function capabilityIndex(servers) {
 const cmdLike = (cmd) =>
   typeof cmd === "string" && !cmd.includes("(") && !/\bafter\b|\bclone\b|\bthen\b/i.test(cmd);
 
+const remoteHeaders = (s) =>
+  Array.isArray(s.install?.remote_headers) ? s.install.remote_headers.filter(Boolean) : [];
+
+const remoteNeedsHeaders = (s) => remoteHeaders(s).length > 0;
+
 function installConfig(s, client) {
   const out = { slug: s.slug, client };
   if (client === "claude_code") {
     if (s.install?.claude_code && cmdLike(s.install.claude_code)) out.command = s.install.claude_code;
-    else if (s.install?.remote_url) out.command = `claude mcp add --transport http ${s.slug} ${s.install.remote_url}`;
+    else if (s.install?.remote_url && !remoteNeedsHeaders(s)) out.command = `claude mcp add --transport http ${s.slug} ${s.install.remote_url}`;
     else if (cmdLike(s.install?.stdio_command)) out.command = `claude mcp add ${s.slug} -- ${s.install.stdio_command}`;
   } else if (client === "hosted_remote" || client === "generic_remote") {
     if (s.install?.remote_url) {
       out.remote_url = s.install.remote_url;
-      out.note = "Use this hosted MCP endpoint in a client that supports remote MCP connectors; complete the vendor OAuth/API-key flow in that client.";
+      if (remoteNeedsHeaders(s)) out.remote_headers = remoteHeaders(s);
+      out.note = remoteNeedsHeaders(s)
+        ? "Use this hosted MCP endpoint only in clients that can attach the required headers; otherwise use the stdio command."
+        : "Use this hosted MCP endpoint in a client that supports remote MCP connectors; complete the vendor OAuth/API-key flow in that client.";
     } else {
       out.note = "This server is local/stdio only; use a local client or choose a hosted remote entry.";
     }
-  } else if (s.install?.remote_url) {
+  } else if (s.install?.remote_url && !remoteNeedsHeaders(s)) {
     out.config =
       client === "cursor"
         ? { mcpServers: { [s.slug]: { url: s.install.remote_url } } }

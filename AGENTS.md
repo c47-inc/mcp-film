@@ -70,6 +70,7 @@ Schema per entry (all fields required unless noted):
   "install": {
     "claude_code": "exact verified command or null",
     "remote_url": "https hosted MCP endpoint or null",
+    "remote_headers": ["required header names"] /* optional, only for hosted remotes that need non-OAuth headers */,
     "stdio_command": "npx/uvx command, or prose if install is multi-step, or null"
   },
   "auth": { "type": "api_key|oauth|none|local-app", "env_var": "X or null", "key_url": "where to get access" },
