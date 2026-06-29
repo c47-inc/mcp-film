@@ -92,6 +92,29 @@
     "notes": "GPL-3.0 editor, 9.3k stars, v0.4.5 released Jun 28 2026. The MCP server and agent chat are open source, but the generative AI processing is closed. Hard platform caveat: macOS 26 Tahoe on Apple Silicon only, and the editor is early: no transitions, masking or graphics yet."
   },
   {
+    "slug": "fcp-mcp",
+    "name": "fcp-mcp",
+    "vendor": "Community (dreliq9 / Adam Steen)",
+    "official": false,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Final Cut Pro MCP with FCPXML editing, live control, media QC and Compressor dispatch.",
+    "description": "fcp-mcp gives agents a broad Final Cut Pro bench: parse and rewrite FCPXML, run QC for flash frames and gaps, build rough cuts, control FCP through AppleScript, analyze media through ffprobe, and send jobs to Apple Compressor. It matters when a filmmaker lives in Final Cut but still wants agent-operated timeline repair, captions, cross-NLE handoff, and export automation.",
+    "capabilities": ["final-cut-pro", "fcpxml", "nle-control", "timeline-qc", "media-analysis", "compressor", "cross-nle-export"],
+    "tools_sample": ["fcpxml_qc_report", "fcpxml_fix_flash_frames", "fcpxml_auto_rough_cut", "fcpxml_export_resolve", "fcp_open_library", "fcp_share", "media_loudness", "compressor_encode"],
+    "install": {
+      "claude_code": "claude mcp add-json fcp '{\"type\":\"stdio\",\"command\":\"fcp-mcp\"}' --scope user",
+      "remote_url": null,
+      "stdio_command": "fcp-mcp"
+    },
+    "auth": { "type": "local-app", "env_var": null, "key_url": "Requires macOS with Final Cut Pro for live-control tools; FCPXML tools work without FCP, FFmpeg is required for media tools, and Apple Compressor is optional" },
+    "pricing": "free",
+    "links": { "repo": "https://github.com/dreliq9/fcp-mcp", "docs": "https://github.com/dreliq9/fcp-mcp#readme", "site": "https://pypi.org/project/fcp-mcp/" },
+    "added": "2026-06-29",
+    "verified": "2026-06-29",
+    "notes": "MIT, PyPI fcp-mcp 0.2.0 uploaded Apr 23 2026, Python >=3.10, server.json present, 88 tools and 107 tests claimed by the repo. The caveat is maturity: only 1 GitHub star and last pushed May 21 2026. Treat it as the most complete-looking Final Cut MCP, not a battle-tested standard; local live-control depends on AppleScript and a running Final Cut Pro install. Optional FCP_MCP_OUTPUT_DIR changes where modified FCPXML files are written."
+  },
+  {
     "slug": "premiere-pro",
     "name": "Adobe Premiere Pro MCP",
     "vendor": "Community (hetpatel-11)",

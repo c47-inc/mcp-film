@@ -69,6 +69,21 @@ const ratingFor = (ctx, slug) => {
   return r && r.votes > 0 ? r : null;
 };
 
+const daysSince = (ctx, iso) => {
+  const then = new Date(`${iso}T00:00:00Z`);
+  const now = new Date(ctx.built);
+  return Math.max(0, Math.floor((now - then) / (24 * 60 * 60 * 1000)));
+};
+
+const verificationStatus = (ctx, s) => {
+  const days = daysSince(ctx, s.verified);
+  if (days >= 60) return { days, tone: "due", label: "Verification due", age: `${days} days old` };
+  if (days >= 30) return { days, tone: "watch", label: "Review soon", age: `${days} days old` };
+  return { days, tone: "fresh", label: "Freshly checked", age: days === 0 ? "checked today" : `${days} days old` };
+};
+
+const sourceLinks = (s) => [["Site", s.links?.site], ["Docs", s.links?.docs], ["Repo", s.links?.repo]].filter(([, u]) => u);
+
 // The film pipeline, in order. Categories map to stages via categories.json.
 export const STAGES = [
   { id: "develop", name: "Develop", blurb: "Script, beats, boards, plans — spend thought before you spend credits." },
@@ -428,6 +443,8 @@ export const renderServer = (ctx, s) => {
   const cursor = cursorConfig(s);
   const pairs = pairings(ctx, s);
   const docsUrl = s.install?.docs_url ?? s.links?.docs;
+  const verify = verificationStatus(ctx, s);
+  const links = sourceLinks(s);
 
   const connect = [];
   if (s.install?.remote_url) {
@@ -501,14 +518,24 @@ export const renderServer = (ctx, s) => {
   </div>
 
   <aside class="server-side">
+    <div class="side-box verify-box">
+      <p class="foot-h">Verification</p>
+      <p class="verify-status verify-${verify.tone}"><span aria-hidden="true"></span>${esc(verify.label)}</p>
+      <dl class="verify-list">
+        <div><dt>Last checked</dt><dd><time datetime="${s.verified}">${nice(s.verified)}</time></dd></div>
+        <div><dt>Age</dt><dd>${esc(verify.age)}</dd></div>
+        <div><dt>First listed</dt><dd><time datetime="${s.added}">${nice(s.added)}</time></dd></div>
+        <div><dt>Sources</dt><dd>${links.length}</dd></div>
+      </dl>
+      <a href="/pulse/">Open catalog pulse</a>
+    </div>
     <div class="side-box">
       <p class="foot-h">Capabilities</p>
       <p class="side-caps">${(s.capabilities ?? []).map(esc).join(" · ")}</p>
     </div>
     <div class="side-box">
       <p class="foot-h">Links</p>
-      ${[["Site", s.links?.site], ["Docs", s.links?.docs], ["Repo", s.links?.repo]]
-        .filter(([, u]) => u)
+      ${links
         .map(([l, u]) => `<a href="${esc(u)}" rel="noopener">${l} ↗</a>`)
         .join("")}
     </div>
@@ -558,6 +585,8 @@ export const renderServer = (ctx, s) => {
 export const renderServerMd = (ctx, s) => {
   const cat = catById(ctx, s.category);
   const cc = claudeCodeCmd(s);
+  const verify = verificationStatus(ctx, s);
+  const links = sourceLinks(s);
   const lines = [
     `# ${s.name}`,
     "",
@@ -589,7 +618,15 @@ export const renderServerMd = (ctx, s) => {
   if (s.capabilities?.length) lines.push("## Capabilities", "", s.capabilities.map((c) => `\`${c}\``).join(" · "), "");
   if (s.tools_sample?.length) lines.push("## Sample tools", "", s.tools_sample.map((t) => `\`${t}\``).join(" · "), "");
   if (s.notes) lines.push("## Field notes", "", s.notes, "");
-  const links = [["Site", s.links?.site], ["Docs", s.links?.docs], ["Repo", s.links?.repo]].filter(([, u]) => u);
+  lines.push(
+    "## Verification",
+    "",
+    `- Status: ${verify.label} (${verify.age})`,
+    `- Added: ${s.added}`,
+    `- Last verified: ${s.verified}`,
+    `- Machine JSON: ${ctx.site.url}/api/mcps/${s.slug}.json`,
+    "",
+  );
   if (links.length) lines.push("## Links", "", ...links.map(([l, u]) => `- ${l}: ${u}`), "");
   lines.push("---", "", `Structured data: ${ctx.site.url}/api/mcps/${s.slug}.json · Directory: ${ctx.site.url}`);
   return lines.join("\n") + "\n";

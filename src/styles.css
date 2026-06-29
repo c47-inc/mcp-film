@@ -436,6 +436,27 @@ img.avatar { object-fit: cover; background: var(--paper); }
 .foot-h { margin: 0 0 3px; }
 .grid-pairs { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
 
+.verify-box { background: var(--paper-dim); }
+.verify-status {
+  display: flex; align-items: center; gap: 7px;
+  margin: 0.1rem 0 0.25rem;
+  font-size: 13px; font-weight: 550; color: var(--ink);
+}
+.verify-status span {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green); flex-shrink: 0;
+}
+.verify-watch span { background: #a16207; }
+.verify-due span { background: #b91c1c; }
+.verify-list {
+  margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: 3px;
+  font-size: 12.5px;
+}
+.verify-list div { display: flex; justify-content: space-between; gap: 12px; }
+.verify-list dt { color: var(--ink-3); }
+.verify-list dd { margin: 0; color: var(--ink-2); text-align: right; }
+
 .feedback summary { cursor: pointer; color: var(--ink-2); font-size: 13px; }
 .feedback textarea {
   width: 100%; margin: 0.5rem 0; padding: 0.55rem 0.7rem;
