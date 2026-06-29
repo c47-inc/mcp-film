@@ -7,9 +7,10 @@ mcp.film has two analytics layers:
   `mcpfilm_open_server`, `mcpfilm_open_playbook`,
   `mcpfilm_playbook_server`, `mcpfilm_open_recommendation`,
   `mcpfilm_recommendation_server`, `mcpfilm_open_capability`,
-  `mcpfilm_capability_server`, `mcpfilm_rate`, `mcpfilm_feedback`,
-  `mcpfilm_copy`, `mcpfilm_connect`, `mcpfilm_sponsor_click`, and
-  `mcpfilm_outbound`.
+  `mcpfilm_capability_server`, `mcpfilm_server_view`,
+  `mcpfilm_server_impression`, `mcpfilm_sponsor_impression`,
+  `mcpfilm_rate`, `mcpfilm_feedback`, `mcpfilm_copy`, `mcpfilm_connect`,
+  `mcpfilm_sponsor_click`, and `mcpfilm_outbound`.
 - Cloudflare edge events from generated `dist/_worker.js` capture request
   traffic that JavaScript cannot see: agents fetching `/llms.txt`, markdown,
   JSON API routes, feeds, and MCP discovery. The event is
@@ -121,6 +122,8 @@ Browser events include:
 | `mcpfilm_pageview` | `path`, `page` |
 | `mcpfilm_search` | `query`, `results` |
 | `mcpfilm_filter` | `category`, `quick`, `results` |
+| `mcpfilm_server_view` | `slug`, `category`, `official`, `remote`, `featured`, `pricing`, `is_martini`, `path` |
+| `mcpfilm_server_impression` | `slug`, `source_section`, `category`, `official`, `remote`, `is_martini`, `page`, `path` |
 | `mcpfilm_open_server` | `slug`, `from`, optional `source_section`, `playbook`, `playbook_section`, `playbook_stage`, `recommendation` |
 | `mcpfilm_open_playbook` | `playbook`, `from` |
 | `mcpfilm_playbook_server` | `slug`, `playbook`, `section`, `stage` |
@@ -132,6 +135,7 @@ Browser events include:
 | `mcpfilm_connect` | `slug`, `method`, `label`, `page`, `path`, `snippet` |
 | `mcpfilm_rate` | `slug`, `rating`, `rerate` |
 | `mcpfilm_feedback` | `slug`, `text` |
+| `mcpfilm_sponsor_impression` | `sponsor`, `placement`, `to`, `page`, `path`, optional `source_slug`, `label` |
 | `mcpfilm_sponsor_click` | `sponsor`, `placement`, `to`, `from`, `page`, optional `source_slug`, `label` |
 | `mcpfilm_outbound` | `to`, `from` |
 
@@ -292,6 +296,38 @@ ORDER BY clicks DESC
 LIMIT 50
 ```
 
+Server impressions by source:
+
+```sql
+SELECT
+  properties.source_section AS source_section,
+  properties.slug AS slug,
+  count() AS impressions,
+  count(DISTINCT distinct_id) AS users
+FROM events
+WHERE event = 'mcpfilm_server_impression'
+  AND timestamp > now() - interval 30 day
+GROUP BY source_section, slug
+ORDER BY impressions DESC
+LIMIT 50
+```
+
+Server detail views:
+
+```sql
+SELECT
+  properties.slug AS slug,
+  properties.category AS category,
+  count() AS views,
+  count(DISTINCT distinct_id) AS users
+FROM events
+WHERE event = 'mcpfilm_server_view'
+  AND timestamp > now() - interval 30 day
+GROUP BY slug, category
+ORDER BY views DESC
+LIMIT 50
+```
+
 Connect intent by server and method:
 
 ```sql
@@ -315,14 +351,15 @@ SELECT
   properties.placement AS placement,
   properties.source_slug AS source_slug,
   properties.to AS destination,
-  count() AS clicks,
+  countIf(event = 'mcpfilm_sponsor_impression') AS impressions,
+  countIf(event = 'mcpfilm_sponsor_click') AS clicks,
   count(DISTINCT distinct_id) AS users
 FROM events
-WHERE event = 'mcpfilm_sponsor_click'
+WHERE event IN ('mcpfilm_sponsor_impression', 'mcpfilm_sponsor_click')
   AND properties.sponsor = 'martini'
   AND timestamp > now() - interval 30 day
 GROUP BY placement, source_slug, destination
-ORDER BY clicks DESC
+ORDER BY impressions DESC, clicks DESC
 LIMIT 50
 ```
 

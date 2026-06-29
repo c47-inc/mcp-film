@@ -18,6 +18,29 @@
   // pageview (autocapture is off; we send a single clean event)
   ph("mcpfilm_pageview", { path: location.pathname, page: document.body.dataset.page });
 
+  const currentServer = (() => {
+    const node = document.getElementById("server-data");
+    if (!node?.textContent) return null;
+    try {
+      return JSON.parse(node.textContent);
+    } catch {
+      return null;
+    }
+  })();
+
+  if (currentServer?.slug) {
+    ph("mcpfilm_server_view", {
+      slug: currentServer.slug,
+      category: currentServer.category,
+      official: Boolean(currentServer.official),
+      remote: Boolean(currentServer.install?.remote_url),
+      featured: Boolean(currentServer.featured),
+      pricing: currentServer.pricing,
+      is_martini: currentServer.slug === "martini",
+      path: location.pathname,
+    });
+  }
+
   // ------------------------------------------------------------- search
   const search = document.getElementById("search");
   const cards = [...document.querySelectorAll(".card[data-search]")];
@@ -239,6 +262,60 @@
       }
     }, { rootMargin: "-15% 0px -75% 0px" });
     sections.forEach((s) => io.observe(s));
+  }
+
+  // ----------------------------------------------- impression analytics
+  if ("IntersectionObserver" in window) {
+    const seenServerImpressions = new WeakSet();
+    const seenSponsorImpressions = new WeakSet();
+    const impressionSource = (el) => el.closest("[data-track-section]")?.dataset.trackSection || null;
+
+    const cardIo = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting || entry.intersectionRatio < 0.5) continue;
+        const card = entry.target;
+        if (seenServerImpressions.has(card)) continue;
+        seenServerImpressions.add(card);
+        cardIo.unobserve(card);
+
+        const href = card.getAttribute("href") || "";
+        const slug = href.startsWith("/mcps/") ? href.split("/")[2] : null;
+        if (!slug) continue;
+        ph("mcpfilm_server_impression", {
+          slug,
+          source_section: impressionSource(card),
+          category: card.dataset.cat || null,
+          official: card.dataset.official === "true",
+          remote: card.dataset.remote === "true",
+          is_martini: slug === "martini",
+          page: document.body.dataset.page,
+          path: location.pathname,
+        });
+      }
+    }, { threshold: [0.5] });
+
+    document.querySelectorAll(".card[href^='/mcps/'], .card[href^=\"/mcps/\"]").forEach((card) => cardIo.observe(card));
+
+    const sponsorIo = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting || entry.intersectionRatio < 0.45) continue;
+        const a = entry.target;
+        if (seenSponsorImpressions.has(a)) continue;
+        seenSponsorImpressions.add(a);
+        sponsorIo.unobserve(a);
+        ph("mcpfilm_sponsor_impression", {
+          sponsor: a.dataset.sponsor || document.body.dataset.sponsor || "sponsor",
+          placement: a.dataset.sponsorPlacement || "host-match",
+          to: a.href,
+          page: document.body.dataset.page,
+          path: location.pathname,
+          source_slug: currentServer?.slug || null,
+          label: (a.textContent || "").trim().slice(0, 80),
+        });
+      }
+    }, { threshold: [0.45] });
+
+    document.querySelectorAll("[data-sponsor-click]").forEach((a) => sponsorIo.observe(a));
   }
 
   // --------------------------------------------- outbound + detail signal

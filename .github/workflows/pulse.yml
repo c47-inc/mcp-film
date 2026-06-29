@@ -69,7 +69,10 @@ jobs:
           prompt: |
             You are the analytics pulse for mcp.film. Read AGENTS.md first.
             The site captures events into PostHog (project 292112, host
-            https://us.posthog.com): mcpfilm_pageview, mcpfilm_open_server
+            https://us.posthog.com): mcpfilm_pageview, mcpfilm_server_view
+            {slug, category, official, remote, is_martini},
+            mcpfilm_server_impression {slug, source_section, category,
+            official, remote, is_martini}, mcpfilm_open_server
             {slug, source_section}, mcpfilm_open_playbook {playbook}, mcpfilm_playbook_server
             {playbook, slug, section, stage}, mcpfilm_open_recommendation
             {recommendation}, mcpfilm_recommendation_server {recommendation, slug},
@@ -79,8 +82,9 @@ jobs:
             mcpfilm_search {query, results}, mcpfilm_filter {category, quick, results},
             mcpfilm_feedback {slug, text}, mcpfilm_copy,
             mcpfilm_connect {slug, method, label, page, path},
-            mcpfilm_sponsor_click {sponsor, placement, to, from, page,
-            source_slug, label}, mcpfilm_outbound, and mcpfilm_edge_request
+            mcpfilm_sponsor_impression {sponsor, placement, to, page, path,
+            source_slug, label}, mcpfilm_sponsor_click {sponsor, placement,
+            to, from, page, source_slug, label}, mcpfilm_outbound, and mcpfilm_edge_request
             {path, surface, route_group, slug, category, capability,
             is_martini, traffic_kind, agent_family, status} from
             Cloudflare edge analytics when enabled.
@@ -112,10 +116,13 @@ jobs:
             5. CONNECTS: summarize the last 30 days of mcpfilm_connect by
                slug and method in the PR body. This is informational only —
                do not write connect counts into data/.
-            6. SPONSOR: summarize the last 30 days of mcpfilm_sponsor_click
-               for sponsor='martini' by placement, source_slug, and destination
-               in the PR body. This is informational only — do not write
-               sponsor click counts into data/.
+            6. SPONSOR: summarize the last 30 days of
+               mcpfilm_sponsor_impression and mcpfilm_sponsor_click for
+               sponsor='martini' by placement, source_slug, and destination in
+               the PR body. Also summarize Martini rows from
+               mcpfilm_server_impression and mcpfilm_server_view. This is
+               informational only — do not write sponsor or impression counts
+               into data/.
             7. TRAFFIC: summarize the last 30 days of mcpfilm_edge_request by
                traffic_kind, surface, and agent_family in the PR body. This is
                informational only — do not write traffic counts into data/.
