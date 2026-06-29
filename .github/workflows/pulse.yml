@@ -81,7 +81,8 @@ jobs:
             mcpfilm_connect {slug, method, label, page, path},
             mcpfilm_sponsor_click {sponsor, placement, to, from, page,
             source_slug, label}, mcpfilm_outbound, and mcpfilm_edge_request
-            {path, surface, traffic_kind, agent_family, status} from
+            {path, surface, route_group, slug, category, capability,
+            is_martini, traffic_kind, agent_family, status} from
             Cloudflare edge analytics when enabled.
             Query with HogQL via:
               curl -s -H "Authorization: Bearer $POSTHOG_API_KEY" \

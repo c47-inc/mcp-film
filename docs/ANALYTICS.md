@@ -92,12 +92,13 @@ node scripts/monitor-production.mjs
 ```
 
 The curl commands should return `200`; the Node monitor also checks `www`,
-`mcp-film.pages.dev`, JSON APIs, markdown playbooks, and common agent user
-agents with real `GET` requests. If the spoofed-agent checks return `403`, the
-custom domain is blocking agent-like traffic. Some Cloudflare blocks happen
-before the Pages worker and never reach PostHog; others can happen after the
-worker and leave an optimistic `mcpfilm_edge_request` status. Treat the monitor
-as the client-side truth and the PostHog event as traffic observability.
+`mcp-film.pages.dev`, JSON APIs, recommendations, capabilities, markdown
+playbooks, and common agent user agents with real `GET` requests. If the
+spoofed-agent checks return `403`, the custom domain is blocking agent-like
+traffic. Some Cloudflare blocks happen before the Pages worker and never reach
+PostHog; others can happen after the worker and leave an optimistic
+`mcpfilm_edge_request` status. Treat the monitor as the client-side truth and
+the PostHog event as traffic observability.
 
 ## Cloudflare variables
 
@@ -140,7 +141,10 @@ Browser events include:
 | --- | --- |
 | `path` | URL path without query values. |
 | `query_keys` | Query parameter names only, not values. |
-| `surface` | `page`, `listing-page`, `category-page`, `api`, `remote-directory`, `remote-directory-json`, `remote-directory-markdown`, `mcp-registry`, `llms`, `markdown`, `feed`, `sitemap`, `robots`, or `mcp-discovery`. |
+| `surface` | Specific route surface, e.g. `listing-page`, `listing-json`, `capability-page`, `capability-json`, `capability-markdown`, `recommendations-json`, `playbooks-json`, `remote-directory-json`, `registry-json`, `mcp-registry`, `llms`, `feed`, `sitemap`, `robots`, or `mcp-discovery`. |
+| `route_group` | Higher-level family: `server`, `capability`, `recommendation`, `playbook`, `remote`, `registry`, `category`, `llms`, `pulse`, and similar. |
+| `slug`, `category`, `capability` | Parsed route identifiers when the path is about one server, category, or capability. |
+| `is_martini` | `true` for Martini listing/JSON/markdown traffic. |
 | `traffic_kind` | `human_browser`, `agent`, `crawler`, or `unknown`. |
 | `agent_family` | Best-effort family such as `chatgpt`, `claude`, `perplexity`, `mcp-client`, `developer-agent`, `script`, or the agent-readable surface name. |
 | `status` | HTTP status returned by the static asset layer. |
@@ -194,6 +198,39 @@ WHERE event = 'mcpfilm_edge_request'
 GROUP BY path, surface
 ORDER BY requests DESC
 LIMIT 50
+```
+
+Capability traffic:
+
+```sql
+SELECT
+  properties.capability AS capability,
+  properties.surface AS surface,
+  count() AS requests,
+  count(DISTINCT distinct_id) AS approx_clients
+FROM events
+WHERE event = 'mcpfilm_edge_request'
+  AND properties.route_group = 'capability'
+  AND timestamp > now() - interval 30 day
+GROUP BY capability, surface
+ORDER BY requests DESC
+LIMIT 50
+```
+
+Martini listing reads from humans and agents:
+
+```sql
+SELECT
+  properties.traffic_kind AS traffic_kind,
+  properties.surface AS surface,
+  count() AS requests,
+  count(DISTINCT distinct_id) AS approx_clients
+FROM events
+WHERE event = 'mcpfilm_edge_request'
+  AND properties.is_martini = true
+  AND timestamp > now() - interval 30 day
+GROUP BY traffic_kind, surface
+ORDER BY requests DESC
 ```
 
 Human pageviews from browser JavaScript:

@@ -48,6 +48,36 @@ const checks = [
     validateJson: (body) => body.count >= 1 && Array.isArray(body.playbooks),
   },
   {
+    name: "Recommendations API",
+    url: `${base}/api/recommendations.json?monitor=${smoke}`,
+    method: "GET",
+    accept: "application/json",
+    expect: (status) => status === 200,
+    validateJson: (body) => body.count >= 1 && Array.isArray(body.recommendations),
+  },
+  {
+    name: "Capabilities API",
+    url: `${base}/api/capabilities.json?monitor=${smoke}`,
+    method: "GET",
+    accept: "application/json",
+    expect: (status) => status === 200,
+    validateJson: (body) => body.count >= 1 && body.published_pages >= 1 && Array.isArray(body.capabilities),
+  },
+  {
+    name: "Text-to-video capability API",
+    url: `${base}/api/capabilities/text-to-video.json?monitor=${smoke}`,
+    method: "GET",
+    accept: "application/json",
+    expect: (status) => status === 200,
+    validateJson: (body) => body.capability === "text-to-video" && body.count >= 1 && body.servers?.[0]?.slug === "martini",
+  },
+  {
+    name: "Text-to-video capability page",
+    url: `${base}/capabilities/text-to-video/?monitor=${smoke}`,
+    method: "HEAD",
+    expect: (status) => status === 200,
+  },
+  {
     name: "Remotes page",
     url: `${base}/remotes/?monitor=${smoke}`,
     method: "HEAD",
@@ -94,6 +124,14 @@ const checks = [
     validateJson: (body) => body.count >= 1 && Array.isArray(body.playbooks),
   },
   {
+    name: "Pages fallback capabilities API",
+    url: `${pagesBase}/api/capabilities.json?monitor=${smoke}`,
+    method: "GET",
+    accept: "application/json",
+    expect: (status) => status === 200,
+    validateJson: (body) => body.count >= 1 && body.published_pages >= 1 && Array.isArray(body.capabilities),
+  },
+  {
     name: "Pages fallback remotes API",
     url: `${pagesBase}/api/remotes.json?monitor=${smoke}`,
     method: "GET",
@@ -103,7 +141,19 @@ const checks = [
   },
 ];
 
-for (const path of ["/llms.txt", "/api/playbooks.json", "/api/remotes.json", "/v0.1/servers", "/playbooks.md", "/remotes.md"]) {
+for (const path of [
+  "/llms.txt",
+  "/api/playbooks.json",
+  "/api/recommendations.json",
+  "/api/capabilities.json",
+  "/api/capabilities/text-to-video.json",
+  "/api/remotes.json",
+  "/v0.1/servers",
+  "/playbooks.md",
+  "/recommendations.md",
+  "/capabilities/text-to-video.md",
+  "/remotes.md",
+]) {
   for (const [family, userAgent] of agentUserAgents) {
     checks.push({
       name: `${family} access ${path}`,

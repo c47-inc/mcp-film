@@ -92,11 +92,13 @@ add one narrow bypass for agent-readable files:
    ```
 
 The second command and the Node monitor intentionally spoof known agent/crawler
-user agents with real `GET` requests. If they get `403`, Cloudflare security is
-blocking the machine-readable surface. Depending on which Cloudflare product
-fires, those blocked requests may be invisible to PostHog or may be recorded
-with the Pages worker's pre-block status, so the WAF rule is about access first
-and analytics accuracy second.
+user agents with real `GET` requests. The monitor covers registry, playbook,
+recommendation, capability, remote, markdown, and MCP Registry surfaces. If the
+spoofed requests get `403`, Cloudflare security is blocking the
+machine-readable surface. Depending on which Cloudflare product fires, those
+blocked requests may be invisible to PostHog or may be recorded with the Pages
+worker's pre-block status, so the WAF rule is about access first and analytics
+accuracy second.
 
 ## 3b. If staying on GitHub Pages, point mcp.film there
 
