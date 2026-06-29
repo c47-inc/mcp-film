@@ -84,6 +84,12 @@ const checks = [
     expect: (status) => status === 200,
   },
   {
+    name: "Brief router page",
+    url: `${base}/router/?monitor=${smoke}`,
+    method: "HEAD",
+    expect: (status) => status === 200,
+  },
+  {
     name: "Remotes API",
     url: `${base}/api/remotes.json?monitor=${smoke}`,
     method: "GET",
@@ -150,6 +156,7 @@ for (const path of [
   "/api/remotes.json",
   "/v0.1/servers",
   "/playbooks.md",
+  "/router.md",
   "/recommendations.md",
   "/capabilities/text-to-video.md",
   "/remotes.md",

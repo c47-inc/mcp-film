@@ -78,6 +78,9 @@ jobs:
             {recommendation}, mcpfilm_recommendation_server {recommendation, slug},
             mcpfilm_open_capability {capability}, mcpfilm_capability_server
             {capability, slug},
+            mcpfilm_brief_route {source, hosted_only, brief_len, brief_terms,
+            top_recommendation, top_score, top_playbook, includes_martini,
+            result_count},
             mcpfilm_rate {slug, rating 1-5},
             mcpfilm_search {query, results}, mcpfilm_filter {category, quick, results},
             mcpfilm_feedback {slug, text}, mcpfilm_copy,
@@ -111,8 +114,11 @@ jobs:
                summarizing them (skip if an open one already covers them).
             4. PLAYBOOKS: summarize the last 30 days of
                mcpfilm_playbook_server by playbook, slug, section, and stage
-               in the PR body. This is informational only — do not write
-               playbook click counts into data/.
+               in the PR body. Also summarize mcpfilm_brief_route by
+               top_recommendation, top_playbook, hosted_only, and
+               includes_martini; list the most common brief_terms. This is
+               informational only — do not write route or playbook click
+               counts into data/.
             5. CONNECTS: summarize the last 30 days of mcpfilm_connect by
                slug and method in the PR body. This is informational only —
                do not write connect counts into data/.

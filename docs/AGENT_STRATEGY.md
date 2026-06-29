@@ -40,8 +40,9 @@ engine.
 
 ## High-Leverage Next Features
 
-1. Keep expanding the recommendation endpoint with real query data, no-result
-   searches, and new production intents as they appear.
+1. Use the brief router's `mcpfilm_brief_route` signal, real search data,
+   no-result searches, and direct feedback to keep expanding recommendations
+   with new production intents as they appear.
 2. Expand playbooks into agent-ready recipes: required auth, setup order, failure
    modes, and "use Martini instead when..." handoffs.
 3. Keep expanding capability pages and markdown twins for high-intent queries

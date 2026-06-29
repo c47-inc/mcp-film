@@ -176,6 +176,275 @@
     });
   }
 
+  // ----------------------------------------------------------- brief router
+  const routerNode = document.querySelector("[data-router]");
+  const routerDataNode = document.getElementById("router-data");
+  if (routerNode && routerDataNode?.textContent) {
+    let routerData = null;
+    try {
+      routerData = JSON.parse(routerDataNode.textContent);
+    } catch { /* static fallback remains */ }
+
+    if (routerData) {
+      const form = routerNode.querySelector(".router-form");
+      const input = routerNode.querySelector("#router-brief");
+      const hostedToggle = routerNode.querySelector("#router-hosted-only");
+      const results = routerNode.querySelector("#router-results");
+      const stop = new Set([
+        "about", "after", "also", "and", "are", "can", "for", "from", "have", "into",
+        "make", "need", "needs", "that", "the", "this", "with", "film", "films",
+        "video", "videos", "using", "want", "will", "your",
+      ]);
+
+      const wordsFor = (value) =>
+        String(value || "")
+          .toLowerCase()
+          .split(/[^a-z0-9+.-]+/)
+          .filter((w) => w.length > 2 && !stop.has(w));
+
+      const hayForRecommendation = (r) => [
+        r.id, r.title, r.summary, r.best_for, r.martini_handoff,
+        ...(r.tags || []),
+        ...(r.primary || []).map((p) => `${p.role} ${p.why} ${p.server?.slug} ${p.server?.name} ${p.server?.tagline}`),
+        ...(r.fallback_servers || []).map((s) => `${s.slug} ${s.name} ${s.tagline}`),
+      ].join(" ").toLowerCase();
+
+      const hayForPlaybook = (p) => [
+        p.id, p.title, p.summary, p.best_for,
+        ...(p.constraints || []),
+        ...(p.primary_servers || []).map((s) => `${s.slug} ${s.name} ${s.tagline}`),
+        ...(p.steps || []).map((step) => `${step.stage} ${step.intent} ${(step.servers || []).map((s) => `${s.slug} ${s.name} ${s.tagline}`).join(" ")}`),
+      ].join(" ").toLowerCase();
+
+      const scoreRecommendations = (brief) => {
+        const words = wordsFor(brief);
+        return (routerData.recommendations || [])
+          .map((r, index) => {
+            const hay = hayForRecommendation(r);
+            let score = 0;
+            for (const word of words) {
+              if ((r.tags || []).some((tag) => tag.includes(word))) score += 7;
+              if ((r.title || "").toLowerCase().includes(word)) score += 5;
+              if ((r.best_for || "").toLowerCase().includes(word)) score += 4;
+              if (hay.includes(word)) score += word.length > 4 ? 3 : 2;
+            }
+            if ((r.primary || []).some((p) => p.server?.slug === "martini")) score += 1;
+            return { ...r, _score: score, _rank: index };
+          })
+          .sort((a, b) => b._score - a._score || a._rank - b._rank);
+      };
+
+      const scorePlaybooks = (brief) => {
+        const words = wordsFor(brief);
+        return (routerData.playbooks || [])
+          .map((p, index) => {
+            const hay = hayForPlaybook(p);
+            const score = words.reduce((n, w) => n + (hay.includes(w) ? 1 : 0), 0);
+            return { ...p, _score: score, _rank: index };
+          })
+          .sort((a, b) => b._score - a._score || a._rank - b._rank);
+      };
+
+      const localHref = (url) => {
+        try {
+          const u = new URL(url, location.origin);
+          const sameSite = u.hostname === location.hostname || (u.hostname === "mcp.film" && /^(localhost|127\.0\.0\.1)$/.test(location.hostname));
+          return sameSite ? `${u.pathname}${u.search}${u.hash}` : u.href;
+        } catch {
+          return url || "#";
+        }
+      };
+
+      const node = (tag, className, text) => {
+        const el = document.createElement(tag);
+        if (className) el.className = className;
+        if (text !== undefined) el.textContent = text;
+        return el;
+      };
+
+      const link = (text, href, className) => {
+        const a = node("a", className, text);
+        a.href = href;
+        return a;
+      };
+
+      const serverAnchor = (server) => {
+        const a = link(server?.name || "Unknown server", localHref(server?.url || `/mcps/${server?.slug || ""}/`));
+        if (server?.official) {
+          const official = node("span", "tag tag-official", "Official");
+          const wrap = document.createDocumentFragment();
+          wrap.append(a, " ", official);
+          if (server?.remote) wrap.append(" ", node("span", "tag", "Remote"));
+          return wrap;
+        }
+        if (server?.remote) {
+          const wrap = document.createDocumentFragment();
+          wrap.append(a, " ", node("span", "tag", "Remote"));
+          return wrap;
+        }
+        return a;
+      };
+
+      const renderPicksTable = (picks) => {
+        const table = node("table", "pulse-table recommendation-table");
+        const thead = document.createElement("thead");
+        thead.innerHTML = "<tr><th>Role</th><th>Server</th><th>Why</th></tr>";
+        const tbody = document.createElement("tbody");
+        for (const pick of picks) {
+          const tr = document.createElement("tr");
+          tr.append(node("td", "", pick.role || "server"));
+          const serverCell = document.createElement("td");
+          serverCell.append(serverAnchor(pick.server));
+          tr.append(serverCell);
+          tr.append(node("td", "", pick.why || pick.server?.tagline || ""));
+          tbody.append(tr);
+        }
+        table.append(thead, tbody);
+        return table;
+      };
+
+      const filteredRoute = (r, hostedOnly) => {
+        if (!r) return r;
+        if (!hostedOnly) return r;
+        return {
+          ...r,
+          primary: (r.primary || []).filter((p) => p.server?.remote),
+          fallback_servers: (r.fallback_servers || []).filter((s) => s.remote),
+        };
+      };
+
+      const renderRoute = (brief, source = "typing", track = false) => {
+        if (!results) return;
+        const clean = String(brief || "").trim();
+        const hostedOnly = Boolean(hostedToggle?.checked);
+        if (!clean) {
+          results.replaceChildren(node("p", "agent-hint", "Paste a brief or choose an example. The router will return the closest route, first MCP connections, matching playbook, and Martini handoff."));
+          return;
+        }
+
+        const terms = wordsFor(clean);
+        const ranked = scoreRecommendations(clean);
+        const top = filteredRoute(ranked[0], hostedOnly);
+        const alternates = ranked.slice(1, 3).map((r) => filteredRoute(r, hostedOnly));
+        const playbook = (() => {
+          const byId = top?.playbook?.id && (routerData.playbooks || []).find((p) => p.id === top.playbook.id);
+          return byId || scorePlaybooks(clean)[0] || null;
+        })();
+
+        const shell = node("div", "router-output");
+        const eyebrow = node("p", "label", hostedOnly ? "Hosted-only route" : "Recommended route");
+        const h2 = node("h2", "", top?.title || "No route found");
+        const summary = node("p", "router-summary", top?.summary || "Try a more specific brief.");
+        shell.append(eyebrow, h2, summary);
+
+        const tags = node("p", "recommendation-tags");
+        for (const tag of top?.tags || []) tags.append(node("code", "", tag), " ");
+        shell.append(tags);
+
+        const picks = (top?.primary || []).slice(0, 7);
+        if (picks.length) {
+          shell.append(node("h3", "", "First MCP connections"));
+          shell.append(renderPicksTable(picks));
+        } else if (hostedOnly) {
+          shell.append(node("p", "connect-note", "This route has no hosted primary picks after filtering. Try hosted-only stack directly or turn off hosted-only mode."));
+        }
+
+        const actions = node("p", "router-actions");
+        if (top?.url) actions.append(link("Open route", localHref(top.url), "btn"));
+        if (top?.playbook?.url) actions.append(link("Open playbook", localHref(top.playbook.url), "btn"));
+        const sponsorUrl = document.body.dataset.sponsorUrl;
+        if (sponsorUrl) {
+          const martiniLink = link("Connect Martini", sponsorUrl, "btn btn-primary");
+          martiniLink.dataset.sponsorClick = "true";
+          martiniLink.dataset.sponsor = document.body.dataset.sponsor || "martini";
+          martiniLink.dataset.sponsorPlacement = `router:${top?.id || "unknown"}`;
+          actions.append(martiniLink);
+        }
+        shell.append(actions);
+
+        if (top?.martini_handoff) {
+          const handoff = node("p", "recommendation-handoff");
+          handoff.append(node("span", "label", "Martini handoff"), " ", top.martini_handoff);
+          shell.append(handoff);
+        }
+
+        if (playbook) {
+          const pb = node("div", "router-playbook");
+          pb.append(node("h3", "", "Matching playbook"));
+          const p = node("p", "", `${playbook.title}: ${playbook.summary}`);
+          pb.append(p);
+          const ol = node("ol", "playbook-steps");
+          for (const step of (playbook.steps || []).slice(0, 6)) {
+            const li = document.createElement("li");
+            li.dataset.playbookStage = step.stage;
+            li.append(node("span", "stage-num", step.stage));
+            const detail = node("p", "", step.intent);
+            const links = node("p", "playbook-links");
+            (step.servers || []).slice(0, 4).forEach((server, i) => {
+              if (i) links.append(" · ");
+              links.append(link(server.name, localHref(server.url)));
+            });
+            li.append(detail, links);
+            ol.append(li);
+          }
+          pb.append(ol);
+          shell.append(pb);
+        }
+
+        if (alternates.length) {
+          const alt = node("div", "router-alternates");
+          alt.append(node("h3", "", "Also consider"));
+          const ul = node("ul", "agents-list");
+          for (const r of alternates) {
+            const li = document.createElement("li");
+            li.append(link(r.title, localHref(r.url)), " — ", r.summary);
+            ul.append(li);
+          }
+          alt.append(ul);
+          shell.append(alt);
+        }
+
+        results.replaceChildren(shell);
+
+        if (track && top) {
+          ph("mcpfilm_brief_route", {
+            source,
+            hosted_only: hostedOnly,
+            brief_len: clean.length,
+            brief_terms: terms.slice(0, 8),
+            top_recommendation: top.id,
+            top_score: ranked[0]?._score ?? 0,
+            top_playbook: playbook?.id || null,
+            includes_martini: (top.primary || []).some((p) => p.server?.slug === "martini"),
+            result_count: ranked.length,
+          });
+        }
+      };
+
+      let routerTimer;
+      input?.addEventListener("input", () => {
+        clearTimeout(routerTimer);
+        routerTimer = setTimeout(() => renderRoute(input.value, "typing", false), 220);
+      });
+      hostedToggle?.addEventListener("change", () => renderRoute(input?.value, "hosted_toggle", Boolean(input?.value.trim())));
+      form?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        renderRoute(input?.value, "submit", true);
+      });
+      routerNode.querySelectorAll("[data-router-example]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (input) input.value = btn.dataset.routerExample || "";
+          renderRoute(input?.value, "example", true);
+        });
+      });
+      const qBrief = new URLSearchParams(location.search).get("brief") || new URLSearchParams(location.search).get("q");
+      if (qBrief && input) {
+        input.value = qBrief;
+        renderRoute(qBrief, "url", false);
+      }
+    }
+  }
+
   // ------------------------------------------------------------- polish
   // Functional micro-interactions only. Everything here is progressive
   // enhancement: the static HTML (what agents read) is complete without it.

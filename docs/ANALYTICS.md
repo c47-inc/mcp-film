@@ -9,8 +9,9 @@ mcp.film has two analytics layers:
   `mcpfilm_recommendation_server`, `mcpfilm_open_capability`,
   `mcpfilm_capability_server`, `mcpfilm_server_view`,
   `mcpfilm_server_impression`, `mcpfilm_sponsor_impression`,
-  `mcpfilm_rate`, `mcpfilm_feedback`, `mcpfilm_copy`, `mcpfilm_connect`,
-  `mcpfilm_sponsor_click`, and `mcpfilm_outbound`.
+  `mcpfilm_brief_route`, `mcpfilm_rate`, `mcpfilm_feedback`,
+  `mcpfilm_copy`, `mcpfilm_connect`, `mcpfilm_sponsor_click`, and
+  `mcpfilm_outbound`.
 - Cloudflare edge events from generated `dist/_worker.js` capture request
   traffic that JavaScript cannot see: agents fetching `/llms.txt`, markdown,
   JSON API routes, feeds, and MCP discovery. The event is
@@ -131,6 +132,7 @@ Browser events include:
 | `mcpfilm_recommendation_server` | `slug`, `recommendation` |
 | `mcpfilm_open_capability` | `capability`, `from` |
 | `mcpfilm_capability_server` | `slug`, `capability` |
+| `mcpfilm_brief_route` | `source`, `hosted_only`, `brief_len`, `brief_terms`, `top_recommendation`, `top_score`, `top_playbook`, `includes_martini`, `result_count` |
 | `mcpfilm_copy` | `slug`, `kind`, `method`, `label`, `page`, `path`, `snippet` |
 | `mcpfilm_connect` | `slug`, `method`, `label`, `page`, `path`, `snippet` |
 | `mcpfilm_rate` | `slug`, `rating`, `rerate` |
@@ -341,6 +343,24 @@ WHERE event = 'mcpfilm_connect'
   AND timestamp > now() - interval 30 day
 GROUP BY slug, method
 ORDER BY copies DESC
+LIMIT 50
+```
+
+Brief-router demand:
+
+```sql
+SELECT
+  properties.top_recommendation AS route,
+  properties.top_playbook AS playbook,
+  properties.hosted_only AS hosted_only,
+  properties.includes_martini AS includes_martini,
+  count() AS routed_briefs,
+  count(DISTINCT distinct_id) AS users
+FROM events
+WHERE event = 'mcpfilm_brief_route'
+  AND timestamp > now() - interval 30 day
+GROUP BY route, playbook, hosted_only, includes_martini
+ORDER BY routed_briefs DESC
 LIMIT 50
 ```
 

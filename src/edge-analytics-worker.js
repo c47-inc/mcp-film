@@ -39,6 +39,7 @@ const agentReadableSurfaces = new Set([
   "registry-json",
   "remote-directory-json",
   "remote-directory-markdown",
+  "router-markdown",
   "sitemap",
   "stats-json",
 ]);
@@ -236,6 +237,8 @@ function routePropertiesFor(pathname) {
   if (pathname === "/playbooks.md") return route("playbooks-markdown", "playbook");
   if (pathname === "/recommendations/" || pathname === "/recommendations") return route("recommendations-page", "recommendation");
   if (pathname === "/recommendations.md") return route("recommendations-markdown", "recommendation");
+  if (pathname === "/router/" || pathname === "/router") return route("router-page", "router");
+  if (pathname === "/router.md") return route("router-markdown", "router");
   if (pathname === "/capabilities/" || pathname === "/capabilities") return route("capability-page", "capability");
   if (pathname === "/stack/" || pathname === "/stack") return route("stack-page", "stack");
   if (pathname === "/stack.md") return route("stack-markdown", "stack");

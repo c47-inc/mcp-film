@@ -689,6 +689,127 @@ img.avatar { object-fit: cover; background: var(--paper); }
   white-space: nowrap;
 }
 
+/* --------------------------------------------------------------- router */
+.router-shell {
+  display: grid;
+  gap: clamp(1rem, 3vw, 2rem);
+  grid-template-columns: 1fr;
+  align-items: start;
+  margin: 1.2rem 0 2.6rem;
+}
+@media (min-width: 960px) {
+  .router-shell { grid-template-columns: minmax(320px, 0.82fr) minmax(0, 1.18fr); }
+}
+.router-form {
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  padding: clamp(1rem, 2.6vw, 1.4rem);
+  background: var(--paper-dim);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.router-form textarea {
+  width: 100%;
+  min-height: 172px;
+  padding: 0.8rem 0.9rem;
+  resize: vertical;
+  outline: none;
+  font: inherit;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--r);
+  line-height: 1.6;
+}
+.router-form textarea:focus { border-color: var(--ink-3); box-shadow: 0 0 0 3px rgba(0,0,0,0.04); }
+.router-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+.router-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--ink-2);
+  font-size: 13px;
+}
+.router-toggle input { accent-color: var(--ink); }
+.router-examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 0.2rem;
+}
+.router-examples button {
+  font: inherit;
+  font-size: 12px;
+  color: var(--ink-2);
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.router-examples button:hover { border-color: var(--hairline-2); color: var(--ink); }
+.router-results {
+  min-width: 0;
+  border-top: 1px solid var(--hairline);
+  padding-top: 0.6rem;
+}
+@media (min-width: 960px) {
+  .router-results { border-top: 0; padding-top: 0; }
+}
+.router-output h2 {
+  margin: 0.25rem 0 0.45rem;
+  font-size: 1.55rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.router-output h3 {
+  margin: 1.35rem 0 0.55rem;
+  font-size: 13px;
+  font-weight: 600;
+}
+.router-summary {
+  color: var(--ink-2);
+  max-width: 48rem;
+  margin: 0;
+}
+.router-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 1rem 0 0;
+}
+.router-playbook {
+  margin-top: 1rem;
+  padding-top: 0.2rem;
+}
+.router-playbook > p {
+  color: var(--ink-2);
+  margin: 0 0 0.8rem;
+}
+.router-alternates { margin-top: 1rem; }
+.router-agent-doc { margin-top: 1.2rem; }
+.router-static-routes {
+  margin-top: 1.2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--hairline);
+}
+.router-static-routes h2 {
+  margin: 0 0 0.5rem;
+  font-size: 14px;
+  font-weight: 600;
+}
+.router-static-routes .recommendation h3 {
+  margin: 0.35rem 0 0.45rem;
+  font-size: 1.1rem;
+}
+
 /* ---------------------------------------------------------- capabilities */
 .capability-doc { max-width: 68rem; }
 .capability-cloud {

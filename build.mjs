@@ -362,6 +362,7 @@ ctx.pulse = {
     { label: "stack.md", url: `${site.url}/stack.md`, kind: "pipeline-guide" },
     { label: "remotes.md", url: `${site.url}/remotes.md`, kind: "hosted-remotes-markdown" },
     { label: "playbooks.md", url: `${site.url}/playbooks.md`, kind: "stack-recipes" },
+    { label: "router.md", url: `${site.url}/router.md`, kind: "brief-router" },
     { label: "feed.xml", url: `${site.url}/feed.xml`, kind: "new-additions-feed" },
     { label: "server-card", url: `${site.url}/.well-known/mcp/server-card`, kind: "mcp-discovery" },
     { label: "MCP Registry API", url: `${site.url}/v0.1/servers`, kind: "mcp-registry-api" },
@@ -383,6 +384,7 @@ const write = (rel, content) => {
 
 // pages
 write("index.html", T.renderHome(ctx));
+write("router/index.html", T.renderRouter(ctx));
 write("stack/index.html", T.renderStack(ctx));
 write("playbooks/index.html", T.renderPlaybooks(ctx));
 write("recommendations/index.html", T.renderRecommendations(ctx));
@@ -414,6 +416,7 @@ for (const s of servers) {
 write("llms.txt", T.renderLlmsTxt(ctx));
 write("llms-full.txt", T.renderLlmsFull(ctx));
 write("stack.md", T.renderStackMd(ctx));
+write("router.md", T.renderRouterMd(ctx));
 write("playbooks.md", T.renderPlaybooksMd(ctx));
 write("recommendations.md", T.renderRecommendationsMd(ctx));
 write("remotes.md", T.renderRemotesMd(ctx));
@@ -555,7 +558,7 @@ fs.writeFileSync(
   JSON.stringify(ctx.recommendationDoc),
 );
 
-const pages = servers.length + categories.length + ctx.capabilityPages.length + 10;
+const pages = servers.length + categories.length + ctx.capabilityPages.length + 11;
 console.log(`✓ built ${pages} pages + API + agent surfaces → dist/`);
 
 function mcpRegistryResponse(s) {
