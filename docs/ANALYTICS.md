@@ -77,10 +77,13 @@ Smoke test:
 ```sh
 curl -I https://mcp.film/llms.txt
 curl -I -A 'ClaudeBot-mcpfilm-smoke/1.0' https://mcp.film/llms.txt
+node scripts/monitor-production.mjs
 ```
 
-Both should return `200`. If the second request returns `403`, the custom
-domain is blocking agent-like traffic before edge analytics can measure it.
+The curl commands should return `200`; the Node monitor also checks `www`,
+`mcp-film.pages.dev`, JSON APIs, markdown playbooks, and common agent user
+agents. If the spoofed-agent checks return `403`, the custom domain is blocking
+agent-like traffic before edge analytics can measure it.
 
 ## Cloudflare variables
 

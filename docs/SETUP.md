@@ -83,11 +83,12 @@ add one narrow bypass for agent-readable files:
    ```sh
    curl -I https://mcp.film/llms.txt
    curl -I -A 'ClaudeBot-mcpfilm-smoke/1.0' https://mcp.film/llms.txt
+   node scripts/monitor-production.mjs
    ```
 
-The second command intentionally spoofs a known crawler user agent; if it gets
-`403`, Cloudflare blocked it before `mcpfilm_edge_request` could be recorded in
-PostHog.
+The second command and the Node monitor intentionally spoof known agent/crawler
+user agents; if they get `403`, Cloudflare blocked them before
+`mcpfilm_edge_request` could be recorded in PostHog.
 
 ## 3b. If staying on GitHub Pages, point mcp.film there
 
@@ -202,6 +203,7 @@ re-release — only tool changes do.
 | Workflow | Trigger | What it does |
 | --- | --- | --- |
 | Build & Deploy | push to main / manual | builds `dist/`, publishes to Pages |
+| Production Monitor | every 6 hours / manual | checks custom-domain, `www`, Pages fallback, agent-user-agent access, and optional PostHog edge ingestion |
 | Curator | daily 06:17 UTC | re-verifies the 3 stalest entries (full catalog every ~3 weeks), hunts for new servers, PRs data — skips the PR on quiet days |
 | Pulse | Thursdays 07:41 UTC | syncs PostHog ratings/trending/feedback into data, summarizes edge traffic in the PR, PRs |
 | Inbox | issue opened w/ `submit`/`correction` | verifies and lists (or declines with reasons) |

@@ -1,0 +1,72 @@
+name: Production Monitor
+
+on:
+  schedule:
+    - cron: "23 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: production-monitor
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Run production monitor
+        id: smoke
+        env:
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
+          POSTHOG_PROJECT_ID: "292112"
+        run: |
+          set +e
+          node scripts/monitor-production.mjs > monitor-summary.md
+          status=$?
+          set -e
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          cat monitor-summary.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Alert on monitor failure
+        if: steps.smoke.outputs.status != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          {
+            echo "Production monitor failed: $url"
+            echo
+            cat monitor-summary.md
+            echo
+            echo "Most likely 403 fix: add the narrow Cloudflare WAF Skip/Allow rule from docs/SETUP.md."
+          } > issue-body.md
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --label automation-failure --state open --search "Production monitor mcp.film agent access in:title" --json number -q '.[0].number' || true)
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body-file issue-body.md
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" \
+              --title "Production monitor: mcp.film agent access" \
+              --label automation-failure \
+              --body-file issue-body.md \
+            || gh issue create --repo "$GITHUB_REPOSITORY" \
+              --title "Production monitor: mcp.film agent access" \
+              --body-file issue-body.md
+          fi
+          exit 1
+      - name: Close recovered monitor alert
+        if: steps.smoke.outputs.status == '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --label automation-failure --state open --search "Production monitor mcp.film agent access in:title" --json number -q '.[0].number' || true)
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --repo "$GITHUB_REPOSITORY" --body "Production monitor recovered in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}."
+            gh issue close "$existing" --repo "$GITHUB_REPOSITORY"
+          fi
