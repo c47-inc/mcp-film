@@ -389,5 +389,28 @@
     "added": "2026-06-11",
     "verified": "2026-06-11",
     "notes": "Official but brand new, MIT, TypeScript. IMAGE ONLY for now — the README says video is 'not yet supported' via MCP even though Topaz's developer API covers Video AI, Photo AI, and Gigapixel. For Topaz VIDEO upscaling today, use the Topaz models hosted on fal.ai via the fal MCP. Needs a filesystem-capable client (Claude Code, not Claude web chat)."
+  },
+  {
+    "slug": "magnific",
+    "name": "Magnific MCP",
+    "vendor": "Magnific",
+    "official": true,
+    "category": "enhancement",
+    "featured": false,
+    "tagline": "Official remote MCP for upscaling, image/video generation, characters, and asset history.",
+    "description": "Magnific's official remote MCP connects agents to its creative upscaler, image generation/editing, video generation, Soul character/style references, creation history, TTS, and 3D model generation through one OAuth endpoint. For filmmakers, it is strongest as a remote polish-and-iteration bench: upscale keeper frames, crop or relight plates, train reusable references, then browse prior generations without leaving the chat.",
+    "capabilities": ["upscaling", "image-generation", "image-editing", "video-generation", "character-references", "asset-history", "tts", "3d-generation"],
+    "tools_sample": ["images_upscale", "images_generate", "images_remove_background", "video_generate", "custom_references_create", "creations_search", "creations_show", "audio_tts", "models3d_generate"],
+    "install": {
+      "claude_code": "claude mcp add --transport http magnific https://mcp.magnific.com",
+      "remote_url": "https://mcp.magnific.com",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth with a Magnific account; no API key is needed for MCP." },
+    "pricing": "credits",
+    "links": { "repo": null, "docs": "https://docs.magnific.com/modelcontextprotocol", "site": "https://www.magnific.com/api" },
+    "added": "2026-06-29",
+    "verified": "2026-06-29",
+    "notes": "Remote streamable HTTP only; no local package or source repo is published for the official MCP. The docs say tools draw from the same Magnific credit balance as the app/API, and live `tools/list` is the source of truth. The MCP surface is broader than pure upscaling — image/video generation, Soul references, TTS, 3D, folders, and prior-creation browsing — so use explicit prompts when you want faithful enhancement rather than creative reinterpretation."
   }
 ]
