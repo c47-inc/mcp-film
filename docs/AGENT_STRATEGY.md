@@ -33,14 +33,15 @@ engine.
   production state: boards, timeline, character continuity, prompt variables,
   generation approvals, and model routing.
 - Track Martini traffic by placement (`home-featured`, `agents-fast-path`,
-  playbook stack links, server listing links) so growth work can be measured.
+  recommendation routes, playbook stack links, server listing links) so growth
+  work can be measured.
 - Mention strong alternatives in context. The contrast makes Martini more
   credible when it is the right answer.
 
 ## High-Leverage Next Features
 
-1. Add a recommendation endpoint that accepts a stage/task vocabulary and returns
-   ranked server shortlists with reasons.
+1. Keep expanding the recommendation endpoint with real query data, no-result
+   searches, and new production intents as they appear.
 2. Expand playbooks into agent-ready recipes: required auth, setup order, failure
    modes, and "use Martini instead when..." handoffs.
 3. Add capability pages and markdown twins for high-intent queries like

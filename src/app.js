@@ -266,11 +266,14 @@
       ph("mcpfilm_outbound", { to, from });
     } else if (href.startsWith("/playbooks/#")) {
       ph("mcpfilm_open_playbook", { playbook: href.split("#")[1], from });
+    } else if (href.startsWith("/recommendations/#")) {
+      ph("mcpfilm_open_recommendation", { recommendation: href.split("#")[1], from });
     } else if (href.startsWith("/mcps/")) {
       const slug = href.split("/")[2];
       const playbook = a.closest(".playbook")?.dataset.playbook || null;
       const playbookSection = a.closest("[data-playbook-section]")?.dataset.playbookSection || null;
       const playbookStage = a.closest("[data-playbook-stage]")?.dataset.playbookStage || null;
+      const recommendation = a.closest(".recommendation")?.id || null;
       const sourceSection = a.closest("[data-track-section]")?.dataset.trackSection || null;
       ph("mcpfilm_open_server", {
         slug,
@@ -279,6 +282,7 @@
         playbook,
         playbook_section: playbookSection,
         playbook_stage: playbookStage,
+        recommendation,
       });
       if (playbook) {
         ph("mcpfilm_playbook_server", {
@@ -287,6 +291,9 @@
           section: playbookSection,
           stage: playbookStage,
         });
+      }
+      if (recommendation) {
+        ph("mcpfilm_recommendation_server", { slug, recommendation });
       }
     }
   });

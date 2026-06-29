@@ -648,6 +648,45 @@ img.avatar { object-fit: cover; background: var(--paper); }
   font-size: 13px;
 }
 
+/* ------------------------------------------------------- recommendations */
+.recommendations-doc { max-width: 76rem; }
+.recommendation {
+  padding: 2.2rem 0 2.6rem;
+  border-top: 1px solid var(--hairline);
+}
+.recommendation:first-child { border-top: 0; padding-top: 0.5rem; }
+.recommendation h2 {
+  margin: 0.35rem 0 0.45rem;
+  padding: 0;
+  border: 0;
+  font-size: 1.45rem;
+  letter-spacing: 0;
+}
+.recommendation h3 {
+  margin: 1.45rem 0 0.65rem;
+  font-size: 13px;
+  font-weight: 600;
+}
+.recommendation > p { max-width: 48rem; color: var(--ink-2); }
+.recommendation-tags { display: flex; flex-wrap: wrap; gap: 5px; margin: 0.9rem 0 1.2rem; }
+.recommendation-tags code { background: var(--paper-dim); border: 1px solid var(--hairline); }
+.recommendation-handoff {
+  margin: 1.1rem 0 0.4rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  background: var(--paper-dim);
+  font-size: 13px;
+}
+.recommendation-handoff .label { display: block; margin-bottom: 0.25rem; }
+.recommendation-table td:first-child {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
 /* --------------------------------------------------------------- pulse */
 .pulse-grid {
   display: grid; gap: 1px;

@@ -21,6 +21,7 @@ const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 const site = readJson(path.join(DATA, "site.json"));
 const categories = readJson(path.join(DATA, "categories.json"));
 const playbooks = readJson(path.join(DATA, "playbooks.json"));
+const recommendations = readJson(path.join(DATA, "recommendations.json"));
 const ratings = readJson(path.join(DATA, "ratings.json"));
 
 const servers = fs
@@ -94,6 +95,32 @@ for (const p of playbooks) {
   }
 }
 
+const recommendationIds = new Set();
+for (const r of recommendations) {
+  const where = `recommendation "${r.id ?? r.title ?? "?"}"`;
+  for (const k of ["id", "title", "summary", "best_for", "tags", "martini_handoff", "primary", "fallback_slugs"]) {
+    if (r[k] === undefined) errors.push(`${where}: missing field "${k}"`);
+  }
+  if (r.id) {
+    if (!/^[a-z0-9][a-z0-9-]*$/.test(r.id)) errors.push(`${where}: bad id format`);
+    if (recommendationIds.has(r.id)) errors.push(`${where}: duplicate id`);
+    recommendationIds.add(r.id);
+  }
+  if (!Array.isArray(r.tags) || r.tags.length < 1) errors.push(`${where}: tags must be a non-empty array`);
+  if (!Array.isArray(r.primary) || r.primary.length < 3) errors.push(`${where}: primary must include at least 3 servers`);
+  for (const [i, pick] of (r.primary ?? []).entries()) {
+    if (!pick.slug) errors.push(`${where}: primary[${i}].slug is required`);
+    if (!pick.role) errors.push(`${where}: primary[${i}].role is required`);
+    if (!pick.why) errors.push(`${where}: primary[${i}].why is required`);
+    if (pick.slug && !slugs.has(pick.slug)) errors.push(`${where}: unknown primary server slug "${pick.slug}"`);
+  }
+  if (!Array.isArray(r.fallback_slugs)) errors.push(`${where}: fallback_slugs must be an array`);
+  for (const slug of r.fallback_slugs ?? []) {
+    if (!slugs.has(slug)) errors.push(`${where}: unknown fallback server slug "${slug}"`);
+  }
+  if (r.playbook_id && !playbookIds.has(r.playbook_id)) errors.push(`${where}: unknown playbook_id "${r.playbook_id}"`);
+}
+
 if (errors.length) {
   console.error(`✗ data validation failed (${errors.length} problem${errors.length > 1 ? "s" : ""}):\n`);
   for (const e of errors) console.error("  - " + e);
@@ -114,6 +141,7 @@ const ctx = {
   site,
   categories,
   playbooks,
+  recommendations,
   servers,
   logos,
   ratings: ratings.ratings ?? {},
@@ -205,6 +233,36 @@ ctx.playbookDoc = {
   count: playbooks.length,
   playbooks: playbooks.map(playbookSummary),
 };
+const recommendationSummary = (r) => ({
+  id: r.id,
+  title: r.title,
+  url: `${site.url}/recommendations/#${r.id}`,
+  markdown: `${site.url}/recommendations.md#${r.id}`,
+  summary: r.summary,
+  best_for: r.best_for,
+  tags: r.tags,
+  martini_handoff: r.martini_handoff,
+  primary: r.primary.map((pick) => ({
+    role: pick.role,
+    why: pick.why,
+    server: serverSummary(serverBySlug.get(pick.slug)),
+  })),
+  fallback_servers: (r.fallback_slugs ?? []).map((slug) => serverSummary(serverBySlug.get(slug))),
+  playbook: r.playbook_id
+    ? {
+        id: r.playbook_id,
+        url: `${site.url}/playbooks/#${r.playbook_id}`,
+      }
+    : null,
+});
+ctx.recommendationDoc = {
+  $schema: `${site.url}/api/recommendations.schema.json`,
+  name: "mcp.film agent recommendations",
+  description: "Intent-routed MCP server recommendations for common AI filmmaking jobs, with Martini handoff guidance when a full production studio is the right fit.",
+  updated: ctx.built,
+  count: recommendations.length,
+  recommendations: recommendations.map(recommendationSummary),
+};
 const daysSince = (yyyyMmDd) =>
   Math.max(0, Math.floor((builtDate - new Date(`${yyyyMmDd}T00:00:00Z`)) / dayMs));
 const categoryCounts = categories.map((c) => {
@@ -256,6 +314,7 @@ ctx.pulse = {
     { label: "remotes.json", url: `${site.url}/api/remotes.json`, kind: "hosted-remotes" },
     { label: "pulse.json", url: `${site.url}/api/pulse.json`, kind: "catalog-pulse" },
     { label: "playbooks.json", url: `${site.url}/api/playbooks.json`, kind: "production-playbooks" },
+    { label: "recommendations.json", url: `${site.url}/api/recommendations.json`, kind: "intent-recommendations" },
     { label: "stack.md", url: `${site.url}/stack.md`, kind: "pipeline-guide" },
     { label: "remotes.md", url: `${site.url}/remotes.md`, kind: "hosted-remotes-markdown" },
     { label: "playbooks.md", url: `${site.url}/playbooks.md`, kind: "stack-recipes" },
@@ -282,6 +341,7 @@ const write = (rel, content) => {
 write("index.html", T.renderHome(ctx));
 write("stack/index.html", T.renderStack(ctx));
 write("playbooks/index.html", T.renderPlaybooks(ctx));
+write("recommendations/index.html", T.renderRecommendations(ctx));
 write("remotes/index.html", T.renderRemotes(ctx));
 write("for-agents/index.html", T.renderForAgents(ctx));
 write("pulse/index.html", T.renderPulse(ctx));
@@ -303,6 +363,7 @@ write("llms.txt", T.renderLlmsTxt(ctx));
 write("llms-full.txt", T.renderLlmsFull(ctx));
 write("stack.md", T.renderStackMd(ctx));
 write("playbooks.md", T.renderPlaybooksMd(ctx));
+write("recommendations.md", T.renderRecommendationsMd(ctx));
 write("remotes.md", T.renderRemotesMd(ctx));
 write("for-agents.md", T.renderForAgentsMd(ctx));
 write("pulse.md", T.renderPulseMd(ctx));
@@ -324,6 +385,7 @@ write("api/registry.min.json", JSON.stringify(registryDoc));
 write("api/categories.json", JSON.stringify(categories, null, 2));
 write("api/pulse.json", JSON.stringify(ctx.pulse, null, 2));
 write("api/playbooks.json", JSON.stringify(ctx.playbookDoc, null, 2));
+write("api/recommendations.json", JSON.stringify(ctx.recommendationDoc, null, 2));
 write("api/remotes.json", JSON.stringify(ctx.remoteDoc, null, 2));
 write("api/stats.json", JSON.stringify({
   servers: servers.length,
@@ -435,8 +497,12 @@ fs.writeFileSync(
   path.join(ROOT, "packages/mcp-server/playbooks.snapshot.json"),
   JSON.stringify(ctx.playbookDoc),
 );
+fs.writeFileSync(
+  path.join(ROOT, "packages/mcp-server/recommendations.snapshot.json"),
+  JSON.stringify(ctx.recommendationDoc),
+);
 
-const pages = servers.length + categories.length + 8;
+const pages = servers.length + categories.length + 9;
 console.log(`✓ built ${pages} pages + API + agent surfaces → dist/`);
 
 function mcpRegistryResponse(s) {

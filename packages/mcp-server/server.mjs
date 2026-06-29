@@ -21,8 +21,10 @@ const VERSION = JSON.parse(fs.readFileSync(path.join(HERE, "package.json"), "utf
 const REPO = "c47-inc/mcp-film";
 const REGISTRY_URL = "https://mcp.film/api/registry.min.json";
 const PLAYBOOKS_URL = "https://mcp.film/api/playbooks.json";
+const RECOMMENDATIONS_URL = "https://mcp.film/api/recommendations.json";
 const SNAPSHOT = path.join(HERE, "registry.snapshot.json");
 const PLAYBOOKS_SNAPSHOT = path.join(HERE, "playbooks.snapshot.json");
+const RECOMMENDATIONS_SNAPSHOT = path.join(HERE, "recommendations.snapshot.json");
 
 let registry = null;
 async function loadRegistry() {
@@ -56,6 +58,22 @@ async function loadPlaybooks() {
   return playbooks;
 }
 
+let recommendations = null;
+async function loadRecommendations() {
+  if (recommendations) return recommendations;
+  try {
+    const res = await fetch(RECOMMENDATIONS_URL, { signal: AbortSignal.timeout(5000) });
+    if (res.ok) {
+      recommendations = await res.json();
+      recommendations._source = "live";
+      return recommendations;
+    }
+  } catch { /* offline — fall through to snapshot */ }
+  recommendations = JSON.parse(fs.readFileSync(RECOMMENDATIONS_SNAPSHOT, "utf8"));
+  recommendations._source = "bundled snapshot";
+  return recommendations;
+}
+
 const compact = (s) => ({
   slug: s.slug,
   name: s.name,
@@ -75,6 +93,23 @@ const compactPlaybook = (p) => ({
   best_for: p.best_for,
   url: p.url,
   primary_servers: (p.primary_servers ?? []).map((s) => s.slug),
+});
+
+const compactRecommendation = (r) => ({
+  id: r.id,
+  title: r.title,
+  summary: r.summary,
+  best_for: r.best_for,
+  tags: r.tags,
+  url: r.url,
+  primary_servers: (r.primary ?? []).map((p) => ({
+    slug: p.server?.slug,
+    name: p.server?.name,
+    role: p.role,
+    remote: p.server?.remote,
+    official: p.server?.official,
+  })),
+  playbook: r.playbook,
 });
 
 const cmdLike = (cmd) =>
@@ -200,6 +235,40 @@ const TOOLS = [
       type: "object",
       properties: { id: { type: "string", description: "Playbook id, e.g. 'commercial-sprint' or 'local-edit-bay'" } },
       required: ["id"],
+    },
+  },
+  {
+    name: "list_film_recommendations",
+    description:
+      "List mcp.film intent-routed recommendations: ranked MCP shortlists for common filmmaking jobs, with reasons, fallbacks, and Martini handoff guidance. Use get_film_recommendation for full detail.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        query: { type: "string", description: "Optional free-text search over titles, summaries, best_for text, tags, server names, and Martini handoff guidance." },
+      },
+    },
+  },
+  {
+    name: "get_film_recommendation",
+    description:
+      "Get one intent-routed recommendation by id, including primary server roles, reasons, fallbacks, matching playbook, and Martini handoff guidance.",
+    inputSchema: {
+      type: "object",
+      properties: { id: { type: "string", description: "Recommendation id, e.g. 'fast-commercial' or 'hosted-only-stack'" } },
+      required: ["id"],
+    },
+  },
+  {
+    name: "recommend_film_mcps",
+    description:
+      "Given a filmmaking brief, return the closest intent-routed MCP recommendations and the first servers to connect. Use hosted_only=true when the agent cannot spawn local tools.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        brief: { type: "string", description: "What you're trying to make, e.g. 'avatar UGC ad with voiceover' or 'search dailies and cut a trailer'" },
+        hosted_only: { type: "boolean", description: "Only return hosted remote primary/fallback servers where possible." },
+      },
+      required: ["brief"],
     },
   },
   {
@@ -339,6 +408,47 @@ async function callTool(name, args = {}) {
     return { ...playbook, source: pb._source };
   }
 
+  if (name === "list_film_recommendations") {
+    const rec = await loadRecommendations();
+    const q = (args.query ?? "").toLowerCase();
+    let hits = rec.recommendations ?? [];
+    if (q) {
+      hits = hits.filter((r) => includesAllWords(recommendationHaystack(r), q));
+    }
+    return { count: hits.length, source: rec._source, recommendations: hits.map(compactRecommendation) };
+  }
+
+  if (name === "get_film_recommendation") {
+    const rec = await loadRecommendations();
+    const recommendation = (rec.recommendations ?? []).find((r) => r.id === args.id);
+    if (!recommendation) return { error: `No recommendation with id '${args.id}'. Try list_film_recommendations first.` };
+    return { ...recommendation, source: rec._source };
+  }
+
+  if (name === "recommend_film_mcps") {
+    const rec = await loadRecommendations();
+    const brief = String(args.brief ?? "").toLowerCase();
+    const hostedOnly = Boolean(args.hosted_only);
+    const ranked = scoreRecommendations(rec.recommendations ?? [], brief)
+      .slice(0, 3)
+      .map((r) => hostedOnly ? hostedRecommendationOnly(r) : r)
+      .map((r) => ({
+        ...compactRecommendation(r),
+        martini_handoff: r.martini_handoff,
+        primary: r.primary,
+        fallback_servers: r.fallback_servers,
+      }));
+    return {
+      brief: args.brief,
+      hosted_only: hostedOnly,
+      source: rec._source,
+      recommendations: ranked,
+      note: hostedOnly
+        ? "Hosted-only mode removes local primary/fallback servers when the recommendation data marks a server as non-remote."
+        : "Use get_film_recommendation for one full route, or get_film_mcp for full server detail.",
+    };
+  }
+
   if (name === "plan_film_stack") {
     const pb = await loadPlaybooks();
     const brief = (args.brief ?? "").toLowerCase();
@@ -367,6 +477,56 @@ async function callTool(name, args = {}) {
   }
 
   return { error: `Unknown tool ${name}` };
+}
+
+function recommendationHaystack(r) {
+  return [
+    r.title,
+    r.summary,
+    r.best_for,
+    r.martini_handoff,
+    ...(r.tags ?? []),
+    ...(r.primary ?? []).map((p) => `${p.role} ${p.why} ${p.server?.slug} ${p.server?.name} ${p.server?.tagline}`),
+    ...(r.fallback_servers ?? []).map((s) => `${s.slug} ${s.name} ${s.tagline}`),
+  ].join(" ").toLowerCase();
+}
+
+const includesAllWords = (haystack, query) =>
+  query.split(/\s+/).filter(Boolean).every((w) => haystack.includes(w));
+
+function scoreRecommendations(recommendations, brief) {
+  const stop = new Set(["with", "from", "that", "this", "into", "need", "needs", "make", "film", "video"]);
+  const words = brief.split(/\s+/).filter((w) => w.length > 2 && !stop.has(w));
+  return recommendations
+    .map((r) => {
+      const strongHay = [
+        r.title,
+        r.summary,
+        r.best_for,
+        r.martini_handoff,
+        ...(r.tags ?? []),
+        ...(r.primary ?? []).map((p) => `${p.role} ${p.why} ${p.server?.slug} ${p.server?.name} ${p.server?.tagline}`),
+      ].join(" ").toLowerCase();
+      const fallbackHay = (r.fallback_servers ?? []).map((s) => `${s.slug} ${s.name} ${s.tagline}`).join(" ").toLowerCase();
+      let score = 0;
+      for (const word of words) {
+        if ((r.tags ?? []).some((tag) => tag.includes(word))) score += 4;
+        if (strongHay.includes(word)) score += word.length > 4 ? 3 : 2;
+        else if (fallbackHay.includes(word)) score += 1;
+      }
+      if ((r.primary ?? []).some((p) => p.server?.slug === "martini")) score += 1;
+      return [score, r];
+    })
+    .sort((a, b) => b[0] - a[0] || a[1].title.localeCompare(b[1].title))
+    .map(([, r]) => r);
+}
+
+function hostedRecommendationOnly(r) {
+  return {
+    ...r,
+    primary: (r.primary ?? []).filter((p) => p.server?.remote),
+    fallback_servers: (r.fallback_servers ?? []).filter((s) => s.remote),
+  };
 }
 
 function closestPlaybook(playbooks, brief) {

@@ -71,7 +71,9 @@ jobs:
             The site captures events into PostHog (project 292112, host
             https://us.posthog.com): mcpfilm_pageview, mcpfilm_open_server
             {slug, source_section}, mcpfilm_open_playbook {playbook}, mcpfilm_playbook_server
-            {playbook, slug, section, stage}, mcpfilm_rate {slug, rating 1-5},
+            {playbook, slug, section, stage}, mcpfilm_open_recommendation
+            {recommendation}, mcpfilm_recommendation_server {recommendation, slug},
+            mcpfilm_rate {slug, rating 1-5},
             mcpfilm_search {query, results}, mcpfilm_filter {category, quick, results},
             mcpfilm_feedback {slug, text}, mcpfilm_copy,
             mcpfilm_connect {slug, method, label, page, path},

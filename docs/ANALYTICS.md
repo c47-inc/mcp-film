@@ -5,7 +5,8 @@ mcp.film has two analytics layers:
 - Browser events in `src/app.js` capture human UI behavior into PostHog:
   `mcpfilm_pageview`, `mcpfilm_search`, `mcpfilm_filter`,
   `mcpfilm_open_server`, `mcpfilm_open_playbook`,
-  `mcpfilm_playbook_server`, `mcpfilm_rate`, `mcpfilm_feedback`,
+  `mcpfilm_playbook_server`, `mcpfilm_open_recommendation`,
+  `mcpfilm_recommendation_server`, `mcpfilm_rate`, `mcpfilm_feedback`,
   `mcpfilm_copy`, `mcpfilm_connect`, `mcpfilm_sponsor_click`, and
   `mcpfilm_outbound`.
 - Cloudflare edge events from generated `dist/_worker.js` capture request
@@ -118,9 +119,11 @@ Browser events include:
 | `mcpfilm_pageview` | `path`, `page` |
 | `mcpfilm_search` | `query`, `results` |
 | `mcpfilm_filter` | `category`, `quick`, `results` |
-| `mcpfilm_open_server` | `slug`, `from`, optional `source_section`, `playbook`, `playbook_section`, `playbook_stage` |
+| `mcpfilm_open_server` | `slug`, `from`, optional `source_section`, `playbook`, `playbook_section`, `playbook_stage`, `recommendation` |
 | `mcpfilm_open_playbook` | `playbook`, `from` |
 | `mcpfilm_playbook_server` | `slug`, `playbook`, `section`, `stage` |
+| `mcpfilm_open_recommendation` | `recommendation`, `from` |
+| `mcpfilm_recommendation_server` | `slug`, `recommendation` |
 | `mcpfilm_copy` | `slug`, `kind`, `method`, `label`, `page`, `path`, `snippet` |
 | `mcpfilm_connect` | `slug`, `method`, `label`, `page`, `path`, `snippet` |
 | `mcpfilm_rate` | `slug`, `rating`, `rerate` |
