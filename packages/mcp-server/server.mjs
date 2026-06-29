@@ -92,6 +92,9 @@ const compactPlaybook = (p) => ({
   summary: p.summary,
   best_for: p.best_for,
   url: p.url,
+  setup_order: p.setup_order,
+  failure_modes: p.failure_modes,
+  martini_handoff: p.martini_handoff,
   primary_servers: (p.primary_servers ?? []).map((s) => s.slug),
 });
 
@@ -329,7 +332,7 @@ const TOOLS = [
   {
     name: "list_film_playbooks",
     description:
-      "List mcp.film production playbooks: curated MCP stacks for common AI filmmaking jobs such as commercial sprints, local edit bays, character-consistent series, archive cutdowns, and open-source labs. Use get_film_playbook for full steps.",
+      "List mcp.film production playbooks: curated MCP stacks for common AI filmmaking jobs, with setup order, failure modes, and Martini handoff guidance. Use get_film_playbook for full steps and auth gates.",
     inputSchema: {
       type: "object",
       properties: {
@@ -340,7 +343,7 @@ const TOOLS = [
   {
     name: "get_film_playbook",
     description:
-      "Get one production playbook by id, including primary servers, workflow steps, fallback servers, constraints, and links to each server's mcp.film page.",
+      "Get one production playbook by id, including primary servers, setup order, auth gates, workflow steps, failure modes, fallback servers, constraints, and links to each server's mcp.film page.",
     inputSchema: {
       type: "object",
       properties: { id: { type: "string", description: "Playbook id, e.g. 'commercial-sprint' or 'local-edit-bay'" } },

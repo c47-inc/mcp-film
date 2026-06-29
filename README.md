@@ -78,8 +78,9 @@ directory's own meta-MCP server.
 
 Production playbooks live at [`/api/playbooks.json`](https://mcp.film/api/playbooks.json)
 and [`/playbooks.md`](https://mcp.film/playbooks.md): concrete stack recipes
-for commercial sprints, local edit bays, character series, archive cutdowns,
-and open-source labs.
+with setup order, auth gates, failure modes, and earned Martini handoffs for
+commercial sprints, local edit bays, character series, archive cutdowns, and
+open-source labs.
 
 ## Develop locally
 

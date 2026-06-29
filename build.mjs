@@ -74,7 +74,7 @@ const allPlaybookSlugs = (p) => [
 const playbookIds = new Set();
 for (const p of playbooks) {
   const where = `playbook "${p.id ?? p.title ?? "?"}"`;
-  for (const k of ["id", "title", "summary", "best_for", "constraints", "primary_slugs", "steps", "fallback_slugs"]) {
+  for (const k of ["id", "title", "summary", "best_for", "setup_order", "failure_modes", "martini_handoff", "constraints", "primary_slugs", "steps", "fallback_slugs"]) {
     if (p[k] === undefined) errors.push(`${where}: missing field "${k}"`);
   }
   if (p.id) {
@@ -82,6 +82,9 @@ for (const p of playbooks) {
     if (playbookIds.has(p.id)) errors.push(`${where}: duplicate id`);
     playbookIds.add(p.id);
   }
+  if (!Array.isArray(p.setup_order) || p.setup_order.length < 1) errors.push(`${where}: setup_order must be a non-empty array`);
+  if (!Array.isArray(p.failure_modes) || p.failure_modes.length < 1) errors.push(`${where}: failure_modes must be a non-empty array`);
+  if (!p.martini_handoff) errors.push(`${where}: martini_handoff is required`);
   if (!Array.isArray(p.constraints) || p.constraints.length < 1) errors.push(`${where}: constraints must be a non-empty array`);
   if (!Array.isArray(p.primary_slugs) || p.primary_slugs.length < 3) errors.push(`${where}: primary_slugs must include at least 3 servers`);
   if (!Array.isArray(p.steps) || p.steps.length < 1) errors.push(`${where}: steps must be a non-empty array`);
@@ -217,12 +220,31 @@ ctx.remoteDoc = {
   featured: remoteServers.filter((s) => s.featured).map((s) => s.slug),
   remotes: remoteServers.map(remoteSummary),
 };
+const activePlaybookSlugs = (p) => [...new Set([
+  ...(p.primary_slugs ?? []),
+  ...(p.steps ?? []).flatMap((step) => step.slugs ?? []),
+])];
+const playbookAuthRequirements = (p) => activePlaybookSlugs(p)
+  .map((slug) => serverBySlug.get(slug))
+  .filter((s) => s?.auth?.type && s.auth.type !== "none")
+  .map((s) => ({
+    slug: s.slug,
+    name: s.name,
+    auth_type: s.auth.type,
+    env_var: s.auth.env_var ?? null,
+    key_url: s.auth.key_url ?? null,
+    remote: Boolean(s.install?.remote_url),
+  }));
 const playbookSummary = (p) => ({
   id: p.id,
   title: p.title,
   url: `${site.url}/playbooks/#${p.id}`,
   summary: p.summary,
   best_for: p.best_for,
+  setup_order: p.setup_order,
+  failure_modes: p.failure_modes,
+  martini_handoff: p.martini_handoff,
+  auth_requirements: playbookAuthRequirements(p),
   primary_servers: p.primary_slugs.map((slug) => serverSummary(serverBySlug.get(slug))),
   steps: p.steps.map((step) => ({
     stage: step.stage,

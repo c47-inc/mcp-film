@@ -43,8 +43,8 @@ engine.
 1. Use the brief router's `mcpfilm_brief_route` signal, real search data,
    no-result searches, and direct feedback to keep expanding recommendations
    with new production intents as they appear.
-2. Expand playbooks into agent-ready recipes: required auth, setup order, failure
-   modes, and "use Martini instead when..." handoffs.
+2. Keep playbooks agent-ready: required auth, setup order, failure modes, and
+   "use Martini instead when..." handoffs should evolve as the catalog changes.
 3. Keep expanding capability pages and markdown twins for high-intent queries
    like `text-to-video`, `timeline-editing`, `voice-cloning`, and
    `hosted-remote`, using search/no-result data to decide which clusters need

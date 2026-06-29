@@ -1036,6 +1036,15 @@ const playbookServerLink = (ctx, slug) => {
   return s ? `<a href="/mcps/${s.slug}/">${esc(s.name)}</a>` : `<span>${esc(slug)}</span>`;
 };
 
+const playbookSlugs = (p) => [...new Set([
+  ...(p.primary_slugs ?? []),
+  ...(p.steps ?? []).flatMap((step) => step.slugs ?? []),
+])];
+
+const playbookAuthItems = (ctx, p) => playbookSlugs(p)
+  .map((slug) => serverForSlug(ctx, slug))
+  .filter((s) => s?.auth?.type && s.auth.type !== "none");
+
 export const renderPlaybooks = (ctx) => {
   const { site, playbooks } = ctx;
   const body = `
@@ -1060,6 +1069,21 @@ export const renderPlaybooks = (ctx) => {
       }).join("")}
     </div>
 
+    <h3>Agent setup order</h3>
+    <ol class="playbook-steps playbook-setup" data-playbook-section="setup">
+      ${p.setup_order.map((item, i) => `
+      <li>
+        <span class="stage-num">${String(i + 1).padStart(2, "0")}</span>
+        <p>${esc(item)}</p>
+      </li>`).join("")}
+    </ol>
+
+    ${playbookAuthItems(ctx, p).length ? `
+    <h3>Auth gates</h3>
+    <ul class="agents-list" data-playbook-section="auth">
+      ${playbookAuthItems(ctx, p).map((s) => `<li><a href="/mcps/${s.slug}/">${esc(s.name)}</a>: ${esc(s.auth.type)}${s.auth.env_var ? ` · <code class="mono">${esc(s.auth.env_var)}</code>` : ""}${s.install?.remote_url ? " · hosted remote" : " · local/client setup"}</li>`).join("")}
+    </ul>` : ""}
+
     <h3>Workflow</h3>
     <ol class="playbook-steps">
       ${p.steps.map((step) => `
@@ -1070,11 +1094,17 @@ export const renderPlaybooks = (ctx) => {
       </li>`).join("")}
     </ol>
 
+    <h3>Failure modes</h3>
+    <ul class="agents-list" data-playbook-section="failure">
+      ${p.failure_modes.map((c) => `<li>${esc(c)}</li>`).join("")}
+    </ul>
+
     <h3>Watch-outs</h3>
     <ul class="agents-list">
       ${p.constraints.map((c) => `<li>${esc(c)}</li>`).join("")}
     </ul>
 
+    <p class="recommendation-handoff"><span class="label">Martini handoff</span> ${esc(p.martini_handoff)} ${sponsorLink(ctx, `playbook:${p.id}`, "Connect Martini")}.</p>
     <p class="playbook-fallback" data-playbook-section="fallback"><span class="label">Fallbacks</span> ${p.fallback_slugs.map((slug) => playbookServerLink(ctx, slug)).join(" · ")}</p>
   </article>`).join("")}
 </section>`;
@@ -1124,6 +1154,15 @@ export const renderPlaybooksMd = (ctx) => {
       const s = serverForSlug(ctx, slug);
       if (s) lines.push(`- [${s.name}](${ctx.site.url}/mcps/${s.slug}.md): ${s.tagline}`);
     }
+    lines.push("", "### Agent setup order", "", ...p.setup_order.map((item) => `- ${item}`), "");
+    const authItems = playbookAuthItems(ctx, p);
+    if (authItems.length) {
+      lines.push("### Auth gates", "");
+      for (const s of authItems) {
+        lines.push(`- [${s.name}](${ctx.site.url}/mcps/${s.slug}.md): ${s.auth.type}${s.auth.env_var ? ` (${s.auth.env_var})` : ""}${s.install?.remote_url ? "; hosted remote" : "; local/client setup"}`);
+      }
+      lines.push("");
+    }
     lines.push("", "### Workflow", "");
     for (const step of p.steps) {
       const names = step.slugs
@@ -1133,7 +1172,9 @@ export const renderPlaybooksMd = (ctx) => {
         .join(", ");
       lines.push(`- ${step.stage}: ${step.intent} ${names}`);
     }
-    lines.push("", "### Watch-outs", "", ...p.constraints.map((c) => `- ${c}`), "", "### Fallbacks", "");
+    lines.push("", "### Failure modes", "", ...p.failure_modes.map((c) => `- ${c}`), "");
+    lines.push("### Watch-outs", "", ...p.constraints.map((c) => `- ${c}`), "");
+    lines.push("### Martini handoff", "", p.martini_handoff, "", "### Fallbacks", "");
     for (const slug of p.fallback_slugs) {
       const s = serverForSlug(ctx, slug);
       if (s) lines.push(`- [${s.name}](${ctx.site.url}/mcps/${s.slug}.md): ${s.tagline}`);

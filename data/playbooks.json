@@ -4,6 +4,17 @@
     "title": "AI Commercial Sprint",
     "summary": "A fast path from brief to polished 30-60 second ad with one studio, one model hub, voice, edit, finish, and upload.",
     "best_for": "Launch videos, product promos, UGC-style ads, and short brand films where speed matters more than bespoke tooling.",
+    "setup_order": [
+      "Connect Martini first when the brief needs shared boards, shot approvals, reusable subjects, or campaign state; otherwise start with the video generator and tracker.",
+      "Wire hosted remotes for Runway, Canva, and the production tracker before local stdio tools, because they unblock cloud agents fastest.",
+      "Set voice and music credentials before the first cut, then connect edit/export tools after the first approved takes exist."
+    ],
+    "failure_modes": [
+      "Vendor media URLs can expire; download keeper outputs into Martini, Drive, Dropbox, or the project folder before review.",
+      "UGC and social tools can produce platform-shaped clips without preserving production context; keep source prompts, approvals, and final asset IDs in one place.",
+      "YouTube OAuth and quota limits can block publishing late; test upload auth before the final cut is due."
+    ],
+    "martini_handoff": "Use Martini as the command center when the agent must keep briefs, boards, model routes, generated takes, approvals, and final campaign variants attached to the same production.",
     "constraints": ["Use hosted tools where possible.", "Keep one human review gate before publish.", "Download generated assets before vendor URLs expire."],
     "primary_slugs": ["martini", "runway", "agent-media", "runapi", "elevenlabs", "mureka", "palmier-pro", "topaz", "magnific", "canva", "youtube-yutu"],
     "steps": [
@@ -21,6 +32,17 @@
     "title": "Model Shootout",
     "summary": "A controlled way to test the same shot across competing video and image hubs before committing a production budget.",
     "best_for": "Directors, creative technologists, and agencies comparing Veo, Kling, Seedance, Runway, FLUX and other fast-moving models for a specific film look.",
+    "setup_order": [
+      "Define the shot, keeper criteria, aspect ratio, duration, and cost cap before connecting paid model hubs.",
+      "Create the shared start frame or style reference once, then run every model against that same input.",
+      "Log provider, model, prompt, settings, cost, task ID, and output URL with each take before assembling the comparison reel."
+    ],
+    "failure_modes": [
+      "Aggregators may expose unofficial or shifting model routes; record the exact model name and provider returned by each job.",
+      "Comparisons become useless if prompts or start frames drift between runs; freeze inputs before spending credits.",
+      "High-scoring test outputs can still fail rights, watermark, or resolution requirements; check commercial terms before picking a winner."
+    ],
+    "martini_handoff": "Use Martini when the shootout becomes production memory: keeper takes, rejected routes, reference frames, approved prompts, and chosen models need to stay attached to real shots.",
     "constraints": ["Keep prompt, input frame, model, settings, cost and output URL with every take.", "Cap batch counts before spending credits.", "Verify provider rights and ToS before commercial use, especially through aggregator routes."],
     "primary_slugs": ["martini", "promptibus", "krea", "runapi", "kie-ai", "fal", "replicate", "mcp-video"],
     "steps": [
@@ -37,6 +59,17 @@
     "title": "Local Edit Bay",
     "summary": "A workstation-first stack for agents that need to inspect footage, cut precisely, caption, export, and keep media local.",
     "best_for": "Editors who want agent help without sending every source file to a hosted generation or editing service.",
+    "setup_order": [
+      "Mount or expose the source media folder first, then connect transcription and semantic-indexing tools before touching the timeline.",
+      "Pick one authoritative edit surface for the session: Palmier, Resolve, Premiere, or FFmpeg, rather than letting agents split edits across tools.",
+      "Connect review and publishing tools only after the edit app can export a clean local master."
+    ],
+    "failure_modes": [
+      "Local-app MCPs fail quietly when the desktop app, bridge panel, or socket server is not running; verify a harmless read tool before issuing edits.",
+      "Destructive timeline operations can be hard to undo across agent sessions; duplicate projects and source bins before batch edits.",
+      "Hosted transcription or analysis may violate client handling rules; keep sensitive footage local unless the production has cleared upload."
+    ],
+    "martini_handoff": "Use Martini only when local editorial work needs generated shots, shared production boards, or model-routing state; keep purely private source-footage cutting inside local tools.",
     "constraints": ["Requires local apps and media access.", "Prefer explicit file paths and review every destructive edit.", "Use hosted generation only for assets that need it."],
     "primary_slugs": ["palmier-pro", "davinci-resolve", "mcp-video", "ffmpeg", "twelvelabs", "deepgram", "topaz"],
     "steps": [
@@ -53,6 +86,17 @@
     "title": "Character-Consistent Series",
     "summary": "A stack for recurring characters, repeatable looks, and short episodic work where continuity beats raw novelty.",
     "best_for": "Serial social films, AI influencers, explainers, recurring product mascots, and episodic shorts.",
+    "setup_order": [
+      "Create the character bible, approved reference frames, voice IDs, and location state before generating new scenes.",
+      "Connect the production tracker and studio state source before video generation so every new shot can inherit continuity constraints.",
+      "Lock reusable subjects, voices, prompts, and rejected variants after each episode before planning the next one."
+    ],
+    "failure_modes": [
+      "Character drift compounds across episodes if agents reuse outputs without recording the source prompt, model, and reference image.",
+      "Voice cloning and avatar tools can carry consent and rights constraints; keep proof of authorization with the character record.",
+      "Airtable or Notion status can diverge from generated assets unless the agent writes back shot IDs and approved take URLs immediately."
+    ],
+    "martini_handoff": "Use Martini as the series bible when recurring subjects, boards, prompt variables, approved takes, and episode state need to move together across many sessions.",
     "constraints": ["Keep reference images and approved takes organized.", "Record model, prompt, seed, and rights notes per shot.", "Use one source of truth for character state."],
     "primary_slugs": ["martini", "higgsfield", "recraft", "ideogram", "cartesia", "studio-state", "airtable"],
     "steps": [
@@ -70,6 +114,17 @@
     "title": "Archive To Trailer",
     "summary": "Find the right moments in a footage library, make a trailer or cutdown, and ship reviewable versions.",
     "best_for": "Dailies, long interviews, b-roll libraries, event footage, and generated-clip archives that need fast retrieval.",
+    "setup_order": [
+      "Confirm storage permissions and media ownership before indexing, then connect Drive, Dropbox, Frame.io, or Mux as the source of truth.",
+      "Index transcripts and semantic video search before asking the agent for an edit; search quality determines the trailer.",
+      "Export review cuts with metadata, source clip references, and human notes before publishing anywhere public."
+    ],
+    "failure_modes": [
+      "Large libraries can duplicate indexing costs if the agent cannot tell what was already processed; keep index IDs with the source folder.",
+      "Search tools can find the right moment but not the legal right to use it; preserve license and release notes beside each chosen clip.",
+      "Review links and hosted assets can go stale; archive the final cut and source pull list in a production-owned folder."
+    ],
+    "martini_handoff": "Use Martini when archive pulls become new production boards, generated bridge shots, campaign variants, or a trailer package that must preserve approvals and context.",
     "constraints": ["Index only footage you are allowed to process.", "Keep human review before publishing public cuts.", "Avoid re-transcribing media already indexed."],
     "primary_slugs": ["twelvelabs", "frameio", "google-drive", "dropbox", "palmier-pro", "mux", "vimeo"],
     "steps": [
@@ -85,6 +140,17 @@
     "title": "Open Lab",
     "summary": "A mostly local, hackable pipeline for technical filmmakers who want workflows they can inspect and modify.",
     "best_for": "R&D, local GPU shops, labs, students, open-source film experiments, and teams that need maximum control.",
+    "setup_order": [
+      "Pin Python, Node, model, workflow, and node-pack versions before the first run; reproducibility is the product here.",
+      "Connect local generation and DCC tools before cloud fallbacks so the agent learns what the workstation can actually do.",
+      "Keep render scripts, prompts, seeds, generated assets, and failure logs in the project folder so experiments can be rebuilt."
+    ],
+    "failure_modes": [
+      "Local workflow servers break when dependencies drift; record working commit hashes and package versions with every successful run.",
+      "Arbitrary code tools can damage scene files or overwrite media; use throwaway projects until a workflow is trusted.",
+      "Open-source routes often lack commercial licensing clarity for models, assets, and training data; verify rights before client delivery."
+    ],
+    "martini_handoff": "Use Martini when an experiment graduates into a production with deadlines, shared boards, model choices, approved takes, and human review gates.",
     "constraints": ["Expect setup friction.", "Pin model versions and node packs.", "Budget time for render failures and dependency drift."],
     "primary_slugs": ["comfyui-artokun", "comfyui", "blender", "audiogen", "freesound", "mcp-video", "youtube-yutu"],
     "steps": [
