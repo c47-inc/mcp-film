@@ -40,6 +40,10 @@ For the apex domain, delete any old GitHub Pages `A`/`AAAA` records for
 | `CNAME` | `@` | `mcp-film.pages.dev` | Proxied |
 | `CNAME` | `www` | `mcp-film.pages.dev` | Proxied |
 
+The generated Cloudflare worker redirects `www.mcp.film` to `mcp.film` while
+recording the redirect request, keeping agent and human traffic on one
+canonical host.
+
 If the project was created by `wrangler pages project create`, it is a direct
 upload project and will not automatically build from GitHub. Add
 `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` to GitHub Actions secrets so

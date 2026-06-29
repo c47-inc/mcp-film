@@ -74,7 +74,7 @@ const checks = [
     url: `${wwwBase}/api/playbooks.json?monitor=${smoke}`,
     method: "GET",
     accept: "application/json",
-    expect: (status) => status === 200,
+    expect: (status) => status === 200 || status === 301 || status === 308,
     validateJson: (body) => body.count >= 1 && Array.isArray(body.playbooks),
   },
   {
@@ -82,7 +82,7 @@ const checks = [
     url: `${wwwBase}/api/remotes.json?monitor=${smoke}`,
     method: "GET",
     accept: "application/json",
-    expect: (status) => status === 200,
+    expect: (status) => status === 200 || status === 301 || status === 308,
     validateJson: (body) => body.count >= 1 && Array.isArray(body.remotes),
   },
   {
@@ -175,9 +175,10 @@ async function runHttpCheck(check) {
 
     if (res.headers.get("server")) detail += `, server=${res.headers.get("server")}`;
     if (res.headers.get("cf-ray")) detail += `, cf-ray=${res.headers.get("cf-ray")}`;
+    if (res.headers.get("location")) detail += `, location=${res.headers.get("location")}`;
 
     let ok = check.expect(res.status);
-    if (ok && check.validateJson) {
+    if (ok && check.validateJson && res.status >= 200 && res.status < 300) {
       try {
         const body = await res.json();
         ok = Boolean(check.validateJson(body));
@@ -186,6 +187,8 @@ async function runHttpCheck(check) {
         ok = false;
         detail += `, JSON parse failed: ${error.message}`;
       }
+    } else if (ok && check.validateJson) {
+      detail += ", redirect accepted without JSON parse";
     }
 
     if (!ok && check.wafSensitive && res.status === 403) {

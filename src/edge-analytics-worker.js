@@ -3,6 +3,7 @@
 
 const DEFAULT_POSTHOG_KEY = "__MCPFILM_POSTHOG_KEY__";
 const DEFAULT_POSTHOG_HOST = "__MCPFILM_POSTHOG_HOST__";
+const DEFAULT_CANONICAL_HOST = "__MCPFILM_CANONICAL_HOST__";
 
 const staticAssetPattern = /\.(?:avif|css|gif|ico|jpeg|jpg|js|json\.map|map|png|svg|webp|woff2?)$/i;
 
@@ -21,11 +22,30 @@ const browserPattern = /\b(mozilla|chrome|safari|firefox|edg|opr)\b/i;
 
 export default {
   async fetch(request, env, ctx) {
+    const canonicalRedirect = canonicalRedirectResponse(request, env);
+    if (canonicalRedirect) {
+      ctx.waitUntil(captureRequest(request, canonicalRedirect, env));
+      return canonicalRedirect;
+    }
+
     const response = await registryApiResponse(request, env) || await env.ASSETS.fetch(assetRequestFor(request));
     ctx.waitUntil(captureRequest(request, response, env));
     return response;
   },
 };
+
+function canonicalRedirectResponse(request, env) {
+  const url = new URL(request.url);
+  const canonicalHost = String(env.CANONICAL_HOST || DEFAULT_CANONICAL_HOST || "mcp.film")
+    .replace(/^https?:\/\//i, "")
+    .replace(/\/.*$/, "");
+
+  if (!canonicalHost || canonicalHost.startsWith("__MCPFILM_")) return null;
+  if (url.hostname.toLowerCase() !== `www.${canonicalHost}`.toLowerCase()) return null;
+
+  url.hostname = canonicalHost;
+  return Response.redirect(url.toString(), 301);
+}
 
 async function registryApiResponse(request, env) {
   const url = new URL(request.url);
