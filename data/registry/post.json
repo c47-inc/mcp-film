@@ -115,6 +115,29 @@
     "notes": "MIT, PyPI fcp-mcp 0.2.0 uploaded Apr 23 2026, Python >=3.10, server.json present, 88 tools and 107 tests claimed by the repo. The caveat is maturity: only 1 GitHub star and last pushed May 21 2026. Treat it as the most complete-looking Final Cut MCP, not a battle-tested standard; local live-control depends on AppleScript and a running Final Cut Pro install. Optional FCP_MCP_OUTPUT_DIR changes where modified FCPXML files are written."
   },
   {
+    "slug": "fcpxml-mcp",
+    "name": "FCPXML MCP",
+    "vendor": "Community (DareDev256 / James Dare)",
+    "official": false,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Turn Final Cut Pro XML into QC, markers, rough cuts, and cross-NLE handoffs.",
+    "description": "FCPXML MCP gives agents a deep Final Cut Pro XML workbench: inspect timelines, detect flash frames and gaps, add marker batches, build rough cuts, reformat cuts, export EDL/CSV, and write Resolve or FCP7 handoff files. It fits the assistant-editor jobs that do not require eyes on the frame: count, QC, annotate, restructure, and push a clean XML back into the edit bay.",
+    "capabilities": ["final-cut-pro", "fcpxml", "timeline-qc", "rough-cuts", "marker-automation", "cross-nle-export", "security-hardened"],
+    "tools_sample": ["analyze_timeline", "detect_flash_frames", "detect_gaps", "batch_add_markers", "auto_rough_cut", "reformat_timeline", "export_resolve_xml", "push_to_fcp"],
+    "install": {
+      "claude_code": "claude mcp add fcpxml -e FCP_PROJECTS_DIR=/Users/you/Movies -- uv --directory /path/to/fcpxml-mcp-server run server.py",
+      "remote_url": null,
+      "stdio_command": "uv --directory /path/to/fcpxml-mcp-server run server.py"
+    },
+    "auth": { "type": "local-app", "env_var": null, "key_url": "XML mode works on exported FCPXML files; Live Mode requires macOS with Final Cut Pro 10.4+ running and a one-time Automation permission grant" },
+    "pricing": "free",
+    "links": { "repo": "https://github.com/DareDev256/fcpxml-mcp-server", "docs": "https://github.com/DareDev256/fcpxml-mcp-server#readme", "site": null },
+    "added": "2026-06-29",
+    "verified": "2026-06-29",
+    "notes": "MIT, v0.9.0 released Jun 11 2026, 58 stars, Python >=3.10, last pushed Jun 19 2026. This is not an in-FCP plugin: Apple's scriptable import surface lets Live Mode push XML into Final Cut, but current timelines still come back by manual File > Export XML. The repo has been renamed to fcpxml-mcp-server while some README/pyproject install paths still say fcp-mcp-server; GitHub redirects, but use the canonical repo path in new configs."
+  },
+  {
     "slug": "premiere-pro",
     "name": "Adobe Premiere Pro MCP",
     "vendor": "Community (hetpatel-11)",
