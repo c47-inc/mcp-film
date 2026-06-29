@@ -69,6 +69,29 @@
     "notes": "Apache-2.0, npm @runapi.ai/mcp 0.1.13, Node >=22, pushed Jun 25 2026, 51 stars. Catalog, pricing and input constraints ship as build-time data, so the package must be updated when RunAPI changes its marketplace. Narrow sibling: @runapi.ai/runway-aleph-mcp wraps only Runway Aleph."
   },
   {
+    "slug": "kie-ai",
+    "name": "Kie.ai MCP Server",
+    "vendor": "Community (felores) / Kie.ai API",
+    "official": false,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "Run Veo, Seedance, Kling, Runway, Suno, ElevenLabs, FLUX and more through one local MCP.",
+    "description": "Community MCP server and sibling CLI for Kie.ai's media API, covering image, video, music and speech models from one local connector. It is useful for filmmaker-agents that need a broad current model shelf, async task polling, and token-conscious tool loading by category or explicit tool list. The agent still has to treat it as an aggregator, not as first-party access to every underlying model.",
+    "capabilities": ["model-hub", "text-to-video", "image-to-video", "text-to-image", "image-editing", "music", "tts", "sfx", "async-jobs", "task-polling", "tool-filtering"],
+    "tools_sample": ["nano_banana_image", "veo3_generate_video", "bytedance_seedance_video", "kling_video", "runway_aleph_video", "suno_generate_music", "elevenlabs_tts", "wait_for_task", "list_tasks"],
+    "install": {
+      "claude_code": "claude mcp add kie-ai -e KIE_AI_API_KEY=YOUR_KEY -- npx -y @felores/kie-ai-mcp-server",
+      "remote_url": null,
+      "stdio_command": "npx -y @felores/kie-ai-mcp-server"
+    },
+    "auth": { "type": "api_key", "env_var": "KIE_AI_API_KEY", "key_url": "https://kie.ai/api-key" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/felores/kie-cli-mcp", "docs": "https://github.com/felores/kie-cli-mcp#readme", "site": "https://kie.ai" },
+    "added": "2026-06-29",
+    "verified": "2026-06-29",
+    "notes": "MIT, npm @felores/kie-ai-mcp-server 3.5.0, Node >=18, pushed Jun 7 2026, 28 stars. It can load all tools, but the README recommends KIE_AI_ENABLED_TOOLS or KIE_AI_TOOL_CATEGORIES=image,video to avoid burning context on unused schemas. Caveat: Kie.ai is an aggregator/reseller path for models from many vendors; rights, availability and ToS safety depend on the underlying provider, and Midjourney/Suno-style access should be treated as gray until verified for your use case."
+  },
+  {
     "slug": "promptibus",
     "name": "Promptibus MCP",
     "vendor": "Promptibus",
