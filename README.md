@@ -78,7 +78,7 @@ Zero dependencies — Node 20+ is the whole toolchain:
 
 ```sh
 node build.mjs --validate-only   # check the data
-node build.mjs                   # build → dist/ (86 pages, API, feeds, OG image)
+node build.mjs                   # build → dist/ (89 pages, API, feeds, OG image)
 node scripts/serve.mjs           # preview at http://localhost:4173
 ```
 

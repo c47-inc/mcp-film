@@ -69,6 +69,29 @@
     "notes": "Official, published as @humeai/mcp-server on npm with first-party docs. Smaller tool surface than ElevenLabs/Cartesia (TTS-focused). Octave 2 multilingual model strengthens its case for character performance."
   },
   {
+    "slug": "allvoicelab",
+    "name": "AllVoiceLab MCP",
+    "vendor": "All Voice Lab",
+    "official": true,
+    "category": "voice-speech",
+    "featured": false,
+    "tagline": "Official voice and video localization MCP: TTS, cloning, dubbing, subtitles.",
+    "description": "AllVoiceLab's official MCP server gives agents a localization bench: text-to-speech, speech-to-speech conversion, voice cloning, video translation and dubbing, subtitle extraction, subtitle removal, and text translation. For film teams, it is most useful when a cut needs foreign-language dialogue, subtitles, or cleaned title-safe plates without hand-hopping across tools.",
+    "capabilities": ["tts", "speech-to-speech", "voice-cloning", "video-dubbing", "subtitle-extraction", "subtitle-removal", "text-translation"],
+    "tools_sample": ["text_to_speech", "speech_to_speech", "clone_voice", "remove_subtitle", "video_translation_dubbing", "text_translation", "subtitle_extraction"],
+    "install": {
+      "claude_code": "claude mcp add allvoicelab -e ALLVOICELAB_API_KEY=YOUR_KEY -e ALLVOICELAB_API_DOMAIN=https://api.allvoicelab.com -- uvx allvoicelab-mcp",
+      "remote_url": null,
+      "stdio_command": "uvx allvoicelab-mcp"
+    },
+    "auth": { "type": "api_key", "env_var": "ALLVOICELAB_API_KEY", "key_url": "https://www.allvoicelab.com/workbench/api-keys" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/allvoicelab/AllVoiceLab-MCP", "docs": "https://github.com/allvoicelab/AllVoiceLab-MCP#readme", "site": "https://www.allvoicelab.com" },
+    "added": "2026-06-29",
+    "verified": "2026-06-29",
+    "notes": "MIT, PyPI allvoicelab-mcp 0.0.5, Python >=3.11, 56 stars; official but last pushed Aug 2025. Region matters: global keys use https://api.allvoicelab.com, mainland keys use https://api.allvoicelab.cn. The README is explicit that credits are required."
+  },
+  {
     "slug": "suno-acedata",
     "name": "SunoMCP (AceDataCloud)",
     "vendor": "Community (AceDataCloud — not Suno)",

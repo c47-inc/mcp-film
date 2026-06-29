@@ -23,6 +23,29 @@
     "notes": "npm twelvelabs-mcp 1.0.0, published May 2026, maintained by the `twelvelabs` npm account plus Teraflop. The stdio bin is `twelvelabs-mcp-stdio`; the explicit `--package=twelvelabs-mcp` npx form avoids npm confusing the package name with the bin name. Local file and folder uploads only work over stdio; hosted HTTP expects API-key headers and public/direct video URLs."
   },
   {
+    "slug": "video-jungle",
+    "name": "Video Jungle MCP",
+    "vendor": "Community (burningion) / Video Jungle",
+    "official": false,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Search, analyze, and generate edits from source videos through Video Jungle.",
+    "description": "Video Jungle's MCP server connects agents to its video analysis and edit-generation platform: upload videos by URL, create projects, search analyzed footage by embeddings and keywords, generate edits from one or more videos, and optionally export OpenTimelineIO projects for DaVinci Resolve Studio. It fits the research-to-cutdown workflow: find every moment in a clip set, ask for the edit, then bring the timeline back to an NLE.",
+    "capabilities": ["video-search", "video-analysis", "edit-generation", "otio-export", "local-photos-search", "davinci-resolve"],
+    "tools_sample": ["add-video", "create-videojungle-project", "search-videos", "generate-edit-from-videos", "generate-edit-from-single-video", "edit-locally", "get-project-assets", "update-video-edit"],
+    "install": {
+      "claude_code": "claude mcp add video-jungle -- uvx video-editor-mcp YOURAPIKEY",
+      "remote_url": null,
+      "stdio_command": "uvx video-editor-mcp YOURAPIKEY"
+    },
+    "auth": { "type": "api_key", "env_var": null, "key_url": "https://app.video-jungle.com/profile/settings" },
+    "pricing": "freemium",
+    "links": { "repo": "https://github.com/burningion/video-editing-mcp", "docs": "https://github.com/burningion/video-editing-mcp#readme", "site": "https://www.video-jungle.com" },
+    "added": "2026-06-29",
+    "verified": "2026-06-29",
+    "notes": "PyPI video-editor-mcp 0.1.59, Python >=3.11, 276 stars, last pushed Oct 2025, no repo license detected. Video Jungle's site advertises 6 free generated videos, then usage depends on the hosted account. The API key is passed as a positional CLI argument rather than an env var, and local Photos search requires LOAD_PHOTOS_DB=1 plus macOS file access."
+  },
+  {
     "slug": "davinci-resolve",
     "name": "DaVinci Resolve MCP",
     "vendor": "Community (samuelgursky)",
