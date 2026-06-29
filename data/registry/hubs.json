@@ -92,6 +92,29 @@
     "notes": "Apache-2.0, npm @runapi.ai/mcp 0.1.13, Node >=22, pushed Jun 25 2026, 51 stars. Catalog, pricing and input constraints ship as build-time data, so the package must be updated when RunAPI changes its marketplace. Narrow sibling: @runapi.ai/runway-aleph-mcp wraps only Runway Aleph."
   },
   {
+    "slug": "runware",
+    "name": "Runware MCP",
+    "vendor": "Runware",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "Official Runware MCP for image, video, audio, 3D, upscaling, and model search.",
+    "description": "Runware's official npm MCP package gives agents access to the Runware API: image generation, video generation, audio generation, 3D, upscaling, background removal, captioning, model discovery, pricing, task lookup, and account balance. For filmmaker-agents it is another broad media workbench, especially useful when a prompt needs model search plus schema validation before spending credits.",
+    "capabilities": ["text-to-image", "text-to-video", "image-to-video", "audio-generation", "3d-generation", "upscaling", "background-removal", "image-captioning", "model-search", "pricing", "task-inspection", "custom-model-upload"],
+    "tools_sample": ["run", "model_schema", "list_models", "model_details", "model_examples", "model_pricing", "list_capabilities", "model_search", "image_upload", "model_upload", "account", "get_task_details"],
+    "install": {
+      "claude_code": "claude mcp add runware -e RUNWARE_API_KEY=YOUR_KEY -- npx -y @runware/mcp",
+      "remote_url": null,
+      "stdio_command": "npx -y @runware/mcp"
+    },
+    "auth": { "type": "api_key", "env_var": "RUNWARE_API_KEY", "key_url": "https://my.runware.ai" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/Runware/MCP-Runware", "docs": "https://www.npmjs.com/package/@runware/mcp", "site": "https://runware.ai" },
+    "added": "2026-06-29",
+    "verified": "2026-06-29",
+    "notes": "npm @runware/mcp 1.1.0, Node >=18, MIT, published Jun 23 2026; package docs list Claude Desktop, Cursor, and Codex stdio configs. Caveat: the npm package metadata points to github.com/Runware/mcp, which returned 404 during verification, so this listing links the older public Runware/MCP-Runware repo for provenance and the npm package page for the current install. It is a local stdio package, not a hosted remote MCP."
+  },
+  {
     "slug": "kie-ai",
     "name": "Kie.ai MCP Server",
     "vendor": "Community (felores) / Kie.ai API",

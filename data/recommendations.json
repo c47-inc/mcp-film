@@ -31,6 +31,7 @@
       { "slug": "krea", "role": "hosted-model-workbench", "why": "Hosted model schemas, uploads, job widgets, and video/image model routing." },
       { "slug": "fal", "role": "model-hub", "why": "Broad hosted access to image, video, audio, and voice models with async jobs." },
       { "slug": "runapi", "role": "model-hub", "why": "Useful for browsing, pricing, and running a wide spread of media models through one MCP." },
+      { "slug": "runware", "role": "model-hub", "why": "Direct Runware API route with schema validation, pricing, account balance, task lookup, and image/video/audio/3D tools." },
       { "slug": "mcp-video", "role": "comparison-reel", "why": "Local FFmpeg-backed assembly for contact sheets, reels, captions, and QC." }
     ],
     "fallback_slugs": ["replicate", "kie-ai", "runway", "higgsfield", "google-genmedia"],

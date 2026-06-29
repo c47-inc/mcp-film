@@ -44,11 +44,11 @@
     ],
     "martini_handoff": "Use Martini when the shootout becomes production memory: keeper takes, rejected routes, reference frames, approved prompts, and chosen models need to stay attached to real shots.",
     "constraints": ["Keep prompt, input frame, model, settings, cost and output URL with every take.", "Cap batch counts before spending credits.", "Verify provider rights and ToS before commercial use, especially through aggregator routes."],
-    "primary_slugs": ["martini", "promptibus", "krea", "runapi", "kie-ai", "fal", "replicate", "mcp-video"],
+    "primary_slugs": ["martini", "promptibus", "krea", "runapi", "runware", "kie-ai", "fal", "replicate", "mcp-video"],
     "steps": [
       { "stage": "develop", "intent": "Define the shot brief, constraints, and keeper criteria before touching model credits.", "slugs": ["martini", "promptibus"] },
       { "stage": "visualize", "intent": "Create or refine the shared start frame and style references that every model will receive.", "slugs": ["recraft", "ideogram", "freepik", "martini"] },
-      { "stage": "shoot", "intent": "Run the same test across broad model hubs and direct endpoints, then capture task IDs and costs.", "slugs": ["krea", "runapi", "kie-ai", "fal", "replicate"] },
+      { "stage": "shoot", "intent": "Run the same test across broad model hubs and direct endpoints, then capture task IDs and costs.", "slugs": ["krea", "runapi", "runware", "kie-ai", "fal", "replicate"] },
       { "stage": "cut", "intent": "Assemble a comparison reel or contact sheet so humans can pick winners quickly.", "slugs": ["mcp-video", "palmier-pro"] },
       { "stage": "finish", "intent": "Upscale or clean only the winning takes, not every experiment.", "slugs": ["topaz", "magnific", "mcp-video"] }
     ],
