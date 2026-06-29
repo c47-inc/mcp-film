@@ -51,8 +51,9 @@ engine.
    stronger editorial notes.
 4. Add client-specific install profiles for Claude Code, Claude Desktop,
    ChatGPT, Cursor, Gemini CLI, and generic Streamable HTTP clients.
-5. Build a PostHog dashboard around agent traffic, Martini handoffs, no-result
-   searches, and top machine surfaces.
+5. Use the `mcp.film Agent Traffic` dashboard to decide which routes deserve
+   stronger playbooks: agent-readable URLs, brief-router demand, Martini
+   handoffs, no-result searches, and top machine surfaces.
 
 ## Editorial Test
 

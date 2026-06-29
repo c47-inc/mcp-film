@@ -138,8 +138,8 @@ Browser events include:
 | `mcpfilm_rate` | `slug`, `rating`, `rerate` |
 | `mcpfilm_feedback` | `slug`, `text` |
 | `mcpfilm_sponsor_impression` | `sponsor`, `placement`, `to`, `page`, `path`, optional `source_slug`, `label` |
-| `mcpfilm_sponsor_click` | `sponsor`, `placement`, `to`, `from`, `page`, optional `source_slug`, `label` |
-| `mcpfilm_outbound` | `to`, `from` |
+| `mcpfilm_sponsor_click` | `sponsor`, `placement`, `to`, `from`, `trigger`, `page`, optional `source_slug`, `label` |
+| `mcpfilm_outbound` | `to`, `from`, `trigger` |
 
 `mcpfilm_edge_request` includes:
 
@@ -160,6 +160,17 @@ Browser events include:
 
 Pinned PostHog dashboard:
 [`mcp.film Agent Traffic`](https://us.posthog.com/project/292112/dashboard/1772277).
+
+Current saved dashboard tiles:
+
+| Tile | Insight |
+| --- | --- |
+| Traffic by kind | [`trSm0Q1j`](https://us.posthog.com/project/292112/insights/trSm0Q1j) |
+| Human engagement | [`CshcfEnp`](https://us.posthog.com/project/292112/insights/CshcfEnp) |
+| Agent surfaces | [`VhJd9ZLq`](https://us.posthog.com/project/292112/insights/VhJd9ZLq) |
+| Top agent-readable URLs | [`qKqnkLRf`](https://us.posthog.com/project/292112/insights/qKqnkLRf) |
+| Brief router demand | [`LLUEXfaF`](https://us.posthog.com/project/292112/insights/LLUEXfaF) |
+| Martini handoffs | [`6baCVfoG`](https://us.posthog.com/project/292112/insights/6baCVfoG) |
 
 Total request traffic, non-asset paths:
 
@@ -364,22 +375,24 @@ ORDER BY routed_briefs DESC
 LIMIT 50
 ```
 
-Martini sponsor traffic:
+Martini handoffs:
 
 ```sql
 SELECT
-  properties.placement AS placement,
-  properties.source_slug AS source_slug,
-  properties.to AS destination,
-  countIf(event = 'mcpfilm_sponsor_impression') AS impressions,
-  countIf(event = 'mcpfilm_sponsor_click') AS clicks,
-  count(DISTINCT distinct_id) AS users
+  event,
+  coalesce(properties.placement, properties.from, properties.label, properties.path) AS placement,
+  count() AS events,
+  count(DISTINCT distinct_id) AS users,
+  max(timestamp) AS latest
 FROM events
-WHERE event IN ('mcpfilm_sponsor_impression', 'mcpfilm_sponsor_click')
-  AND properties.sponsor = 'martini'
-  AND timestamp > now() - interval 30 day
-GROUP BY placement, source_slug, destination
-ORDER BY impressions DESC, clicks DESC
+WHERE timestamp >= now() - interval 30 day
+  AND (
+    (event IN ('mcpfilm_sponsor_impression', 'mcpfilm_sponsor_click') AND properties.sponsor = 'martini')
+    OR (event = 'mcpfilm_outbound' AND properties.to LIKE '%martini.film%')
+    OR (event = 'mcpfilm_connect' AND properties.slug = 'martini')
+  )
+GROUP BY event, placement
+ORDER BY events DESC
 LIMIT 50
 ```
 
@@ -397,3 +410,7 @@ Cloudflare security products can still transform or block a response after the
 Pages worker has served it. In that case PostHog may record the worker response
 status while the client receives a `403`. Keep the production monitor green if
 agent access matters; it checks what clients actually receive.
+
+Outbound click events are captured on `pointerdown` where available, then fall
+back to `click` for keyboard activation. Use the `trigger` property to debug
+whether a handoff came from early pointer capture or normal click capture.

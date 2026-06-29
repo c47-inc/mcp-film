@@ -588,6 +588,38 @@
   }
 
   // --------------------------------------------- outbound + detail signal
+  const externalIntentAt = new WeakMap();
+  const captureExternalLink = (a, trigger) => {
+    const from = location.pathname;
+    const to = a.href;
+    const linkHost = normalizedHost(to);
+    const sponsor = a.dataset.sponsor || (hostMatches(linkHost, sponsorHost) ? document.body.dataset.sponsor : "");
+    if (a.dataset.sponsorClick || sponsor) {
+      ph("mcpfilm_sponsor_click", {
+        sponsor: sponsor || document.body.dataset.sponsor || "sponsor",
+        placement: a.dataset.sponsorPlacement || "host-match",
+        to,
+        from,
+        trigger,
+        page: document.body.dataset.page,
+        source_slug: document.querySelector(".server")?.dataset.slug || null,
+        label: (a.textContent || "").trim().slice(0, 80),
+      });
+    }
+    ph("mcpfilm_outbound", { to, from, trigger });
+    externalIntentAt.set(a, Date.now());
+  };
+
+  document.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return;
+    const a = e.target.closest("a[href]");
+    if (!a) return;
+    const to = a.href;
+    const linkHost = normalizedHost(to);
+    const isExternal = /^https?:\/\//.test(to) && linkHost && linkHost !== siteHost;
+    if (isExternal) captureExternalLink(a, "pointerdown");
+  }, { passive: true });
+
   document.addEventListener("click", (e) => {
     const a = e.target.closest("a[href]");
     if (!a) return;
@@ -597,19 +629,8 @@
     const linkHost = normalizedHost(to);
     const isExternal = /^https?:\/\//.test(to) && linkHost && linkHost !== siteHost;
     if (isExternal) {
-      const sponsor = a.dataset.sponsor || (hostMatches(linkHost, sponsorHost) ? document.body.dataset.sponsor : "");
-      if (a.dataset.sponsorClick || sponsor) {
-        ph("mcpfilm_sponsor_click", {
-          sponsor: sponsor || document.body.dataset.sponsor || "sponsor",
-          placement: a.dataset.sponsorPlacement || "host-match",
-          to,
-          from,
-          page: document.body.dataset.page,
-          source_slug: document.querySelector(".server")?.dataset.slug || null,
-          label: (a.textContent || "").trim().slice(0, 80),
-        });
-      }
-      ph("mcpfilm_outbound", { to, from });
+      const captured = Date.now() - (externalIntentAt.get(a) || 0) < 1500;
+      if (!captured) captureExternalLink(a, "click");
     } else if (href.startsWith("/capabilities/") && href !== "/capabilities/") {
       const capability = href.split("/")[2]?.replace(/\.md$/, "") || null;
       if (capability) ph("mcpfilm_open_capability", { capability, from });
