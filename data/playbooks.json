@@ -1,0 +1,83 @@
+[
+  {
+    "id": "commercial-sprint",
+    "title": "AI Commercial Sprint",
+    "summary": "A fast path from brief to polished 30-60 second ad with one studio, one model hub, voice, edit, finish, and upload.",
+    "best_for": "Launch videos, product promos, UGC-style ads, and short brand films where speed matters more than bespoke tooling.",
+    "constraints": ["Use hosted tools where possible.", "Keep one human review gate before publish.", "Download generated assets before vendor URLs expire."],
+    "primary_slugs": ["martini", "runway", "runapi", "elevenlabs", "palmier-pro", "topaz", "youtube-yutu"],
+    "steps": [
+      { "stage": "develop", "intent": "Turn the brief into scenes, shot goals, and edit notes.", "slugs": ["martini", "notion"] },
+      { "stage": "shoot", "intent": "Generate hero shots and alternates with direct video models plus a hub for gaps.", "slugs": ["runway", "runapi", "fal"] },
+      { "stage": "sound", "intent": "Record voiceover and temp score without leaving the agent session.", "slugs": ["elevenlabs", "google-genmedia"] },
+      { "stage": "cut", "intent": "Assemble, caption, and revise the timeline in an agent-operable editor.", "slugs": ["palmier-pro", "mcp-video"] },
+      { "stage": "finish", "intent": "Upscale stills or plates and QC the final master.", "slugs": ["topaz", "mcp-video"] },
+      { "stage": "ship", "intent": "Upload the final cut and retain metadata control.", "slugs": ["youtube-yutu", "youtube-data"] }
+    ],
+    "fallback_slugs": ["pika", "higgsfield", "json2video", "vimeo"]
+  },
+  {
+    "id": "local-edit-bay",
+    "title": "Local Edit Bay",
+    "summary": "A workstation-first stack for agents that need to inspect footage, cut precisely, caption, export, and keep media local.",
+    "best_for": "Editors who want agent help without sending every source file to a hosted generation or editing service.",
+    "constraints": ["Requires local apps and media access.", "Prefer explicit file paths and review every destructive edit.", "Use hosted generation only for assets that need it."],
+    "primary_slugs": ["palmier-pro", "davinci-resolve", "mcp-video", "ffmpeg", "twelvelabs", "deepgram", "topaz"],
+    "steps": [
+      { "stage": "develop", "intent": "Index source material and pull searchable notes before cutting.", "slugs": ["twelvelabs", "deepgram"] },
+      { "stage": "cut", "intent": "Use the right edit surface: Palmier for agent-native timeline work, Resolve for mature finishing, FFmpeg for batch operations.", "slugs": ["palmier-pro", "davinci-resolve", "ffmpeg", "mcp-video"] },
+      { "stage": "sound", "intent": "Clean and normalize dialogue before final assembly.", "slugs": ["auphonic-zapier", "elevenlabs"] },
+      { "stage": "finish", "intent": "Upscale, enhance, and verify deliverables locally or through focused APIs.", "slugs": ["topaz", "mcp-video"] },
+      { "stage": "ship", "intent": "Send review copies, archive outputs, and publish only after approval.", "slugs": ["frameio", "vimeo", "youtube-yutu"] }
+    ],
+    "fallback_slugs": ["premiere-pro", "after-effects", "capcut"]
+  },
+  {
+    "id": "character-series",
+    "title": "Character-Consistent Series",
+    "summary": "A stack for recurring characters, repeatable looks, and short episodic work where continuity beats raw novelty.",
+    "best_for": "Serial social films, AI influencers, explainers, recurring product mascots, and episodic shorts.",
+    "constraints": ["Keep reference images and approved takes organized.", "Record model, prompt, seed, and rights notes per shot.", "Use one source of truth for character state."],
+    "primary_slugs": ["martini", "higgsfield", "recraft", "ideogram", "cartesia", "studio-state", "airtable"],
+    "steps": [
+      { "stage": "develop", "intent": "Track characters, locations, and shot state so each session starts grounded.", "slugs": ["studio-state", "airtable", "notion"] },
+      { "stage": "visualize", "intent": "Create locked references, style frames, logos, and art direction boards.", "slugs": ["recraft", "ideogram", "miro"] },
+      { "stage": "shoot", "intent": "Generate scenes with character-aware tools and a full-stack studio for continuity.", "slugs": ["martini", "higgsfield", "runway"] },
+      { "stage": "sound", "intent": "Keep voice and dialogue consistent across episodes.", "slugs": ["cartesia", "elevenlabs", "hume"] },
+      { "stage": "cut", "intent": "Assemble episodes and preserve reusable project structure.", "slugs": ["palmier-pro", "vibeframe"] },
+      { "stage": "ship", "intent": "Publish and read performance signals for the next episode.", "slugs": ["youtube-yutu", "youtube-data"] }
+    ],
+    "fallback_slugs": ["pika", "pixverse", "heygen", "hedra"]
+  },
+  {
+    "id": "archive-to-trailer",
+    "title": "Archive To Trailer",
+    "summary": "Find the right moments in a footage library, make a trailer or cutdown, and ship reviewable versions.",
+    "best_for": "Dailies, long interviews, b-roll libraries, event footage, and generated-clip archives that need fast retrieval.",
+    "constraints": ["Index only footage you are allowed to process.", "Keep human review before publishing public cuts.", "Avoid re-transcribing media already indexed."],
+    "primary_slugs": ["twelvelabs", "frameio", "google-drive", "dropbox", "palmier-pro", "mux", "vimeo"],
+    "steps": [
+      { "stage": "develop", "intent": "Collect footage sources and production notes.", "slugs": ["google-drive", "dropbox", "frameio"] },
+      { "stage": "cut", "intent": "Search semantic video moments, transcripts, and media bins before assembling.", "slugs": ["twelvelabs", "palmier-pro", "deepgram"] },
+      { "stage": "finish", "intent": "Create clean review exports and delivery variants.", "slugs": ["mcp-video", "topaz"] },
+      { "stage": "ship", "intent": "Host the cut, collect review feedback, and update metadata.", "slugs": ["mux", "vimeo", "youtube-yutu"] }
+    ],
+    "fallback_slugs": ["premiere-pro", "davinci-resolve", "youtube-data"]
+  },
+  {
+    "id": "open-lab",
+    "title": "Open Lab",
+    "summary": "A mostly local, hackable pipeline for technical filmmakers who want workflows they can inspect and modify.",
+    "best_for": "R&D, local GPU shops, labs, students, open-source film experiments, and teams that need maximum control.",
+    "constraints": ["Expect setup friction.", "Pin model versions and node packs.", "Budget time for render failures and dependency drift."],
+    "primary_slugs": ["comfyui-artokun", "comfyui", "blender", "audiogen", "freesound", "mcp-video", "youtube-yutu"],
+    "steps": [
+      { "stage": "visualize", "intent": "Generate stills, boards, and model tests locally or through inspectable workflows.", "slugs": ["comfyui-artokun", "comfyui"] },
+      { "stage": "shoot", "intent": "Build scenes, props, previz, and open video-model experiments.", "slugs": ["blender", "comfyui", "unreal-engine"] },
+      { "stage": "sound", "intent": "Draft SFX locally and fill gaps with licensed library search.", "slugs": ["audiogen", "freesound"] },
+      { "stage": "cut", "intent": "Transcode, caption, QC, and assemble media with guardrailed local tools.", "slugs": ["mcp-video", "ffmpeg"] },
+      { "stage": "ship", "intent": "Publish when ready, with analytics available for iteration.", "slugs": ["youtube-yutu", "youtube-data"] }
+    ],
+    "fallback_slugs": ["replicate", "fal", "tripo", "meshy"]
+  }
+]

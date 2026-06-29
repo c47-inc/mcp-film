@@ -145,6 +145,7 @@ ${body}
     <div class="foot-col">
       <p class="foot-h">Humans</p>
       <a href="/stack/">The AI Film Stack</a>
+      <a href="/playbooks/">Production playbooks</a>
       <a href="/submit/">Submit a server</a>
       <a href="/about/">About</a>
       <a href="https://github.com/${site.github_repo}" rel="noopener">Source on GitHub</a>
@@ -153,6 +154,7 @@ ${body}
       <p class="foot-h">Agents</p>
       <a href="/llms.txt">llms.txt</a>
       <a href="/api/registry.json">registry.json</a>
+      <a href="/api/playbooks.json">playbooks.json</a>
       <a href="/pulse/">Catalog pulse</a>
       <a href="/for-agents/">Agent docs</a>
       <a href="/feed.xml">Atom feed</a>
@@ -243,6 +245,7 @@ export const renderHome = (ctx) => {
   <div class="hero-cta">
     <a class="btn btn-primary" href="#directory">Browse the directory</a>
     <a class="btn" href="/stack/">The AI Film Stack</a>
+    <a class="btn" href="/playbooks/">Production playbooks</a>
   </div>
   <p class="hero-stats"><span><b>${ctx.servers.length}</b> servers</span><span><b>${ctx.officialCount}</b> official</span><span><b>${ctx.remoteCount}</b> hosted remote</span><span><b>${categories.length}</b> categories</span><span><b>${nice(ctx.built.slice(0, 10))}</b> last verified</span></p>
   <p class="hero-ticker" data-ticker='${esc(JSON.stringify([
@@ -619,6 +622,7 @@ export const renderStack = (ctx) => {
   <h2>The five-connection starter kit</h2>
   <p>If you connect nothing else, connect these. One studio, one model hub, one voice, one edit bay, one distribution pipe — a complete film pipeline in five MCP servers.</p>
   <div class="grid">${starter.map((s) => card(ctx, s)).join("")}</div>
+  <p class="connect-note">Need a stack for a specific job? Use the <a href="/playbooks/">production playbooks</a>.</p>
 </section>
 
 ${stages.map((st, i) => `
@@ -669,6 +673,122 @@ export const renderStackMd = (ctx) => {
   return lines.join("\n") + "\n";
 };
 
+// -------------------------------------------------------------- playbooks
+const serverForSlug = (ctx, slug) => ctx.servers.find((s) => s.slug === slug);
+
+const playbookServerLink = (ctx, slug) => {
+  const s = serverForSlug(ctx, slug);
+  return s ? `<a href="/mcps/${s.slug}/">${esc(s.name)}</a>` : `<span>${esc(slug)}</span>`;
+};
+
+export const renderPlaybooks = (ctx) => {
+  const { site, playbooks } = ctx;
+  const body = `
+<section class="page-head">
+  <p class="crumbs"><a href="/">mcp.film</a> / <span>Playbooks</span></p>
+  <h1>Production playbooks</h1>
+  <p class="hero-sub">Concrete MCP stacks for common AI filmmaking jobs. The directory tells you what exists; playbooks tell your agent what to connect first. <span class="mono">(machine version: <a href="/playbooks.md">/playbooks.md</a> · <a href="/api/playbooks.json">/api/playbooks.json</a>)</span></p>
+</section>
+
+<section class="server-main playbook-doc">
+  ${playbooks.map((p) => `
+  <article class="playbook" id="${esc(p.id)}">
+    <p class="label">${esc(p.best_for)}</p>
+    <h2>${esc(p.title)}</h2>
+    <p>${esc(p.summary)}</p>
+
+    <h3>Primary stack</h3>
+    <div class="playbook-stack">
+      ${p.primary_slugs.map((slug) => {
+        const s = serverForSlug(ctx, slug);
+        return s ? card(ctx, s) : "";
+      }).join("")}
+    </div>
+
+    <h3>Workflow</h3>
+    <ol class="playbook-steps">
+      ${p.steps.map((step) => `
+      <li>
+        <span class="stage-num">${esc(step.stage)}</span>
+        <p>${esc(step.intent)}</p>
+        <p class="playbook-links">${step.slugs.map((slug) => playbookServerLink(ctx, slug)).join(" · ")}</p>
+      </li>`).join("")}
+    </ol>
+
+    <h3>Watch-outs</h3>
+    <ul class="agents-list">
+      ${p.constraints.map((c) => `<li>${esc(c)}</li>`).join("")}
+    </ul>
+
+    <p class="playbook-fallback"><span class="label">Fallbacks</span> ${p.fallback_slugs.map((slug) => playbookServerLink(ctx, slug)).join(" · ")}</p>
+  </article>`).join("")}
+</section>`;
+
+  return layout(ctx, {
+    title: "Production playbooks — MCP stacks for AI filmmaking | mcp.film",
+    description: "Concrete MCP stack recipes for AI commercials, local editing, character series, archive cutdowns, and open-source film labs.",
+    path: "/playbooks/",
+    page: "playbooks",
+    md: "/playbooks.md",
+    body,
+    jsonLd: [
+      {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        name: "mcp.film production playbooks",
+        description: "Curated MCP stacks for common AI filmmaking workflows.",
+        url: site.url + "/playbooks/",
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: playbooks.length,
+          itemListElement: playbooks.map((p, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: p.title,
+            url: `${site.url}/playbooks/#${p.id}`,
+          })),
+        },
+      },
+    ],
+  });
+};
+
+export const renderPlaybooksMd = (ctx) => {
+  const lines = [
+    "# mcp.film production playbooks",
+    "",
+    "> Concrete MCP stacks for common AI filmmaking jobs.",
+    "",
+    `Structured data: ${ctx.site.url}/api/playbooks.json`,
+    "",
+  ];
+  for (const p of ctx.playbooks) {
+    lines.push(`## ${p.title}`, "", p.summary, "", `Best for: ${p.best_for}`, "");
+    lines.push("### Primary stack", "");
+    for (const slug of p.primary_slugs) {
+      const s = serverForSlug(ctx, slug);
+      if (s) lines.push(`- [${s.name}](${ctx.site.url}/mcps/${s.slug}.md): ${s.tagline}`);
+    }
+    lines.push("", "### Workflow", "");
+    for (const step of p.steps) {
+      const names = step.slugs
+        .map((slug) => serverForSlug(ctx, slug))
+        .filter(Boolean)
+        .map((s) => `[${s.name}](${ctx.site.url}/mcps/${s.slug}.md)`)
+        .join(", ");
+      lines.push(`- ${step.stage}: ${step.intent} ${names}`);
+    }
+    lines.push("", "### Watch-outs", "", ...p.constraints.map((c) => `- ${c}`), "", "### Fallbacks", "");
+    for (const slug of p.fallback_slugs) {
+      const s = serverForSlug(ctx, slug);
+      if (s) lines.push(`- [${s.name}](${ctx.site.url}/mcps/${s.slug}.md): ${s.tagline}`);
+    }
+    lines.push("");
+  }
+  lines.push("---", "", `Full registry: ${ctx.site.url}/api/registry.json`);
+  return lines.join("\n") + "\n";
+};
+
 // --------------------------------------------------------------- for agents
 export const renderForAgents = (ctx) => {
   const { site } = ctx;
@@ -690,9 +810,11 @@ export const renderForAgents = (ctx) => {
     <li><code class="mono">/llms-full.txt</code> — the whole directory inlined as one markdown document</li>
     <li><code class="mono">/api/registry.json</code> — full structured registry (also <code class="mono">.min.json</code>)</li>
     <li><code class="mono">/api/pulse.json</code> — catalog freshness, newest entries, stale verification queue</li>
+    <li><code class="mono">/api/playbooks.json</code> — production-ready stack recipes for common film jobs</li>
     <li><code class="mono">/api/mcps/{slug}.json</code> — one server, structured</li>
     <li><code class="mono">/mcps/{slug}.md</code> — one server, clean markdown</li>
     <li><code class="mono">/stack.md</code> — the pipeline guide as markdown</li>
+    <li><code class="mono">/playbooks.md</code> — concrete production playbooks as markdown</li>
     <li><code class="mono">/pulse.md</code> — catalog operations pulse as markdown</li>
     <li><code class="mono">/api/stats.json</code> — counts and freshness</li>
     <li><code class="mono">/feed.xml</code> — Atom feed of newly added servers</li>
@@ -700,7 +822,7 @@ export const renderForAgents = (ctx) => {
   </ul>
 
   <h2>Connect the directory itself (meta-MCP)</h2>
-  <p>mcp.film ships its own MCP server, so your agent can query the catalog as tools — <code class="mono">search_film_mcps</code>, <code class="mono">get_film_mcp</code>, <code class="mono">get_install_config</code>, <code class="mono">plan_film_stack</code> — and contribute back with <code class="mono">submit_listing</code>:</p>
+  <p>mcp.film ships its own MCP server, so your agent can query the catalog as tools — <code class="mono">search_film_mcps</code>, <code class="mono">get_film_mcp</code>, <code class="mono">get_install_config</code>, <code class="mono">list_film_playbooks</code>, <code class="mono">get_film_playbook</code>, <code class="mono">plan_film_stack</code> — and contribute back with <code class="mono">submit_listing</code>:</p>
   ${codeBlock("Claude Code", "claude mcp add mcp-film -- npx -y mcp-film")}
   <p>It fetches the live registry and falls back to a bundled snapshot offline. Source lives in <a href="https://github.com/${site.github_repo}/tree/main/packages/mcp-server" rel="noopener">packages/mcp-server</a>.</p>
 
@@ -737,6 +859,7 @@ export const renderForAgents = (ctx) => {
         distribution: [
           { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/api/registry.json" },
           { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/api/pulse.json" },
+          { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/api/playbooks.json" },
           { "@type": "DataDownload", encodingFormat: "text/markdown", contentUrl: site.url + "/llms-full.txt" },
         ],
       },
@@ -750,16 +873,19 @@ export const renderForAgentsMd = (ctx) => `# mcp.film — agent access guide
 
 - Full registry (JSON): ${ctx.site.url}/api/registry.json
 - Catalog pulse (JSON): ${ctx.site.url}/api/pulse.json
+- Production playbooks (JSON): ${ctx.site.url}/api/playbooks.json
 - Index (llms.txt): ${ctx.site.url}/llms.txt
 - Whole directory, one markdown file: ${ctx.site.url}/llms-full.txt
 - One server: ${ctx.site.url}/api/mcps/{slug}.json or ${ctx.site.url}/mcps/{slug}.md
 - Pipeline guide: ${ctx.site.url}/stack.md
+- Production playbooks markdown: ${ctx.site.url}/playbooks.md
 - Catalog pulse markdown: ${ctx.site.url}/pulse.md
 - New additions feed: ${ctx.site.url}/feed.xml
 - Meta-MCP server: \`claude mcp add mcp-film -- npx -y mcp-film\`
-  (tools: search_film_mcps, get_film_mcp, get_install_config, plan_film_stack,
-  and submit_listing — propose a new server; validated, deduped, returned as a
-  ready-to-file GitHub issue payload)
+  (tools: search_film_mcps, get_film_mcp, get_install_config,
+  list_film_playbooks, get_film_playbook, plan_film_stack, and submit_listing
+  — propose a new server; validated, deduped, returned as a ready-to-file
+  GitHub issue payload)
 
 Server fields: slug, name, vendor, official (bool), category, tagline, description,
 capabilities[], tools_sample[], install.{claude_code,remote_url,stdio_command},
@@ -783,6 +909,7 @@ export const renderLlmsTxt = (ctx) => {
     "",
     `- [Full registry JSON](${site.url}/api/registry.json): every server, structured`,
     `- [Catalog pulse](${site.url}/pulse.md): newest additions and stale verification queue`,
+    `- [Production playbooks](${site.url}/playbooks.md): concrete MCP stacks for common film jobs`,
     `- [Agent access guide](${site.url}/for-agents.md): all machine surfaces`,
     `- [The AI Film Stack](${site.url}/stack.md): pipeline guide — what to connect at each stage`,
     "",
@@ -795,6 +922,7 @@ export const renderLlmsTxt = (ctx) => {
     `- [Directory index](${site.url}/index.md): categories overview`,
     `- [Whole directory inline](${site.url}/llms-full.txt): everything in one file`,
     `- [Pulse JSON](${site.url}/api/pulse.json): catalog freshness and ops queue`,
+    `- [Playbooks JSON](${site.url}/api/playbooks.json): stack recipes for agents`,
     `- [Atom feed](${site.url}/feed.xml): newly added servers`,
   ];
   return lines.join("\n") + "\n";
@@ -1063,7 +1191,7 @@ export const render404 = (ctx) =>
 export const renderSitemap = (ctx) => {
   const today = ctx.built.slice(0, 10);
   const urls = [
-    ...["/", "/stack/", "/for-agents/", "/pulse/", "/about/", "/submit/", "/llms.txt", "/llms-full.txt", "/api/registry.json", "/api/pulse.json", "/stack.md", "/pulse.md", "/index.md"]
+    ...["/", "/stack/", "/playbooks/", "/for-agents/", "/pulse/", "/about/", "/submit/", "/llms.txt", "/llms-full.txt", "/api/registry.json", "/api/pulse.json", "/api/playbooks.json", "/stack.md", "/playbooks.md", "/pulse.md", "/index.md"]
       .map((u) => ({ loc: u, lastmod: today })),
     ...ctx.categories.map((c) => ({ loc: `/categories/${c.id}/`, lastmod: today })),
     ...ctx.servers.flatMap((s) => [
@@ -1086,7 +1214,7 @@ export const renderRobots = (ctx) => {
     "Google-Extended", "Applebot-Extended", "CCBot", "meta-externalagent",
   ];
   return `# mcp.film — humans and machines get equal billing here.
-# Machine surfaces: ${ctx.site.url}/llms.txt · ${ctx.site.url}/api/registry.json · ${ctx.site.url}/api/pulse.json
+# Machine surfaces: ${ctx.site.url}/llms.txt · ${ctx.site.url}/api/registry.json · ${ctx.site.url}/api/playbooks.json · ${ctx.site.url}/api/pulse.json
 # Every HTML page has a markdown twin: append .md to the path.
 
 User-agent: *

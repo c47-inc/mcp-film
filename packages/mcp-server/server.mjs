@@ -20,7 +20,9 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const VERSION = JSON.parse(fs.readFileSync(path.join(HERE, "package.json"), "utf8")).version;
 const REPO = "c47-inc/mcp-film";
 const REGISTRY_URL = "https://mcp.film/api/registry.min.json";
+const PLAYBOOKS_URL = "https://mcp.film/api/playbooks.json";
 const SNAPSHOT = path.join(HERE, "registry.snapshot.json");
+const PLAYBOOKS_SNAPSHOT = path.join(HERE, "playbooks.snapshot.json");
 
 let registry = null;
 async function loadRegistry() {
@@ -38,6 +40,22 @@ async function loadRegistry() {
   return registry;
 }
 
+let playbooks = null;
+async function loadPlaybooks() {
+  if (playbooks) return playbooks;
+  try {
+    const res = await fetch(PLAYBOOKS_URL, { signal: AbortSignal.timeout(5000) });
+    if (res.ok) {
+      playbooks = await res.json();
+      playbooks._source = "live";
+      return playbooks;
+    }
+  } catch { /* offline — fall through to snapshot */ }
+  playbooks = JSON.parse(fs.readFileSync(PLAYBOOKS_SNAPSHOT, "utf8"));
+  playbooks._source = "bundled snapshot";
+  return playbooks;
+}
+
 const compact = (s) => ({
   slug: s.slug,
   name: s.name,
@@ -48,6 +66,15 @@ const compact = (s) => ({
   pricing: s.pricing,
   remote: Boolean(s.install?.remote_url),
   capabilities: s.capabilities,
+});
+
+const compactPlaybook = (p) => ({
+  id: p.id,
+  title: p.title,
+  summary: p.summary,
+  best_for: p.best_for,
+  url: p.url,
+  primary_servers: (p.primary_servers ?? []).map((s) => s.slug),
 });
 
 const cmdLike = (cmd) =>
@@ -152,6 +179,27 @@ const TOOLS = [
         notes: { type: "string", description: "Caveats worth knowing: quotas, ToS gray areas, local-app requirements" },
       },
       required: ["name", "link", "category", "why"],
+    },
+  },
+  {
+    name: "list_film_playbooks",
+    description:
+      "List mcp.film production playbooks: curated MCP stacks for common AI filmmaking jobs such as commercial sprints, local edit bays, character-consistent series, archive cutdowns, and open-source labs. Use get_film_playbook for full steps.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        query: { type: "string", description: "Optional free-text search over title, summary, best_for, constraints, and server names." },
+      },
+    },
+  },
+  {
+    name: "get_film_playbook",
+    description:
+      "Get one production playbook by id, including primary servers, workflow steps, fallback servers, constraints, and links to each server's mcp.film page.",
+    inputSchema: {
+      type: "object",
+      properties: { id: { type: "string", description: "Playbook id, e.g. 'commercial-sprint' or 'local-edit-bay'" } },
+      required: ["id"],
     },
   },
   {
@@ -264,7 +312,35 @@ async function callTool(name, args = {}) {
     };
   }
 
+  if (name === "list_film_playbooks") {
+    const pb = await loadPlaybooks();
+    const q = (args.query ?? "").toLowerCase();
+    let hits = pb.playbooks ?? [];
+    if (q) {
+      hits = hits.filter((p) => {
+        const hay = [
+          p.title,
+          p.summary,
+          p.best_for,
+          ...(p.constraints ?? []),
+          ...(p.primary_servers ?? []).map((s) => `${s.name} ${s.tagline}`),
+          ...(p.fallback_servers ?? []).map((s) => `${s.name} ${s.tagline}`),
+        ].join(" ").toLowerCase();
+        return q.split(/\s+/).every((w) => hay.includes(w));
+      });
+    }
+    return { count: hits.length, source: pb._source, playbooks: hits.map(compactPlaybook) };
+  }
+
+  if (name === "get_film_playbook") {
+    const pb = await loadPlaybooks();
+    const playbook = (pb.playbooks ?? []).find((p) => p.id === args.id);
+    if (!playbook) return { error: `No playbook with id '${args.id}'. Try list_film_playbooks first.` };
+    return { ...playbook, source: pb._source };
+  }
+
   if (name === "plan_film_stack") {
+    const pb = await loadPlaybooks();
     const brief = (args.brief ?? "").toLowerCase();
     const score = (s) => {
       let sc = 0;
@@ -284,12 +360,33 @@ async function callTool(name, args = {}) {
     });
     return {
       brief: args.brief ?? null,
+      closest_playbook: closestPlaybook(pb.playbooks ?? [], brief),
       plan,
       note: "Picks are ranked by editorial featuring, official status, hosted availability, and brief match. Full entries: get_film_mcp.",
     };
   }
 
   return { error: `Unknown tool ${name}` };
+}
+
+function closestPlaybook(playbooks, brief) {
+  if (!brief) return null;
+  const words = brief.split(/\s+/).filter((w) => w.length > 3);
+  const scored = playbooks
+    .map((p) => {
+      const hay = [
+        p.title,
+        p.summary,
+        p.best_for,
+        ...(p.constraints ?? []),
+        ...(p.primary_servers ?? []).map((s) => `${s.slug} ${s.name} ${s.tagline}`),
+      ].join(" ").toLowerCase();
+      const score = words.reduce((n, w) => n + (hay.includes(w) ? 1 : 0), 0);
+      return [score, p];
+    })
+    .sort((a, b) => b[0] - a[0]);
+  if (!scored[0] || scored[0][0] === 0) return null;
+  return compactPlaybook(scored[0][1]);
 }
 
 // ------------------------------------------------- stdio JSON-RPC plumbing

@@ -482,6 +482,51 @@ img.avatar { object-fit: cover; background: var(--paper); }
 .agents-list li { margin: 0.5rem 0; line-height: 1.65; }
 .agents-list strong, .agents-doc strong { color: var(--ink); font-weight: 600; }
 
+/* ------------------------------------------------------------ playbooks */
+.playbook-doc { max-width: 76rem; }
+.playbook {
+  padding: 2.2rem 0 2.6rem;
+  border-top: 1px solid var(--hairline);
+}
+.playbook:first-child { border-top: 0; padding-top: 0.5rem; }
+.playbook h2 {
+  margin: 0.35rem 0 0.45rem;
+  padding: 0;
+  border: 0;
+  font-size: 1.45rem;
+  letter-spacing: 0;
+}
+.playbook h3 {
+  margin: 1.45rem 0 0.65rem;
+  font-size: 13px;
+  font-weight: 600;
+}
+.playbook > p { max-width: 46rem; color: var(--ink-2); }
+.playbook-stack {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+.playbook-steps {
+  list-style: none;
+  margin: 0.7rem 0 1.2rem;
+  padding: 0;
+  border-top: 1px solid var(--hairline);
+}
+.playbook-steps li {
+  display: grid;
+  gap: 0.5rem 1rem;
+  grid-template-columns: 84px minmax(0, 1fr);
+  padding: 0.8rem 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.playbook-steps p { margin: 0; color: var(--ink-2); }
+.playbook-links { grid-column: 2; font-size: 13px; }
+.playbook-fallback {
+  margin-top: 1.4rem;
+  font-size: 13px;
+}
+
 /* --------------------------------------------------------------- pulse */
 .pulse-grid {
   display: grid; gap: 1px;

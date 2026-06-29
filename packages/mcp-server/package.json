@@ -1,10 +1,10 @@
 {
   "name": "mcp-film",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "The mcp.film directory as an MCP server — search the best MCP servers for AI filmmaking, get install configs, and plan a full production stack.",
   "type": "module",
   "bin": { "mcp-film": "server.mjs" },
-  "files": ["server.mjs", "registry.snapshot.json", "README.md"],
+  "files": ["server.mjs", "registry.snapshot.json", "playbooks.snapshot.json", "README.md"],
   "mcpName": "film.mcp/directory",
   "keywords": ["mcp", "model-context-protocol", "ai-filmmaking", "video-generation", "directory"],
   "homepage": "https://mcp.film",

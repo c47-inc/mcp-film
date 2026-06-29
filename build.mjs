@@ -20,6 +20,7 @@ const readJson = (p) => JSON.parse(fs.readFileSync(p, "utf8"));
 
 const site = readJson(path.join(DATA, "site.json"));
 const categories = readJson(path.join(DATA, "categories.json"));
+const playbooks = readJson(path.join(DATA, "playbooks.json"));
 const ratings = readJson(path.join(DATA, "ratings.json"));
 
 const servers = fs
@@ -38,6 +39,7 @@ const REQUIRED = [
   "links", "added", "verified",
 ];
 const PRICING = new Set(["free", "freemium", "paid", "credits"]);
+const STAGES = new Set(["develop", "visualize", "shoot", "sound", "cut", "finish", "ship"]);
 const isUrl = (u) => typeof u === "string" && /^https:\/\/\S+$/.test(u);
 
 for (const s of servers) {
@@ -63,6 +65,35 @@ for (const s of servers) {
   }
 }
 
+const allPlaybookSlugs = (p) => [
+  ...(p.primary_slugs ?? []),
+  ...(p.fallback_slugs ?? []),
+  ...(p.steps ?? []).flatMap((step) => step.slugs ?? []),
+];
+const playbookIds = new Set();
+for (const p of playbooks) {
+  const where = `playbook "${p.id ?? p.title ?? "?"}"`;
+  for (const k of ["id", "title", "summary", "best_for", "constraints", "primary_slugs", "steps", "fallback_slugs"]) {
+    if (p[k] === undefined) errors.push(`${where}: missing field "${k}"`);
+  }
+  if (p.id) {
+    if (!/^[a-z0-9][a-z0-9-]*$/.test(p.id)) errors.push(`${where}: bad id format`);
+    if (playbookIds.has(p.id)) errors.push(`${where}: duplicate id`);
+    playbookIds.add(p.id);
+  }
+  if (!Array.isArray(p.constraints) || p.constraints.length < 1) errors.push(`${where}: constraints must be a non-empty array`);
+  if (!Array.isArray(p.primary_slugs) || p.primary_slugs.length < 3) errors.push(`${where}: primary_slugs must include at least 3 servers`);
+  if (!Array.isArray(p.steps) || p.steps.length < 1) errors.push(`${where}: steps must be a non-empty array`);
+  for (const [i, step] of (p.steps ?? []).entries()) {
+    if (!STAGES.has(step.stage)) errors.push(`${where}: steps[${i}].stage must be a known pipeline stage`);
+    if (!step.intent) errors.push(`${where}: steps[${i}].intent is required`);
+    if (!Array.isArray(step.slugs) || step.slugs.length < 1) errors.push(`${where}: steps[${i}].slugs must be non-empty`);
+  }
+  for (const slug of allPlaybookSlugs(p)) {
+    if (!slugs.has(slug)) errors.push(`${where}: unknown server slug "${slug}"`);
+  }
+}
+
 if (errors.length) {
   console.error(`✗ data validation failed (${errors.length} problem${errors.length > 1 ? "s" : ""}):\n`);
   for (const e of errors) console.error("  - " + e);
@@ -82,6 +113,7 @@ const logos = new Set(
 const ctx = {
   site,
   categories,
+  playbooks,
   servers,
   logos,
   ratings: ratings.ratings ?? {},
@@ -105,6 +137,30 @@ const serverSummary = (s) => ({
   verified: s.verified,
   tagline: s.tagline,
 });
+const serverBySlug = new Map(servers.map((s) => [s.slug, s]));
+const playbookSummary = (p) => ({
+  id: p.id,
+  title: p.title,
+  url: `${site.url}/playbooks/#${p.id}`,
+  summary: p.summary,
+  best_for: p.best_for,
+  primary_servers: p.primary_slugs.map((slug) => serverSummary(serverBySlug.get(slug))),
+  steps: p.steps.map((step) => ({
+    stage: step.stage,
+    intent: step.intent,
+    servers: step.slugs.map((slug) => serverSummary(serverBySlug.get(slug))),
+  })),
+  fallback_servers: p.fallback_slugs.map((slug) => serverSummary(serverBySlug.get(slug))),
+  constraints: p.constraints,
+});
+ctx.playbookDoc = {
+  $schema: `${site.url}/api/playbooks.schema.json`,
+  name: "mcp.film production playbooks",
+  description: "Curated MCP stacks for common AI filmmaking workflows.",
+  updated: ctx.built,
+  count: playbooks.length,
+  playbooks: playbooks.map(playbookSummary),
+};
 const daysSince = (yyyyMmDd) =>
   Math.max(0, Math.floor((builtDate - new Date(`${yyyyMmDd}T00:00:00Z`)) / dayMs));
 const categoryCounts = categories.map((c) => {
@@ -154,7 +210,9 @@ ctx.pulse = {
     { label: "llms-full.txt", url: `${site.url}/llms-full.txt`, kind: "full-markdown" },
     { label: "registry.json", url: `${site.url}/api/registry.json`, kind: "json-registry" },
     { label: "pulse.json", url: `${site.url}/api/pulse.json`, kind: "catalog-pulse" },
+    { label: "playbooks.json", url: `${site.url}/api/playbooks.json`, kind: "production-playbooks" },
     { label: "stack.md", url: `${site.url}/stack.md`, kind: "pipeline-guide" },
+    { label: "playbooks.md", url: `${site.url}/playbooks.md`, kind: "stack-recipes" },
     { label: "feed.xml", url: `${site.url}/feed.xml`, kind: "new-additions-feed" },
     { label: "server-card", url: `${site.url}/.well-known/mcp/server-card`, kind: "mcp-discovery" },
   ],
@@ -176,6 +234,7 @@ const write = (rel, content) => {
 // pages
 write("index.html", T.renderHome(ctx));
 write("stack/index.html", T.renderStack(ctx));
+write("playbooks/index.html", T.renderPlaybooks(ctx));
 write("for-agents/index.html", T.renderForAgents(ctx));
 write("pulse/index.html", T.renderPulse(ctx));
 write("about/index.html", T.renderAbout(ctx));
@@ -195,6 +254,7 @@ for (const s of servers) {
 write("llms.txt", T.renderLlmsTxt(ctx));
 write("llms-full.txt", T.renderLlmsFull(ctx));
 write("stack.md", T.renderStackMd(ctx));
+write("playbooks.md", T.renderPlaybooksMd(ctx));
 write("for-agents.md", T.renderForAgentsMd(ctx));
 write("pulse.md", T.renderPulseMd(ctx));
 write("index.md", T.renderIndexMd(ctx));
@@ -214,6 +274,7 @@ write("api/registry.json", JSON.stringify(registryDoc, null, 2));
 write("api/registry.min.json", JSON.stringify(registryDoc));
 write("api/categories.json", JSON.stringify(categories, null, 2));
 write("api/pulse.json", JSON.stringify(ctx.pulse, null, 2));
+write("api/playbooks.json", JSON.stringify(ctx.playbookDoc, null, 2));
 write("api/stats.json", JSON.stringify({
   servers: servers.length,
   official: ctx.officialCount,
@@ -286,6 +347,10 @@ fs.writeFileSync(
   path.join(ROOT, "packages/mcp-server/registry.snapshot.json"),
   JSON.stringify(registryDoc),
 );
+fs.writeFileSync(
+  path.join(ROOT, "packages/mcp-server/playbooks.snapshot.json"),
+  JSON.stringify(ctx.playbookDoc),
+);
 
-const pages = servers.length + categories.length + 7;
+const pages = servers.length + categories.length + 8;
 console.log(`✓ built ${pages} pages + API + agent surfaces → dist/`);

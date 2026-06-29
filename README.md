@@ -25,6 +25,7 @@ It is built **agents-first**:
 | llms.txt index ([spec](https://llmstxt.org)) | `/llms.txt` · `/llms-full.txt` |
 | Full structured registry | `/api/registry.json` (+ `.min.json`) |
 | Catalog freshness / ops pulse | `/api/pulse.json` · `/pulse.md` |
+| Production playbooks | `/api/playbooks.json` · `/playbooks.md` |
 | One server, JSON / markdown | `/api/mcps/{slug}.json` · `/mcps/{slug}.md` |
 | Pipeline guide | `/stack/` · `/stack.md` |
 | New servers feed | `/feed.xml` |
@@ -66,6 +67,10 @@ pageviews still use the lightweight PostHog client event. See
 The live catalog pulse is published at [`/api/pulse.json`](https://mcp.film/api/pulse.json)
 and [`/pulse.md`](https://mcp.film/pulse.md): newest additions, stale
 verification queue, category coverage, and machine-surface links for agents.
+Production playbooks live at [`/api/playbooks.json`](https://mcp.film/api/playbooks.json)
+and [`/playbooks.md`](https://mcp.film/playbooks.md): concrete stack recipes
+for commercial sprints, local edit bays, character series, archive cutdowns,
+and open-source labs.
 
 ## Develop locally
 
@@ -73,7 +78,7 @@ Zero dependencies — Node 20+ is the whole toolchain:
 
 ```sh
 node build.mjs --validate-only   # check the data
-node build.mjs                   # build → dist/ (85 pages, API, feeds, OG image)
+node build.mjs                   # build → dist/ (86 pages, API, feeds, OG image)
 node scripts/serve.mjs           # preview at http://localhost:4173
 ```
 
