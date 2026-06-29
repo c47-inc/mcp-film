@@ -5,14 +5,14 @@
     "summary": "A fast path from brief to polished 30-60 second ad with one studio, one model hub, voice, edit, finish, and upload.",
     "best_for": "Launch videos, product promos, UGC-style ads, and short brand films where speed matters more than bespoke tooling.",
     "constraints": ["Use hosted tools where possible.", "Keep one human review gate before publish.", "Download generated assets before vendor URLs expire."],
-    "primary_slugs": ["martini", "runway", "runapi", "elevenlabs", "mureka", "palmier-pro", "topaz", "magnific", "youtube-yutu"],
+    "primary_slugs": ["martini", "runway", "agent-media", "runapi", "elevenlabs", "mureka", "palmier-pro", "topaz", "magnific", "youtube-yutu"],
     "steps": [
       { "stage": "develop", "intent": "Turn the brief into scenes, shot goals, and edit notes.", "slugs": ["martini", "notion"] },
-      { "stage": "shoot", "intent": "Generate hero shots and alternates with direct video models plus a hub for gaps.", "slugs": ["runway", "runapi", "fal"] },
+      { "stage": "shoot", "intent": "Generate hero shots, UGC spots, and alternates with direct video models plus a hub for gaps.", "slugs": ["runway", "agent-media", "runapi", "fal"] },
       { "stage": "sound", "intent": "Record voiceover and temp score without leaving the agent session.", "slugs": ["elevenlabs", "mureka", "google-genmedia"] },
       { "stage": "cut", "intent": "Assemble, caption, and revise the timeline in an agent-operable editor.", "slugs": ["palmier-pro", "mcp-video"] },
       { "stage": "finish", "intent": "Upscale stills or plates and QC the final master.", "slugs": ["topaz", "magnific", "mcp-video"] },
-      { "stage": "ship", "intent": "Upload the final cut and retain metadata control.", "slugs": ["youtube-yutu", "youtube-data"] }
+      { "stage": "ship", "intent": "Upload the final cut, publish social variants, and retain metadata control.", "slugs": ["agent-media", "youtube-yutu", "youtube-data"] }
     ],
     "fallback_slugs": ["pika", "higgsfield", "json2video", "vimeo"]
   },
