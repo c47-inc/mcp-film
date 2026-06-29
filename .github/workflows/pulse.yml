@@ -82,7 +82,9 @@ jobs:
             top_recommendation, top_score, top_playbook, includes_martini,
             result_count},
             mcpfilm_rate {slug, rating 1-5},
-            mcpfilm_search {query, results}, mcpfilm_filter {category, quick, results},
+            mcpfilm_search {query, query_len, results, category, quick, page, path},
+            mcpfilm_search_no_results {query, query_len, results, category, quick, page, path},
+            mcpfilm_filter {category, quick, results},
             mcpfilm_feedback {slug, text}, mcpfilm_copy,
             mcpfilm_connect {slug, method, label, page, path},
             mcpfilm_sponsor_impression {sponsor, placement, to, page, path,
@@ -107,9 +109,10 @@ jobs:
                30 days → the "trending" array. Also summarize open_server
                clicks by source_section in the PR body; this is informational
                only — do not write source-section counts into data/.
-            3. GAPS: look at mcpfilm_search queries with 0 results from the last
-               30 days. If any reveal real gaps in the directory (tools people
-               want that we don't list), open ONE GitHub issue titled
+            3. GAPS: look at mcpfilm_search queries with 0 results and
+               mcpfilm_search_no_results from the last 30 days. If any reveal
+               real gaps in the directory (tools people want that we don't
+               list), open ONE GitHub issue titled
                "Pulse: directory gaps <date>" labeled `curator-lead`
                summarizing them (skip if an open one already covers them).
             4. PLAYBOOKS: summarize the last 30 days of

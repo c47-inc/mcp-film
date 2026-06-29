@@ -3,7 +3,7 @@
 mcp.film has two analytics layers:
 
 - Browser events in `src/app.js` capture human UI behavior into PostHog:
-  `mcpfilm_pageview`, `mcpfilm_search`, `mcpfilm_filter`,
+  `mcpfilm_pageview`, `mcpfilm_search`, `mcpfilm_search_no_results`, `mcpfilm_filter`,
   `mcpfilm_open_server`, `mcpfilm_open_playbook`,
   `mcpfilm_playbook_server`, `mcpfilm_open_recommendation`,
   `mcpfilm_recommendation_server`, `mcpfilm_open_capability`,
@@ -121,7 +121,8 @@ Browser events include:
 | Event | Fields |
 | --- | --- |
 | `mcpfilm_pageview` | `path`, `page` |
-| `mcpfilm_search` | `query`, `results` |
+| `mcpfilm_search` | `query`, `query_len`, `results`, `category`, `quick`, `page`, `path` |
+| `mcpfilm_search_no_results` | `query`, `query_len`, `results`, `category`, `quick`, `page`, `path` |
 | `mcpfilm_filter` | `category`, `quick`, `results` |
 | `mcpfilm_server_view` | `slug`, `category`, `official`, `remote`, `featured`, `pricing`, `is_martini`, `path` |
 | `mcpfilm_server_impression` | `slug`, `source_section`, `category`, `official`, `remote`, `is_martini`, `page`, `path` |
@@ -169,6 +170,7 @@ Current saved dashboard tiles:
 | Human engagement | [`CshcfEnp`](https://us.posthog.com/project/292112/insights/CshcfEnp) |
 | Agent surfaces | [`VhJd9ZLq`](https://us.posthog.com/project/292112/insights/VhJd9ZLq) |
 | Top agent-readable URLs | [`qKqnkLRf`](https://us.posthog.com/project/292112/insights/qKqnkLRf) |
+| No-result searches | [`7uhQsrFg`](https://us.posthog.com/project/292112/insights/7uhQsrFg) |
 | Brief router demand | [`LLUEXfaF`](https://us.posthog.com/project/292112/insights/LLUEXfaF) |
 | Martini handoffs | [`6baCVfoG`](https://us.posthog.com/project/292112/insights/6baCVfoG) |
 
@@ -262,6 +264,27 @@ WHERE event = 'mcpfilm_pageview'
   AND timestamp > now() - interval 30 day
 GROUP BY day
 ORDER BY day ASC
+```
+
+No-result search demand:
+
+```sql
+SELECT
+  lower(properties.query) AS query,
+  coalesce(properties.category, '') AS category,
+  coalesce(toString(properties.quick), '') AS quick,
+  count() AS searches,
+  count(DISTINCT distinct_id) AS users,
+  max(timestamp) AS latest
+FROM events
+WHERE timestamp >= now() - interval 30 day
+  AND (
+    (event = 'mcpfilm_search' AND properties.results = 0)
+    OR event = 'mcpfilm_search_no_results'
+  )
+GROUP BY query, category, quick
+ORDER BY searches DESC, latest DESC
+LIMIT 50
 ```
 
 Human-vs-agent split from the edge:

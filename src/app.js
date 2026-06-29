@@ -67,13 +67,32 @@
       sec.hidden = ![...sec.querySelectorAll(".card")].some((c) => !c.hidden);
     }
     if (noResults) noResults.hidden = shown > 0;
-    if (q.length > 2) phSearchDebounced(q, shown);
+    if (q.length > 2) phSearchDebounced(q, shown, activeCat || null, [...activeQuick].sort());
   };
 
   let searchTimer;
-  const phSearchDebounced = (q, results) => {
+  let lastNoResultSearch = "";
+  const phSearchDebounced = (q, results, category, quick) => {
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => ph("mcpfilm_search", { query: q, results }), 800);
+    searchTimer = setTimeout(() => {
+      const props = {
+        query: q,
+        query_len: q.length,
+        results,
+        category,
+        quick,
+        page: document.body.dataset.page,
+        path: location.pathname,
+      };
+      ph("mcpfilm_search", props);
+      if (results === 0) {
+        const gapKey = JSON.stringify([q, category, quick]);
+        if (gapKey !== lastNoResultSearch) {
+          lastNoResultSearch = gapKey;
+          ph("mcpfilm_search_no_results", props);
+        }
+      }
+    }, 800);
   };
 
   if (search) {
