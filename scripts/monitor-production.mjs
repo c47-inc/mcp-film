@@ -78,7 +78,7 @@ for (const path of ["/llms.txt", "/api/playbooks.json", "/v0.1/servers", "/playb
     checks.push({
       name: `${family} access ${path}`,
       url: `${base}${path}?monitor=${smoke}`,
-      method: "HEAD",
+      method: "GET",
       userAgent,
       accept: path.endsWith(".json") ? "application/json" : "text/plain",
       expect: (status) => status === 200,
@@ -110,7 +110,8 @@ for (const row of rows) {
 console.log("");
 
 if (failures.some((row) => row.wafSensitive)) {
-  console.log("Agent-readable routes are being blocked before the Cloudflare Pages worker can record edge analytics.");
+  console.log("Agent-readable routes are being blocked by Cloudflare security before the client receives them.");
+  console.log("Depending on the Cloudflare product, some blocked probes may be invisible to PostHog, while others may be recorded with the Pages worker's pre-block status.");
   console.log("Add the narrow WAF Skip/Allow rule documented in docs/SETUP.md and docs/ANALYTICS.md.");
   console.log("");
 }
@@ -158,7 +159,7 @@ async function runHttpCheck(check) {
     }
 
     if (!ok && check.wafSensitive && res.status === 403) {
-      detail += ", likely Cloudflare WAF/Bot block before Pages worker";
+      detail += ", likely Cloudflare WAF/Bot block";
     }
 
     return {

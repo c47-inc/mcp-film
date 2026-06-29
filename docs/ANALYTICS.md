@@ -79,14 +79,17 @@ Smoke test:
 
 ```sh
 curl -I https://mcp.film/llms.txt
-curl -I -A 'ClaudeBot-mcpfilm-smoke/1.0' https://mcp.film/llms.txt
+curl -fsS -A 'ClaudeBot-mcpfilm-smoke/1.0' -o /dev/null -w '%{http_code}\n' https://mcp.film/llms.txt
 node scripts/monitor-production.mjs
 ```
 
 The curl commands should return `200`; the Node monitor also checks `www`,
 `mcp-film.pages.dev`, JSON APIs, markdown playbooks, and common agent user
-agents. If the spoofed-agent checks return `403`, the custom domain is blocking
-agent-like traffic before edge analytics can measure it.
+agents with real `GET` requests. If the spoofed-agent checks return `403`, the
+custom domain is blocking agent-like traffic. Some Cloudflare blocks happen
+before the Pages worker and never reach PostHog; others can happen after the
+worker and leave an optimistic `mcpfilm_edge_request` status. Treat the monitor
+as the client-side truth and the PostHog event as traffic observability.
 
 ## Cloudflare variables
 
@@ -201,3 +204,8 @@ as an identity claim.
 
 GitHub Pages can remain enabled as a fallback deploy target, but only the
 Cloudflare Pages deployment runs the edge worker.
+
+Cloudflare security products can still transform or block a response after the
+Pages worker has served it. In that case PostHog may record the worker response
+status while the client receives a `403`. Keep the production monitor green if
+agent access matters; it checks what clients actually receive.

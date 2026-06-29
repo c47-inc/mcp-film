@@ -83,13 +83,16 @@ add one narrow bypass for agent-readable files:
 
    ```sh
    curl -I https://mcp.film/llms.txt
-   curl -I -A 'ClaudeBot-mcpfilm-smoke/1.0' https://mcp.film/llms.txt
+   curl -fsS -A 'ClaudeBot-mcpfilm-smoke/1.0' -o /dev/null -w '%{http_code}\n' https://mcp.film/llms.txt
    node scripts/monitor-production.mjs
    ```
 
 The second command and the Node monitor intentionally spoof known agent/crawler
-user agents; if they get `403`, Cloudflare blocked them before
-`mcpfilm_edge_request` could be recorded in PostHog.
+user agents with real `GET` requests. If they get `403`, Cloudflare security is
+blocking the machine-readable surface. Depending on which Cloudflare product
+fires, those blocked requests may be invisible to PostHog or may be recorded
+with the Pages worker's pre-block status, so the WAF rule is about access first
+and analytics accuracy second.
 
 ## 3b. If staying on GitHub Pages, point mcp.film there
 
