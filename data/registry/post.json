@@ -1,5 +1,28 @@
 [
   {
+    "slug": "twelvelabs",
+    "name": "TwelveLabs MCP",
+    "vendor": "TwelveLabs / Teraflop",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Index, search, and analyze video libraries with Pegasus and Marengo through MCP.",
+    "description": "TwelveLabs' MCP server gives agents semantic video search and analysis: create indexes, upload or batch-index clips, search by natural language or image, summarize footage, generate chapters/highlights, and retrieve embeddings. For filmmakers this is the missing dailies-and-library brain — ask for the shot where a character enters frame, find matching B-roll, or produce structured notes from long generated cuts.",
+    "capabilities": ["video-search", "video-analysis", "dailies-indexing", "embeddings", "metadata-extraction", "entity-search"],
+    "tools_sample": ["create-index", "start-video-indexing-task", "search", "async-analyse-video", "create-entity", "retrieve-video-embeddings"],
+    "install": {
+      "claude_code": "claude mcp add twelvelabs -e TWELVELABS_API_KEY=YOUR_KEY -- npx -y --package=twelvelabs-mcp twelvelabs-mcp-stdio",
+      "remote_url": null,
+      "stdio_command": "npx -y --package=twelvelabs-mcp twelvelabs-mcp-stdio"
+    },
+    "auth": { "type": "api_key", "env_var": "TWELVELABS_API_KEY", "key_url": "https://playground.twelvelabs.io" },
+    "pricing": "freemium",
+    "links": { "repo": "https://github.com/twelvelabs-io/twelvelabs-js", "docs": "https://www.npmjs.com/package/twelvelabs-mcp", "site": "https://www.twelvelabs.io" },
+    "added": "2026-06-28",
+    "verified": "2026-06-28",
+    "notes": "npm twelvelabs-mcp 1.0.0, published May 2026, maintained by the `twelvelabs` npm account plus Teraflop. The stdio bin is `twelvelabs-mcp-stdio`; the explicit `--package=twelvelabs-mcp` npx form avoids npm confusing the package name with the bin name. Local file and folder uploads only work over stdio; hosted HTTP expects API-key headers and public/direct video URLs."
+  },
+  {
     "slug": "davinci-resolve",
     "name": "DaVinci Resolve MCP",
     "vendor": "Community (samuelgursky)",

@@ -75,21 +75,21 @@
     "official": false,
     "category": "3d-vfx",
     "featured": false,
-    "tagline": "Run and debug ComfyUI workflows from Claude Code — generate, validate, manage VRAM.",
-    "description": "TypeScript MCP server + Claude Code plugin for ComfyUI: execute and validate workflows, visualize node graphs, search and download models, and manage GPU memory. The glue for agentic VFX pipelines built on ComfyUI (img2img cleanup, style passes, video nodes).",
-    "capabilities": ["workflow-execution", "image-generation", "vfx-pipeline", "model-management"],
-    "tools_sample": ["generate_image", "enqueue_workflow", "visualize_workflow", "search_models", "validate_workflow", "clear_vram"],
+    "tagline": "Drive ComfyUI as a live image, video, audio, and workflow workbench from Claude or ChatGPT.",
+    "description": "TypeScript MCP server + Claude Code plugin for ComfyUI: generate assets, execute and author workflows, manage models/custom nodes, inspect outputs, and edit the live graph. The newer Agent Panel turns ComfyUI itself into an agent surface, with Claude or ChatGPT operating the canvas while the MCP server supplies model-family skills, installer packs, and paid-credit guardrails.",
+    "capabilities": ["workflow-execution", "image-generation", "video-generation", "audio-generation", "live-graph-editing", "model-management", "agent-panel"],
+    "tools_sample": ["generate_image", "generate_audio", "enqueue_workflow", "view_image", "list_packs", "read_skill", "check_workflow_runtime", "panel_load_workflow"],
     "install": {
-      "claude_code": "claude plugin install comfyui-mcp",
+      "claude_code": "claude plugin marketplace add artokun/comfyui-mcp && claude plugin install comfy",
       "remote_url": null,
       "stdio_command": "npx -y comfyui-mcp"
     },
     "auth": { "type": "local-app", "env_var": null, "key_url": "Requires ComfyUI running (auto-detects ports 8188/8000, or --comfyui-url for remote)" },
     "pricing": "free",
-    "links": { "repo": "https://github.com/artokun/comfyui-mcp", "docs": null, "site": null },
+    "links": { "repo": "https://github.com/artokun/comfyui-mcp", "docs": "https://comfyui-mcp.artokun.io/docs", "site": "https://registry.comfy.org/nodes/comfyui-agent-panel" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "142 stars, v0.9.4 (Jun 2026), MIT, very active; needs Node >=22. Most-starred Python alternative: joenorton/comfyui-mcp-server (350 stars); comfy-pilot (207 stars) focuses on workflow editing."
+    "verified": "2026-06-28",
+    "notes": "npm comfyui-mcp 0.20.9, pushed Jun 27 2026, MIT, Node >=22, ~202 stars. Current README claims 108 MCP tools, 22 bundled skills, 13 installer packs, 11 slash commands, and a ComfyUI Agent Panel with Claude or ChatGPT backends. It is heavier than shawnrushefsky/comfyui-mcp but far more filmmaker-useful for local video/audio workflows; official Comfy Cloud MCP remains invite-only and cloud-scoped."
   },
   {
     "slug": "tripo",

@@ -34,7 +34,7 @@ const registry = fs
 
 // Fallback: derive owner from a GitHub repo link when not mapped.
 const ownerFor = (s) => {
-  if (OWNERS[s.slug]) return OWNERS[s.slug];
+  if (Object.hasOwn(OWNERS, s.slug)) return OWNERS[s.slug] || null;
   const m = /^https:\/\/github\.com\/([^/]+)\//.exec(s.links?.repo ?? "");
   return m ? m[1] : null;
 };

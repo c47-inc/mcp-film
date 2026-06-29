@@ -71,6 +71,9 @@ The worker can run with the public PostHog project token already embedded from
 
 ## HogQL snippets
 
+Pinned PostHog dashboard:
+[`mcp.film Agent Traffic`](https://us.posthog.com/project/292112/dashboard/1772277).
+
 Total request traffic, non-asset paths:
 
 ```sql

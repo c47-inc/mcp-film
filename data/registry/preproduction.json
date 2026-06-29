@@ -23,6 +23,29 @@
     "notes": "94 stars, actively updated (Jun 2026); docs are bilingual Chinese/English. Directory finding: no dedicated MCP exists for Final Draft, Celtx, WriterDuet, or Fountain as of June 2026 — script writing itself is best done with your agent directly (Fountain is plain text), stored via the Notion or Google Drive MCPs."
   },
   {
+    "slug": "studio-state",
+    "name": "studio-state",
+    "vendor": "Community (DKF2 Studios)",
+    "official": false,
+    "category": "story-preproduction",
+    "featured": false,
+    "tagline": "Keeps AI-film characters, locations, shots, and lock status grounded in project files.",
+    "description": "A stateless MCP server for long-running AI film and episodic projects: it reads a file-based show folder and tells an agent where the production stands. Its tools orient the session, report per-shot status, and write only a small sidecar when a shot is fired, locked, or needs rework.",
+    "capabilities": ["production-state", "shot-tracking", "continuity", "session-orientation", "render-status"],
+    "tools_sample": ["orient", "get_shot_status", "update_shot"],
+    "install": {
+      "claude_code": "claude mcp add studio-state -e STUDIO_ROOT=/abs/path/your_show -- python3 /abs/path/studio-state-public/server.py",
+      "remote_url": null,
+      "stdio_command": "python3 /abs/path/studio-state-public/server.py"
+    },
+    "auth": { "type": "local-app", "env_var": "STUDIO_ROOT", "key_url": "Requires a local project folder containing _pipeline/STATE.json and episodes/" },
+    "pricing": "free",
+    "links": { "repo": "https://github.com/dkf2studios/studio-state-public", "docs": "https://github.com/dkf2studios/studio-state-public/blob/main/INSTALL.md", "site": "https://dkf2studios.gumroad.com/l/flplx" },
+    "added": "2026-06-28",
+    "verified": "2026-06-28",
+    "notes": "MIT, pushed Jun 2026, tiny adoption so far (0 stars) but unusually film-native. It is a state shim, not a generator: it expects your production to follow its folder convention and the paid Studio Method pack is upsold in the README. The useful bit is safe by design — only `update_shot` writes, and only to a per-scene `shot_status.json` sidecar."
+  },
+  {
     "slug": "miro",
     "name": "Miro MCP",
     "vendor": "Miro",
