@@ -23,6 +23,29 @@
     "notes": "Hosted and fully stateless; the MCP itself is free, you pay standard fal per-run pricing. Arguably the best single 'everything' server for a generative film pipeline, and the practical MCP route to models with no first-party server (LTX-2, Stable Audio, CassetteAI, Beatoven)."
   },
   {
+    "slug": "krea",
+    "name": "Krea MCP Server",
+    "vendor": "Krea",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "Official hosted MCP for Krea image/video models, schemas, uploads, and job widgets.",
+    "description": "Krea's official Streamable HTTP MCP lets agents discover available image and video models, inspect live input schemas, submit generation jobs, upload local assets, poll results, and cancel mistakes. For filmmakers it is a clean direct route into Krea's creative API and model shelf without hard-coding endpoints that drift. The MCP Apps widget can show an inline generation tile, auto-poll job progress, retry, cancel, and compare enhancement results in clients that support it.",
+    "capabilities": ["model-search", "schema-inspection", "text-to-image", "image-to-image", "text-to-video", "image-to-video", "file-upload", "async-jobs", "job-cancel", "mcp-apps", "deprecation-metadata"],
+    "tools_sample": ["list_models", "get_model_schema", "generate", "execute_node_app", "get_job", "cancel_job", "get_upload_url"],
+    "install": {
+      "claude_code": "claude mcp add --transport http krea-ai https://api.krea.ai/mcp",
+      "remote_url": "https://api.krea.ai/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth browser flow; API-token fallback from https://www.krea.ai/app/api/tokens sent as Authorization: Bearer." },
+    "pricing": "credits",
+    "links": { "repo": null, "docs": "https://docs.krea.ai/developers/mcp", "site": "https://www.krea.ai" },
+    "added": "2026-06-29",
+    "verified": "2026-06-29",
+    "notes": "Official hosted Streamable HTTP. OAuth was added Jun 13 2026 and bills the workspace selected during consent; API-token auth still works for clients without OAuth but bills a separate workspace API balance. Ask the agent to call list_models/get_model_schema first because Krea surfaces deprecation metadata there, and provider models do disappear — Sora 2 and older Seedance/Seedream endpoints are already sunset. get_upload_url returns presigned upload URLs valid for three hours."
+  },
+  {
     "slug": "replicate",
     "name": "Replicate MCP Server",
     "vendor": "Replicate",

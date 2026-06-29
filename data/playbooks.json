@@ -22,11 +22,11 @@
     "summary": "A controlled way to test the same shot across competing video and image hubs before committing a production budget.",
     "best_for": "Directors, creative technologists, and agencies comparing Veo, Kling, Seedance, Runway, FLUX and other fast-moving models for a specific film look.",
     "constraints": ["Keep prompt, input frame, model, settings, cost and output URL with every take.", "Cap batch counts before spending credits.", "Verify provider rights and ToS before commercial use, especially through aggregator routes."],
-    "primary_slugs": ["martini", "promptibus", "runapi", "kie-ai", "fal", "replicate", "mcp-video"],
+    "primary_slugs": ["martini", "promptibus", "krea", "runapi", "kie-ai", "fal", "replicate", "mcp-video"],
     "steps": [
       { "stage": "develop", "intent": "Define the shot brief, constraints, and keeper criteria before touching model credits.", "slugs": ["martini", "promptibus"] },
       { "stage": "visualize", "intent": "Create or refine the shared start frame and style references that every model will receive.", "slugs": ["recraft", "ideogram", "martini"] },
-      { "stage": "shoot", "intent": "Run the same test across broad model hubs and direct endpoints, then capture task IDs and costs.", "slugs": ["runapi", "kie-ai", "fal", "replicate"] },
+      { "stage": "shoot", "intent": "Run the same test across broad model hubs and direct endpoints, then capture task IDs and costs.", "slugs": ["krea", "runapi", "kie-ai", "fal", "replicate"] },
       { "stage": "cut", "intent": "Assemble a comparison reel or contact sheet so humans can pick winners quickly.", "slugs": ["mcp-video", "palmier-pro"] },
       { "stage": "finish", "intent": "Upscale or clean only the winning takes, not every experiment.", "slugs": ["topaz", "mcp-video"] }
     ],
