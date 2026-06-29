@@ -17,7 +17,8 @@ claude mcp add mcp-film -- npx -y mcp-film
 | `list_film_categories` | All categories with pipeline stages and agent hints |
 | `list_film_capabilities` | Capability tags ranked by server count |
 | `get_film_capability` | Ranked server cluster for one capability tag |
-| `get_install_config` | Copy-paste config for claude_code / claude_desktop / cursor |
+| `get_install_config` | Copy-paste config or hosted remote URL for claude_code / claude_desktop / cursor / hosted_remote |
+| `list_client_profiles` | Supported MCP client setup profiles and install-shape hints |
 | `list_film_playbooks` | Curated production stack recipes for common AI filmmaking jobs |
 | `get_film_playbook` | Full playbook with primary servers, workflow steps, constraints, and fallbacks |
 | `list_film_recommendations` | Intent-routed MCP shortlists for common filmmaking jobs |

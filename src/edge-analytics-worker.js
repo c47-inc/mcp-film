@@ -24,6 +24,8 @@ const agentReadableSurfaces = new Set([
   "agent-docs-markdown",
   "capability-json",
   "capability-markdown",
+  "client-profiles-json",
+  "clients-markdown",
   "feed",
   "llms",
   "listing-json",
@@ -224,6 +226,7 @@ function routePropertiesFor(pathname) {
   if (pathname.startsWith("/api/mcp-registry")) return route("mcp-registry", "registry");
   if (pathname === "/api/registry.json" || pathname === "/api/registry.min.json") return route("registry-json", "registry");
   if (pathname === "/api/remotes.json") return route("remote-directory-json", "remote");
+  if (pathname === "/api/client-profiles.json") return route("client-profiles-json", "clients");
   if (pathname === "/api/playbooks.json") return route("playbooks-json", "playbook");
   if (pathname === "/api/recommendations.json") return route("recommendations-json", "recommendation");
   if (pathname === "/api/capabilities.json") return route("capability-json", "capability");
@@ -242,6 +245,8 @@ function routePropertiesFor(pathname) {
   if (pathname === "/capabilities/" || pathname === "/capabilities") return route("capability-page", "capability");
   if (pathname === "/stack/" || pathname === "/stack") return route("stack-page", "stack");
   if (pathname === "/stack.md") return route("stack-markdown", "stack");
+  if (pathname === "/clients/" || pathname === "/clients") return route("clients-page", "clients");
+  if (pathname === "/clients.md") return route("clients-markdown", "clients");
   if (pathname === "/for-agents/" || pathname === "/for-agents") return route("agent-docs-page", "agent-docs");
   if (pathname === "/for-agents.md") return route("agent-docs-markdown", "agent-docs");
   if (pathname === "/pulse/" || pathname === "/pulse") return route("pulse-page", "pulse");

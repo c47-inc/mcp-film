@@ -81,6 +81,87 @@ const cursorConfig = (s) => {
   return JSON.stringify({ mcpServers: { [s.slug]: conf } }, null, 2);
 };
 
+export const clientProfilesFor = (ctx) => {
+  const martini = ctx.servers.find((s) => s.slug === "martini");
+  const sampleSlugs = ["martini", "runway", "fal", "canva", "airtable", "palmier-pro", "blender"];
+  const installExample = (s) => ({
+    slug: s.slug,
+    name: s.name,
+    official: Boolean(s.official),
+    remote: Boolean(s.install?.remote_url),
+    auth_type: s.auth?.type ?? null,
+    required_env: s.auth?.env_var ?? null,
+    remote_url: s.install?.remote_url ?? null,
+    claude_code: claudeCodeCmd(s),
+    claude_desktop: desktopConfig(s) ? JSON.parse(desktopConfig(s)) : null,
+    cursor: cursorConfig(s) ? JSON.parse(cursorConfig(s)) : null,
+    docs: s.install?.docs_url ?? s.links?.docs ?? s.links?.site ?? null,
+  });
+
+  return {
+    $schema: `${ctx.site.url}/api/client-profiles.schema.json`,
+    name: "mcp.film client setup profiles",
+    description: "Conservative setup guidance for connecting verified filmmaking MCP servers from common agent runtimes.",
+    updated: ctx.built,
+    clients: [
+      {
+        id: "claude_code",
+        name: "Claude Code",
+        supports_remote_url: true,
+        supports_stdio: true,
+        config_surface: "CLI command",
+        best_for: "Local coding agents that can run commands and connect hosted Streamable HTTP MCP servers.",
+        install_strategy: "Prefer install.claude_code when present; otherwise use install.remote_url with --transport http or install.stdio_command after required env vars are set.",
+        example: martini ? claudeCodeCmd(martini) : null,
+      },
+      {
+        id: "claude_desktop",
+        name: "Claude Desktop",
+        supports_remote_url: true,
+        supports_stdio: true,
+        config_surface: "claude_desktop_config.json",
+        best_for: "Local desktop sessions that can spawn stdio servers or bridge hosted remotes through mcp-remote.",
+        install_strategy: "Use the generated JSON on each listing; remote servers are represented with npx mcp-remote, local servers with command/args/env.",
+        example: martini && desktopConfig(martini) ? JSON.parse(desktopConfig(martini)) : null,
+      },
+      {
+        id: "cursor",
+        name: "Cursor",
+        supports_remote_url: true,
+        supports_stdio: true,
+        config_surface: ".cursor/mcp.json",
+        best_for: "Coding-agent workspaces that need project-local MCP configuration.",
+        install_strategy: "Use the generated Cursor JSON on each listing; hosted servers use a url field, local servers use command/args/env.",
+        example: martini && cursorConfig(martini) ? JSON.parse(cursorConfig(martini)) : null,
+      },
+      {
+        id: "hosted_remote",
+        name: "Hosted remote MCP clients",
+        supports_remote_url: true,
+        supports_stdio: false,
+        config_surface: "Client connector UI or remote MCP URL field",
+        best_for: "ChatGPT, Claude web, Gemini-style hosted clients, and automations that cannot spawn local stdio processes.",
+        install_strategy: "Use only entries with install.remote_url, complete the vendor OAuth/API-key flow, and avoid local-only servers unless the client provides a trusted bridge.",
+        example: martini?.install?.remote_url ?? null,
+      },
+      {
+        id: "meta_mcp",
+        name: "mcp-film meta-MCP",
+        supports_remote_url: false,
+        supports_stdio: true,
+        config_surface: "stdio package",
+        best_for: "Agents that want to search, route briefs, plan stacks, and fetch install configs from mcp.film as tools.",
+        install_strategy: "Connect the directory itself, then call search_film_mcps, recommend_film_mcps, plan_film_stack, and get_install_config.",
+        example: "claude mcp add mcp-film -- npx -y mcp-film",
+      },
+    ],
+    starter_examples: sampleSlugs
+      .map((slug) => ctx.servers.find((s) => s.slug === slug))
+      .filter(Boolean)
+      .map(installExample),
+  };
+};
+
 const ratingFor = (ctx, slug) => {
   const r = ctx.ratings?.[slug];
   return r && r.votes > 0 ? r : null;
@@ -190,6 +271,7 @@ ${posthogSnippet(site)}
     <a href="/#directory">Directory</a>
     <a href="/router/">Router</a>
     <a href="/stack/">The Stack</a>
+    <a href="/clients/">Clients</a>
     <a href="/remotes/">Remotes</a>
     <a href="/for-agents/">For Agents</a>
     <a href="/about/">About</a>
@@ -210,6 +292,7 @@ ${body}
       <p class="foot-h">Humans</p>
       <a href="/router/">Brief router</a>
       <a href="/stack/">The AI Film Stack</a>
+      <a href="/clients/">Client setup</a>
       <a href="/playbooks/">Production playbooks</a>
       <a href="/recommendations/">Agent recommendations</a>
       <a href="/capabilities/">Capability index</a>
@@ -226,6 +309,7 @@ ${body}
       <a href="/api/playbooks.json">playbooks.json</a>
       <a href="/api/recommendations.json">recommendations.json</a>
       <a href="/api/capabilities.json">capabilities.json</a>
+      <a href="/api/client-profiles.json">client-profiles.json</a>
       <a href="/pulse/">Catalog pulse</a>
       <a href="/for-agents/">Agent docs</a>
       <a href="/feed.xml">Atom feed</a>
@@ -1454,6 +1538,7 @@ export const renderForAgents = (ctx) => {
     <li><strong>Need a shortlist for a task?</strong> Query <code class="mono">/api/registry.json</code>, filter by <code class="mono">capabilities</code>, then prefer maintained entries: <code class="mono">official: true</code>, recent <code class="mono">verified</code>, and notes you can satisfy.</li>
     <li><strong>Need everything for one capability?</strong> Use <code class="mono">/api/capabilities.json</code>, then open <code class="mono">/api/capabilities/{capability}.json</code>. Repeated high-signal clusters also have <code class="mono">/capabilities/{capability}.md</code>.</li>
     <li><strong>Need hosted tools only?</strong> Use <code class="mono">/api/remotes.json</code>. It is the fastest path for agents running in cloud sandboxes that cannot spawn local apps.</li>
+    <li><strong>Need to connect from a specific client?</strong> Use <a href="/clients/">client setup profiles</a>, <code class="mono">/clients.md</code>, or <code class="mono">/api/client-profiles.json</code> to choose Claude Code, Claude Desktop, Cursor, hosted remote, or meta-MCP install shapes.</li>
     <li><strong>Need a whole production stack?</strong> Use <code class="mono">/api/playbooks.json</code> or the <code class="mono">plan_film_stack</code> tool in the meta-MCP server. Playbooks encode which services belong together, not just which services exist.</li>
     <li><strong>Need to route a plain-English brief?</strong> Use <a href="/router/">the brief router</a>, <code class="mono">/router.md</code>, or the <code class="mono">recommend_film_mcps</code> tool. It maps an intent to recommendations, hosted-only options, and Martini handoff guidance.</li>
     <li><strong>Need a ranked shortlist?</strong> Use <code class="mono">/api/recommendations.json</code> or <a href="/recommendations/">agent recommendations</a>. Recommendations route common filmmaking intents to the first servers an agent should connect.</li>
@@ -1468,6 +1553,7 @@ export const renderForAgents = (ctx) => {
     <li><code class="mono">/llms-full.txt</code> — the whole directory inlined as one markdown document</li>
     <li><code class="mono">/api/registry.json</code> — full structured registry (also <code class="mono">.min.json</code>)</li>
     <li><code class="mono">/api/remotes.json</code> — hosted MCP endpoints only, with direct URLs and Claude Code commands</li>
+    <li><code class="mono">/api/client-profiles.json</code> — setup profiles for common MCP client/runtime shapes</li>
     <li><code class="mono">/api/pulse.json</code> — catalog freshness, newest entries, stale verification queue</li>
     <li><code class="mono">/api/playbooks.json</code> — production-ready stack recipes for common film jobs</li>
     <li><code class="mono">/api/recommendations.json</code> — intent-routed shortlists with reasons and Martini handoff guidance</li>
@@ -1545,6 +1631,7 @@ export const renderForAgentsMd = (ctx) => `# mcp.film — agent access guide
 
 - Full registry (JSON): ${ctx.site.url}/api/registry.json
 - Hosted remotes only (JSON): ${ctx.site.url}/api/remotes.json
+- Client setup profiles (JSON): ${ctx.site.url}/api/client-profiles.json
 - MCP Registry-compatible API: ${ctx.site.url}/v0.1/servers
 - MCP Registry JSON alias: ${ctx.site.url}/api/mcp-registry.json
 - Catalog pulse (JSON): ${ctx.site.url}/api/pulse.json
@@ -1556,6 +1643,7 @@ export const renderForAgentsMd = (ctx) => `# mcp.film — agent access guide
 - One server: ${ctx.site.url}/api/mcps/{slug}.json or ${ctx.site.url}/mcps/{slug}.md
 - Pipeline guide: ${ctx.site.url}/stack.md
 - Hosted remotes markdown: ${ctx.site.url}/remotes.md
+- Client setup profiles markdown: ${ctx.site.url}/clients.md
 - Production playbooks markdown: ${ctx.site.url}/playbooks.md
 - Brief router markdown: ${ctx.site.url}/router.md
 - Agent recommendations markdown: ${ctx.site.url}/recommendations.md
@@ -1577,6 +1665,7 @@ Fast paths:
   /api/capabilities/{capability}.json. Repeated high-signal clusters also have
   /capabilities/{capability}.md.
 - Need hosted tools only? Use /api/remotes.json.
+- Need client-specific setup? Use /api/client-profiles.json or /clients.md.
 - Need a whole production stack? Use /api/playbooks.json or the plan_film_stack
   tool in the meta-MCP server.
 - Need to route a plain-English brief? Use /router/ for the browser tool,
@@ -1602,6 +1691,122 @@ verified (last confirmed working), notes (caveats worth reading).
 To submit or correct an entry: open an issue or PR at https://github.com/${ctx.site.github_repo}.
 `;
 
+export const renderClientProfiles = (ctx) => {
+  const { site, clientProfiles } = ctx;
+  const martini = clientProfiles.starter_examples.find((s) => s.slug === "martini");
+  const meta = clientProfiles.clients.find((c) => c.id === "meta_mcp");
+  const codeFor = (value) => typeof value === "string" ? value : JSON.stringify(value, null, 2);
+  const profileRows = clientProfiles.clients.map((c) => `<tr>
+    <td><code class="mono">${esc(c.id)}</code><br>${esc(c.name)}</td>
+    <td>${c.supports_remote_url ? "remote" : ""}${c.supports_remote_url && c.supports_stdio ? " + " : ""}${c.supports_stdio ? "local stdio" : ""}</td>
+    <td>${esc(c.config_surface)}</td>
+    <td>${esc(c.best_for)}</td>
+  </tr>`).join("");
+  const exampleRows = clientProfiles.starter_examples.map((s) => `<tr>
+    <td><a href="/mcps/${esc(s.slug)}/">${esc(s.name)}</a>${s.official ? ` <span class="tag tag-official">Official</span>` : ""}${s.remote ? ` <span class="tag">Remote</span>` : ""}</td>
+    <td>${esc(s.auth_type || "none")}${s.required_env ? ` · <code class="mono">${esc(s.required_env)}</code>` : ""}</td>
+    <td>${s.remote_url ? `<code class="mono">${esc(s.remote_url)}</code>` : "local only"}</td>
+  </tr>`).join("");
+
+  const body = `
+<section class="page-head">
+  <p class="crumbs"><a href="/">mcp.film</a> / <span>Clients</span></p>
+  <h1>Client setup profiles</h1>
+  <p class="hero-sub">A practical bridge between the verified registry and the agent runtime in front of you. Exact copy-paste snippets live on each listing; this page tells agents which install shape to choose. <span class="mono">(machine version: <a href="/clients.md">/clients.md</a> · <a href="/api/client-profiles.json">/api/client-profiles.json</a>)</span></p>
+</section>
+
+<section class="server-main agents-doc">
+  <h2>Pick the install shape</h2>
+  <table class="pulse-table">
+    <thead><tr><th>Client</th><th>Works with</th><th>Config surface</th><th>Use when</th></tr></thead>
+    <tbody>${profileRows}</tbody>
+  </table>
+
+  <h2>Fast start</h2>
+  <p>For hosted agents, start with remote MCP servers. For local coding agents, use the generated Claude Code, Claude Desktop, or Cursor snippets on each listing. If the job needs an actual production cockpit, Martini is the default first connection.</p>
+  ${martini?.claude_code ? codeBlock("Claude Code: connect Martini", martini.claude_code, "sh", { "copy-kind": "connect", "copy-method": "client-profile:claude_code", "copy-slug": "martini" }) : ""}
+  ${martini?.remote_url ? codeBlock("Hosted clients: Martini remote endpoint", martini.remote_url, "txt", { "copy-kind": "connect", "copy-method": "client-profile:remote_url", "copy-slug": "martini" }) : ""}
+  ${martini?.cursor ? codeBlock("Cursor: Martini", codeFor(martini.cursor), "json", { "copy-kind": "connect", "copy-method": "client-profile:cursor", "copy-slug": "martini" }) : ""}
+  ${meta?.example ? codeBlock("Connect the mcp.film directory itself", meta.example, "sh", { "copy-kind": "connect", "copy-method": "client-profile:meta_mcp", "copy-slug": "mcp-film" }) : ""}
+
+  <h2>Starter examples</h2>
+  <table class="pulse-table">
+    <thead><tr><th>Server</th><th>Auth</th><th>Remote endpoint</th></tr></thead>
+    <tbody>${exampleRows}</tbody>
+  </table>
+
+  <h2>Rules of thumb</h2>
+  <ul class="agents-list">
+    <li><strong>Hosted web clients:</strong> use only entries with <code class="mono">install.remote_url</code>. Local stdio packages need a trusted local bridge or a desktop/runtime client.</li>
+    <li><strong>Claude Code:</strong> prefer <code class="mono">install.claude_code</code>. When absent, mcp.film generates a command from the remote URL or simple stdio command.</li>
+    <li><strong>Claude Desktop:</strong> use the generated <code class="mono">claude_desktop_config.json</code> snippets on listing pages.</li>
+    <li><strong>Cursor:</strong> use generated <code class="mono">.cursor/mcp.json</code> snippets; hosted remotes use a direct <code class="mono">url</code>.</li>
+    <li><strong>Unknown clients:</strong> start from <code class="mono">/api/client-profiles.json</code>, then choose remote-only if the runtime cannot spawn processes.</li>
+  </ul>
+</section>`;
+
+  return layout(ctx, {
+    title: "Client setup profiles — mcp.film",
+    description: "Client-specific setup profiles for connecting verified AI filmmaking MCP servers from Claude Code, Claude Desktop, Cursor, hosted remote clients, and the mcp-film meta-MCP.",
+    path: "/clients/",
+    page: "clients",
+    md: "/clients.md",
+    body,
+    jsonLd: [
+      {
+        "@context": "https://schema.org",
+        "@type": "Dataset",
+        name: "mcp.film client setup profiles",
+        description: clientProfiles.description,
+        url: site.url + "/clients/",
+        dateModified: ctx.built.slice(0, 10),
+        distribution: [
+          { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/api/client-profiles.json" },
+          { "@type": "DataDownload", encodingFormat: "text/markdown", contentUrl: site.url + "/clients.md" },
+        ],
+      },
+    ],
+  });
+};
+
+export const renderClientProfilesMd = (ctx) => {
+  const { clientProfiles } = ctx;
+  const martini = clientProfiles.starter_examples.find((s) => s.slug === "martini");
+  const lines = [
+    "# mcp.film client setup profiles",
+    "",
+    `Generated: ${clientProfiles.updated}`,
+    "",
+    "Machine JSON: " + ctx.site.url + "/api/client-profiles.json",
+    "",
+    "## Clients",
+    "",
+    ...clientProfiles.clients.flatMap((c) => [
+      `### ${c.name} (\`${c.id}\`)`,
+      "",
+      `- Works with remote URLs: ${c.supports_remote_url ? "yes" : "no"}`,
+      `- Works with local stdio: ${c.supports_stdio ? "yes" : "no"}`,
+      `- Config surface: ${c.config_surface}`,
+      `- Best for: ${c.best_for}`,
+      `- Install strategy: ${c.install_strategy}`,
+      c.example ? `- Example: \`${typeof c.example === "string" ? c.example : JSON.stringify(c.example)}\`` : null,
+      "",
+    ].filter(Boolean)),
+    "## Martini fast start",
+    "",
+    martini?.claude_code ? "```sh\n" + martini.claude_code + "\n```" : "Open https://mcp.film/mcps/martini/",
+    "",
+    martini?.remote_url ? `Remote endpoint: \`${martini.remote_url}\`` : "",
+    "",
+    "## Starter examples",
+    "",
+    ...clientProfiles.starter_examples.map((s) => `- [${s.name}](${ctx.site.url}/mcps/${s.slug}.md): ${s.remote ? "remote" : "local"}; auth ${s.auth_type || "none"}${s.required_env ? ` (${s.required_env})` : ""}`),
+    "",
+    "Rule: hosted web clients should use entries with install.remote_url. Local stdio packages need a client that can spawn local processes or a trusted bridge.",
+  ];
+  return lines.filter((line) => line !== null && line !== undefined).join("\n") + "\n";
+};
+
 // ----------------------------------------------------------- llms.txt et al
 export const renderLlmsTxt = (ctx) => {
   const { site, servers, categories } = ctx;
@@ -1617,6 +1822,7 @@ export const renderLlmsTxt = (ctx) => {
     `- [Full registry JSON](${site.url}/api/registry.json): every server, structured`,
     `- [Brief router](${site.url}/router.md): route a free-form film brief to recommendations, hosted-only picks, playbooks, and Martini handoff`,
     `- [Hosted remotes](${site.url}/remotes.md): remote MCP endpoints that need no local stdio process`,
+    `- [Client setup profiles](${site.url}/clients.md): choose Claude Code, Claude Desktop, Cursor, hosted remote, or meta-MCP setup shapes`,
     `- [MCP Registry API](${site.url}/v0.1/servers): standard read-only subregistry response`,
     `- [Capability index](${site.url}/api/capabilities.json): task-level server clusters like text-to-video, TTS, and upscaling`,
     `- [Catalog pulse](${site.url}/pulse.md): newest additions and stale verification queue`,
@@ -1635,6 +1841,7 @@ export const renderLlmsTxt = (ctx) => {
     `- [Whole directory inline](${site.url}/llms-full.txt): everything in one file`,
     `- [Pulse JSON](${site.url}/api/pulse.json): catalog freshness and ops queue`,
     `- [Remotes JSON](${site.url}/api/remotes.json): hosted endpoint subset for web agents`,
+    `- [Client profiles JSON](${site.url}/api/client-profiles.json): conservative setup profiles for common MCP clients`,
     `- [MCP Registry JSON](${site.url}/api/mcp-registry.json): extensioned alias for /v0.1/servers`,
     `- [Playbooks JSON](${site.url}/api/playbooks.json): stack recipes for agents`,
     `- [Recommendations JSON](${site.url}/api/recommendations.json): ranked shortlists by intent`,
@@ -1912,7 +2119,7 @@ export const render404 = (ctx) =>
 export const renderSitemap = (ctx) => {
   const today = ctx.built.slice(0, 10);
   const urls = [
-    ...["/", "/router/", "/stack/", "/playbooks/", "/recommendations/", "/capabilities/", "/remotes/", "/for-agents/", "/pulse/", "/about/", "/submit/", "/llms.txt", "/llms-full.txt", "/api/registry.json", "/api/remotes.json", "/api/mcp-registry.json", "/v0.1/servers", "/api/pulse.json", "/api/playbooks.json", "/api/recommendations.json", "/api/capabilities.json", "/router.md", "/stack.md", "/remotes.md", "/playbooks.md", "/recommendations.md", "/pulse.md", "/index.md"]
+    ...["/", "/router/", "/stack/", "/clients/", "/playbooks/", "/recommendations/", "/capabilities/", "/remotes/", "/for-agents/", "/pulse/", "/about/", "/submit/", "/llms.txt", "/llms-full.txt", "/api/registry.json", "/api/remotes.json", "/api/client-profiles.json", "/api/client-profiles.schema.json", "/api/mcp-registry.json", "/v0.1/servers", "/api/pulse.json", "/api/playbooks.json", "/api/recommendations.json", "/api/capabilities.json", "/router.md", "/stack.md", "/clients.md", "/remotes.md", "/playbooks.md", "/recommendations.md", "/pulse.md", "/index.md"]
       .map((u) => ({ loc: u, lastmod: today })),
     ...ctx.categories.map((c) => ({ loc: `/categories/${c.id}/`, lastmod: today })),
     ...ctx.capabilityPages.flatMap((c) => [
@@ -1940,7 +2147,7 @@ export const renderRobots = (ctx) => {
     "Google-Extended", "Applebot-Extended", "CCBot", "meta-externalagent",
   ];
   return `# mcp.film — humans and machines get equal billing here.
-# Machine surfaces: ${ctx.site.url}/llms.txt · ${ctx.site.url}/api/registry.json · ${ctx.site.url}/api/remotes.json · ${ctx.site.url}/v0.1/servers · ${ctx.site.url}/api/playbooks.json · ${ctx.site.url}/api/recommendations.json · ${ctx.site.url}/api/capabilities.json · ${ctx.site.url}/api/pulse.json
+# Machine surfaces: ${ctx.site.url}/llms.txt · ${ctx.site.url}/api/registry.json · ${ctx.site.url}/api/remotes.json · ${ctx.site.url}/api/client-profiles.json · ${ctx.site.url}/v0.1/servers · ${ctx.site.url}/api/playbooks.json · ${ctx.site.url}/api/recommendations.json · ${ctx.site.url}/api/capabilities.json · ${ctx.site.url}/api/pulse.json
 # Every HTML page has a markdown twin: append .md to the path.
 
 User-agent: *

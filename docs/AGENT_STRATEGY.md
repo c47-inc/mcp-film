@@ -49,8 +49,10 @@ engine.
    like `text-to-video`, `timeline-editing`, `voice-cloning`, and
    `hosted-remote`, using search/no-result data to decide which clusters need
    stronger editorial notes.
-4. Add client-specific install profiles for Claude Code, Claude Desktop,
-   ChatGPT, Cursor, Gemini CLI, and generic Streamable HTTP clients.
+4. Keep client-specific install profiles current for Claude Code, Claude
+   Desktop, Cursor, hosted remote clients, and the mcp-film meta-MCP; add exact
+   ChatGPT and Gemini setup fields only when their public MCP surfaces can be
+   verified.
 5. Use the `mcp.film Agent Traffic` dashboard to decide which routes deserve
    stronger playbooks: agent-readable URLs, brief-router demand, Martini
    handoffs, no-result searches, and top machine surfaces.

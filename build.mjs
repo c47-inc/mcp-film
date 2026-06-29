@@ -355,6 +355,7 @@ ctx.pulse = {
     { label: "llms-full.txt", url: `${site.url}/llms-full.txt`, kind: "full-markdown" },
     { label: "registry.json", url: `${site.url}/api/registry.json`, kind: "json-registry" },
     { label: "remotes.json", url: `${site.url}/api/remotes.json`, kind: "hosted-remotes" },
+    { label: "client-profiles.json", url: `${site.url}/api/client-profiles.json`, kind: "client-setup-profiles" },
     { label: "pulse.json", url: `${site.url}/api/pulse.json`, kind: "catalog-pulse" },
     { label: "playbooks.json", url: `${site.url}/api/playbooks.json`, kind: "production-playbooks" },
     { label: "recommendations.json", url: `${site.url}/api/recommendations.json`, kind: "intent-recommendations" },
@@ -373,6 +374,60 @@ ctx.pulse = {
     cloudflare_pages: "mcp-film",
   },
 };
+ctx.clientProfiles = T.clientProfilesFor(ctx);
+ctx.clientProfilesSchema = {
+  $schema: "https://json-schema.org/draft/2020-12/schema",
+  $id: `${site.url}/api/client-profiles.schema.json`,
+  title: "mcp.film client setup profiles",
+  type: "object",
+  required: ["name", "description", "updated", "clients", "starter_examples"],
+  properties: {
+    $schema: { type: "string", format: "uri" },
+    name: { type: "string" },
+    description: { type: "string" },
+    updated: { type: "string" },
+    clients: {
+      type: "array",
+      items: {
+        type: "object",
+        required: ["id", "name", "supports_remote_url", "supports_stdio", "config_surface", "best_for", "install_strategy"],
+        properties: {
+          id: { type: "string" },
+          name: { type: "string" },
+          supports_remote_url: { type: "boolean" },
+          supports_stdio: { type: "boolean" },
+          config_surface: { type: "string" },
+          best_for: { type: "string" },
+          install_strategy: { type: "string" },
+          example: {},
+        },
+        additionalProperties: true,
+      },
+    },
+    starter_examples: {
+      type: "array",
+      items: {
+        type: "object",
+        required: ["slug", "name", "official", "remote", "auth_type", "remote_url", "claude_code", "claude_desktop", "cursor", "docs"],
+        properties: {
+          slug: { type: "string" },
+          name: { type: "string" },
+          official: { type: "boolean" },
+          remote: { type: "boolean" },
+          auth_type: { type: ["string", "null"] },
+          required_env: { type: ["string", "null"] },
+          remote_url: { type: ["string", "null"], format: "uri" },
+          claude_code: { type: ["string", "null"] },
+          claude_desktop: { type: ["object", "null"] },
+          cursor: { type: ["object", "null"] },
+          docs: { type: ["string", "null"], format: "uri" },
+        },
+        additionalProperties: false,
+      },
+    },
+  },
+  additionalProperties: true,
+};
 
 // ------------------------------------------------------------------- emit
 fs.rmSync(DIST, { recursive: true, force: true });
@@ -386,6 +441,7 @@ const write = (rel, content) => {
 write("index.html", T.renderHome(ctx));
 write("router/index.html", T.renderRouter(ctx));
 write("stack/index.html", T.renderStack(ctx));
+write("clients/index.html", T.renderClientProfiles(ctx));
 write("playbooks/index.html", T.renderPlaybooks(ctx));
 write("recommendations/index.html", T.renderRecommendations(ctx));
 write("capabilities/index.html", T.renderCapabilities(ctx));
@@ -416,6 +472,7 @@ for (const s of servers) {
 write("llms.txt", T.renderLlmsTxt(ctx));
 write("llms-full.txt", T.renderLlmsFull(ctx));
 write("stack.md", T.renderStackMd(ctx));
+write("clients.md", T.renderClientProfilesMd(ctx));
 write("router.md", T.renderRouterMd(ctx));
 write("playbooks.md", T.renderPlaybooksMd(ctx));
 write("recommendations.md", T.renderRecommendationsMd(ctx));
@@ -443,6 +500,8 @@ write("api/playbooks.json", JSON.stringify(ctx.playbookDoc, null, 2));
 write("api/recommendations.json", JSON.stringify(ctx.recommendationDoc, null, 2));
 write("api/capabilities.json", JSON.stringify(ctx.capabilityDoc, null, 2));
 write("api/remotes.json", JSON.stringify(ctx.remoteDoc, null, 2));
+write("api/client-profiles.json", JSON.stringify(ctx.clientProfiles, null, 2));
+write("api/client-profiles.schema.json", JSON.stringify(ctx.clientProfilesSchema, null, 2));
 write("api/stats.json", JSON.stringify({
   servers: servers.length,
   official: ctx.officialCount,

@@ -154,6 +154,13 @@ function installConfig(s, client) {
     if (s.install?.claude_code && cmdLike(s.install.claude_code)) out.command = s.install.claude_code;
     else if (s.install?.remote_url) out.command = `claude mcp add --transport http ${s.slug} ${s.install.remote_url}`;
     else if (cmdLike(s.install?.stdio_command)) out.command = `claude mcp add ${s.slug} -- ${s.install.stdio_command}`;
+  } else if (client === "hosted_remote" || client === "generic_remote") {
+    if (s.install?.remote_url) {
+      out.remote_url = s.install.remote_url;
+      out.note = "Use this hosted MCP endpoint in a client that supports remote MCP connectors; complete the vendor OAuth/API-key flow in that client.";
+    } else {
+      out.note = "This server is local/stdio only; use a local client or choose a hosted remote entry.";
+    }
   } else if (s.install?.remote_url) {
     out.config =
       client === "cursor"
@@ -165,12 +172,50 @@ function installConfig(s, client) {
     if (s.auth?.env_var) conf.env = { [s.auth.env_var]: "YOUR_KEY_HERE" };
     out.config = { mcpServers: { [s.slug]: conf } };
   }
-  if (!out.command && !out.config) {
+  if (!out.command && !out.config && !out.remote_url) {
     out.note = `No mechanical install available — follow the vendor instructions: ${s.install?.docs_url ?? s.links?.docs ?? s.links?.site ?? "see mcp.film/mcps/" + s.slug}`;
   }
   if (s.auth?.env_var) out.required_env = s.auth.env_var;
   if (s.auth?.type) out.auth = s.auth.type;
   return out;
+}
+
+function clientProfiles() {
+  return {
+    clients: [
+      {
+        id: "claude_code",
+        supports_remote_url: true,
+        supports_stdio: true,
+        config_surface: "CLI command",
+        install_hint: "Use install.claude_code when available; otherwise use remote_url with --transport http or stdio_command after setting env vars.",
+      },
+      {
+        id: "claude_desktop",
+        supports_remote_url: true,
+        supports_stdio: true,
+        config_surface: "claude_desktop_config.json",
+        install_hint: "Use generated JSON configs; hosted remotes are bridged through mcp-remote.",
+      },
+      {
+        id: "cursor",
+        supports_remote_url: true,
+        supports_stdio: true,
+        config_surface: ".cursor/mcp.json",
+        install_hint: "Use generated Cursor JSON; hosted remotes use a url field.",
+      },
+      {
+        id: "hosted_remote",
+        aliases: ["generic_remote"],
+        supports_remote_url: true,
+        supports_stdio: false,
+        config_surface: "client connector UI or remote MCP URL field",
+        install_hint: "Use only servers with install.remote_url; local stdio packages need a local client or trusted bridge.",
+      },
+    ],
+    docs: "https://mcp.film/clients.md",
+    json: "https://mcp.film/api/client-profiles.json",
+  };
 }
 
 // The pipeline stages and which categories serve them (mirrors mcp.film/stack).
@@ -244,15 +289,21 @@ const TOOLS = [
   {
     name: "get_install_config",
     description:
-      "Get a copy-paste install command or JSON config for a server, for a specific MCP client (claude_code, claude_desktop, or cursor). Includes required env vars and auth type.",
+      "Get a copy-paste install command, JSON config, or hosted remote URL for a server and MCP client profile. Includes required env vars and auth type.",
     inputSchema: {
       type: "object",
       properties: {
         slug: { type: "string" },
-        client: { type: "string", enum: ["claude_code", "claude_desktop", "cursor"] },
+        client: { type: "string", enum: ["claude_code", "claude_desktop", "cursor", "hosted_remote", "generic_remote"] },
       },
       required: ["slug", "client"],
     },
+  },
+  {
+    name: "list_client_profiles",
+    description:
+      "List the MCP client setup profiles mcp.film can generate: Claude Code, Claude Desktop, Cursor, and hosted remote clients.",
+    inputSchema: { type: "object", properties: {} },
   },
   {
     name: "submit_listing",
@@ -403,6 +454,10 @@ async function callTool(name, args = {}) {
     const s = servers.find((x) => x.slug === args.slug);
     if (!s) return { error: `No server with slug '${args.slug}'.` };
     return installConfig(s, args.client);
+  }
+
+  if (name === "list_client_profiles") {
+    return clientProfiles();
   }
 
   if (name === "submit_listing") {

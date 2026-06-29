@@ -29,6 +29,7 @@ It is built **agents-first**:
 | Production playbooks | `/api/playbooks.json` · `/playbooks.md` |
 | Agent recommendations | `/api/recommendations.json` · `/recommendations.md` |
 | Capability index | `/api/capabilities.json` · `/capabilities/{tag}.md` |
+| Client setup profiles | `/clients/` · `/clients.md` · `/api/client-profiles.json` |
 | One server, JSON / markdown | `/api/mcps/{slug}.json` · `/mcps/{slug}.md` |
 | Pipeline guide | `/stack/` · `/stack.md` |
 | New servers feed | `/feed.xml` |
@@ -70,6 +71,11 @@ pageviews still use the lightweight PostHog client event. See
 The live catalog pulse is published at [`/api/pulse.json`](https://mcp.film/api/pulse.json)
 and [`/pulse.md`](https://mcp.film/pulse.md): newest additions, stale
 verification queue, category coverage, and machine-surface links for agents.
+Client setup profiles live at [`/api/client-profiles.json`](https://mcp.film/api/client-profiles.json)
+and [`/clients.md`](https://mcp.film/clients.md): conservative setup guidance
+for Claude Code, Claude Desktop, Cursor, hosted remote clients, and the
+directory's own meta-MCP server.
+
 Production playbooks live at [`/api/playbooks.json`](https://mcp.film/api/playbooks.json)
 and [`/playbooks.md`](https://mcp.film/playbooks.md): concrete stack recipes
 for commercial sprints, local edit bays, character series, archive cutdowns,
@@ -81,7 +87,7 @@ Zero dependencies — Node 20+ is the whole toolchain:
 
 ```sh
 node build.mjs --validate-only   # check the data
-node build.mjs                   # build → dist/ (90 pages, API, feeds, OG image)
+node build.mjs                   # build → dist/ (HTML, APIs, feeds, agent surfaces)
 node scripts/serve.mjs           # preview at http://localhost:4173
 ```
 
