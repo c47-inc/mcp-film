@@ -123,6 +123,15 @@ const ctx = {
   remoteCount: servers.filter((s) => s.install?.remote_url).length,
 };
 
+const categoryById = new Map(categories.map((c) => [c.id, c]));
+const remoteServers = [...servers]
+  .filter((s) => s.install?.remote_url)
+  .sort((a, b) =>
+    Number(Boolean(b.featured)) - Number(Boolean(a.featured))
+    || Number(Boolean(b.official)) - Number(Boolean(a.official))
+    || a.name.localeCompare(b.name)
+  );
+
 const dayMs = 24 * 60 * 60 * 1000;
 const builtDate = new Date(ctx.built);
 const serverSummary = (s) => ({
@@ -138,6 +147,41 @@ const serverSummary = (s) => ({
   tagline: s.tagline,
 });
 const serverBySlug = new Map(servers.map((s) => [s.slug, s]));
+const remoteSummary = (s) => {
+  const cat = categoryById.get(s.category);
+  return {
+    slug: s.slug,
+    name: s.name,
+    vendor: s.vendor,
+    official: s.official,
+    featured: Boolean(s.featured),
+    category: s.category,
+    category_name: cat?.name ?? s.category,
+    stage: cat?.stage ?? null,
+    tagline: s.tagline,
+    remote_url: s.install.remote_url,
+    claude_code: T.claudeCodeCmd(s),
+    auth: s.auth,
+    pricing: s.pricing,
+    links: s.links,
+    added: s.added,
+    verified: s.verified,
+    listing_url: `${site.url}/mcps/${s.slug}/`,
+    markdown_url: `${site.url}/mcps/${s.slug}.md`,
+    notes: s.notes,
+  };
+};
+ctx.remoteServers = remoteServers;
+ctx.remoteDoc = {
+  $schema: `${site.url}/api/remotes.schema.json`,
+  name: "mcp.film hosted MCP remotes",
+  description: "Hosted MCP endpoints for AI filmmaking agents: Streamable HTTP or SSE servers that do not require a local stdio process.",
+  updated: ctx.built,
+  count: remoteServers.length,
+  official: remoteServers.filter((s) => s.official).length,
+  featured: remoteServers.filter((s) => s.featured).map((s) => s.slug),
+  remotes: remoteServers.map(remoteSummary),
+};
 const playbookSummary = (p) => ({
   id: p.id,
   title: p.title,
@@ -209,9 +253,11 @@ ctx.pulse = {
     { label: "llms.txt", url: `${site.url}/llms.txt`, kind: "llms-index" },
     { label: "llms-full.txt", url: `${site.url}/llms-full.txt`, kind: "full-markdown" },
     { label: "registry.json", url: `${site.url}/api/registry.json`, kind: "json-registry" },
+    { label: "remotes.json", url: `${site.url}/api/remotes.json`, kind: "hosted-remotes" },
     { label: "pulse.json", url: `${site.url}/api/pulse.json`, kind: "catalog-pulse" },
     { label: "playbooks.json", url: `${site.url}/api/playbooks.json`, kind: "production-playbooks" },
     { label: "stack.md", url: `${site.url}/stack.md`, kind: "pipeline-guide" },
+    { label: "remotes.md", url: `${site.url}/remotes.md`, kind: "hosted-remotes-markdown" },
     { label: "playbooks.md", url: `${site.url}/playbooks.md`, kind: "stack-recipes" },
     { label: "feed.xml", url: `${site.url}/feed.xml`, kind: "new-additions-feed" },
     { label: "server-card", url: `${site.url}/.well-known/mcp/server-card`, kind: "mcp-discovery" },
@@ -236,6 +282,7 @@ const write = (rel, content) => {
 write("index.html", T.renderHome(ctx));
 write("stack/index.html", T.renderStack(ctx));
 write("playbooks/index.html", T.renderPlaybooks(ctx));
+write("remotes/index.html", T.renderRemotes(ctx));
 write("for-agents/index.html", T.renderForAgents(ctx));
 write("pulse/index.html", T.renderPulse(ctx));
 write("about/index.html", T.renderAbout(ctx));
@@ -256,6 +303,7 @@ write("llms.txt", T.renderLlmsTxt(ctx));
 write("llms-full.txt", T.renderLlmsFull(ctx));
 write("stack.md", T.renderStackMd(ctx));
 write("playbooks.md", T.renderPlaybooksMd(ctx));
+write("remotes.md", T.renderRemotesMd(ctx));
 write("for-agents.md", T.renderForAgentsMd(ctx));
 write("pulse.md", T.renderPulseMd(ctx));
 write("index.md", T.renderIndexMd(ctx));
@@ -276,6 +324,7 @@ write("api/registry.min.json", JSON.stringify(registryDoc));
 write("api/categories.json", JSON.stringify(categories, null, 2));
 write("api/pulse.json", JSON.stringify(ctx.pulse, null, 2));
 write("api/playbooks.json", JSON.stringify(ctx.playbookDoc, null, 2));
+write("api/remotes.json", JSON.stringify(ctx.remoteDoc, null, 2));
 write("api/stats.json", JSON.stringify({
   servers: servers.length,
   official: ctx.officialCount,

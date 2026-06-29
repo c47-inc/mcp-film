@@ -142,6 +142,7 @@ ${posthogSnippet(site)}
   <nav class="site-nav">
     <a href="/#directory">Directory</a>
     <a href="/stack/">The Stack</a>
+    <a href="/remotes/">Remotes</a>
     <a href="/for-agents/">For Agents</a>
     <a href="/about/">About</a>
     <a class="nav-gh" href="https://github.com/${site.github_repo}" rel="noopener">GitHub</a>
@@ -161,6 +162,7 @@ ${body}
       <p class="foot-h">Humans</p>
       <a href="/stack/">The AI Film Stack</a>
       <a href="/playbooks/">Production playbooks</a>
+      <a href="/remotes/">Hosted remotes</a>
       <a href="/submit/">Submit a server</a>
       <a href="/about/">About</a>
       <a href="https://github.com/${site.github_repo}" rel="noopener">Source on GitHub</a>
@@ -169,6 +171,7 @@ ${body}
       <p class="foot-h">Agents</p>
       <a href="/llms.txt">llms.txt</a>
       <a href="/api/registry.json">registry.json</a>
+      <a href="/api/remotes.json">remotes.json</a>
       <a href="/api/playbooks.json">playbooks.json</a>
       <a href="/pulse/">Catalog pulse</a>
       <a href="/for-agents/">Agent docs</a>
@@ -218,6 +221,14 @@ const card = (ctx, s) => {
   <div class="card-meta"><span class="card-caps">${esc(caps)}</span><span class="card-extra">${esc(extra)}${r ? ` · ★ ${r.avg.toFixed(1)}` : ""}</span></div>
 </a>`;
 };
+
+const remoteServersFor = (ctx) =>
+  [...(ctx.remoteServers ?? ctx.servers.filter((s) => s.install?.remote_url))]
+    .sort((a, b) =>
+      Number(Boolean(b.featured)) - Number(Boolean(a.featured))
+      || Number(Boolean(b.official)) - Number(Boolean(a.official))
+      || a.name.localeCompare(b.name)
+    );
 
 // --------------------------------------------------------------------- home
 export const renderHome = (ctx) => {
@@ -826,6 +837,129 @@ export const renderPlaybooksMd = (ctx) => {
   return lines.join("\n") + "\n";
 };
 
+// --------------------------------------------------------------- remotes
+export const renderRemotes = (ctx) => {
+  const { site } = ctx;
+  const remotes = remoteServersFor(ctx);
+  const official = remotes.filter((s) => s.official).length;
+  const oauth = remotes.filter((s) => s.auth?.type === "oauth").length;
+  const apiKey = remotes.filter((s) => s.auth?.type === "api_key").length;
+  const rows = remotes.map((s) => {
+    const cat = catById(ctx, s.category);
+    const cc = claudeCodeCmd(s);
+    return `
+  <article class="remote-row">
+    <div class="remote-ident">
+      ${avatar(ctx, s)}
+      <div>
+        <h2><a href="/mcps/${s.slug}/">${esc(s.name)}</a></h2>
+        <p class="remote-meta">${badge(s)}${remoteBadge(s)}<span>${esc(cat?.name ?? s.category)}</span><span>${esc(PRICING_LABEL[s.pricing] ?? s.pricing)}</span><span>verified ${nice(s.verified)}</span></p>
+        <p class="remote-tag">${esc(s.tagline)}</p>
+      </div>
+    </div>
+    <div class="remote-connect">
+      <span class="label">Endpoint</span>
+      <code class="mono">${esc(s.install.remote_url)}</code>
+    </div>
+    <div class="remote-connect">
+      <span class="label">Claude Code</span>
+      <code class="mono">${esc(cc ?? "Use the vendor connect flow")}</code>
+      <p class="remote-auth">Auth: ${esc(s.auth?.type ?? "unknown")}${s.auth?.env_var ? ` · ${esc(s.auth.env_var)}` : ""}</p>
+    </div>
+  </article>`;
+  }).join("");
+
+  const body = `
+<section class="page-head">
+  <p class="crumbs"><a href="/">mcp.film</a> / <span>Remotes</span></p>
+  <h1>Hosted MCP remotes</h1>
+  <p class="hero-sub">Remote MCP endpoints for filmmaking agents: no local stdio process, no package install, usually OAuth or a platform key. This is the fastest path for web agents, Claude, ChatGPT-style connectors, and production automations.</p>
+</section>
+
+<section class="pulse-grid remote-stats" aria-label="Hosted remote summary">
+  <div><span>${remotes.length}</span><p>hosted remotes</p></div>
+  <div><span>${official}</span><p>official</p></div>
+  <div><span>${oauth}</span><p>OAuth</p></div>
+  <div><span>${apiKey}</span><p>API key</p></div>
+</section>
+
+<section class="remote-doc">
+  <div class="agent-hint"><strong>Agent path:</strong> use <a href="/api/remotes.json">/api/remotes.json</a> for structured endpoint data, or <a href="/remotes.md">/remotes.md</a> for a clean markdown copy. The full registry remains at <a href="/api/registry.json">/api/registry.json</a>.</div>
+  <div class="remote-list" aria-label="Hosted remote MCP servers">
+    ${rows}
+  </div>
+</section>`;
+
+  return layout(ctx, {
+    title: "Hosted MCP remotes for AI filmmaking | mcp.film",
+    description: "Hosted remote MCP endpoints for AI filmmaking agents: Streamable HTTP and SSE servers that connect without a local stdio process.",
+    path: "/remotes/",
+    page: "remotes",
+    md: "/remotes.md",
+    body,
+    jsonLd: [
+      {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        name: "Hosted MCP remotes for AI filmmaking",
+        description: "Hosted MCP endpoints for AI filmmaking agents.",
+        url: site.url + "/remotes/",
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: remotes.length,
+          itemListElement: remotes.map((s, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: s.name,
+            url: `${site.url}/mcps/${s.slug}/`,
+          })),
+        },
+      },
+    ],
+  });
+};
+
+export const renderRemotesMd = (ctx) => {
+  const remotes = remoteServersFor(ctx);
+  const lines = [
+    "# Hosted MCP remotes",
+    "",
+    "> MCP endpoints for filmmaking agents that connect over HTTPS without a local stdio process.",
+    "",
+    `Structured data: ${ctx.site.url}/api/remotes.json`,
+    `Full registry: ${ctx.site.url}/api/registry.json`,
+    "",
+  ];
+  for (const s of remotes) {
+    const cat = catById(ctx, s.category);
+    const cc = claudeCodeCmd(s);
+    lines.push(
+      `## ${s.name}`,
+      "",
+      s.tagline,
+      "",
+      `- Listing: ${ctx.site.url}/mcps/${s.slug}/`,
+      `- Category: ${cat?.name ?? s.category}`,
+      `- Official: ${s.official ? "yes" : "no"}`,
+      `- Pricing: ${PRICING_LABEL[s.pricing] ?? s.pricing}`,
+      `- Auth: ${s.auth?.type ?? "unknown"}${s.auth?.env_var ? ` (${s.auth.env_var})` : ""}`,
+      `- Verified: ${s.verified}`,
+      "",
+      "Endpoint:",
+      "",
+      "```text",
+      s.install.remote_url,
+      "```",
+      "",
+    );
+    if (cc) {
+      lines.push("Claude Code:", "", "```sh", cc, "```", "");
+    }
+    if (s.notes) lines.push(`Notes: ${s.notes}`, "");
+  }
+  return lines.join("\n") + "\n";
+};
+
 // --------------------------------------------------------------- for agents
 export const renderForAgents = (ctx) => {
   const { site } = ctx;
@@ -846,6 +980,7 @@ export const renderForAgents = (ctx) => {
     <li><code class="mono">/llms.txt</code> — spec-compliant index (llmstxt.org format)</li>
     <li><code class="mono">/llms-full.txt</code> — the whole directory inlined as one markdown document</li>
     <li><code class="mono">/api/registry.json</code> — full structured registry (also <code class="mono">.min.json</code>)</li>
+    <li><code class="mono">/api/remotes.json</code> — hosted MCP endpoints only, with direct URLs and Claude Code commands</li>
     <li><code class="mono">/api/pulse.json</code> — catalog freshness, newest entries, stale verification queue</li>
     <li><code class="mono">/api/playbooks.json</code> — production-ready stack recipes for common film jobs</li>
     <li><code class="mono">/v0.1/servers</code> — MCP Registry-compatible read-only subregistry API</li>
@@ -853,6 +988,7 @@ export const renderForAgents = (ctx) => {
     <li><code class="mono">/api/mcps/{slug}.json</code> — one server, structured</li>
     <li><code class="mono">/mcps/{slug}.md</code> — one server, clean markdown</li>
     <li><code class="mono">/stack.md</code> — the pipeline guide as markdown</li>
+    <li><code class="mono">/remotes.md</code> — hosted remote endpoints as markdown</li>
     <li><code class="mono">/playbooks.md</code> — concrete production playbooks as markdown</li>
     <li><code class="mono">/pulse.md</code> — catalog operations pulse as markdown</li>
     <li><code class="mono">/api/stats.json</code> — counts and freshness</li>
@@ -897,9 +1033,11 @@ export const renderForAgents = (ctx) => {
         dateModified: ctx.built.slice(0, 10),
         distribution: [
           { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/api/registry.json" },
+          { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/api/remotes.json" },
           { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/v0.1/servers" },
           { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/api/pulse.json" },
           { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/api/playbooks.json" },
+          { "@type": "DataDownload", encodingFormat: "text/markdown", contentUrl: site.url + "/remotes.md" },
           { "@type": "DataDownload", encodingFormat: "text/markdown", contentUrl: site.url + "/llms-full.txt" },
         ],
       },
@@ -912,6 +1050,7 @@ export const renderForAgentsMd = (ctx) => `# mcp.film — agent access guide
 > Every page on mcp.film has a machine twin. Start with /api/registry.json.
 
 - Full registry (JSON): ${ctx.site.url}/api/registry.json
+- Hosted remotes only (JSON): ${ctx.site.url}/api/remotes.json
 - MCP Registry-compatible API: ${ctx.site.url}/v0.1/servers
 - MCP Registry JSON alias: ${ctx.site.url}/api/mcp-registry.json
 - Catalog pulse (JSON): ${ctx.site.url}/api/pulse.json
@@ -920,6 +1059,7 @@ export const renderForAgentsMd = (ctx) => `# mcp.film — agent access guide
 - Whole directory, one markdown file: ${ctx.site.url}/llms-full.txt
 - One server: ${ctx.site.url}/api/mcps/{slug}.json or ${ctx.site.url}/mcps/{slug}.md
 - Pipeline guide: ${ctx.site.url}/stack.md
+- Hosted remotes markdown: ${ctx.site.url}/remotes.md
 - Production playbooks markdown: ${ctx.site.url}/playbooks.md
 - Catalog pulse markdown: ${ctx.site.url}/pulse.md
 - New additions feed: ${ctx.site.url}/feed.xml
@@ -950,6 +1090,7 @@ export const renderLlmsTxt = (ctx) => {
     "## Start here",
     "",
     `- [Full registry JSON](${site.url}/api/registry.json): every server, structured`,
+    `- [Hosted remotes](${site.url}/remotes.md): remote MCP endpoints that need no local stdio process`,
     `- [MCP Registry API](${site.url}/v0.1/servers): standard read-only subregistry response`,
     `- [Catalog pulse](${site.url}/pulse.md): newest additions and stale verification queue`,
     `- [Production playbooks](${site.url}/playbooks.md): concrete MCP stacks for common film jobs`,
@@ -965,6 +1106,7 @@ export const renderLlmsTxt = (ctx) => {
     `- [Directory index](${site.url}/index.md): categories overview`,
     `- [Whole directory inline](${site.url}/llms-full.txt): everything in one file`,
     `- [Pulse JSON](${site.url}/api/pulse.json): catalog freshness and ops queue`,
+    `- [Remotes JSON](${site.url}/api/remotes.json): hosted endpoint subset for web agents`,
     `- [MCP Registry JSON](${site.url}/api/mcp-registry.json): extensioned alias for /v0.1/servers`,
     `- [Playbooks JSON](${site.url}/api/playbooks.json): stack recipes for agents`,
     `- [Atom feed](${site.url}/feed.xml): newly added servers`,
@@ -1235,7 +1377,7 @@ export const render404 = (ctx) =>
 export const renderSitemap = (ctx) => {
   const today = ctx.built.slice(0, 10);
   const urls = [
-    ...["/", "/stack/", "/playbooks/", "/for-agents/", "/pulse/", "/about/", "/submit/", "/llms.txt", "/llms-full.txt", "/api/registry.json", "/api/mcp-registry.json", "/v0.1/servers", "/api/pulse.json", "/api/playbooks.json", "/stack.md", "/playbooks.md", "/pulse.md", "/index.md"]
+    ...["/", "/stack/", "/playbooks/", "/remotes/", "/for-agents/", "/pulse/", "/about/", "/submit/", "/llms.txt", "/llms-full.txt", "/api/registry.json", "/api/remotes.json", "/api/mcp-registry.json", "/v0.1/servers", "/api/pulse.json", "/api/playbooks.json", "/stack.md", "/remotes.md", "/playbooks.md", "/pulse.md", "/index.md"]
       .map((u) => ({ loc: u, lastmod: today })),
     ...ctx.categories.map((c) => ({ loc: `/categories/${c.id}/`, lastmod: today })),
     ...ctx.servers.flatMap((s) => [
@@ -1258,7 +1400,7 @@ export const renderRobots = (ctx) => {
     "Google-Extended", "Applebot-Extended", "CCBot", "meta-externalagent",
   ];
   return `# mcp.film — humans and machines get equal billing here.
-# Machine surfaces: ${ctx.site.url}/llms.txt · ${ctx.site.url}/api/registry.json · ${ctx.site.url}/v0.1/servers · ${ctx.site.url}/api/playbooks.json · ${ctx.site.url}/api/pulse.json
+# Machine surfaces: ${ctx.site.url}/llms.txt · ${ctx.site.url}/api/registry.json · ${ctx.site.url}/api/remotes.json · ${ctx.site.url}/v0.1/servers · ${ctx.site.url}/api/playbooks.json · ${ctx.site.url}/api/pulse.json
 # Every HTML page has a markdown twin: append .md to the path.
 
 User-agent: *
