@@ -43,11 +43,51 @@ are hashed with a private salt. See [`docs/ANALYTICS.md`](ANALYTICS.md) for the
 event fields and HogQL queries.
 
 In **Cloudflare → mcp.film → DNS → Records**, remove the old GitHub Pages
-`A`/`AAAA` records for `@`, then add:
+`A`/`AAAA` records for `@` and the old `www → c47-inc.github.io` CNAME, then
+add:
 
 | Type | Name | Target | Proxy |
 | --- | --- | --- | --- |
 | `CNAME` | `@` | `mcp-film.pages.dev` | Proxied |
+| `CNAME` | `www` | `mcp-film.pages.dev` | Proxied |
+
+Cloudflare security settings can block spoofed crawler user agents before the
+Pages worker runs. Keep the bot posture strict for the rest of the site, but
+add one narrow bypass for agent-readable files:
+
+1. Go to **Cloudflare → mcp.film → Security → WAF → Custom rules**.
+2. Create a rule named `Allow agent-readable mcp.film surfaces`.
+3. Use this expression:
+
+   ```txt
+   http.host in {"mcp.film" "www.mcp.film"} and (
+     starts_with(http.request.uri.path, "/api/") or
+     ends_with(http.request.uri.path, ".md") or
+     http.request.uri.path in {
+       "/llms.txt"
+       "/llms-full.txt"
+       "/feed.xml"
+       "/robots.txt"
+       "/sitemap.xml"
+       "/.well-known/mcp/server-card"
+     }
+   )
+   ```
+
+4. Prefer action **Skip** and skip bot/WAF products available on the plan:
+   Bot Fight Mode or Super Bot Fight Mode, Browser Integrity Check, managed
+   WAF rules, and remaining custom rules. If **Skip** is not available, use
+   **Allow** and keep the rule scoped to the expression above.
+5. Verify both of these return `200`:
+
+   ```sh
+   curl -I https://mcp.film/llms.txt
+   curl -I -A 'ClaudeBot-mcpfilm-smoke/1.0' https://mcp.film/llms.txt
+   ```
+
+The second command intentionally spoofs a known crawler user agent; if it gets
+`403`, Cloudflare blocked it before `mcpfilm_edge_request` could be recorded in
+PostHog.
 
 ## 3b. If staying on GitHub Pages, point mcp.film there
 

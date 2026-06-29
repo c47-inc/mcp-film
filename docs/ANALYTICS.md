@@ -31,17 +31,56 @@ Cloudflare if it is not already there. Cloudflare Pages will run the generated
 `_worker.js` before serving static assets.
 
 For the apex domain, delete any old GitHub Pages `A`/`AAAA` records for
-`mcp.film`, then create a proxied `CNAME` record:
+`mcp.film` and the old `www → c47-inc.github.io` CNAME, then create proxied
+`CNAME` records:
 
 | Type | Name | Target | Proxy |
 | --- | --- | --- | --- |
 | `CNAME` | `@` | `mcp-film.pages.dev` | Proxied |
+| `CNAME` | `www` | `mcp-film.pages.dev` | Proxied |
 
 If the project was created by `wrangler pages project create`, it is a direct
 upload project and will not automatically build from GitHub. Add
 `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` to GitHub Actions secrets so
 `.github/workflows/deploy.yml` can deploy `dist/` to Cloudflare after every
 push to `main`.
+
+## Agent access through Cloudflare security
+
+Cloudflare can block suspicious or spoofed crawler user agents at the zone
+before the Pages worker runs. That means the request will be invisible to
+PostHog and the agent will not receive `/llms.txt`. Add a narrow WAF custom
+rule for machine-readable surfaces only:
+
+```txt
+http.host in {"mcp.film" "www.mcp.film"} and (
+  starts_with(http.request.uri.path, "/api/") or
+  ends_with(http.request.uri.path, ".md") or
+  http.request.uri.path in {
+    "/llms.txt"
+    "/llms-full.txt"
+    "/feed.xml"
+    "/robots.txt"
+    "/sitemap.xml"
+    "/.well-known/mcp/server-card"
+  }
+)
+```
+
+Use action **Skip** when available and skip Bot Fight Mode / Super Bot Fight
+Mode, Browser Integrity Check, managed WAF rules, and remaining custom rules.
+If the plan only exposes **Allow**, use it with the exact expression above.
+Do not globally allow all crawlers.
+
+Smoke test:
+
+```sh
+curl -I https://mcp.film/llms.txt
+curl -I -A 'ClaudeBot-mcpfilm-smoke/1.0' https://mcp.film/llms.txt
+```
+
+Both should return `200`. If the second request returns `403`, the custom
+domain is blocking agent-like traffic before edge analytics can measure it.
 
 ## Cloudflare variables
 
