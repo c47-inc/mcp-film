@@ -608,7 +608,8 @@ const edgeWorker = fs
   .readFileSync(path.join(ROOT, "src/edge-analytics-worker.js"), "utf8")
   .replaceAll("__MCPFILM_POSTHOG_KEY__", site.analytics?.posthog_key ?? "")
   .replaceAll("__MCPFILM_POSTHOG_HOST__", site.analytics?.posthog_host ?? "https://us.i.posthog.com")
-  .replaceAll("__MCPFILM_CANONICAL_HOST__", site.domain);
+  .replaceAll("__MCPFILM_CANONICAL_HOST__", site.domain)
+  .replaceAll("__MCPFILM_SPONSOR_URL__", site.sponsor?.url ?? "");
 write("_worker.js", edgeWorker);
 
 // static assets

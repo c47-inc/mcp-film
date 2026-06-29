@@ -4,6 +4,7 @@
 const DEFAULT_POSTHOG_KEY = "__MCPFILM_POSTHOG_KEY__";
 const DEFAULT_POSTHOG_HOST = "__MCPFILM_POSTHOG_HOST__";
 const DEFAULT_CANONICAL_HOST = "__MCPFILM_CANONICAL_HOST__";
+const DEFAULT_SPONSOR_URL = "__MCPFILM_SPONSOR_URL__";
 
 const staticAssetPattern = /\.(?:avif|css|gif|ico|jpeg|jpg|js|json\.map|map|png|svg|webp|woff2?)$/i;
 
@@ -54,6 +55,15 @@ export default {
       return canonicalRedirect;
     }
 
+    const handoffRedirect = handoffRedirectResponse(request, env);
+    if (handoffRedirect) {
+      ctx.waitUntil(Promise.all([
+        captureRequest(request, handoffRedirect, env),
+        captureMartiniHandoff(request, handoffRedirect, env),
+      ]));
+      return handoffRedirect;
+    }
+
     const response = await registryApiResponse(request, env) || await env.ASSETS.fetch(assetRequestFor(request));
     ctx.waitUntil(captureRequest(request, response, env));
     return response;
@@ -71,6 +81,30 @@ function canonicalRedirectResponse(request, env) {
 
   url.hostname = canonicalHost;
   return Response.redirect(url.toString(), 301);
+}
+
+function handoffRedirectResponse(request, env) {
+  const url = new URL(request.url);
+  if (url.pathname !== "/go/martini" && url.pathname !== "/go/martini/") return null;
+  if (request.method !== "GET" && request.method !== "HEAD") return jsonResponse({ error: "Method not allowed" }, 405);
+
+  const destination = sponsorDestinationFor(request, env);
+  if (!destination) return jsonResponse({ error: "Sponsor destination unavailable" }, 404);
+  return Response.redirect(destination.toString(), 302);
+}
+
+function sponsorDestinationFor(request, env) {
+  const sponsorUrl = env.SPONSOR_URL || DEFAULT_SPONSOR_URL;
+  if (!sponsorUrl || sponsorUrl.startsWith("__MCPFILM_")) return null;
+
+  const requestUrl = new URL(request.url);
+  const destination = new URL(sponsorUrl);
+  const placement = cleanPlacement(requestUrl.searchParams.get("from"));
+  destination.searchParams.set("utm_source", "mcp.film");
+  destination.searchParams.set("utm_medium", "referral");
+  destination.searchParams.set("utm_campaign", "mcp_film_handoff");
+  if (placement) destination.searchParams.set("utm_content", placement);
+  return destination;
 }
 
 async function registryApiResponse(request, env) {
@@ -137,9 +171,8 @@ async function captureRequest(request, response, env) {
     if (!shouldCapture(request)) return;
 
     const url = new URL(request.url);
-    const key = env.POSTHOG_KEY || DEFAULT_POSTHOG_KEY;
-    const host = env.POSTHOG_HOST || DEFAULT_POSTHOG_HOST || "https://us.i.posthog.com";
-    if (!key || key.startsWith("__MCPFILM_")) return;
+    const posthog = posthogConfig(env);
+    if (!posthog) return;
 
     const userAgent = request.headers.get("user-agent") || "";
     const classification = classifyTraffic(url.pathname, userAgent, request.headers);
@@ -173,19 +206,73 @@ async function captureRequest(request, response, env) {
 
     if (env.ANALYTICS_DEBUG_UA === "true") properties.user_agent = userAgent.slice(0, 240);
 
-    await fetch(new URL("/i/v0/e/", host).toString(), {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        api_key: key,
-        event: "mcpfilm_edge_request",
-        distinct_id: distinctId,
-        properties,
-      }),
-    });
+    await sendPosthogEvent(posthog, "mcpfilm_edge_request", distinctId, properties);
   } catch {
     // Analytics must never affect the site response.
   }
+}
+
+async function captureMartiniHandoff(request, response, env) {
+  try {
+    const url = new URL(request.url);
+    if (url.pathname !== "/go/martini" && url.pathname !== "/go/martini/") return;
+    if (response.status < 300 || response.status >= 400) return;
+
+    const posthog = posthogConfig(env);
+    if (!posthog) return;
+
+    const userAgent = request.headers.get("user-agent") || "";
+    const classification = classifyTraffic(url.pathname, userAgent, request.headers);
+    const distinctId = await distinctIdFor(request, env);
+    const destination = response.headers.get("location") || "";
+
+    const properties = {
+      sponsor: "martini",
+      placement: cleanPlacement(url.searchParams.get("from")) || null,
+      path: url.pathname,
+      method: request.method,
+      status: response.status,
+      to: destination,
+      destination_host: destination ? new URL(destination).hostname : null,
+      traffic_kind: classification.kind,
+      agent_family: classification.family,
+      referrer_domain: referrerDomain(request.headers.get("referer")),
+      accept: compactHeader(request.headers.get("accept")),
+      country: request.cf?.country || null,
+      colo: request.cf?.colo || null,
+      asn: request.cf?.asn || null,
+      host: url.hostname,
+      "$current_url": url.origin + url.pathname,
+      "$geoip_disable": true,
+      "$process_person_profile": false,
+    };
+
+    if (env.ANALYTICS_DEBUG_UA === "true") properties.user_agent = userAgent.slice(0, 240);
+
+    await sendPosthogEvent(posthog, "mcpfilm_martini_handoff", distinctId, properties);
+  } catch {
+    // Analytics must never affect the site response.
+  }
+}
+
+function posthogConfig(env) {
+  const key = env.POSTHOG_KEY || DEFAULT_POSTHOG_KEY;
+  const host = env.POSTHOG_HOST || DEFAULT_POSTHOG_HOST || "https://us.i.posthog.com";
+  if (!key || key.startsWith("__MCPFILM_")) return null;
+  return { key, host };
+}
+
+async function sendPosthogEvent(posthog, event, distinctId, properties) {
+  await fetch(new URL("/i/v0/e/", posthog.host).toString(), {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      api_key: posthog.key,
+      event,
+      distinct_id: distinctId,
+      properties,
+    }),
+  });
 }
 
 function shouldCapture(request) {
@@ -221,6 +308,8 @@ function routePropertiesFor(pathname) {
 
   const categoryPage = /^\/categories\/([a-z0-9][a-z0-9-]*)(?:\/)?$/.exec(pathname);
   if (categoryPage) return route("category-page", "category", { category: categoryPage[1] });
+
+  if (pathname === "/go/martini" || pathname === "/go/martini/") return route("martini-handoff", "martini", { slug: "martini" });
 
   if (pathname.startsWith("/v0.1/")) return route("mcp-registry", "registry");
   if (pathname.startsWith("/api/mcp-registry")) return route("mcp-registry", "registry");
@@ -313,4 +402,12 @@ function referrerDomain(value) {
 
 function compactHeader(value) {
   return value ? value.slice(0, 160) : null;
+}
+
+function cleanPlacement(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9:_-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 96);
 }

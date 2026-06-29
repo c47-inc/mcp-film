@@ -373,10 +373,12 @@
         if (top?.playbook?.url) actions.append(link("Open playbook", localHref(top.playbook.url), "btn"));
         const sponsorUrl = document.body.dataset.sponsorUrl;
         if (sponsorUrl) {
-          const martiniLink = link("Connect Martini", sponsorUrl, "btn btn-primary");
+          const placement = `router:${top?.id || "unknown"}`;
+          const martiniLink = link("Connect Martini", `/go/martini?from=${encodeURIComponent(placement)}`, "btn btn-primary");
           martiniLink.dataset.sponsorClick = "true";
           martiniLink.dataset.sponsor = document.body.dataset.sponsor || "martini";
-          martiniLink.dataset.sponsorPlacement = `router:${top?.id || "unknown"}`;
+          martiniLink.dataset.sponsorPlacement = placement;
+          martiniLink.dataset.sponsorDestination = sponsorUrl;
           actions.append(martiniLink);
         }
         shell.append(actions);
@@ -594,7 +596,7 @@
         ph("mcpfilm_sponsor_impression", {
           sponsor: a.dataset.sponsor || document.body.dataset.sponsor || "sponsor",
           placement: a.dataset.sponsorPlacement || "host-match",
-          to: a.href,
+          to: a.dataset.sponsorDestination || a.href,
           page: document.body.dataset.page,
           path: location.pathname,
           source_slug: currentServer?.slug || null,
@@ -610,7 +612,7 @@
   const externalIntentAt = new WeakMap();
   const captureExternalLink = (a, trigger) => {
     const from = location.pathname;
-    const to = a.href;
+    const to = a.dataset.sponsorDestination || a.href;
     const linkHost = normalizedHost(to);
     const sponsor = a.dataset.sponsor || (hostMatches(linkHost, sponsorHost) ? document.body.dataset.sponsor : "");
     if (a.dataset.sponsorClick || sponsor) {
@@ -636,7 +638,7 @@
     const to = a.href;
     const linkHost = normalizedHost(to);
     const isExternal = /^https?:\/\//.test(to) && linkHost && linkHost !== siteHost;
-    if (isExternal) captureExternalLink(a, "pointerdown");
+    if (isExternal || a.dataset.sponsorClick) captureExternalLink(a, "pointerdown");
   }, { passive: true });
 
   document.addEventListener("click", (e) => {
@@ -647,7 +649,7 @@
     const to = a.href;
     const linkHost = normalizedHost(to);
     const isExternal = /^https?:\/\//.test(to) && linkHost && linkHost !== siteHost;
-    if (isExternal) {
+    if (isExternal || a.dataset.sponsorClick) {
       const captured = Date.now() - (externalIntentAt.get(a) || 0) < 1500;
       if (!captured) captureExternalLink(a, "click");
     } else if (href.startsWith("/capabilities/") && href !== "/capabilities/") {

@@ -128,6 +128,18 @@ const checks = [
     validateJson: (body) => Array.isArray(body.servers) && body.servers.length > 0 && body.metadata?.count >= 1,
   },
   {
+    name: "Martini handoff redirect",
+    url: `${base}/go/martini?from=monitor-${smoke}`,
+    method: "GET",
+    expect: (status) => status === 302 || status === 301 || status === 307 || status === 308,
+    validateHeaders: (headers) => {
+      const location = headers.get("location") || "";
+      return /^https:\/\/www\.martini\.film\//.test(location) &&
+        location.includes("utm_source=mcp.film") &&
+        location.includes("utm_campaign=mcp_film_handoff");
+    },
+  },
+  {
     name: "WWW playbooks API",
     url: `${wwwBase}/api/playbooks.json?monitor=${smoke}`,
     method: "GET",
@@ -196,6 +208,18 @@ for (const path of [
       wafSensitive: true,
     });
   }
+}
+
+for (const [family, userAgent] of agentUserAgents) {
+  checks.push({
+    name: `${family} access Martini handoff`,
+    url: `${base}/go/martini?from=monitor-${family.toLowerCase().replace(/\s+/g, "-")}-${smoke}`,
+    method: "GET",
+    userAgent,
+    expect: (status) => status === 302 || status === 301 || status === 307 || status === 308,
+    validateHeaders: (headers) => /^https:\/\/www\.martini\.film\//.test(headers.get("location") || ""),
+    wafSensitive: true,
+  });
 }
 
 const rows = [];
@@ -270,6 +294,11 @@ async function runHttpCheck(check) {
       }
     } else if (ok && check.validateJson) {
       detail += ", redirect accepted without JSON parse";
+    }
+
+    if (ok && check.validateHeaders) {
+      ok = Boolean(check.validateHeaders(res.headers));
+      detail += ok ? ", headers valid" : ", headers invalid";
     }
 
     if (!ok && check.wafSensitive && res.status === 403) {

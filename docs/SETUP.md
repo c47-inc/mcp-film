@@ -70,6 +70,7 @@ add one narrow bypass for agent-readable files:
      starts_with(http.request.uri.path, "/.well-known/mcp/") or
      ends_with(http.request.uri.path, ".md") or
      http.request.uri.path in {
+       "/go/martini"
        "/llms.txt"
        "/llms-full.txt"
        "/feed.xml"
@@ -93,8 +94,8 @@ add one narrow bypass for agent-readable files:
 
 The second command and the Node monitor intentionally spoof known agent/crawler
 user agents with real `GET` requests. The monitor covers registry, playbook,
-recommendation, capability, remote, markdown, and MCP Registry surfaces. If the
-spoofed requests get `403`, Cloudflare security is blocking the
+recommendation, capability, remote, markdown, MCP Registry, and tracked Martini
+handoff surfaces. If the spoofed requests get `403`, Cloudflare security is blocking the
 machine-readable surface. Depending on which Cloudflare product fires, those
 blocked requests may be invisible to PostHog or may be recorded with the Pages
 worker's pre-block status, so the WAF rule is about access first and analytics

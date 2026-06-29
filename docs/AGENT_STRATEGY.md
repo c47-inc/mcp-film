@@ -43,6 +43,9 @@ work into Martini.
 - Track Martini traffic by placement (`home-featured`, `agents-fast-path`,
   recommendation routes, playbook stack links, server listing links) so growth
   work can be measured.
+- Route curated Martini CTAs through `/go/martini?from=...` so markdown,
+  agents, and browsers all produce first-party handoff events before landing on
+  Martini.
 - Mention strong alternatives in context. The contrast makes Martini more
   credible when it is the right answer.
 

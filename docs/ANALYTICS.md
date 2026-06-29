@@ -15,7 +15,9 @@ mcp.film has two analytics layers:
 - Cloudflare edge events from generated `dist/_worker.js` capture request
   traffic that JavaScript cannot see: agents fetching `/llms.txt`, markdown,
   JSON API routes, feeds, and MCP discovery. The event is
-  `mcpfilm_edge_request`.
+  `mcpfilm_edge_request`. First-party Martini handoff redirects at
+  `/go/martini` also emit `mcpfilm_martini_handoff` so agent and markdown
+  referrals are measurable without browser JavaScript.
 
 GitHub Pages does not expose request logs to the site, so it cannot measure
 agent traffic reliably. Use Cloudflare Pages when agent traffic matters.
@@ -71,6 +73,7 @@ http.host in {"mcp.film" "www.mcp.film"} and (
   starts_with(http.request.uri.path, "/.well-known/mcp/") or
   ends_with(http.request.uri.path, ".md") or
   http.request.uri.path in {
+    "/go/martini"
     "/llms.txt"
     "/llms-full.txt"
     "/feed.xml"
@@ -156,6 +159,16 @@ Browser events include:
 | `agent_family` | Best-effort family such as `chatgpt`, `claude`, `perplexity`, `mcp-client`, `developer-agent`, `script`, or the agent-readable surface name. |
 | `status` | HTTP status returned by the static asset layer. |
 | `country`, `colo`, `asn` | Coarse Cloudflare request metadata. |
+
+`mcpfilm_martini_handoff` includes:
+
+| Field | Meaning |
+| --- | --- |
+| `sponsor` | Always `martini`. |
+| `placement` | The originating placement, e.g. `agents-fast-path`, `playbook:commercial-sprint`, `recommendation:model-shootout`, or `capability:text-to-video`. |
+| `to`, `destination_host` | The Martini URL produced by the redirect. |
+| `traffic_kind`, `agent_family` | Same best-effort classification as `mcpfilm_edge_request`. |
+| `status` | Redirect status returned to the client. |
 
 ## HogQL snippets
 
@@ -411,6 +424,7 @@ FROM events
 WHERE timestamp >= now() - interval 30 day
   AND (
     (event IN ('mcpfilm_sponsor_impression', 'mcpfilm_sponsor_click') AND properties.sponsor = 'martini')
+    OR event = 'mcpfilm_martini_handoff'
     OR (event = 'mcpfilm_outbound' AND properties.to LIKE '%martini.film%')
     OR (event = 'mcpfilm_connect' AND properties.slug = 'martini')
   )
