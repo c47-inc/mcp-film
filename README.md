@@ -12,7 +12,7 @@ to ship it. Curated, verified, agent-first, and self-updating.
 
 ## What this is
 
-A directory of 61 verified Model Context Protocol servers across the full film
+A directory of 63 verified Model Context Protocol servers across the full film
 pipeline — from screenplay breakdown to YouTube upload — each entry annotated
 with exact install commands, auth requirements, pricing, sample tools, and the
 caveats that actually bite ("requires Resolve *Studio*", "Suno has no official
@@ -73,7 +73,7 @@ Zero dependencies — Node 20+ is the whole toolchain:
 
 ```sh
 node build.mjs --validate-only   # check the data
-node build.mjs                   # build → dist/ (83 pages, API, feeds, OG image)
+node build.mjs                   # build → dist/ (85 pages, API, feeds, OG image)
 node scripts/serve.mjs           # preview at http://localhost:4173
 ```
 

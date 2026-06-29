@@ -46,6 +46,29 @@
     "notes": "~1.2k stars, v2.45.0 (Jun 2026), 78 releases, MIT; 331/336 Resolve API methods live-tested. Requires Resolve STUDIO 18.5+ (the free edition lacks external scripting) and Python 3.10-3.12. The setup wizard auto-configures Claude Desktop/Cursor/VS Code."
   },
   {
+    "slug": "palmier-pro",
+    "name": "Palmier Pro",
+    "vendor": "Palmier",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "AI-native Mac timeline editor with a built-in local MCP server for agents.",
+    "description": "Palmier Pro is an open-source Swift video editor built around human-agent co-editing. When the app is open, its local HTTP MCP server lets Claude, Codex, Cursor and Claude Desktop inspect the timeline, search media, add and move clips, generate media, caption, color, apply effects and export from the same project the editor is showing.",
+    "capabilities": ["nle-control", "timeline-editing", "media-search", "captioning", "text-based-editing", "generation", "export"],
+    "tools_sample": ["get_timeline", "get_media", "inspect_timeline", "search_media", "add_clips", "insert_clips", "generate_video", "generate_image", "add_captions", "export_project"],
+    "install": {
+      "claude_code": "claude mcp add --transport http palmier-pro http://127.0.0.1:19789/mcp",
+      "remote_url": null,
+      "stdio_command": null
+    },
+    "auth": { "type": "local-app", "env_var": null, "key_url": "Requires Palmier Pro running locally with a project open; generative AI features require login/subscription or BYOK in the app" },
+    "pricing": "freemium",
+    "links": { "repo": "https://github.com/palmier-io/palmier-pro", "docs": "https://github.com/palmier-io/palmier-pro#readme", "site": "https://palmier.io" },
+    "added": "2026-06-29",
+    "verified": "2026-06-29",
+    "notes": "GPL-3.0 editor, 9.3k stars, v0.4.5 released Jun 28 2026. The MCP server and agent chat are open source, but the generative AI processing is closed. Hard platform caveat: macOS 26 Tahoe on Apple Silicon only, and the editor is early: no transitions, masking or graphics yet."
+  },
+  {
     "slug": "premiere-pro",
     "name": "Adobe Premiere Pro MCP",
     "vendor": "Community (hetpatel-11)",

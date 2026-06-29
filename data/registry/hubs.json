@@ -46,6 +46,29 @@
     "notes": "Remote server recommended; check mcp.replicate.com for the current endpoint (SSE at launch, streamable-HTTP may follow). The npm package tracks the full HTTP API and is auto-updated. Also a strong route to upscalers (Real-ESRGAN, Topaz-style models) with no first-party MCP."
   },
   {
+    "slug": "runapi",
+    "name": "RunAPI MCP Server",
+    "vendor": "RunAPI",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "Browse, price, and run 130+ image, video, audio and voice models through one MCP.",
+    "description": "RunAPI's official MCP server gives agents catalog discovery, input-schema inspection, prompt search, pricing lookup, media task creation, polling and balance checks across its model marketplace. For filmmakers it is a pragmatic aggregator for Flux, Kling, Seedance, Veo, Suno, ElevenLabs and related media endpoints when you want the agent to pick a model from current constraints instead of memorized slugs.",
+    "capabilities": ["model-search", "pricing", "text-to-video", "image-to-video", "text-to-image", "music", "tts", "async-jobs"],
+    "tools_sample": ["list_models", "get_model_info", "list_actions", "check_pricing", "search_prompts", "create_task", "get_task", "check_balance"],
+    "install": {
+      "claude_code": "claude mcp add runapi -s user -- npx -y @runapi.ai/mcp",
+      "remote_url": null,
+      "stdio_command": "npx -y @runapi.ai/mcp"
+    },
+    "auth": { "type": "api_key", "env_var": "RUNAPI_API_KEY", "key_url": "https://runapi.ai" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/runapi-ai/mcp", "docs": "https://github.com/runapi-ai/mcp#readme", "site": "https://runapi.ai" },
+    "added": "2026-06-29",
+    "verified": "2026-06-29",
+    "notes": "Apache-2.0, npm @runapi.ai/mcp 0.1.13, Node >=22, pushed Jun 25 2026, 51 stars. Catalog, pricing and input constraints ship as build-time data, so the package must be updated when RunAPI changes its marketplace. Narrow sibling: @runapi.ai/runway-aleph-mcp wraps only Runway Aleph."
+  },
+  {
     "slug": "comfyui",
     "name": "ComfyUI MCP",
     "vendor": "Community (shawnrushefsky)",
