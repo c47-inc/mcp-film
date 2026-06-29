@@ -3,9 +3,10 @@
 mcp.film has two analytics layers:
 
 - Browser events in `src/app.js` capture human UI behavior into PostHog:
-  `mcpfilm_pageview`, `mcpfilm_search`, `mcpfilm_open_server`,
-  `mcpfilm_rate`, `mcpfilm_feedback`, `mcpfilm_copy`, and
-  `mcpfilm_outbound`.
+  `mcpfilm_pageview`, `mcpfilm_search`, `mcpfilm_filter`,
+  `mcpfilm_open_server`, `mcpfilm_open_playbook`,
+  `mcpfilm_playbook_server`, `mcpfilm_rate`, `mcpfilm_feedback`,
+  `mcpfilm_copy`, and `mcpfilm_outbound`.
 - Cloudflare edge events from generated `dist/_worker.js` capture request
   traffic that JavaScript cannot see: agents fetching `/llms.txt`, markdown,
   JSON API routes, feeds, and MCP discovery. The event is
@@ -105,6 +106,21 @@ The worker can run with the public PostHog project token already embedded from
 
 ## Event fields
 
+Browser events include:
+
+| Event | Fields |
+| --- | --- |
+| `mcpfilm_pageview` | `path`, `page` |
+| `mcpfilm_search` | `query`, `results` |
+| `mcpfilm_filter` | `category` |
+| `mcpfilm_open_server` | `slug`, `from`, optional `playbook`, `playbook_section`, `playbook_stage` |
+| `mcpfilm_open_playbook` | `playbook`, `from` |
+| `mcpfilm_playbook_server` | `slug`, `playbook`, `section`, `stage` |
+| `mcpfilm_copy` | `slug`, `snippet` |
+| `mcpfilm_rate` | `slug`, `rating`, `rerate` |
+| `mcpfilm_feedback` | `slug`, `text` |
+| `mcpfilm_outbound` | `to`, `from` |
+
 `mcpfilm_edge_request` includes:
 
 | Field | Meaning |
@@ -193,6 +209,21 @@ WHERE event = 'mcpfilm_edge_request'
   AND timestamp > now() - interval 30 day
 GROUP BY traffic_kind
 ORDER BY requests DESC
+```
+
+Playbook-driven server interest:
+
+```sql
+SELECT
+  properties.playbook AS playbook,
+  properties.slug AS slug,
+  count() AS clicks
+FROM events
+WHERE event = 'mcpfilm_playbook_server'
+  AND timestamp > now() - interval 30 day
+GROUP BY playbook, slug
+ORDER BY clicks DESC
+LIMIT 50
 ```
 
 ## Caveats

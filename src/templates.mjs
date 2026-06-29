@@ -740,13 +740,13 @@ export const renderPlaybooks = (ctx) => {
 
 <section class="server-main playbook-doc">
   ${playbooks.map((p) => `
-  <article class="playbook" id="${esc(p.id)}">
+  <article class="playbook" id="${esc(p.id)}" data-playbook="${esc(p.id)}">
     <p class="label">${esc(p.best_for)}</p>
     <h2>${esc(p.title)}</h2>
     <p>${esc(p.summary)}</p>
 
     <h3>Primary stack</h3>
-    <div class="playbook-stack">
+    <div class="playbook-stack" data-playbook-section="primary">
       ${p.primary_slugs.map((slug) => {
         const s = serverForSlug(ctx, slug);
         return s ? card(ctx, s) : "";
@@ -756,10 +756,10 @@ export const renderPlaybooks = (ctx) => {
     <h3>Workflow</h3>
     <ol class="playbook-steps">
       ${p.steps.map((step) => `
-      <li>
+      <li data-playbook-stage="${esc(step.stage)}">
         <span class="stage-num">${esc(step.stage)}</span>
         <p>${esc(step.intent)}</p>
-        <p class="playbook-links">${step.slugs.map((slug) => playbookServerLink(ctx, slug)).join(" · ")}</p>
+        <p class="playbook-links" data-playbook-section="workflow">${step.slugs.map((slug) => playbookServerLink(ctx, slug)).join(" · ")}</p>
       </li>`).join("")}
     </ol>
 
@@ -768,7 +768,7 @@ export const renderPlaybooks = (ctx) => {
       ${p.constraints.map((c) => `<li>${esc(c)}</li>`).join("")}
     </ul>
 
-    <p class="playbook-fallback"><span class="label">Fallbacks</span> ${p.fallback_slugs.map((slug) => playbookServerLink(ctx, slug)).join(" · ")}</p>
+    <p class="playbook-fallback" data-playbook-section="fallback"><span class="label">Fallbacks</span> ${p.fallback_slugs.map((slug) => playbookServerLink(ctx, slug)).join(" · ")}</p>
   </article>`).join("")}
 </section>`;
 

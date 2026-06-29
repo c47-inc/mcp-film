@@ -206,10 +206,31 @@
     const a = e.target.closest("a[href]");
     if (!a) return;
     const href = a.getAttribute("href");
+    const from = location.pathname;
     if (href.startsWith("http") && !href.includes(location.hostname)) {
-      ph("mcpfilm_outbound", { to: href, from: location.pathname });
+      ph("mcpfilm_outbound", { to: href, from });
+    } else if (href.startsWith("/playbooks/#")) {
+      ph("mcpfilm_open_playbook", { playbook: href.split("#")[1], from });
     } else if (href.startsWith("/mcps/")) {
-      ph("mcpfilm_open_server", { slug: href.split("/")[2] });
+      const slug = href.split("/")[2];
+      const playbook = a.closest(".playbook")?.dataset.playbook || null;
+      const playbookSection = a.closest("[data-playbook-section]")?.dataset.playbookSection || null;
+      const playbookStage = a.closest("[data-playbook-stage]")?.dataset.playbookStage || null;
+      ph("mcpfilm_open_server", {
+        slug,
+        from,
+        playbook,
+        playbook_section: playbookSection,
+        playbook_stage: playbookStage,
+      });
+      if (playbook) {
+        ph("mcpfilm_playbook_server", {
+          slug,
+          playbook,
+          section: playbookSection,
+          stage: playbookStage,
+        });
+      }
     }
   });
 })();
