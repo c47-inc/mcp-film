@@ -270,6 +270,13 @@ const remoteServersFor = (ctx) =>
 export const renderHome = (ctx) => {
   const { site, categories, servers } = ctx;
   const featured = servers.filter((s) => s.featured);
+  const newest = [...servers]
+    .sort((a, b) =>
+      b.added.localeCompare(a.added)
+      || Number(Boolean(b.official)) - Number(Boolean(a.official))
+      || a.name.localeCompare(b.name)
+    )
+    .slice(0, 6);
   const byCat = (id) => servers.filter((s) => s.category === id);
 
   const featuredHtml = featured.map((s) => `
@@ -286,7 +293,7 @@ export const renderHome = (ctx) => {
       const list = byCat(cat.id);
       if (!list.length) return "";
       return `
-<section class="cat-section" id="${cat.id}" data-cat-section="${cat.id}">
+<section class="cat-section" id="${cat.id}" data-cat-section="${cat.id}" data-track-section="directory:${cat.id}">
   <div class="cat-head">
     <h2><a href="/categories/${cat.id}/">${esc(cat.name)}</a></h2>
     <span class="cat-count">${list.length}</span>
@@ -320,13 +327,22 @@ export const renderHome = (ctx) => {
   </div>
 </section>
 
-<section class="featured-row">${featuredHtml}
+<section class="featured-row" data-track-section="home-featured">${featuredHtml}
   <div class="agent-callout">
     <div class="feature-eyebrow">For agents</div>
     <p>This site is machine-first. One request gets you everything:</p>
     <pre class="mono">curl -s ${site.url}/api/registry.json</pre>
     <p>Or start at <a href="/llms.txt" class="mono">/llms.txt</a> · <a href="/for-agents/">full agent docs</a></p>
   </div>
+</section>
+
+<section class="cat-section recent-section" data-track-section="home-newest">
+  <div class="cat-head">
+    <h2><a href="/pulse/">New to the catalog</a></h2>
+    <span class="cat-count">${newest.length}</span>
+    <p class="cat-blurb">Freshly verified additions from the latest curator passes. <a href="/pulse/">Open the catalog pulse</a>.</p>
+  </div>
+  <div class="grid">${newest.map((s) => card(ctx, s)).join("")}</div>
 </section>
 
 <div class="directory" id="directory">

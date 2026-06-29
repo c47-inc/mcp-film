@@ -281,6 +281,7 @@ button.chip-filter .count { font-family: var(--mono); font-size: 10.5px; color: 
 .cat-section h2 { font-size: 15px; font-weight: 600; letter-spacing: 0; margin: 0; }
 .cat-count { color: var(--ink-3); font-family: var(--mono); font-size: 11px; }
 .cat-blurb { color: var(--ink-3); font-size: 12.5px; margin: 0; flex-basis: 100%; }
+.recent-section { padding-top: clamp(1.8rem, 4vw, 3rem); }
 
 .grid {
   display: grid; gap: 10px;

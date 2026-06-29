@@ -118,7 +118,7 @@ Browser events include:
 | `mcpfilm_pageview` | `path`, `page` |
 | `mcpfilm_search` | `query`, `results` |
 | `mcpfilm_filter` | `category` |
-| `mcpfilm_open_server` | `slug`, `from`, optional `playbook`, `playbook_section`, `playbook_stage` |
+| `mcpfilm_open_server` | `slug`, `from`, optional `source_section`, `playbook`, `playbook_section`, `playbook_stage` |
 | `mcpfilm_open_playbook` | `playbook`, `from` |
 | `mcpfilm_playbook_server` | `slug`, `playbook`, `section`, `stage` |
 | `mcpfilm_copy` | `slug`, `kind`, `method`, `label`, `page`, `path`, `snippet` |
@@ -229,6 +229,22 @@ FROM events
 WHERE event = 'mcpfilm_playbook_server'
   AND timestamp > now() - interval 30 day
 GROUP BY playbook, slug
+ORDER BY clicks DESC
+LIMIT 50
+```
+
+Server discovery sources:
+
+```sql
+SELECT
+  properties.source_section AS source_section,
+  properties.slug AS slug,
+  count() AS clicks,
+  count(DISTINCT distinct_id) AS users
+FROM events
+WHERE event = 'mcpfilm_open_server'
+  AND timestamp > now() - interval 30 day
+GROUP BY source_section, slug
 ORDER BY clicks DESC
 LIMIT 50
 ```

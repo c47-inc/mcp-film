@@ -69,8 +69,8 @@ jobs:
           prompt: |
             You are the analytics pulse for mcp.film. Read AGENTS.md first.
             The site captures events into PostHog (project 292112, host
-            https://us.posthog.com): mcpfilm_pageview, mcpfilm_open_server,
-            mcpfilm_open_playbook {playbook}, mcpfilm_playbook_server
+            https://us.posthog.com): mcpfilm_pageview, mcpfilm_open_server
+            {slug, source_section}, mcpfilm_open_playbook {playbook}, mcpfilm_playbook_server
             {playbook, slug, section, stage}, mcpfilm_rate {slug, rating 1-5},
             mcpfilm_search {query, results}, mcpfilm_filter {category},
             mcpfilm_feedback {slug, text}, mcpfilm_copy,
@@ -92,7 +92,9 @@ jobs:
                {"<slug>": {"avg": <float>, "votes": <int>}, ...}, "trending":
                [...]} keeping the existing "_comment" field.
             2. TRENDING: top 8 slugs by mcpfilm_open_server count over the last
-               30 days → the "trending" array.
+               30 days → the "trending" array. Also summarize open_server
+               clicks by source_section in the PR body; this is informational
+               only — do not write source-section counts into data/.
             3. GAPS: look at mcpfilm_search queries with 0 results from the last
                30 days. If any reveal real gaps in the directory (tools people
                want that we don't list), open ONE GitHub issue titled

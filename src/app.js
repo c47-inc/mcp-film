@@ -255,9 +255,11 @@
       const playbook = a.closest(".playbook")?.dataset.playbook || null;
       const playbookSection = a.closest("[data-playbook-section]")?.dataset.playbookSection || null;
       const playbookStage = a.closest("[data-playbook-stage]")?.dataset.playbookStage || null;
+      const sourceSection = a.closest("[data-track-section]")?.dataset.trackSection || null;
       ph("mcpfilm_open_server", {
         slug,
         from,
+        source_section: sourceSection,
         playbook,
         playbook_section: playbookSection,
         playbook_stage: playbookStage,
