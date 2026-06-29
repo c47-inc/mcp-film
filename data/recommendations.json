@@ -12,6 +12,7 @@
       { "slug": "runway", "role": "video-generation", "why": "Hosted first-party video generation for hero shots and polished model output." },
       { "slug": "elevenlabs", "role": "voice-and-sfx", "why": "Voiceover, voice design, sound effects, music, and dialogue isolation in one official audio server." },
       { "slug": "palmier-pro", "role": "edit", "why": "Agent-native Mac timeline editing for assembly, captions, media search, and export." },
+      { "slug": "canva", "role": "campaign-collateral", "why": "Official hosted MCP for posters, thumbnails, pitch decks, social variants, exports, and comments around the finished film." },
       { "slug": "youtube-yutu", "role": "publish", "why": "OAuth-based YouTube upload and channel automation when the final cut is ready to ship." }
     ],
     "fallback_slugs": ["fal", "runapi", "topaz", "magnific", "vimeo"],
@@ -133,6 +134,7 @@
       { "slug": "runway", "role": "hosted-video-generation", "why": "Official hosted video generation endpoint for agent clients." },
       { "slug": "fal", "role": "hosted-model-hub", "why": "Hosted endpoint for running and chaining many image, video, audio, and voice models." },
       { "slug": "krea", "role": "hosted-model-workbench", "why": "Hosted MCP for image/video models, schemas, uploads, and job widgets." },
+      { "slug": "canva", "role": "hosted-campaign-collateral", "why": "Hosted OAuth MCP for design generation, campaign assets, comments, and exports." },
       { "slug": "airtable", "role": "hosted-production-db", "why": "Hosted production tracking and schema-aware base operations." },
       { "slug": "google-drive", "role": "hosted-files", "why": "Official remote file search, read, create, and governance-aware access." }
     ],

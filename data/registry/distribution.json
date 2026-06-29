@@ -1,5 +1,28 @@
 [
   {
+    "slug": "canva",
+    "name": "Canva MCP",
+    "vendor": "Canva",
+    "official": true,
+    "category": "distribution",
+    "featured": false,
+    "tagline": "Official Canva remote MCP for campaign designs, thumbnails, decks, exports, and comments.",
+    "description": "Canva's official remote MCP connects agents to editable design workflows: generate and edit designs, search libraries, manage assets and brand materials, export in delivery formats, resize for channels, and handle comments. For film teams it is the campaign and pitch-collateral bench: YouTube thumbnails, posters, social cutdowns, pitch decks, review decks, and branded variants around the actual film.",
+    "capabilities": ["design-generation", "design-editing", "design-search", "template-autofill", "design-export", "resize", "comments", "asset-management", "brand-management"],
+    "tools_sample": ["generate-design", "search-designs", "get-design", "export-design", "resize-design", "autofill-design", "comment-on-design", "upload-asset-from-url"],
+    "install": {
+      "claude_code": null,
+      "remote_url": "https://mcp.canva.com/mcp",
+      "stdio_command": "npx -y mcp-remote@latest https://mcp.canva.com/mcp"
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Canva OAuth/Dynamic Client Registration; popular AI tools may already be allowlisted, custom assistants may need Canva's MCP client approval form" },
+    "pricing": "freemium",
+    "links": { "repo": null, "docs": "https://www.canva.dev/docs/mcp/", "site": "https://www.canva.com/ai-connector/" },
+    "added": "2026-06-29",
+    "verified": "2026-06-29",
+    "notes": "Remote endpoint is documented as https://mcp.canva.com/mcp. Most core tools are available on all plans, but resize requires Pro or above and autofill/brand templates are Enterprise-only. Custom MCP clients may need redirect URI allowlist approval; end-user AI assistants like Claude, ChatGPT, Codex, Gemini, and others are called out by Canva as commonly supported."
+  },
+  {
     "slug": "mux",
     "name": "Mux MCP Server",
     "vendor": "Mux",
