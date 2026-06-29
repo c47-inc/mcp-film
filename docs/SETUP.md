@@ -81,9 +81,11 @@ add one narrow bypass for agent-readable files:
    ```
 
 4. Prefer action **Skip** and skip bot/WAF products available on the plan:
-   Bot Fight Mode or Super Bot Fight Mode, Browser Integrity Check, managed
-   WAF rules, and remaining custom rules. If **Skip** is not available, use
-   **Allow** and keep the rule scoped to the expression above.
+   remaining custom rules, rate limiting rules, managed rules, Bot Fight Mode
+   or Super Bot Fight Mode, User Agent Blocking, Browser Integrity Check,
+   Security Level, Zone Lockdown, and legacy managed/rate-limiting buckets when
+   Cloudflare exposes them. If **Skip** is not available, use **Allow** and keep
+   the rule scoped to the expression above.
 5. Verify both of these return `200`:
 
    ```sh

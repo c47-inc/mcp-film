@@ -83,10 +83,12 @@ http.host in {"mcp.film" "www.mcp.film"} and (
 )
 ```
 
-Use action **Skip** when available and skip Bot Fight Mode / Super Bot Fight
-Mode, Browser Integrity Check, managed WAF rules, and remaining custom rules.
-If the plan only exposes **Allow**, use it with the exact expression above.
-Do not globally allow all crawlers.
+Use action **Skip** when available and skip the bot/WAF products available on
+the plan: remaining custom rules, rate limiting rules, managed rules, Bot Fight
+Mode or Super Bot Fight Mode, User Agent Blocking, Browser Integrity Check,
+Security Level, Zone Lockdown, and legacy managed/rate-limiting buckets when
+Cloudflare exposes them. If the plan only exposes **Allow**, use it with the
+exact expression above. Do not globally allow all crawlers.
 
 Smoke test:
 
