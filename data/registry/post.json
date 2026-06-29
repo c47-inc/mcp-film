@@ -46,6 +46,52 @@
     "notes": "PyPI video-editor-mcp 0.1.59, Python >=3.11, 276 stars, last pushed Oct 2025, no repo license detected. Video Jungle's site advertises 6 free generated videos, then usage depends on the hosted account. The API key is passed as a positional CLI argument rather than an env var, and local Photos search requires LOAD_PHOTOS_DB=1 plus macOS file access."
   },
   {
+    "slug": "plainly-videos",
+    "name": "Plainly Videos MCP",
+    "vendor": "Plainly Videos",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Render After Effects-backed video templates from an agent with Plainly's API.",
+    "description": "Plainly's official MCP server lets agents browse renderable designs and custom projects, inspect required template parameters, submit renders, and poll output status. It is a practical fit for brand-safe, repeatable film marketing assets: trailers, lower-third variants, social cutdowns, and personalized deliverables built from After Effects templates rather than free-form generation.",
+    "capabilities": ["template-rendering", "after-effects", "video-automation", "parameterized-video", "render-status"],
+    "tools_sample": ["list_renderable_items", "get_renderable_items_details", "render_item", "check_render_status"],
+    "install": {
+      "claude_code": "claude mcp add plainly -e PLAINLY_API_KEY=YOUR_KEY -- npx -y @plainly-videos/mcp-server@latest",
+      "remote_url": null,
+      "stdio_command": "npx -y @plainly-videos/mcp-server@latest"
+    },
+    "auth": { "type": "api_key", "env_var": "PLAINLY_API_KEY", "key_url": "https://app.plainlyvideos.com/dashboard/user/settings/general" },
+    "pricing": "paid",
+    "links": { "repo": "https://github.com/plainly-videos/mcp-server", "docs": "https://github.com/plainly-videos/mcp-server#readme", "site": "https://plainlyvideos.com" },
+    "added": "2026-06-29",
+    "verified": "2026-06-29",
+    "notes": "Official, npm @plainly-videos/mcp-server 1.0.5, Node >=18, package MIT, v1.0.5 released Jan 8 2026. The GitHub repo has only 6 stars and no license file surfaced via GitHub metadata, so treat it as a vendor integration rather than a community signal. No prompts/resources yet; it is four focused tools around template discovery and rendering."
+  },
+  {
+    "slug": "shotstack",
+    "name": "Shotstack MCP",
+    "vendor": "Shotstack",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Cloud video editing and template rendering through Shotstack's official MCP.",
+    "description": "Shotstack's MCP server exposes its cloud video editing API to agents: create renders from JSON timelines, save reusable templates, render merge-field variants, inspect media, and poll render status. For filmmaker-agents it is the programmable render farm lane: fast campaign variants, data-driven video, and cloud assembly jobs that should not depend on a local NLE being open.",
+    "capabilities": ["cloud-render", "template-rendering", "programmatic-video", "media-inspection", "json-timeline", "remote-mcp"],
+    "tools_sample": ["render_video", "get_render_status", "create_template", "list_templates", "get_template", "render_template", "delete_template", "inspect_media"],
+    "install": {
+      "claude_code": "claude mcp add shotstack -e SHOTSTACK_API_KEY=YOUR_KEY -- npx -y @shotstack/shotstack-mcp-server",
+      "remote_url": "https://mcp.shotstack.io/",
+      "stdio_command": "npx -y @shotstack/shotstack-mcp-server"
+    },
+    "auth": { "type": "api_key", "env_var": "SHOTSTACK_API_KEY", "key_url": "https://app.shotstack.io" },
+    "pricing": "freemium",
+    "links": { "repo": null, "docs": "https://www.npmjs.com/package/@shotstack/shotstack-mcp-server", "site": "https://shotstack.io" },
+    "added": "2026-06-29",
+    "verified": "2026-06-29",
+    "notes": "Official npm package @shotstack/shotstack-mcp-server 1.1.0, MIT, Node >=18, published by author Shotstack with a shotstack.io maintainer; latest modified May 8 2026. Local stdio uses SHOTSTACK_API_KEY; the hosted endpoint at https://mcp.shotstack.io/ responds as an OAuth-protected MCP resource for web clients. No public source repo was advertised in npm metadata, so verify behavior against package docs and the live endpoint rather than GitHub stars."
+  },
+  {
     "slug": "davinci-resolve",
     "name": "DaVinci Resolve MCP",
     "vendor": "Community (samuelgursky)",

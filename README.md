@@ -12,7 +12,7 @@ to ship it. Curated, verified, agent-first, and self-updating.
 
 ## What this is
 
-A directory of 68 verified Model Context Protocol servers across the full film
+A directory of 70 verified Model Context Protocol servers across the full film
 pipeline — from screenplay breakdown to YouTube upload — each entry annotated
 with exact install commands, auth requirements, pricing, sample tools, and the
 caveats that actually bite ("requires Resolve *Studio*", "Suno has no official
