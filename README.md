@@ -12,7 +12,7 @@ to ship it. Curated, verified, agent-first, and self-updating.
 
 ## What this is
 
-A directory of ~59 verified Model Context Protocol servers across the full film
+A directory of 61 verified Model Context Protocol servers across the full film
 pipeline — from screenplay breakdown to YouTube upload — each entry annotated
 with exact install commands, auth requirements, pricing, sample tools, and the
 caveats that actually bite ("requires Resolve *Studio*", "Suno has no official
@@ -24,6 +24,7 @@ It is built **agents-first**:
 | --- | --- |
 | llms.txt index ([spec](https://llmstxt.org)) | `/llms.txt` · `/llms-full.txt` |
 | Full structured registry | `/api/registry.json` (+ `.min.json`) |
+| Catalog freshness / ops pulse | `/api/pulse.json` · `/pulse.md` |
 | One server, JSON / markdown | `/api/mcps/{slug}.json` · `/mcps/{slug}.md` |
 | Pipeline guide | `/stack/` · `/stack.md` |
 | New servers feed | `/feed.xml` |
@@ -48,7 +49,8 @@ It is built **agents-first**:
                       ▼              ▼              ▼
               PRs labeled `auto-data` ──► auto-merge.yml
               (merges ONLY if every changed file is in data/
-               and validation passes) ──► deploy.yml ──► GitHub Pages fallback
+               and validation passes) ──► deploy.yml ──► Cloudflare Pages
+                                                     └──► GitHub Pages fallback
 ```
 
 Community ratings and feedback are captured on-page as PostHog events and
@@ -61,13 +63,17 @@ for `/llms.txt`, markdown, JSON API routes, feeds, and MCP discovery. Browser
 pageviews still use the lightweight PostHog client event. See
 [`docs/ANALYTICS.md`](docs/ANALYTICS.md).
 
+The live catalog pulse is published at [`/api/pulse.json`](https://mcp.film/api/pulse.json)
+and [`/pulse.md`](https://mcp.film/pulse.md): newest additions, stale
+verification queue, category coverage, and machine-surface links for agents.
+
 ## Develop locally
 
 Zero dependencies — Node 20+ is the whole toolchain:
 
 ```sh
 node build.mjs --validate-only   # check the data
-node build.mjs                   # build → dist/ (80 pages, API, feeds, OG image)
+node build.mjs                   # build → dist/ (83 pages, API, feeds, OG image)
 node scripts/serve.mjs           # preview at http://localhost:4173
 ```
 

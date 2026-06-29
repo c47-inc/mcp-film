@@ -153,6 +153,7 @@ ${body}
       <p class="foot-h">Agents</p>
       <a href="/llms.txt">llms.txt</a>
       <a href="/api/registry.json">registry.json</a>
+      <a href="/pulse/">Catalog pulse</a>
       <a href="/for-agents/">Agent docs</a>
       <a href="/feed.xml">Atom feed</a>
     </div>
@@ -688,9 +689,11 @@ export const renderForAgents = (ctx) => {
     <li><code class="mono">/llms.txt</code> — spec-compliant index (llmstxt.org format)</li>
     <li><code class="mono">/llms-full.txt</code> — the whole directory inlined as one markdown document</li>
     <li><code class="mono">/api/registry.json</code> — full structured registry (also <code class="mono">.min.json</code>)</li>
+    <li><code class="mono">/api/pulse.json</code> — catalog freshness, newest entries, stale verification queue</li>
     <li><code class="mono">/api/mcps/{slug}.json</code> — one server, structured</li>
     <li><code class="mono">/mcps/{slug}.md</code> — one server, clean markdown</li>
     <li><code class="mono">/stack.md</code> — the pipeline guide as markdown</li>
+    <li><code class="mono">/pulse.md</code> — catalog operations pulse as markdown</li>
     <li><code class="mono">/api/stats.json</code> — counts and freshness</li>
     <li><code class="mono">/feed.xml</code> — Atom feed of newly added servers</li>
     <li>JSON-LD (<code class="mono">SoftwareApplication</code>, <code class="mono">ItemList</code>) embedded in every page's static HTML</li>
@@ -733,6 +736,7 @@ export const renderForAgents = (ctx) => {
         dateModified: ctx.built.slice(0, 10),
         distribution: [
           { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/api/registry.json" },
+          { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/api/pulse.json" },
           { "@type": "DataDownload", encodingFormat: "text/markdown", contentUrl: site.url + "/llms-full.txt" },
         ],
       },
@@ -745,10 +749,12 @@ export const renderForAgentsMd = (ctx) => `# mcp.film — agent access guide
 > Every page on mcp.film has a machine twin. Start with /api/registry.json.
 
 - Full registry (JSON): ${ctx.site.url}/api/registry.json
+- Catalog pulse (JSON): ${ctx.site.url}/api/pulse.json
 - Index (llms.txt): ${ctx.site.url}/llms.txt
 - Whole directory, one markdown file: ${ctx.site.url}/llms-full.txt
 - One server: ${ctx.site.url}/api/mcps/{slug}.json or ${ctx.site.url}/mcps/{slug}.md
 - Pipeline guide: ${ctx.site.url}/stack.md
+- Catalog pulse markdown: ${ctx.site.url}/pulse.md
 - New additions feed: ${ctx.site.url}/feed.xml
 - Meta-MCP server: \`claude mcp add mcp-film -- npx -y mcp-film\`
   (tools: search_film_mcps, get_film_mcp, get_install_config, plan_film_stack,
@@ -776,6 +782,7 @@ export const renderLlmsTxt = (ctx) => {
     "## Start here",
     "",
     `- [Full registry JSON](${site.url}/api/registry.json): every server, structured`,
+    `- [Catalog pulse](${site.url}/pulse.md): newest additions and stale verification queue`,
     `- [Agent access guide](${site.url}/for-agents.md): all machine surfaces`,
     `- [The AI Film Stack](${site.url}/stack.md): pipeline guide — what to connect at each stage`,
     "",
@@ -787,6 +794,7 @@ export const renderLlmsTxt = (ctx) => {
     "",
     `- [Directory index](${site.url}/index.md): categories overview`,
     `- [Whole directory inline](${site.url}/llms-full.txt): everything in one file`,
+    `- [Pulse JSON](${site.url}/api/pulse.json): catalog freshness and ops queue`,
     `- [Atom feed](${site.url}/feed.xml): newly added servers`,
   ];
   return lines.join("\n") + "\n";
@@ -821,6 +829,137 @@ export const renderIndexMd = (ctx) => {
     for (const s of list) lines.push(`- [${s.name}](${ctx.site.url}/mcps/${s.slug}.md): ${s.tagline}`);
     lines.push("");
   }
+  return lines.join("\n") + "\n";
+};
+
+// ------------------------------------------------------------ catalog pulse
+const pulseLink = (ctx, s) => `<a href="/mcps/${s.slug}/">${esc(s.name)}</a>`;
+
+export const renderPulse = (ctx) => {
+  const { site, pulse } = ctx;
+  const body = `
+<section class="page-head">
+  <p class="crumbs"><a href="/">mcp.film</a> / <span>Pulse</span></p>
+  <h1>Catalog pulse</h1>
+  <p class="hero-sub">The directory's current operating picture: newest additions, verification queue, category coverage, and machine surfaces. <span class="mono">(machine version: <a href="/pulse.md">/pulse.md</a> · <a href="/api/pulse.json">/api/pulse.json</a>)</span></p>
+</section>
+
+<section class="pulse-grid" aria-label="Catalog summary">
+  <div><span>${pulse.summary.servers}</span><p>servers</p></div>
+  <div><span>${pulse.summary.official}</span><p>official</p></div>
+  <div><span>${pulse.summary.remote}</span><p>hosted remote</p></div>
+  <div><span>${pulse.summary.categories}</span><p>categories</p></div>
+</section>
+
+<section class="server-main agents-doc pulse-doc">
+  <h2>Newest additions</h2>
+  <table class="pulse-table">
+    <thead><tr><th>Server</th><th>Category</th><th>Added</th><th>Type</th></tr></thead>
+    <tbody>
+      ${pulse.newest.slice(0, 8).map((s) => `<tr><td>${pulseLink(ctx, s)}</td><td>${esc(s.category)}</td><td>${esc(s.added)}</td><td>${s.official ? "official" : "community"}${s.remote ? " · remote" : ""}</td></tr>`).join("")}
+    </tbody>
+  </table>
+
+  <h2>Verification queue</h2>
+  <p>These are the oldest verified entries. The daily curator should start here unless a breaking change or submission is more urgent.</p>
+  <table class="pulse-table">
+    <thead><tr><th>Server</th><th>Verified</th><th>Age</th><th>Category</th></tr></thead>
+    <tbody>
+      ${pulse.verification_queue.slice(0, 10).map((s) => `<tr><td>${pulseLink(ctx, s)}</td><td>${esc(s.verified)}</td><td>${s.verification_age_days}d</td><td>${esc(s.category)}</td></tr>`).join("")}
+    </tbody>
+  </table>
+
+  <h2>Coverage by category</h2>
+  <table class="pulse-table">
+    <thead><tr><th>Category</th><th>Servers</th><th>Official</th><th>Remote</th></tr></thead>
+    <tbody>
+      ${pulse.categories.map((c) => `<tr><td><a href="/categories/${c.id}/">${esc(c.name)}</a></td><td>${c.servers}</td><td>${c.official}</td><td>${c.remote}</td></tr>`).join("")}
+    </tbody>
+  </table>
+
+  <h2>Machine surfaces</h2>
+  <ul class="agents-list">
+    ${pulse.machine_surfaces.map((s) => `<li><a href="${new URL(s.url).pathname}"><code class="mono">${esc(new URL(s.url).pathname)}</code></a> — ${esc(s.kind)}</li>`).join("")}
+  </ul>
+
+  <h2>Operations</h2>
+  <ul class="agents-list">
+    <li>Source: <a href="${pulse.operations.github_repo}" rel="noopener">${esc(pulse.operations.github_repo)}</a></li>
+    <li>Analytics: <a href="${pulse.operations.posthog_dashboard}" rel="noopener">PostHog mcp.film Agent Traffic dashboard</a></li>
+    <li>Cloudflare Pages project: <code class="mono">${esc(pulse.operations.cloudflare_pages)}</code></li>
+  </ul>
+</section>`;
+
+  return layout(ctx, {
+    title: "Catalog pulse — mcp.film operations snapshot",
+    description: "Current mcp.film catalog freshness, newest additions, verification queue, coverage, and machine-readable surfaces.",
+    path: "/pulse/",
+    page: "pulse",
+    md: "/pulse.md",
+    body,
+    jsonLd: [
+      {
+        "@context": "https://schema.org",
+        "@type": "Dataset",
+        name: "mcp.film catalog pulse",
+        description: "Freshness and operations snapshot for the mcp.film MCP server directory.",
+        url: site.url + "/pulse/",
+        dateModified: ctx.built.slice(0, 10),
+        distribution: [
+          { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/api/pulse.json" },
+          { "@type": "DataDownload", encodingFormat: "text/markdown", contentUrl: site.url + "/pulse.md" },
+        ],
+      },
+    ],
+  });
+};
+
+export const renderPulseMd = (ctx) => {
+  const { pulse } = ctx;
+  const lines = [
+    "# mcp.film catalog pulse",
+    "",
+    `Generated: ${pulse.generated}`,
+    "",
+    "## Summary",
+    "",
+    `- Servers: ${pulse.summary.servers}`,
+    `- Official: ${pulse.summary.official}`,
+    `- Community: ${pulse.summary.community}`,
+    `- Hosted remote: ${pulse.summary.remote}`,
+    `- Local/stdio: ${pulse.summary.local_or_stdio}`,
+    `- Categories: ${pulse.summary.categories}`,
+    `- Newest added date: ${pulse.summary.newest_added}`,
+    `- Oldest verified date: ${pulse.summary.oldest_verified}`,
+    "",
+    "## Newest additions",
+    "",
+    ...pulse.newest.map((s) => `- [${s.name}](${s.markdown}) — added ${s.added}; ${s.official ? "official" : "community"}; ${s.tagline}`),
+    "",
+    "## Verification queue",
+    "",
+    ...pulse.verification_queue.map((s) => `- [${s.name}](${s.markdown}) — verified ${s.verified} (${s.verification_age_days}d); ${s.category}`),
+    "",
+    "## Category coverage",
+    "",
+    ...pulse.categories.map((c) => `- ${c.name}: ${c.servers} servers (${c.official} official, ${c.remote} remote)`),
+    "",
+    "## Top capability tags",
+    "",
+    ...pulse.top_capabilities.map((c) => `- ${c.capability}: ${c.servers}`),
+    "",
+    "## Machine surfaces",
+    "",
+    ...pulse.machine_surfaces.map((s) => `- ${s.label}: ${s.url} (${s.kind})`),
+    "",
+    "## Operations",
+    "",
+    `- Source: ${pulse.operations.github_repo}`,
+    `- Analytics dashboard: ${pulse.operations.posthog_dashboard}`,
+    `- Cloudflare Pages project: ${pulse.operations.cloudflare_pages}`,
+    "",
+    `Structured pulse: ${ctx.site.url}/api/pulse.json`,
+  ];
   return lines.join("\n") + "\n";
 };
 
@@ -924,7 +1063,7 @@ export const render404 = (ctx) =>
 export const renderSitemap = (ctx) => {
   const today = ctx.built.slice(0, 10);
   const urls = [
-    ...["/", "/stack/", "/for-agents/", "/about/", "/submit/", "/llms.txt", "/llms-full.txt", "/api/registry.json", "/stack.md", "/index.md"]
+    ...["/", "/stack/", "/for-agents/", "/pulse/", "/about/", "/submit/", "/llms.txt", "/llms-full.txt", "/api/registry.json", "/api/pulse.json", "/stack.md", "/pulse.md", "/index.md"]
       .map((u) => ({ loc: u, lastmod: today })),
     ...ctx.categories.map((c) => ({ loc: `/categories/${c.id}/`, lastmod: today })),
     ...ctx.servers.flatMap((s) => [
@@ -947,7 +1086,7 @@ export const renderRobots = (ctx) => {
     "Google-Extended", "Applebot-Extended", "CCBot", "meta-externalagent",
   ];
   return `# mcp.film — humans and machines get equal billing here.
-# Machine surfaces: ${ctx.site.url}/llms.txt · ${ctx.site.url}/api/registry.json
+# Machine surfaces: ${ctx.site.url}/llms.txt · ${ctx.site.url}/api/registry.json · ${ctx.site.url}/api/pulse.json
 # Every HTML page has a markdown twin: append .md to the path.
 
 User-agent: *

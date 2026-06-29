@@ -91,6 +91,80 @@ const ctx = {
   remoteCount: servers.filter((s) => s.install?.remote_url).length,
 };
 
+const dayMs = 24 * 60 * 60 * 1000;
+const builtDate = new Date(ctx.built);
+const serverSummary = (s) => ({
+  slug: s.slug,
+  name: s.name,
+  url: `${site.url}/mcps/${s.slug}/`,
+  markdown: `${site.url}/mcps/${s.slug}.md`,
+  category: s.category,
+  official: s.official,
+  remote: Boolean(s.install?.remote_url),
+  added: s.added,
+  verified: s.verified,
+  tagline: s.tagline,
+});
+const daysSince = (yyyyMmDd) =>
+  Math.max(0, Math.floor((builtDate - new Date(`${yyyyMmDd}T00:00:00Z`)) / dayMs));
+const categoryCounts = categories.map((c) => {
+  const list = servers.filter((s) => s.category === c.id);
+  return {
+    id: c.id,
+    name: c.name,
+    stage: c.stage,
+    servers: list.length,
+    official: list.filter((s) => s.official).length,
+    remote: list.filter((s) => s.install?.remote_url).length,
+  };
+});
+const capabilityCounts = new Map();
+for (const s of servers) {
+  for (const c of s.capabilities ?? []) capabilityCounts.set(c, (capabilityCounts.get(c) ?? 0) + 1);
+}
+ctx.pulse = {
+  $schema: `${site.url}/api/pulse.schema.json`,
+  name: "mcp.film catalog pulse",
+  generated: ctx.built,
+  summary: {
+    servers: servers.length,
+    official: ctx.officialCount,
+    community: servers.length - ctx.officialCount,
+    remote: ctx.remoteCount,
+    local_or_stdio: servers.length - ctx.remoteCount,
+    categories: categories.length,
+    newest_added: servers.reduce((m, s) => (s.added > m ? s.added : m), "0000-00-00"),
+    oldest_verified: servers.reduce((m, s) => (s.verified < m ? s.verified : m), "9999-99-99"),
+  },
+  newest: [...servers]
+    .sort((a, b) => b.added.localeCompare(a.added) || a.name.localeCompare(b.name))
+    .slice(0, 12)
+    .map(serverSummary),
+  verification_queue: [...servers]
+    .sort((a, b) => a.verified.localeCompare(b.verified) || a.name.localeCompare(b.name))
+    .slice(0, 18)
+    .map((s) => ({ ...serverSummary(s), verification_age_days: daysSince(s.verified) })),
+  categories: categoryCounts,
+  top_capabilities: [...capabilityCounts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, 30)
+    .map(([capability, servers]) => ({ capability, servers })),
+  machine_surfaces: [
+    { label: "llms.txt", url: `${site.url}/llms.txt`, kind: "llms-index" },
+    { label: "llms-full.txt", url: `${site.url}/llms-full.txt`, kind: "full-markdown" },
+    { label: "registry.json", url: `${site.url}/api/registry.json`, kind: "json-registry" },
+    { label: "pulse.json", url: `${site.url}/api/pulse.json`, kind: "catalog-pulse" },
+    { label: "stack.md", url: `${site.url}/stack.md`, kind: "pipeline-guide" },
+    { label: "feed.xml", url: `${site.url}/feed.xml`, kind: "new-additions-feed" },
+    { label: "server-card", url: `${site.url}/.well-known/mcp/server-card`, kind: "mcp-discovery" },
+  ],
+  operations: {
+    github_repo: `https://github.com/${site.github_repo}`,
+    posthog_dashboard: "https://us.posthog.com/project/292112/dashboard/1772277",
+    cloudflare_pages: "mcp-film",
+  },
+};
+
 // ------------------------------------------------------------------- emit
 fs.rmSync(DIST, { recursive: true, force: true });
 const write = (rel, content) => {
@@ -103,6 +177,7 @@ const write = (rel, content) => {
 write("index.html", T.renderHome(ctx));
 write("stack/index.html", T.renderStack(ctx));
 write("for-agents/index.html", T.renderForAgents(ctx));
+write("pulse/index.html", T.renderPulse(ctx));
 write("about/index.html", T.renderAbout(ctx));
 write("submit/index.html", T.renderSubmit(ctx));
 write("404.html", T.render404(ctx));
@@ -121,6 +196,7 @@ write("llms.txt", T.renderLlmsTxt(ctx));
 write("llms-full.txt", T.renderLlmsFull(ctx));
 write("stack.md", T.renderStackMd(ctx));
 write("for-agents.md", T.renderForAgentsMd(ctx));
+write("pulse.md", T.renderPulseMd(ctx));
 write("index.md", T.renderIndexMd(ctx));
 
 // machine API (static JSON, stable URLs)
@@ -137,6 +213,7 @@ const registryDoc = {
 write("api/registry.json", JSON.stringify(registryDoc, null, 2));
 write("api/registry.min.json", JSON.stringify(registryDoc));
 write("api/categories.json", JSON.stringify(categories, null, 2));
+write("api/pulse.json", JSON.stringify(ctx.pulse, null, 2));
 write("api/stats.json", JSON.stringify({
   servers: servers.length,
   official: ctx.officialCount,
@@ -210,5 +287,5 @@ fs.writeFileSync(
   JSON.stringify(registryDoc),
 );
 
-const pages = servers.length + categories.length + 6;
+const pages = servers.length + categories.length + 7;
 console.log(`✓ built ${pages} pages + API + agent surfaces → dist/`);

@@ -23,7 +23,8 @@ useful, and beautiful.
   - `inbox.yml` (per issue) triages community submissions
   - `auto-merge.yml` merges agent PRs **only if every changed file is under
     `data/`** and validation passes, then triggers deploy
-  - `deploy.yml` builds and publishes to GitHub Pages
+  - `deploy.yml` builds and publishes to Cloudflare Pages when its token secret
+    exists, and to GitHub Pages as the fallback
 
 ## Hard rules
 
