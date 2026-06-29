@@ -31,12 +31,32 @@ jobs:
           missing=""
           if [ -z "$ANTHROPIC_API_KEY" ]; then missing="$missing ANTHROPIC_API_KEY"; fi
           if [ -z "$POSTHOG_API_KEY" ]; then missing="$missing POSTHOG_API_KEY"; fi
+          missing="${missing# }"
+          echo "missing=$missing" >> "$GITHUB_OUTPUT"
           if [ -n "$missing" ]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "Missing repo secret(s):$missing — pulse is paused until they are restored." >> "$GITHUB_STEP_SUMMARY"
+            echo "Missing repo secret(s): $missing — pulse is paused until they are restored." >> "$GITHUB_STEP_SUMMARY"
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
+      - name: Alert on paused automation
+        if: steps.gate.outputs.skip == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MCPFILM_GAP_TITLE: "Pulse paused: missing repo secrets"
+          MCPFILM_GAP_SUMMARY: "Missing repo secret(s): ${{ steps.gate.outputs.missing }}"
+          MCPFILM_GAP_DETAILS: |
+            The weekly pulse is paused, so PostHog ratings, search gaps, feedback, trending movement, and edge-traffic summaries will not fold back into data/ratings.json or curator-lead issues.
+
+            Add the missing secret(s) under Settings → Secrets and variables → Actions, then rerun this workflow.
+        run: node scripts/report-automation-gap.mjs
+      - name: Close paused-automation alert
+        if: steps.gate.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MCPFILM_GAP_TITLE: "Pulse paused: missing repo secrets"
+          MCPFILM_GAP_RECOVERED: "true"
+        run: node scripts/report-automation-gap.mjs
       - uses: actions/setup-node@v6
         if: steps.gate.outputs.skip != 'true'
         with:

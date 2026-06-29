@@ -122,8 +122,10 @@ Also check **Settings → Actions → General → Workflow permissions**: set
 approve pull requests** (needed by the agent workflows).
 
 After a deleted repo is recreated, these secrets are empty again. The workflows
-now skip cleanly with a job-summary note when required secrets are missing, but
-they will not self-update until `ANTHROPIC_API_KEY` is restored.
+skip cleanly when required secrets are missing, write the reason into the job
+summary, and open/update an `automation-failure` issue so the pause is visible
+from the repo. They will not self-update until `ANTHROPIC_API_KEY` is restored,
+and Cloudflare will not auto-deploy until `CLOUDFLARE_API_TOKEN` is restored.
 
 If GitHub refuses to enable repository-level write permissions with "Write
 permissions for workflows are disabled by the organization", fix it at the org
@@ -143,9 +145,10 @@ Create these issue/PR labels (Settings → Labels): `auto-data`, `submit`,
   would freeze the self-update loop. The gate already refuses to merge
   anything outside `data/`.
 - **Failure alarms**: every workflow files/updates an issue labeled
-  `automation-failure` when a run fails (expired key, deprecated model,
-  upstream change). Watch the repo so those reach your inbox — that issue
-  stream is the only thing you ever need to react to.
+  `automation-failure` when a run fails or when a required secret is missing
+  (expired key, deleted repo secret, deprecated model, upstream change). Watch
+  the repo so those reach your inbox — that issue stream is the only thing you
+  ever need to react to.
 
 ## 6. Search engines (one-time, ~10 minutes)
 

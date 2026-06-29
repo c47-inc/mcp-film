@@ -35,12 +35,32 @@ jobs:
           missing=""
           if [ -z "$CLOUDFLARE_API_TOKEN" ]; then missing="$missing CLOUDFLARE_API_TOKEN"; fi
           if [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then missing="$missing CLOUDFLARE_ACCOUNT_ID"; fi
+          missing="${missing# }"
+          echo "missing=$missing" >> "$GITHUB_OUTPUT"
           if [ -n "$missing" ]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "Cloudflare deploy skipped; missing repo secret(s):$missing" >> "$GITHUB_STEP_SUMMARY"
+            echo "Cloudflare deploy skipped; missing repo secret(s): $missing" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
+      - name: Alert on skipped Cloudflare deploy
+        if: steps.cloudflare.outputs.skip == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MCPFILM_GAP_TITLE: "Cloudflare deploy paused: missing repo secrets"
+          MCPFILM_GAP_SUMMARY: "Missing repo secret(s): ${{ steps.cloudflare.outputs.missing }}"
+          MCPFILM_GAP_DETAILS: |
+            GitHub Pages fallback still deploys, but Cloudflare Pages is the production host that runs the edge worker for agent/API traffic analytics. Until these secrets are restored, pushes to main will not automatically update the Cloudflare deployment and edge analytics may lag behind the repo.
+
+            Add the missing secret(s) under Settings → Secrets and variables → Actions, then rerun Build & Deploy.
+        run: node scripts/report-automation-gap.mjs
+      - name: Close Cloudflare deploy alert
+        if: steps.cloudflare.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MCPFILM_GAP_TITLE: "Cloudflare deploy paused: missing repo secrets"
+          MCPFILM_GAP_RECOVERED: "true"
+        run: node scripts/report-automation-gap.mjs
       - name: Deploy to Cloudflare Pages
         if: steps.cloudflare.outputs.skip != 'true'
         uses: cloudflare/wrangler-action@v4

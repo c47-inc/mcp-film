@@ -43,7 +43,9 @@ If the project was created by `wrangler pages project create`, it is a direct
 upload project and will not automatically build from GitHub. Add
 `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` to GitHub Actions secrets so
 `.github/workflows/deploy.yml` can deploy `dist/` to Cloudflare after every
-push to `main`.
+push to `main`. When either secret is missing, the workflow still deploys the
+GitHub Pages fallback and opens/updates an `automation-failure` issue titled
+`Cloudflare deploy paused: missing repo secrets`.
 
 ## Agent access through Cloudflare security
 

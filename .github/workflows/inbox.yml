@@ -35,6 +35,9 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          missing=""
+          if [ -z "$ANTHROPIC_API_KEY" ]; then missing="ANTHROPIC_API_KEY"; fi
+          echo "missing=$missing" >> "$GITHUB_OUTPUT"
           if [ -z "$ANTHROPIC_API_KEY" ]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
             echo "ANTHROPIC_API_KEY is not configured — inbox triage is paused until the repo secret is restored." >> "$GITHUB_STEP_SUMMARY"
@@ -42,6 +45,24 @@ jobs:
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
+      - name: Alert on paused automation
+        if: steps.gate.outputs.skip == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MCPFILM_GAP_TITLE: "Inbox triage paused: missing repo secrets"
+          MCPFILM_GAP_SUMMARY: "Missing repo secret(s): ${{ steps.gate.outputs.missing }}"
+          MCPFILM_GAP_DETAILS: |
+            Inbox triage is paused, so new submit/correction issues cannot be independently verified and converted into data-only PRs.
+
+            Add the missing secret under Settings → Secrets and variables → Actions, then rerun this workflow.
+        run: node scripts/report-automation-gap.mjs
+      - name: Close paused-automation alert
+        if: steps.gate.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MCPFILM_GAP_TITLE: "Inbox triage paused: missing repo secrets"
+          MCPFILM_GAP_RECOVERED: "true"
+        run: node scripts/report-automation-gap.mjs
       - uses: actions/setup-node@v6
         if: steps.gate.outputs.skip != 'true'
         with:
