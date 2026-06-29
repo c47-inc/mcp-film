@@ -21,11 +21,61 @@ const browserPattern = /\b(mozilla|chrome|safari|firefox|edg|opr)\b/i;
 
 export default {
   async fetch(request, env, ctx) {
-    const response = await env.ASSETS.fetch(assetRequestFor(request));
+    const response = await registryApiResponse(request, env) || await env.ASSETS.fetch(assetRequestFor(request));
     ctx.waitUntil(captureRequest(request, response, env));
     return response;
   },
 };
+
+async function registryApiResponse(request, env) {
+  const url = new URL(request.url);
+  if (url.pathname === "/v0.1/servers") {
+    return jsonAssetResponse(env, url, "/api/mcp-registry.json");
+  }
+
+  const versions = /^\/v0\.1\/servers\/(.+)\/versions$/.exec(url.pathname);
+  if (!versions) return null;
+
+  const slug = slugFromRegistryName(versions[1]);
+  if (!slug) return null;
+  const latest = await jsonAssetResponse(env, url, `/api/mcp-registry/${slug}.json`);
+  if (latest.status !== 200) return latest;
+  const server = await latest.json();
+  return jsonResponse({
+    servers: [server],
+    metadata: { count: 1, nextCursor: null },
+  }, latest.status);
+}
+
+async function jsonAssetResponse(env, requestUrl, pathname) {
+  const url = new URL(pathname, requestUrl);
+  const response = await env.ASSETS.fetch(new Request(url));
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: jsonHeaders(response.headers),
+  });
+}
+
+function jsonResponse(value, status = 200) {
+  return new Response(JSON.stringify(value, null, 2), {
+    status,
+    headers: jsonHeaders(),
+  });
+}
+
+function jsonHeaders(headers = new Headers()) {
+  const out = new Headers(headers);
+  out.set("content-type", "application/json; charset=utf-8");
+  out.set("access-control-allow-origin", "*");
+  return out;
+}
+
+function slugFromRegistryName(value) {
+  const decoded = decodeURIComponent(value);
+  const m = /^film\.mcp\/([a-z0-9][a-z0-9-]*)$/.exec(decoded);
+  return m ? m[1] : null;
+}
 
 function assetRequestFor(request) {
   const url = new URL(request.url);
