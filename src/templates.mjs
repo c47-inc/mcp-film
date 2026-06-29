@@ -439,9 +439,15 @@ const pairings = (ctx, s) => {
     .map(([, o]) => o);
 };
 
-const codeBlock = (label, code, lang = "sh") => `
+const dataAttrs = (attrs = {}) =>
+  Object.entries(attrs)
+    .filter(([, v]) => v !== undefined && v !== null && v !== "")
+    .map(([k, v]) => ` data-${k}="${esc(v)}"`)
+    .join("");
+
+const codeBlock = (label, code, lang = "sh", copyAttrs = {}) => `
 <div class="code-block">
-  <div class="code-head"><span>${esc(label)}</span><button class="copy-btn" data-copy>Copy</button></div>
+  <div class="code-head"><span>${esc(label)}</span><button class="copy-btn" data-copy data-copy-label="${esc(label)}"${dataAttrs(copyAttrs)}>Copy</button></div>
   <pre class="mono" data-lang="${lang}"><code>${esc(code)}</code></pre>
 </div>`;
 
@@ -459,12 +465,12 @@ export const renderServer = (ctx, s) => {
 
   const connect = [];
   if (s.install?.remote_url) {
-    connect.push(codeBlock("Remote endpoint (Streamable HTTP)", s.install.remote_url, "txt"));
+    connect.push(codeBlock("Remote endpoint (Streamable HTTP)", s.install.remote_url, "txt", { "copy-kind": "connect", "copy-method": "remote_url", "copy-slug": s.slug }));
   }
-  if (cc) connect.push(codeBlock("Claude Code", cc));
+  if (cc) connect.push(codeBlock("Claude Code", cc, "sh", { "copy-kind": "connect", "copy-method": "claude_code", "copy-slug": s.slug }));
   else if (docsUrl) connect.push(`<p class="connect-note">Connection is set up through the vendor's flow — follow the <a href="${esc(docsUrl)}" rel="noopener">official connect instructions</a>.</p>`);
-  if (desktop) connect.push(codeBlock("Claude Desktop (claude_desktop_config.json)", desktop, "json"));
-  if (cursor) connect.push(codeBlock("Cursor (.cursor/mcp.json)", cursor, "json"));
+  if (desktop) connect.push(codeBlock("Claude Desktop (claude_desktop_config.json)", desktop, "json", { "copy-kind": "connect", "copy-method": "claude_desktop", "copy-slug": s.slug }));
+  if (cursor) connect.push(codeBlock("Cursor (.cursor/mcp.json)", cursor, "json", { "copy-kind": "connect", "copy-method": "cursor", "copy-slug": s.slug }));
   if (!cmdLike(s.install?.stdio_command) && s.install?.stdio_command) {
     connect.push(`<p class="connect-note">Local install: ${esc(s.install.stdio_command)}</p>`);
   }

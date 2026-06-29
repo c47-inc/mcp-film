@@ -6,7 +6,7 @@ mcp.film has two analytics layers:
   `mcpfilm_pageview`, `mcpfilm_search`, `mcpfilm_filter`,
   `mcpfilm_open_server`, `mcpfilm_open_playbook`,
   `mcpfilm_playbook_server`, `mcpfilm_rate`, `mcpfilm_feedback`,
-  `mcpfilm_copy`, and `mcpfilm_outbound`.
+  `mcpfilm_copy`, `mcpfilm_connect`, and `mcpfilm_outbound`.
 - Cloudflare edge events from generated `dist/_worker.js` capture request
   traffic that JavaScript cannot see: agents fetching `/llms.txt`, markdown,
   JSON API routes, feeds, and MCP discovery. The event is
@@ -116,7 +116,8 @@ Browser events include:
 | `mcpfilm_open_server` | `slug`, `from`, optional `playbook`, `playbook_section`, `playbook_stage` |
 | `mcpfilm_open_playbook` | `playbook`, `from` |
 | `mcpfilm_playbook_server` | `slug`, `playbook`, `section`, `stage` |
-| `mcpfilm_copy` | `slug`, `snippet` |
+| `mcpfilm_copy` | `slug`, `kind`, `method`, `label`, `page`, `path`, `snippet` |
+| `mcpfilm_connect` | `slug`, `method`, `label`, `page`, `path`, `snippet` |
 | `mcpfilm_rate` | `slug`, `rating`, `rerate` |
 | `mcpfilm_feedback` | `slug`, `text` |
 | `mcpfilm_outbound` | `to`, `from` |
@@ -223,6 +224,22 @@ WHERE event = 'mcpfilm_playbook_server'
   AND timestamp > now() - interval 30 day
 GROUP BY playbook, slug
 ORDER BY clicks DESC
+LIMIT 50
+```
+
+Connect intent by server and method:
+
+```sql
+SELECT
+  properties.slug AS slug,
+  properties.method AS method,
+  count() AS copies,
+  count(DISTINCT distinct_id) AS users
+FROM events
+WHERE event = 'mcpfilm_connect'
+  AND timestamp > now() - interval 30 day
+GROUP BY slug, method
+ORDER BY copies DESC
 LIMIT 50
 ```
 

@@ -66,12 +66,26 @@
   for (const btn of document.querySelectorAll("[data-copy]")) {
     btn.addEventListener("click", async () => {
       const code = btn.closest(".code-block")?.querySelector("code")?.textContent ?? "";
+      const slug = btn.dataset.copySlug || document.querySelector(".server")?.dataset.slug || null;
+      const copyKind = btn.dataset.copyKind || "snippet";
+      const copyMethod = btn.dataset.copyMethod || null;
+      const copyLabel = btn.dataset.copyLabel || btn.closest(".code-head")?.querySelector("span")?.textContent || null;
+      const props = {
+        slug,
+        kind: copyKind,
+        method: copyMethod,
+        label: copyLabel,
+        page: document.body.dataset.page,
+        path: location.pathname,
+        snippet: code.slice(0, 60),
+      };
       try {
         await navigator.clipboard.writeText(code);
         btn.textContent = "Copied";
         btn.classList.add("is-done");
         setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("is-done"); }, 1600);
-        ph("mcpfilm_copy", { slug: document.querySelector(".server")?.dataset.slug, snippet: code.slice(0, 60) });
+        ph("mcpfilm_copy", props);
+        if (copyKind === "connect") ph("mcpfilm_connect", props);
       } catch { /* clipboard unavailable */ }
     });
   }
