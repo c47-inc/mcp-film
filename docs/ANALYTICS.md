@@ -111,7 +111,7 @@ The worker can run with the public PostHog project token already embedded from
 | --- | --- |
 | `path` | URL path without query values. |
 | `query_keys` | Query parameter names only, not values. |
-| `surface` | `page`, `listing-page`, `category-page`, `api`, `mcp-registry`, `llms`, `markdown`, `feed`, `sitemap`, `robots`, or `mcp-discovery`. |
+| `surface` | `page`, `listing-page`, `category-page`, `api`, `remote-directory`, `remote-directory-json`, `remote-directory-markdown`, `mcp-registry`, `llms`, `markdown`, `feed`, `sitemap`, `robots`, or `mcp-discovery`. |
 | `traffic_kind` | `human_browser`, `agent`, `crawler`, or `unknown`. |
 | `agent_family` | Best-effort family such as `chatgpt`, `claude`, `perplexity`, `mcp-client`, `developer-agent`, `script`, or the agent-readable surface name. |
 | `status` | HTTP status returned by the static asset layer. |

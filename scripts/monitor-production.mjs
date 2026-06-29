@@ -48,6 +48,20 @@ const checks = [
     validateJson: (body) => body.count >= 1 && Array.isArray(body.playbooks),
   },
   {
+    name: "Remotes page",
+    url: `${base}/remotes/?monitor=${smoke}`,
+    method: "HEAD",
+    expect: (status) => status === 200,
+  },
+  {
+    name: "Remotes API",
+    url: `${base}/api/remotes.json?monitor=${smoke}`,
+    method: "GET",
+    accept: "application/json",
+    expect: (status) => status === 200,
+    validateJson: (body) => body.count >= 1 && Array.isArray(body.remotes),
+  },
+  {
     name: "MCP Registry API",
     url: `${base}/v0.1/servers?limit=5&monitor=${smoke}`,
     method: "GET",
@@ -64,6 +78,14 @@ const checks = [
     validateJson: (body) => body.count >= 1 && Array.isArray(body.playbooks),
   },
   {
+    name: "WWW remotes API",
+    url: `${wwwBase}/api/remotes.json?monitor=${smoke}`,
+    method: "GET",
+    accept: "application/json",
+    expect: (status) => status === 200,
+    validateJson: (body) => body.count >= 1 && Array.isArray(body.remotes),
+  },
+  {
     name: "Pages fallback API",
     url: `${pagesBase}/api/playbooks.json?monitor=${smoke}`,
     method: "GET",
@@ -71,9 +93,17 @@ const checks = [
     expect: (status) => status === 200,
     validateJson: (body) => body.count >= 1 && Array.isArray(body.playbooks),
   },
+  {
+    name: "Pages fallback remotes API",
+    url: `${pagesBase}/api/remotes.json?monitor=${smoke}`,
+    method: "GET",
+    accept: "application/json",
+    expect: (status) => status === 200,
+    validateJson: (body) => body.count >= 1 && Array.isArray(body.remotes),
+  },
 ];
 
-for (const path of ["/llms.txt", "/api/playbooks.json", "/v0.1/servers", "/playbooks.md"]) {
+for (const path of ["/llms.txt", "/api/playbooks.json", "/api/remotes.json", "/v0.1/servers", "/playbooks.md", "/remotes.md"]) {
   for (const [family, userAgent] of agentUserAgents) {
     checks.push({
       name: `${family} access ${path}`,

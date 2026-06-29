@@ -146,7 +146,10 @@ function shouldCapture(request) {
 
 function surfaceFor(pathname) {
   if (pathname.startsWith("/v0.1/")) return "mcp-registry";
+  if (pathname === "/api/remotes.json") return "remote-directory-json";
   if (pathname.startsWith("/api/")) return "api";
+  if (pathname === "/remotes/" || pathname === "/remotes") return "remote-directory";
+  if (pathname === "/remotes.md") return "remote-directory-markdown";
   if (pathname === "/llms.txt" || pathname === "/llms-full.txt") return "llms";
   if (pathname.endsWith(".md")) return "markdown";
   if (pathname === "/feed.xml") return "feed";
@@ -163,7 +166,7 @@ function classifyTraffic(pathname, userAgent, headers) {
   for (const [family, pattern] of agentMatchers) {
     if (pattern.test(userAgent)) return { kind: "agent", family };
   }
-  if (["api", "llms", "markdown", "feed", "mcp-discovery", "mcp-registry"].includes(surface)) {
+  if (["api", "remote-directory-json", "remote-directory-markdown", "llms", "markdown", "feed", "mcp-discovery", "mcp-registry"].includes(surface)) {
     return { kind: "agent", family: surface };
   }
   if (crawlerPattern.test(userAgent)) return { kind: "crawler", family: "crawler" };
