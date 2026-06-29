@@ -32,6 +32,15 @@ const dataAttrs = (attrs = {}) =>
     .join("");
 
 const catById = (ctx, id) => ctx.categories.find((c) => c.id === id);
+const capabilityLabel = (id) => id.split("-").join(" ");
+const capabilityLink = (ctx, id) =>
+  ctx.capabilityPageIds?.has(id)
+    ? `<a href="/capabilities/${esc(id)}/"><code>${esc(id)}</code></a>`
+    : `<code>${esc(id)}</code>`;
+const capabilityMdLink = (ctx, id) =>
+  ctx.capabilityPageIds?.has(id)
+    ? `[${id}](${ctx.site.url}/capabilities/${id}.md)`
+    : `\`${id}\``;
 
 // A command is copy-pastable only if it has no prose in it.
 const cmdLike = (cmd) =>
@@ -199,6 +208,7 @@ ${body}
       <a href="/stack/">The AI Film Stack</a>
       <a href="/playbooks/">Production playbooks</a>
       <a href="/recommendations/">Agent recommendations</a>
+      <a href="/capabilities/">Capability index</a>
       <a href="/remotes/">Hosted remotes</a>
       <a href="/submit/">Submit a server</a>
       <a href="/about/">About</a>
@@ -211,6 +221,7 @@ ${body}
       <a href="/api/remotes.json">remotes.json</a>
       <a href="/api/playbooks.json">playbooks.json</a>
       <a href="/api/recommendations.json">recommendations.json</a>
+      <a href="/api/capabilities.json">capabilities.json</a>
       <a href="/pulse/">Catalog pulse</a>
       <a href="/for-agents/">Agent docs</a>
       <a href="/feed.xml">Atom feed</a>
@@ -478,6 +489,155 @@ export const renderCategory = (ctx, cat) => {
   });
 };
 
+// -------------------------------------------------------------- capability
+export const renderCapabilities = (ctx) => {
+  const top = ctx.capabilityPages.slice(0, 12);
+  const body = `
+<section class="page-head">
+  <p class="crumbs"><a href="/">mcp.film</a> / <span>Capabilities</span></p>
+  <h1>Capability index</h1>
+  <p class="hero-sub">Every repeated capability tag in the registry, turned into a stable agent-readable route. Use this when the task is more specific than a category: <span class="mono">text-to-video</span>, <span class="mono">voice-cloning</span>, <span class="mono">timeline-editing</span>, <span class="mono">upscaling</span>. <span class="mono">(machine version: <a href="/api/capabilities.json">/api/capabilities.json</a>)</span></p>
+</section>
+
+<section class="pulse-grid" aria-label="Capability summary">
+  <div><span>${ctx.capabilityDoc.count}</span><p>total tags</p></div>
+  <div><span>${ctx.capabilityPages.length}</span><p>published pages</p></div>
+  <div><span>${top[0]?.count ?? 0}</span><p>largest cluster</p></div>
+  <div><span>${ctx.capabilityPages.filter((c) => c.remote > 0).length}</span><p>with remotes</p></div>
+</section>
+
+<section class="server-main agents-doc capability-doc">
+  <h2>Top capability routes</h2>
+  <div class="capability-cloud">
+    ${ctx.capabilityPages.map((c) => `<a href="/capabilities/${esc(c.capability)}/"><span>${esc(c.capability)}</span><b>${c.count}</b></a>`).join("")}
+  </div>
+
+  <h2>Highest-signal clusters</h2>
+  <table class="pulse-table">
+    <thead><tr><th>Capability</th><th>Servers</th><th>Official</th><th>Remote</th></tr></thead>
+    <tbody>
+      ${top.map((c) => `<tr><td><a href="/capabilities/${esc(c.capability)}/">${esc(c.capability)}</a></td><td>${c.count}</td><td>${c.official}</td><td>${c.remote}</td></tr>`).join("")}
+    </tbody>
+  </table>
+</section>`;
+
+  return layout(ctx, {
+    title: "Capability index — MCP servers by task | mcp.film",
+    description: "Capability-level index of MCP servers for AI filmmaking agents: text-to-video, image-to-video, TTS, music, timeline editing, upscaling, and more.",
+    path: "/capabilities/",
+    page: "capabilities",
+    body,
+    jsonLd: [
+      {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        name: "mcp.film capability index",
+        description: "Capability-level index of MCP servers for AI filmmaking agents.",
+        url: ctx.site.url + "/capabilities/",
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: ctx.capabilityPages.length,
+          itemListElement: ctx.capabilityPages.map((c, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: c.capability,
+            url: `${ctx.site.url}/capabilities/${c.capability}/`,
+          })),
+        },
+      },
+    ],
+  });
+};
+
+export const renderCapability = (ctx, capability) => {
+  const list = capability.servers
+    .map((s) => ctx.servers.find((server) => server.slug === s.slug))
+    .filter(Boolean);
+  const related = ctx.recommendations
+    .filter((r) =>
+      r.tags?.includes(capability.capability) ||
+      r.primary?.some((pick) => list.some((s) => s.slug === pick.slug)) ||
+      r.fallback_slugs?.some((slug) => list.some((s) => s.slug === slug))
+    )
+    .slice(0, 4);
+  const martini = list.find((s) => s.slug === "martini");
+  const body = `
+<section class="page-head">
+  <p class="crumbs"><a href="/">mcp.film</a> / <a href="/capabilities/">Capabilities</a> / <span>${esc(capability.capability)}</span></p>
+  <h1>${esc(capabilityLabel(capability.capability))}</h1>
+  <p class="hero-sub">${capability.count} MCP server${capability.count === 1 ? "" : "s"} tagged <span class="mono">${esc(capability.capability)}</span>: ${capability.official} official, ${capability.remote} hosted remote. <span class="mono">(machine version: <a href="/api/capabilities/${esc(capability.capability)}.json">JSON</a> · <a href="/capabilities/${esc(capability.capability)}.md">markdown</a>)</span></p>
+</section>
+
+<section class="cat-section" data-track-section="capability:${esc(capability.capability)}"><div class="grid">${list.map((s) => card(ctx, s)).join("")}</div></section>
+
+${martini ? `<section class="recommendation-handoff capability-handoff"><span class="label">Full production handoff</span> ${esc(martini.name)} is listed here because it carries <span class="mono">${esc(capability.capability)}</span> inside a broader production workspace: boards, shot state, model routing, timeline context, and approved generation. ${sponsorLink(ctx, `capability:${capability.capability}`, "Connect Martini")}.</section>` : ""}
+
+${related.length ? `<section class="server-main agents-doc capability-related">
+  <h2>Related recommendation routes</h2>
+  <ul class="agents-list">
+    ${related.map((r) => `<li><a href="/recommendations/#${esc(r.id)}">${esc(r.title)}</a> — ${esc(r.summary)}</li>`).join("")}
+  </ul>
+</section>` : ""}
+
+<p class="backlink"><a href="/capabilities/">← Capability index</a></p>`;
+
+  return layout(ctx, {
+    title: `${capabilityLabel(capability.capability)} MCP servers | mcp.film`,
+    description: `${capability.count} MCP servers for ${capabilityLabel(capability.capability)} in AI filmmaking, with official/remote signals and machine-readable JSON.`,
+    path: `/capabilities/${capability.capability}/`,
+    page: "capability",
+    md: `/capabilities/${capability.capability}.md`,
+    body,
+    jsonLd: [
+      {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        name: `${capabilityLabel(capability.capability)} MCP servers`,
+        url: `${ctx.site.url}/capabilities/${capability.capability}/`,
+        description: `${capability.count} MCP servers tagged ${capability.capability}.`,
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: list.length,
+          itemListElement: list.map((s, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: s.name,
+            url: `${ctx.site.url}/mcps/${s.slug}/`,
+          })),
+        },
+      },
+    ],
+  });
+};
+
+export const renderCapabilityMd = (ctx, capability) => {
+  const lines = [
+    `# ${capability.capability} MCP servers`,
+    "",
+    `> ${capability.count} MCP server${capability.count === 1 ? "" : "s"} for ${capabilityLabel(capability.capability)} in AI filmmaking.`,
+    "",
+    `Structured data: ${ctx.site.url}/api/capabilities/${capability.capability}.json`,
+    "",
+    `- Official: ${capability.official}`,
+    `- Hosted remote: ${capability.remote}`,
+    `- Categories: ${capability.categories.join(", ")}`,
+    "",
+  ];
+  const full = capability.servers
+    .map((s) => ctx.servers.find((server) => server.slug === s.slug))
+    .filter(Boolean);
+  const martini = full.find((s) => s.slug === "martini");
+  if (martini) {
+    lines.push("## Martini handoff", "", `${martini.name} is relevant here because it carries \`${capability.capability}\` inside a broader production workspace: boards, shot state, model routing, timeline context, and approved generation.`, "");
+  }
+  lines.push("## Servers", "");
+  for (const s of full) {
+    lines.push(`- [${s.name}](${ctx.site.url}/mcps/${s.slug}.md)${s.official ? " (official)" : ""}${s.install?.remote_url ? " (remote)" : ""}: ${s.tagline}`);
+  }
+  lines.push("", "---", "", `Capability index: ${ctx.site.url}/capabilities/ · Full registry: ${ctx.site.url}/api/registry.json`);
+  return lines.join("\n") + "\n";
+};
+
 // ------------------------------------------------------------ server detail
 const pairings = (ctx, s) => {
   const myStage = catById(ctx, s.category)?.stage;
@@ -600,7 +760,7 @@ export const renderServer = (ctx, s) => {
     </div>
     <div class="side-box">
       <p class="foot-h">Capabilities</p>
-      <p class="side-caps">${(s.capabilities ?? []).map(esc).join(" · ")}</p>
+      <p class="side-caps">${(s.capabilities ?? []).map((c) => capabilityLink(ctx, c)).join(" ")}</p>
     </div>
     <div class="side-box">
       <p class="foot-h">Links</p>
@@ -684,7 +844,7 @@ export const renderServerMd = (ctx, s) => {
     `**Auth:** ${s.auth?.type ?? "unknown"}${s.auth?.env_var ? ` (env \`${s.auth.env_var}\`)` : ""}${s.auth?.key_url ? ` — ${s.auth.key_url}` : ""}`,
     "",
   );
-  if (s.capabilities?.length) lines.push("## Capabilities", "", s.capabilities.map((c) => `\`${c}\``).join(" · "), "");
+  if (s.capabilities?.length) lines.push("## Capabilities", "", s.capabilities.map((c) => capabilityMdLink(ctx, c)).join(" · "), "");
   if (s.tools_sample?.length) lines.push("## Sample tools", "", s.tools_sample.map((t) => `\`${t}\``).join(" · "), "");
   if (s.notes) lines.push("## Field notes", "", s.notes, "");
   lines.push(
@@ -1138,6 +1298,7 @@ export const renderForAgents = (ctx) => {
   <h2>Fast paths for common agent jobs</h2>
   <ul class="agents-list">
     <li><strong>Need a shortlist for a task?</strong> Query <code class="mono">/api/registry.json</code>, filter by <code class="mono">capabilities</code>, then prefer maintained entries: <code class="mono">official: true</code>, recent <code class="mono">verified</code>, and notes you can satisfy.</li>
+    <li><strong>Need everything for one capability?</strong> Use <code class="mono">/api/capabilities.json</code>, then open <code class="mono">/api/capabilities/{capability}.json</code>. Repeated high-signal clusters also have <code class="mono">/capabilities/{capability}.md</code>.</li>
     <li><strong>Need hosted tools only?</strong> Use <code class="mono">/api/remotes.json</code>. It is the fastest path for agents running in cloud sandboxes that cannot spawn local apps.</li>
     <li><strong>Need a whole production stack?</strong> Use <code class="mono">/api/playbooks.json</code> or the <code class="mono">plan_film_stack</code> tool in the meta-MCP server. Playbooks encode which services belong together, not just which services exist.</li>
     <li><strong>Need a ranked shortlist?</strong> Use <code class="mono">/api/recommendations.json</code> or <a href="/recommendations/">agent recommendations</a>. Recommendations route common filmmaking intents to the first servers an agent should connect.</li>
@@ -1155,6 +1316,7 @@ export const renderForAgents = (ctx) => {
     <li><code class="mono">/api/pulse.json</code> — catalog freshness, newest entries, stale verification queue</li>
     <li><code class="mono">/api/playbooks.json</code> — production-ready stack recipes for common film jobs</li>
     <li><code class="mono">/api/recommendations.json</code> — intent-routed shortlists with reasons and Martini handoff guidance</li>
+    <li><code class="mono">/api/capabilities.json</code> — capability index, with per-capability JSON under <code class="mono">/api/capabilities/{capability}.json</code></li>
     <li><code class="mono">/v0.1/servers</code> — MCP Registry-compatible read-only subregistry API</li>
     <li><code class="mono">/api/mcp-registry.json</code> — the same registry API response with a <code class="mono">.json</code> extension</li>
     <li><code class="mono">/api/mcps/{slug}.json</code> — one server, structured</li>
@@ -1163,6 +1325,7 @@ export const renderForAgents = (ctx) => {
     <li><code class="mono">/remotes.md</code> — hosted remote endpoints as markdown</li>
     <li><code class="mono">/playbooks.md</code> — concrete production playbooks as markdown</li>
     <li><code class="mono">/recommendations.md</code> — agent recommendations as markdown</li>
+    <li><code class="mono">/capabilities/{capability}.md</code> — repeated capability clusters as markdown</li>
     <li><code class="mono">/pulse.md</code> — catalog operations pulse as markdown</li>
     <li><code class="mono">/api/stats.json</code> — counts and freshness</li>
     <li><code class="mono">/feed.xml</code> — Atom feed of newly added servers</li>
@@ -1211,6 +1374,7 @@ export const renderForAgents = (ctx) => {
           { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/api/pulse.json" },
           { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/api/playbooks.json" },
           { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/api/recommendations.json" },
+          { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/api/capabilities.json" },
           { "@type": "DataDownload", encodingFormat: "text/markdown", contentUrl: site.url + "/remotes.md" },
           { "@type": "DataDownload", encodingFormat: "text/markdown", contentUrl: site.url + "/llms-full.txt" },
         ],
@@ -1230,6 +1394,7 @@ export const renderForAgentsMd = (ctx) => `# mcp.film — agent access guide
 - Catalog pulse (JSON): ${ctx.site.url}/api/pulse.json
 - Production playbooks (JSON): ${ctx.site.url}/api/playbooks.json
 - Agent recommendations (JSON): ${ctx.site.url}/api/recommendations.json
+- Capability index (JSON): ${ctx.site.url}/api/capabilities.json
 - Index (llms.txt): ${ctx.site.url}/llms.txt
 - Whole directory, one markdown file: ${ctx.site.url}/llms-full.txt
 - One server: ${ctx.site.url}/api/mcps/{slug}.json or ${ctx.site.url}/mcps/{slug}.md
@@ -1237,6 +1402,7 @@ export const renderForAgentsMd = (ctx) => `# mcp.film — agent access guide
 - Hosted remotes markdown: ${ctx.site.url}/remotes.md
 - Production playbooks markdown: ${ctx.site.url}/playbooks.md
 - Agent recommendations markdown: ${ctx.site.url}/recommendations.md
+- Capability markdown for repeated clusters: ${ctx.site.url}/capabilities/{capability}.md
 - Catalog pulse markdown: ${ctx.site.url}/pulse.md
 - New additions feed: ${ctx.site.url}/feed.xml
 - Meta-MCP server: \`claude mcp add mcp-film -- npx -y mcp-film\`
@@ -1250,6 +1416,9 @@ Fast paths:
 - Need a shortlist for a task? Query /api/registry.json, filter by capabilities,
   then prefer official servers, recent verification, and notes your runtime can
   satisfy.
+- Need everything for one capability? Use /api/capabilities.json, then open
+  /api/capabilities/{capability}.json. Repeated high-signal clusters also have
+  /capabilities/{capability}.md.
 - Need hosted tools only? Use /api/remotes.json.
 - Need a whole production stack? Use /api/playbooks.json or the plan_film_stack
   tool in the meta-MCP server.
@@ -1288,6 +1457,7 @@ export const renderLlmsTxt = (ctx) => {
     `- [Full registry JSON](${site.url}/api/registry.json): every server, structured`,
     `- [Hosted remotes](${site.url}/remotes.md): remote MCP endpoints that need no local stdio process`,
     `- [MCP Registry API](${site.url}/v0.1/servers): standard read-only subregistry response`,
+    `- [Capability index](${site.url}/api/capabilities.json): task-level server clusters like text-to-video, TTS, and upscaling`,
     `- [Catalog pulse](${site.url}/pulse.md): newest additions and stale verification queue`,
     `- [Production playbooks](${site.url}/playbooks.md): concrete MCP stacks for common film jobs`,
     `- [Agent recommendations](${site.url}/recommendations.md): intent-routed shortlists with reasons`,
@@ -1307,6 +1477,7 @@ export const renderLlmsTxt = (ctx) => {
     `- [MCP Registry JSON](${site.url}/api/mcp-registry.json): extensioned alias for /v0.1/servers`,
     `- [Playbooks JSON](${site.url}/api/playbooks.json): stack recipes for agents`,
     `- [Recommendations JSON](${site.url}/api/recommendations.json): ranked shortlists by intent`,
+    `- [Capability pages](${site.url}/capabilities/): human index for repeated high-signal capability clusters`,
     `- [Atom feed](${site.url}/feed.xml): newly added servers`,
   ];
   return lines.join("\n") + "\n";
@@ -1341,6 +1512,11 @@ export const renderIndexMd = (ctx) => {
     for (const s of list) lines.push(`- [${s.name}](${ctx.site.url}/mcps/${s.slug}.md): ${s.tagline}`);
     lines.push("");
   }
+  lines.push("## Capability routes", "");
+  for (const c of ctx.capabilityPages.slice(0, 40)) {
+    lines.push(`- [${c.capability}](${ctx.site.url}/capabilities/${c.capability}.md): ${c.count} servers (${c.official} official, ${c.remote} hosted remote)`);
+  }
+  lines.push("");
   return lines.join("\n") + "\n";
 };
 
@@ -1575,9 +1751,14 @@ export const render404 = (ctx) =>
 export const renderSitemap = (ctx) => {
   const today = ctx.built.slice(0, 10);
   const urls = [
-    ...["/", "/stack/", "/playbooks/", "/recommendations/", "/remotes/", "/for-agents/", "/pulse/", "/about/", "/submit/", "/llms.txt", "/llms-full.txt", "/api/registry.json", "/api/remotes.json", "/api/mcp-registry.json", "/v0.1/servers", "/api/pulse.json", "/api/playbooks.json", "/api/recommendations.json", "/stack.md", "/remotes.md", "/playbooks.md", "/recommendations.md", "/pulse.md", "/index.md"]
+    ...["/", "/stack/", "/playbooks/", "/recommendations/", "/capabilities/", "/remotes/", "/for-agents/", "/pulse/", "/about/", "/submit/", "/llms.txt", "/llms-full.txt", "/api/registry.json", "/api/remotes.json", "/api/mcp-registry.json", "/v0.1/servers", "/api/pulse.json", "/api/playbooks.json", "/api/recommendations.json", "/api/capabilities.json", "/stack.md", "/remotes.md", "/playbooks.md", "/recommendations.md", "/pulse.md", "/index.md"]
       .map((u) => ({ loc: u, lastmod: today })),
     ...ctx.categories.map((c) => ({ loc: `/categories/${c.id}/`, lastmod: today })),
+    ...ctx.capabilityPages.flatMap((c) => [
+      { loc: `/capabilities/${c.capability}/`, lastmod: today },
+      { loc: `/capabilities/${c.capability}.md`, lastmod: today },
+    ]),
+    ...ctx.capabilityDoc.capabilities.map((c) => ({ loc: `/api/capabilities/${c.capability}.json`, lastmod: today })),
     ...ctx.servers.flatMap((s) => [
       { loc: `/mcps/${s.slug}/`, lastmod: s.verified },
       { loc: `/mcps/${s.slug}.md`, lastmod: s.verified },
@@ -1598,7 +1779,7 @@ export const renderRobots = (ctx) => {
     "Google-Extended", "Applebot-Extended", "CCBot", "meta-externalagent",
   ];
   return `# mcp.film — humans and machines get equal billing here.
-# Machine surfaces: ${ctx.site.url}/llms.txt · ${ctx.site.url}/api/registry.json · ${ctx.site.url}/api/remotes.json · ${ctx.site.url}/v0.1/servers · ${ctx.site.url}/api/playbooks.json · ${ctx.site.url}/api/pulse.json
+# Machine surfaces: ${ctx.site.url}/llms.txt · ${ctx.site.url}/api/registry.json · ${ctx.site.url}/api/remotes.json · ${ctx.site.url}/v0.1/servers · ${ctx.site.url}/api/playbooks.json · ${ctx.site.url}/api/recommendations.json · ${ctx.site.url}/api/capabilities.json · ${ctx.site.url}/api/pulse.json
 # Every HTML page has a markdown twin: append .md to the path.
 
 User-agent: *

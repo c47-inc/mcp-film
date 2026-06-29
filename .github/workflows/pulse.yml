@@ -73,6 +73,8 @@ jobs:
             {slug, source_section}, mcpfilm_open_playbook {playbook}, mcpfilm_playbook_server
             {playbook, slug, section, stage}, mcpfilm_open_recommendation
             {recommendation}, mcpfilm_recommendation_server {recommendation, slug},
+            mcpfilm_open_capability {capability}, mcpfilm_capability_server
+            {capability, slug},
             mcpfilm_rate {slug, rating 1-5},
             mcpfilm_search {query, results}, mcpfilm_filter {category, quick, results},
             mcpfilm_feedback {slug, text}, mcpfilm_copy,

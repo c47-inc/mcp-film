@@ -456,6 +456,8 @@ img.avatar { object-fit: cover; background: var(--paper); }
 .side-box a { font-size: 13px; color: var(--ink-2); }
 .side-box a:hover { color: var(--ink); }
 .side-caps { font-family: var(--mono); font-size: 11px; color: var(--ink-2); line-height: 1.9; }
+.side-caps a { display: inline-block; margin: 0 3px 5px 0; }
+.side-caps code { color: var(--ink-2); }
 .foot-h { margin: 0 0 3px; }
 .grid-pairs { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
 
@@ -686,6 +688,35 @@ img.avatar { object-fit: cover; background: var(--paper); }
   font-weight: 500;
   white-space: nowrap;
 }
+
+/* ---------------------------------------------------------- capabilities */
+.capability-doc { max-width: 68rem; }
+.capability-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0.9rem 0 1.8rem;
+}
+.capability-cloud a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 9px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  color: var(--ink-2);
+  background: var(--paper);
+  font-size: 12.5px;
+}
+.capability-cloud a:hover { border-color: var(--hairline-2); background: var(--paper-dim); color: var(--ink); }
+.capability-cloud b {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+.capability-handoff { max-width: 62rem; margin: 1.4rem 0 2rem; }
+.capability-related { padding-bottom: 1rem; }
 
 /* --------------------------------------------------------------- pulse */
 .pulse-grid {

@@ -264,6 +264,9 @@
         });
       }
       ph("mcpfilm_outbound", { to, from });
+    } else if (href.startsWith("/capabilities/") && href !== "/capabilities/") {
+      const capability = href.split("/")[2]?.replace(/\.md$/, "") || null;
+      if (capability) ph("mcpfilm_open_capability", { capability, from });
     } else if (href.startsWith("/playbooks/#")) {
       ph("mcpfilm_open_playbook", { playbook: href.split("#")[1], from });
     } else if (href.startsWith("/recommendations/#")) {
@@ -294,6 +297,9 @@
       }
       if (recommendation) {
         ph("mcpfilm_recommendation_server", { slug, recommendation });
+      }
+      if (sourceSection?.startsWith("capability:")) {
+        ph("mcpfilm_capability_server", { slug, capability: sourceSection.slice("capability:".length) });
       }
     }
   });

@@ -112,6 +112,39 @@ const compactRecommendation = (r) => ({
   playbook: r.playbook,
 });
 
+function capabilityIndex(servers) {
+  const groups = new Map();
+  for (const s of servers) {
+    for (const capability of s.capabilities ?? []) {
+      if (!groups.has(capability)) groups.set(capability, []);
+      groups.get(capability).push(s);
+    }
+  }
+  const sortServers = (list) =>
+    [...list].sort((a, b) =>
+      Number(Boolean(b.featured)) - Number(Boolean(a.featured))
+      || Number(Boolean(b.official)) - Number(Boolean(a.official))
+      || Number(Boolean(b.install?.remote_url)) - Number(Boolean(a.install?.remote_url))
+      || a.name.localeCompare(b.name)
+    );
+  return [...groups.entries()]
+    .map(([capability, list]) => {
+      const sorted = sortServers(list);
+      const published = sorted.length >= 2;
+      return {
+        capability,
+        url: published ? `https://mcp.film/capabilities/${capability}/` : null,
+        markdown: published ? `https://mcp.film/capabilities/${capability}.md` : null,
+        json: `https://mcp.film/api/capabilities/${capability}.json`,
+        count: sorted.length,
+        official: sorted.filter((s) => s.official).length,
+        remote: sorted.filter((s) => s.install?.remote_url).length,
+        servers: sorted.map(compact),
+      };
+    })
+    .sort((a, b) => b.count - a.count || a.capability.localeCompare(b.capability));
+}
+
 const cmdLike = (cmd) =>
   typeof cmd === "string" && !cmd.includes("(") && !/\bafter\b|\bclone\b|\bthen\b/i.test(cmd);
 
@@ -181,6 +214,32 @@ const TOOLS = [
     name: "list_film_categories",
     description: "List all mcp.film categories with ids, pipeline stage, and per-category agent hints.",
     inputSchema: { type: "object", properties: {} },
+  },
+  {
+    name: "list_film_capabilities",
+    description:
+      "List capability tags in the mcp.film registry, ranked by number of matching servers. Use get_film_capability for the server cluster behind one tag.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        query: { type: "string", description: "Optional substring filter, e.g. 'video', 'voice', or 'timeline'." },
+        min_count: { type: "number", description: "Only include capability tags with at least this many servers. Default 1." },
+      },
+    },
+  },
+  {
+    name: "get_film_capability",
+    description:
+      "Get the ranked server cluster for one capability tag such as text-to-video, image-to-video, tts, timeline-editing, voice-cloning, or upscaling.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        capability: { type: "string", description: "Exact capability tag." },
+        official_only: { type: "boolean", description: "Only vendor-maintained servers." },
+        remote_only: { type: "boolean", description: "Only hosted remote MCPs." },
+      },
+      required: ["capability"],
+    },
   },
   {
     name: "get_install_config",
@@ -312,6 +371,32 @@ async function callTool(name, args = {}) {
 
   if (name === "list_film_categories") {
     return { categories: reg.categories };
+  }
+
+  if (name === "list_film_capabilities") {
+    const q = String(args.query ?? "").toLowerCase();
+    const min = Number(args.min_count ?? 1);
+    let capabilities = capabilityIndex(servers).filter((c) => c.count >= min);
+    if (q) capabilities = capabilities.filter((c) => c.capability.includes(q));
+    return {
+      source: reg._source,
+      count: capabilities.length,
+      capabilities: capabilities.map(({ servers: _servers, ...c }) => c),
+    };
+  }
+
+  if (name === "get_film_capability") {
+    const entry = capabilityIndex(servers).find((c) => c.capability === args.capability);
+    if (!entry) return { error: `No capability tag '${args.capability}'. Try list_film_capabilities first.` };
+    let found = entry.servers;
+    if (args.official_only) found = found.filter((s) => s.official);
+    if (args.remote_only) found = found.filter((s) => s.remote);
+    return {
+      ...entry,
+      source: reg._source,
+      servers: found,
+      filters: { official_only: Boolean(args.official_only), remote_only: Boolean(args.remote_only) },
+    };
   }
 
   if (name === "get_install_config") {

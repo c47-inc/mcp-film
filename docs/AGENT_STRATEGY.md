@@ -44,8 +44,10 @@ engine.
    searches, and new production intents as they appear.
 2. Expand playbooks into agent-ready recipes: required auth, setup order, failure
    modes, and "use Martini instead when..." handoffs.
-3. Add capability pages and markdown twins for high-intent queries like
-   `text-to-video`, `timeline-editing`, `voice-cloning`, and `hosted-remote`.
+3. Keep expanding capability pages and markdown twins for high-intent queries
+   like `text-to-video`, `timeline-editing`, `voice-cloning`, and
+   `hosted-remote`, using search/no-result data to decide which clusters need
+   stronger editorial notes.
 4. Add client-specific install profiles for Claude Code, Claude Desktop,
    ChatGPT, Cursor, Gemini CLI, and generic Streamable HTTP clients.
 5. Build a PostHog dashboard around agent traffic, Martini handoffs, no-result

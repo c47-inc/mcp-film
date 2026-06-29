@@ -175,6 +175,13 @@ const serverSummary = (s) => ({
   tagline: s.tagline,
 });
 const serverBySlug = new Map(servers.map((s) => [s.slug, s]));
+const sortServers = (list) =>
+  [...list].sort((a, b) =>
+    Number(Boolean(b.featured)) - Number(Boolean(a.featured))
+    || Number(Boolean(b.official)) - Number(Boolean(a.official))
+    || Number(Boolean(b.install?.remote_url)) - Number(Boolean(a.install?.remote_url))
+    || a.name.localeCompare(b.name)
+  );
 const remoteSummary = (s) => {
   const cat = categoryById.get(s.category);
   return {
@@ -263,6 +270,42 @@ ctx.recommendationDoc = {
   count: recommendations.length,
   recommendations: recommendations.map(recommendationSummary),
 };
+const capabilityServers = new Map();
+for (const s of servers) {
+  for (const capability of s.capabilities ?? []) {
+    if (!capabilityServers.has(capability)) capabilityServers.set(capability, []);
+    capabilityServers.get(capability).push(s);
+  }
+}
+const capabilitySummary = (capability, list) => {
+  const sorted = sortServers(list);
+  const published = sorted.length >= 2;
+  return {
+    capability,
+    url: published ? `${site.url}/capabilities/${capability}/` : null,
+    markdown: published ? `${site.url}/capabilities/${capability}.md` : null,
+    json: `${site.url}/api/capabilities/${capability}.json`,
+    count: sorted.length,
+    official: sorted.filter((s) => s.official).length,
+    remote: sorted.filter((s) => s.install?.remote_url).length,
+    categories: [...new Set(sorted.map((s) => s.category))],
+    servers: sorted.map(serverSummary),
+  };
+};
+const capabilityEntries = [...capabilityServers.entries()]
+  .map(([capability, list]) => capabilitySummary(capability, list))
+  .sort((a, b) => b.count - a.count || a.capability.localeCompare(b.capability));
+ctx.capabilityPages = capabilityEntries.filter((c) => c.count >= 2);
+ctx.capabilityPageIds = new Set(ctx.capabilityPages.map((c) => c.capability));
+ctx.capabilityDoc = {
+  $schema: `${site.url}/api/capabilities.schema.json`,
+  name: "mcp.film capability index",
+  description: "Capability-level index of MCP servers for AI filmmaking agents, derived from the verified registry.",
+  updated: ctx.built,
+  count: capabilityEntries.length,
+  published_pages: ctx.capabilityPages.length,
+  capabilities: capabilityEntries,
+};
 const daysSince = (yyyyMmDd) =>
   Math.max(0, Math.floor((builtDate - new Date(`${yyyyMmDd}T00:00:00Z`)) / dayMs));
 const categoryCounts = categories.map((c) => {
@@ -315,6 +358,7 @@ ctx.pulse = {
     { label: "pulse.json", url: `${site.url}/api/pulse.json`, kind: "catalog-pulse" },
     { label: "playbooks.json", url: `${site.url}/api/playbooks.json`, kind: "production-playbooks" },
     { label: "recommendations.json", url: `${site.url}/api/recommendations.json`, kind: "intent-recommendations" },
+    { label: "capabilities.json", url: `${site.url}/api/capabilities.json`, kind: "capability-index" },
     { label: "stack.md", url: `${site.url}/stack.md`, kind: "pipeline-guide" },
     { label: "remotes.md", url: `${site.url}/remotes.md`, kind: "hosted-remotes-markdown" },
     { label: "playbooks.md", url: `${site.url}/playbooks.md`, kind: "stack-recipes" },
@@ -342,6 +386,7 @@ write("index.html", T.renderHome(ctx));
 write("stack/index.html", T.renderStack(ctx));
 write("playbooks/index.html", T.renderPlaybooks(ctx));
 write("recommendations/index.html", T.renderRecommendations(ctx));
+write("capabilities/index.html", T.renderCapabilities(ctx));
 write("remotes/index.html", T.renderRemotes(ctx));
 write("for-agents/index.html", T.renderForAgents(ctx));
 write("pulse/index.html", T.renderPulse(ctx));
@@ -351,6 +396,13 @@ write("404.html", T.render404(ctx));
 
 for (const cat of categories) {
   write(`categories/${cat.id}/index.html`, T.renderCategory(ctx, cat));
+}
+for (const capability of ctx.capabilityPages) {
+  write(`capabilities/${capability.capability}/index.html`, T.renderCapability(ctx, capability));
+  write(`capabilities/${capability.capability}.md`, T.renderCapabilityMd(ctx, capability));
+}
+for (const capability of capabilityEntries) {
+  write(`api/capabilities/${capability.capability}.json`, JSON.stringify(capability, null, 2));
 }
 for (const s of servers) {
   write(`mcps/${s.slug}/index.html`, T.renderServer(ctx, s));
@@ -386,6 +438,7 @@ write("api/categories.json", JSON.stringify(categories, null, 2));
 write("api/pulse.json", JSON.stringify(ctx.pulse, null, 2));
 write("api/playbooks.json", JSON.stringify(ctx.playbookDoc, null, 2));
 write("api/recommendations.json", JSON.stringify(ctx.recommendationDoc, null, 2));
+write("api/capabilities.json", JSON.stringify(ctx.capabilityDoc, null, 2));
 write("api/remotes.json", JSON.stringify(ctx.remoteDoc, null, 2));
 write("api/stats.json", JSON.stringify({
   servers: servers.length,
@@ -502,7 +555,7 @@ fs.writeFileSync(
   JSON.stringify(ctx.recommendationDoc),
 );
 
-const pages = servers.length + categories.length + 9;
+const pages = servers.length + categories.length + ctx.capabilityPages.length + 10;
 console.log(`✓ built ${pages} pages + API + agent surfaces → dist/`);
 
 function mcpRegistryResponse(s) {

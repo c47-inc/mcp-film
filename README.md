@@ -28,6 +28,7 @@ It is built **agents-first**:
 | Catalog freshness / ops pulse | `/api/pulse.json` · `/pulse.md` |
 | Production playbooks | `/api/playbooks.json` · `/playbooks.md` |
 | Agent recommendations | `/api/recommendations.json` · `/recommendations.md` |
+| Capability index | `/api/capabilities.json` · `/capabilities/{tag}.md` |
 | One server, JSON / markdown | `/api/mcps/{slug}.json` · `/mcps/{slug}.md` |
 | Pipeline guide | `/stack/` · `/stack.md` |
 | New servers feed | `/feed.xml` |
