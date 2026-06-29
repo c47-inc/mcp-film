@@ -6,7 +6,8 @@ mcp.film has two analytics layers:
   `mcpfilm_pageview`, `mcpfilm_search`, `mcpfilm_filter`,
   `mcpfilm_open_server`, `mcpfilm_open_playbook`,
   `mcpfilm_playbook_server`, `mcpfilm_rate`, `mcpfilm_feedback`,
-  `mcpfilm_copy`, `mcpfilm_connect`, and `mcpfilm_outbound`.
+  `mcpfilm_copy`, `mcpfilm_connect`, `mcpfilm_sponsor_click`, and
+  `mcpfilm_outbound`.
 - Cloudflare edge events from generated `dist/_worker.js` capture request
   traffic that JavaScript cannot see: agents fetching `/llms.txt`, markdown,
   JSON API routes, feeds, and MCP discovery. The event is
@@ -124,6 +125,7 @@ Browser events include:
 | `mcpfilm_connect` | `slug`, `method`, `label`, `page`, `path`, `snippet` |
 | `mcpfilm_rate` | `slug`, `rating`, `rerate` |
 | `mcpfilm_feedback` | `slug`, `text` |
+| `mcpfilm_sponsor_click` | `sponsor`, `placement`, `to`, `from`, `page`, optional `source_slug`, `label` |
 | `mcpfilm_outbound` | `to`, `from` |
 
 `mcpfilm_edge_request` includes:
@@ -244,6 +246,24 @@ WHERE event = 'mcpfilm_connect'
   AND timestamp > now() - interval 30 day
 GROUP BY slug, method
 ORDER BY copies DESC
+LIMIT 50
+```
+
+Martini sponsor traffic:
+
+```sql
+SELECT
+  properties.placement AS placement,
+  properties.source_slug AS source_slug,
+  properties.to AS destination,
+  count() AS clicks,
+  count(DISTINCT distinct_id) AS users
+FROM events
+WHERE event = 'mcpfilm_sponsor_click'
+  AND properties.sponsor = 'martini'
+  AND timestamp > now() - interval 30 day
+GROUP BY placement, source_slug, destination
+ORDER BY clicks DESC
 LIMIT 50
 ```
 

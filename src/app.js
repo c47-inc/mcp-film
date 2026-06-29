@@ -4,6 +4,16 @@
   const ph = (event, props) => {
     if (window.posthog?.capture) window.posthog.capture(event, props);
   };
+  const normalizedHost = (url) => {
+    try {
+      return new URL(url, location.href).hostname.replace(/^www\./, "");
+    } catch {
+      return "";
+    }
+  };
+  const hostMatches = (host, root) => Boolean(host && root && (host === root || host.endsWith("." + root)));
+  const siteHost = normalizedHost(location.href);
+  const sponsorHost = normalizedHost(document.body.dataset.sponsorUrl || "");
 
   // pageview (autocapture is off; we send a single clean event)
   ph("mcpfilm_pageview", { path: location.pathname, page: document.body.dataset.page });
@@ -221,8 +231,23 @@
     if (!a) return;
     const href = a.getAttribute("href");
     const from = location.pathname;
-    if (href.startsWith("http") && !href.includes(location.hostname)) {
-      ph("mcpfilm_outbound", { to: href, from });
+    const to = a.href;
+    const linkHost = normalizedHost(to);
+    const isExternal = /^https?:\/\//.test(to) && linkHost && linkHost !== siteHost;
+    if (isExternal) {
+      const sponsor = a.dataset.sponsor || (hostMatches(linkHost, sponsorHost) ? document.body.dataset.sponsor : "");
+      if (a.dataset.sponsorClick || sponsor) {
+        ph("mcpfilm_sponsor_click", {
+          sponsor: sponsor || document.body.dataset.sponsor || "sponsor",
+          placement: a.dataset.sponsorPlacement || "host-match",
+          to,
+          from,
+          page: document.body.dataset.page,
+          source_slug: document.querySelector(".server")?.dataset.slug || null,
+          label: (a.textContent || "").trim().slice(0, 80),
+        });
+      }
+      ph("mcpfilm_outbound", { to, from });
     } else if (href.startsWith("/playbooks/#")) {
       ph("mcpfilm_open_playbook", { playbook: href.split("#")[1], from });
     } else if (href.startsWith("/mcps/")) {

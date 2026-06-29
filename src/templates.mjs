@@ -25,6 +25,12 @@ const truncate = (s, n) => {
   return cut + "…";
 };
 
+const dataAttrs = (attrs = {}) =>
+  Object.entries(attrs)
+    .filter(([, v]) => v !== undefined && v !== null && v !== "")
+    .map(([k, v]) => ` data-${k}="${esc(v)}"`)
+    .join("");
+
 const catById = (ctx, id) => ctx.categories.find((c) => c.id === id);
 
 // A command is copy-pastable only if it has no prose in it.
@@ -84,6 +90,36 @@ const verificationStatus = (ctx, s) => {
 
 const sourceLinks = (s) => [["Site", s.links?.site], ["Docs", s.links?.docs], ["Repo", s.links?.repo]].filter(([, u]) => u);
 
+const hostFor = (url) => {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+};
+
+const sponsorKey = (site) =>
+  String(site.sponsor?.name ?? "sponsor")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "") || "sponsor";
+
+const sponsorAttrs = (ctx, url, placement) => {
+  const sponsorHost = hostFor(ctx.site.sponsor?.url);
+  const targetHost = hostFor(url);
+  if (!sponsorHost || !targetHost || (targetHost !== sponsorHost && !targetHost.endsWith(`.${sponsorHost}`))) {
+    return "";
+  }
+  return dataAttrs({
+    "sponsor-click": "true",
+    sponsor: sponsorKey(ctx.site),
+    "sponsor-placement": placement,
+  });
+};
+
+const sponsorLink = (ctx, placement, label = ctx.site.sponsor.name) =>
+  `<a href="${esc(ctx.site.sponsor.url)}" rel="noopener"${sponsorAttrs(ctx, ctx.site.sponsor.url, placement)}>${esc(label)}</a>`;
+
 // The film pipeline, in order. Categories map to stages via categories.json.
 export const STAGES = [
   { id: "develop", name: "Develop", blurb: "Script, beats, boards, plans — spend thought before you spend credits." },
@@ -136,7 +172,7 @@ ${md ? `<link rel="alternate" type="text/markdown" href="${site.url}${md}" title
 ${ld}
 ${posthogSnippet(site)}
 </head>
-<body data-page="${page}">
+<body data-page="${page}" data-sponsor="${esc(sponsorKey(site))}" data-sponsor-url="${esc(site.sponsor?.url ?? "")}">
 <header class="site-head">
   <a class="brand" href="/"><svg class="brand-mark" width="18" height="18" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="15" fill="#0d0d0d"/><rect x="11" y="15.5" width="9" height="9" rx="2.5" fill="#fff" opacity=".58"/><rect x="11" y="39.5" width="9" height="9" rx="2.5" fill="#fff" opacity=".58"/><rect x="26.5" y="15.5" width="27" height="33" rx="5" fill="#fff"/></svg><span>mcp<span class="brand-dot">.</span>film</span></a>
   <nav class="site-nav">
@@ -156,7 +192,7 @@ ${body}
   <div class="foot-grid">
     <div>
       <p class="foot-brand">mcp.film</p>
-      <p class="foot-blurb">${esc(site.tagline)} Curated, verified, and self-updating — maintained by agents, supervised by the team behind <a href="${site.sponsor.url}" rel="noopener">${esc(site.sponsor.name)}</a>.</p>
+      <p class="foot-blurb">${esc(site.tagline)} Curated, verified, and self-updating — maintained by agents, supervised by the team behind ${sponsorLink(ctx, "footer")}.</p>
     </div>
     <div class="foot-col">
       <p class="foot-h">Humans</p>
@@ -439,12 +475,6 @@ const pairings = (ctx, s) => {
     .map(([, o]) => o);
 };
 
-const dataAttrs = (attrs = {}) =>
-  Object.entries(attrs)
-    .filter(([, v]) => v !== undefined && v !== null && v !== "")
-    .map(([k, v]) => ` data-${k}="${esc(v)}"`)
-    .join("");
-
 const codeBlock = (label, code, lang = "sh", copyAttrs = {}) => `
 <div class="code-block">
   <div class="code-head"><span>${esc(label)}</span><button class="copy-btn" data-copy data-copy-label="${esc(label)}"${dataAttrs(copyAttrs)}>Copy</button></div>
@@ -553,7 +583,7 @@ export const renderServer = (ctx, s) => {
     <div class="side-box">
       <p class="foot-h">Links</p>
       ${links
-        .map(([l, u]) => `<a href="${esc(u)}" rel="noopener">${l} ↗</a>`)
+        .map(([l, u]) => `<a href="${esc(u)}" rel="noopener"${sponsorAttrs(ctx, u, `server-links:${s.slug}:${l.toLowerCase()}`)}>${l} ↗</a>`)
         .join("")}
     </div>
     <div class="side-box">
@@ -1304,7 +1334,7 @@ export const renderAbout = (ctx) => {
   <p>Every change lands as a commit in <a href="https://github.com/${site.github_repo}" rel="noopener">the public repo</a>, so the whole history is auditable.</p>
 
   <h2>Who's behind it</h2>
-  <p>${esc(site.sponsor.blurb)} Martini's own MCP server is listed here — clearly marked, same verification standards as everything else. The directory is a community service: official servers, community servers, and direct competitors are all listed on merit.</p>
+  <p>mcp.film is maintained by the team behind ${sponsorLink(ctx, "about-sponsor")}, the film set for AI videos. Martini's own MCP server is listed here — clearly marked, same verification standards as everything else. The directory is a community service: official servers, community servers, and direct competitors are all listed on merit.</p>
 
   <h2>Open source</h2>
   <p>The whole site — data, generator, meta-MCP server, automation — is MIT licensed. Fork it, build on the data, or <a href="/submit/">add what we're missing</a>.</p>
