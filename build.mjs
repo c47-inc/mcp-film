@@ -215,6 +215,7 @@ ctx.pulse = {
     { label: "playbooks.md", url: `${site.url}/playbooks.md`, kind: "stack-recipes" },
     { label: "feed.xml", url: `${site.url}/feed.xml`, kind: "new-additions-feed" },
     { label: "server-card", url: `${site.url}/.well-known/mcp/server-card`, kind: "mcp-discovery" },
+    { label: "MCP Registry API", url: `${site.url}/v0.1/servers`, kind: "mcp-registry-api" },
   ],
   operations: {
     github_repo: `https://github.com/${site.github_repo}`,
@@ -314,10 +315,43 @@ const serverJson = {
 };
 write("api/server.json", JSON.stringify(serverJson, null, 2));
 write(".well-known/mcp/server-card", JSON.stringify(serverJson, null, 2));
+write(".well-known/mcp/server.json", JSON.stringify(serverJson, null, 2));
+
+// MCP Registry-compatible read-only API. This implements the generic
+// subregistry browse shape from the official registry OpenAPI spec while
+// preserving mcp.film's richer editorial fields under custom _meta.
+const mcpRegistryResponses = servers.map((s) => mcpRegistryResponse(s));
+const mcpRegistryList = {
+  servers: mcpRegistryResponses,
+  metadata: { count: mcpRegistryResponses.length, nextCursor: null },
+};
+write("api/mcp-registry.json", JSON.stringify(mcpRegistryList, null, 2));
+write("v0.1/servers/index.html", JSON.stringify(mcpRegistryList, null, 2));
+for (const response of mcpRegistryResponses) {
+  const name = response.server.name;
+  const version = response.server.version;
+  const slug = response.server._meta["film.mcp/directory"].slug;
+  const versions = { servers: [response], metadata: { count: 1, nextCursor: null } };
+  for (const base of [`v0.1/servers/${name}`, `v0.1/servers/${encodeURIComponent(name)}`]) {
+    write(`${base}/versions/index.html`, JSON.stringify(versions, null, 2));
+    write(`${base}/versions/latest`, JSON.stringify(response, null, 2));
+    write(`${base}/versions/${encodeURIComponent(version)}`, JSON.stringify(response, null, 2));
+  }
+  write(`api/mcp-registry/${slug}.json`, JSON.stringify(response, null, 2));
+}
 
 // hosting glue (GitHub Pages)
 write("CNAME", site.domain + "\n");
 write(".nojekyll", "");
+write("_headers", `# Cloudflare Pages response headers for extensionless machine endpoints.
+/v0.1/*
+  Content-Type: application/json; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+/.well-known/mcp/*
+  Content-Type: application/json; charset=utf-8
+  Access-Control-Allow-Origin: *
+`);
 
 // Cloudflare Pages glue. When deployed to Cloudflare Pages, _worker.js runs in
 // advanced mode and records server-side request analytics for agent/API traffic
@@ -354,3 +388,123 @@ fs.writeFileSync(
 
 const pages = servers.length + categories.length + 8;
 console.log(`✓ built ${pages} pages + API + agent surfaces → dist/`);
+
+function mcpRegistryResponse(s) {
+  const version = `0.0.0+${s.verified.replaceAll("-", "")}`;
+  const server = {
+    $schema: "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+    name: `film.mcp/${s.slug}`,
+    title: clamp(s.name, 100),
+    description: clamp(s.tagline.replace(/\.$/, ""), 100),
+    version,
+    websiteUrl: `${site.url}/mcps/${s.slug}/`,
+  };
+  const repository = repositoryFor(s.links?.repo);
+  if (repository) server.repository = repository;
+  if (logos.has(s.slug)) {
+    server.icons = [{
+      src: `${site.url}/assets/logos/${s.slug}.png`,
+      mimeType: "image/png",
+      sizes: ["128x128"],
+    }];
+  }
+  const packages = packageFor(s);
+  if (packages.length) server.packages = packages;
+  if (s.install?.remote_url) {
+    server.remotes = [{
+      type: /\bsse\b/i.test(new URL(s.install.remote_url).pathname) ? "sse" : "streamable-http",
+      url: s.install.remote_url,
+    }];
+  }
+  server._meta = {
+    "film.mcp/directory": {
+      slug: s.slug,
+      page: `${site.url}/mcps/${s.slug}/`,
+      markdown: `${site.url}/mcps/${s.slug}.md`,
+      json: `${site.url}/api/mcps/${s.slug}.json`,
+      category: s.category,
+      vendor: s.vendor,
+      vendorMaintained: s.official,
+      featured: Boolean(s.featured),
+      pricing: s.pricing,
+      capabilities: s.capabilities,
+      toolsSample: s.tools_sample,
+      install: s.install,
+      auth: s.auth,
+      links: s.links,
+      notes: s.notes,
+      added: s.added,
+      verified: s.verified,
+      verificationAgeDays: daysSince(s.verified),
+    },
+  };
+  return {
+    server,
+    _meta: {
+      "io.modelcontextprotocol.registry/official": {
+        status: "active",
+        publishedAt: `${s.added}T00:00:00Z`,
+        updatedAt: `${s.verified}T00:00:00Z`,
+        isLatest: true,
+      },
+      "film.mcp/subregistry": {
+        source: "mcp.film",
+        category: s.category,
+        official: s.official,
+        remote: Boolean(s.install?.remote_url),
+      },
+    },
+  };
+}
+
+function repositoryFor(url) {
+  if (!url) return null;
+  const github = /^https:\/\/github\.com\/[^/]+\/[^/]+/.exec(url);
+  if (github) return { url, source: "github" };
+  return { url, source: "web" };
+}
+
+function packageFor(s) {
+  const cmd = s.install?.stdio_command;
+  if (!cmd || typeof cmd !== "string") return [];
+  const npxPackage = /(?:^|\s)--package=([^\s]+)|^npx\s+(?:-y\s+)?([@a-zA-Z0-9._/-]+)/.exec(cmd);
+  if (npxPackage) {
+    return [{
+      registryType: "npm",
+      registryBaseUrl: "https://registry.npmjs.org",
+      identifier: cleanupPackageId(npxPackage[1] || npxPackage[2]),
+      transport: { type: "stdio" },
+      ...(s.auth?.env_var ? { environmentVariables: [secretEnv(s.auth.env_var)] } : {}),
+    }];
+  }
+  const uvxFrom = /^uvx\s+--from\s+([^\s]+)\s+/.exec(cmd);
+  const uvxPackage = /^uvx\s+(.+)$/.exec(cmd);
+  const pyPackage = uvxFrom?.[1] || uvxPackage?.[1];
+  if (pyPackage) {
+    return [{
+      registryType: "pypi",
+      registryBaseUrl: "https://pypi.org",
+      identifier: cleanupPackageId(pyPackage.split(/\s+/)[0]),
+      transport: { type: "stdio" },
+      ...(s.auth?.env_var ? { environmentVariables: [secretEnv(s.auth.env_var)] } : {}),
+    }];
+  }
+  return [];
+}
+
+function cleanupPackageId(value) {
+  return String(value)
+    .replace(/^["']|["']$/g, "")
+    .replace(/\[.*\]$/, "")
+    .replace(/@latest$/, "");
+}
+
+function secretEnv(name) {
+  return { name, isRequired: true, isSecret: true, format: "string" };
+}
+
+function clamp(value, max) {
+  const s = String(value ?? "").trim();
+  if (s.length <= max) return s;
+  return s.slice(0, max - 1).replace(/\s+\S*$/, "") + "…";
+}

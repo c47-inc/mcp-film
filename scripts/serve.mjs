@@ -26,10 +26,12 @@ http.createServer((req, res) => {
   let file = path.join(DIST, p);
   if (!file.startsWith(DIST)) { res.writeHead(403); return res.end(); }
   if (!fs.existsSync(file) && fs.existsSync(file + "/index.html")) file += "/index.html";
+  if (fs.existsSync(file) && fs.statSync(file).isDirectory() && fs.existsSync(path.join(file, "index.html"))) file = path.join(file, "index.html");
   if (!fs.existsSync(file) || fs.statSync(file).isDirectory()) {
     res.writeHead(404, { "content-type": "text/html" });
     return res.end(fs.existsSync(path.join(DIST, "404.html")) ? fs.readFileSync(path.join(DIST, "404.html")) : "not found");
   }
-  res.writeHead(200, { "content-type": MIME[path.extname(file)] ?? "application/octet-stream" });
+  const type = p.startsWith("/v0.1/") ? "application/json; charset=utf-8" : (MIME[path.extname(file)] ?? "application/octet-stream");
+  res.writeHead(200, { "content-type": type });
   res.end(fs.readFileSync(file));
 }).listen(PORT, () => console.log(`→ http://localhost:${PORT}`));

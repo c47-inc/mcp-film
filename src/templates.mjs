@@ -848,6 +848,8 @@ export const renderForAgents = (ctx) => {
     <li><code class="mono">/api/registry.json</code> — full structured registry (also <code class="mono">.min.json</code>)</li>
     <li><code class="mono">/api/pulse.json</code> — catalog freshness, newest entries, stale verification queue</li>
     <li><code class="mono">/api/playbooks.json</code> — production-ready stack recipes for common film jobs</li>
+    <li><code class="mono">/v0.1/servers</code> — MCP Registry-compatible read-only subregistry API</li>
+    <li><code class="mono">/api/mcp-registry.json</code> — the same registry API response with a <code class="mono">.json</code> extension</li>
     <li><code class="mono">/api/mcps/{slug}.json</code> — one server, structured</li>
     <li><code class="mono">/mcps/{slug}.md</code> — one server, clean markdown</li>
     <li><code class="mono">/stack.md</code> — the pipeline guide as markdown</li>
@@ -878,7 +880,7 @@ export const renderForAgents = (ctx) => {
 </section>`;
   return layout(ctx, {
     title: "For Agents — machine-readable surfaces of mcp.film",
-    description: "How AI agents should consume mcp.film: llms.txt, the JSON registry API, markdown twins, the Atom feed, and the mcp-film meta-MCP server.",
+    description: "How AI agents should consume mcp.film: llms.txt, the JSON registry API, MCP Registry-compatible endpoints, markdown twins, the Atom feed, and the mcp-film meta-MCP server.",
     path: "/for-agents/",
     page: "agents",
     md: "/for-agents.md",
@@ -895,6 +897,7 @@ export const renderForAgents = (ctx) => {
         dateModified: ctx.built.slice(0, 10),
         distribution: [
           { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/api/registry.json" },
+          { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/v0.1/servers" },
           { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/api/pulse.json" },
           { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: site.url + "/api/playbooks.json" },
           { "@type": "DataDownload", encodingFormat: "text/markdown", contentUrl: site.url + "/llms-full.txt" },
@@ -909,6 +912,8 @@ export const renderForAgentsMd = (ctx) => `# mcp.film — agent access guide
 > Every page on mcp.film has a machine twin. Start with /api/registry.json.
 
 - Full registry (JSON): ${ctx.site.url}/api/registry.json
+- MCP Registry-compatible API: ${ctx.site.url}/v0.1/servers
+- MCP Registry JSON alias: ${ctx.site.url}/api/mcp-registry.json
 - Catalog pulse (JSON): ${ctx.site.url}/api/pulse.json
 - Production playbooks (JSON): ${ctx.site.url}/api/playbooks.json
 - Index (llms.txt): ${ctx.site.url}/llms.txt
@@ -945,6 +950,7 @@ export const renderLlmsTxt = (ctx) => {
     "## Start here",
     "",
     `- [Full registry JSON](${site.url}/api/registry.json): every server, structured`,
+    `- [MCP Registry API](${site.url}/v0.1/servers): standard read-only subregistry response`,
     `- [Catalog pulse](${site.url}/pulse.md): newest additions and stale verification queue`,
     `- [Production playbooks](${site.url}/playbooks.md): concrete MCP stacks for common film jobs`,
     `- [Agent access guide](${site.url}/for-agents.md): all machine surfaces`,
@@ -959,6 +965,7 @@ export const renderLlmsTxt = (ctx) => {
     `- [Directory index](${site.url}/index.md): categories overview`,
     `- [Whole directory inline](${site.url}/llms-full.txt): everything in one file`,
     `- [Pulse JSON](${site.url}/api/pulse.json): catalog freshness and ops queue`,
+    `- [MCP Registry JSON](${site.url}/api/mcp-registry.json): extensioned alias for /v0.1/servers`,
     `- [Playbooks JSON](${site.url}/api/playbooks.json): stack recipes for agents`,
     `- [Atom feed](${site.url}/feed.xml): newly added servers`,
   ];
@@ -1228,7 +1235,7 @@ export const render404 = (ctx) =>
 export const renderSitemap = (ctx) => {
   const today = ctx.built.slice(0, 10);
   const urls = [
-    ...["/", "/stack/", "/playbooks/", "/for-agents/", "/pulse/", "/about/", "/submit/", "/llms.txt", "/llms-full.txt", "/api/registry.json", "/api/pulse.json", "/api/playbooks.json", "/stack.md", "/playbooks.md", "/pulse.md", "/index.md"]
+    ...["/", "/stack/", "/playbooks/", "/for-agents/", "/pulse/", "/about/", "/submit/", "/llms.txt", "/llms-full.txt", "/api/registry.json", "/api/mcp-registry.json", "/v0.1/servers", "/api/pulse.json", "/api/playbooks.json", "/stack.md", "/playbooks.md", "/pulse.md", "/index.md"]
       .map((u) => ({ loc: u, lastmod: today })),
     ...ctx.categories.map((c) => ({ loc: `/categories/${c.id}/`, lastmod: today })),
     ...ctx.servers.flatMap((s) => [
@@ -1251,7 +1258,7 @@ export const renderRobots = (ctx) => {
     "Google-Extended", "Applebot-Extended", "CCBot", "meta-externalagent",
   ];
   return `# mcp.film — humans and machines get equal billing here.
-# Machine surfaces: ${ctx.site.url}/llms.txt · ${ctx.site.url}/api/registry.json · ${ctx.site.url}/api/playbooks.json · ${ctx.site.url}/api/pulse.json
+# Machine surfaces: ${ctx.site.url}/llms.txt · ${ctx.site.url}/api/registry.json · ${ctx.site.url}/v0.1/servers · ${ctx.site.url}/api/playbooks.json · ${ctx.site.url}/api/pulse.json
 # Every HTML page has a markdown twin: append .md to the path.
 
 User-agent: *

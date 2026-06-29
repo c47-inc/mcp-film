@@ -21,11 +21,20 @@ const browserPattern = /\b(mozilla|chrome|safari|firefox|edg|opr)\b/i;
 
 export default {
   async fetch(request, env, ctx) {
-    const response = await env.ASSETS.fetch(request);
+    const response = await env.ASSETS.fetch(assetRequestFor(request));
     ctx.waitUntil(captureRequest(request, response, env));
     return response;
   },
 };
+
+function assetRequestFor(request) {
+  const url = new URL(request.url);
+  if (url.pathname === "/v0.1/servers" || url.pathname.endsWith("/versions")) {
+    url.pathname += "/index.html";
+    return new Request(url, request);
+  }
+  return request;
+}
 
 async function captureRequest(request, response, env) {
   try {
@@ -86,6 +95,7 @@ function shouldCapture(request) {
 }
 
 function surfaceFor(pathname) {
+  if (pathname.startsWith("/v0.1/")) return "mcp-registry";
   if (pathname.startsWith("/api/")) return "api";
   if (pathname === "/llms.txt" || pathname === "/llms-full.txt") return "llms";
   if (pathname.endsWith(".md")) return "markdown";
@@ -103,7 +113,7 @@ function classifyTraffic(pathname, userAgent, headers) {
   for (const [family, pattern] of agentMatchers) {
     if (pattern.test(userAgent)) return { kind: "agent", family };
   }
-  if (["api", "llms", "markdown", "feed", "mcp-discovery"].includes(surface)) {
+  if (["api", "llms", "markdown", "feed", "mcp-discovery", "mcp-registry"].includes(surface)) {
     return { kind: "agent", family: surface };
   }
   if (crawlerPattern.test(userAgent)) return { kind: "crawler", family: "crawler" };

@@ -24,6 +24,7 @@ It is built **agents-first**:
 | --- | --- |
 | llms.txt index ([spec](https://llmstxt.org)) | `/llms.txt` · `/llms-full.txt` |
 | Full structured registry | `/api/registry.json` (+ `.min.json`) |
+| MCP Registry-compatible API | `/v0.1/servers` · `/api/mcp-registry.json` |
 | Catalog freshness / ops pulse | `/api/pulse.json` · `/pulse.md` |
 | Production playbooks | `/api/playbooks.json` · `/playbooks.md` |
 | One server, JSON / markdown | `/api/mcps/{slug}.json` · `/mcps/{slug}.md` |

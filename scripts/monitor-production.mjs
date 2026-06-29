@@ -48,6 +48,14 @@ const checks = [
     validateJson: (body) => body.count >= 1 && Array.isArray(body.playbooks),
   },
   {
+    name: "MCP Registry API",
+    url: `${base}/v0.1/servers?limit=5&monitor=${smoke}`,
+    method: "GET",
+    accept: "application/json",
+    expect: (status) => status === 200,
+    validateJson: (body) => Array.isArray(body.servers) && body.servers.length > 0 && body.metadata?.count >= 1,
+  },
+  {
     name: "WWW playbooks API",
     url: `${wwwBase}/api/playbooks.json?monitor=${smoke}`,
     method: "GET",
@@ -65,7 +73,7 @@ const checks = [
   },
 ];
 
-for (const path of ["/llms.txt", "/api/playbooks.json", "/playbooks.md"]) {
+for (const path of ["/llms.txt", "/api/playbooks.json", "/v0.1/servers", "/playbooks.md"]) {
   for (const [family, userAgent] of agentUserAgents) {
     checks.push({
       name: `${family} access ${path}`,

@@ -57,6 +57,8 @@ rule for machine-readable surfaces only:
 ```txt
 http.host in {"mcp.film" "www.mcp.film"} and (
   starts_with(http.request.uri.path, "/api/") or
+  starts_with(http.request.uri.path, "/v0.1/") or
+  starts_with(http.request.uri.path, "/.well-known/mcp/") or
   ends_with(http.request.uri.path, ".md") or
   http.request.uri.path in {
     "/llms.txt"
@@ -64,7 +66,6 @@ http.host in {"mcp.film" "www.mcp.film"} and (
     "/feed.xml"
     "/robots.txt"
     "/sitemap.xml"
-    "/.well-known/mcp/server-card"
   }
 )
 ```
@@ -107,7 +108,7 @@ The worker can run with the public PostHog project token already embedded from
 | --- | --- |
 | `path` | URL path without query values. |
 | `query_keys` | Query parameter names only, not values. |
-| `surface` | `page`, `listing-page`, `category-page`, `api`, `llms`, `markdown`, `feed`, `sitemap`, `robots`, or `mcp-discovery`. |
+| `surface` | `page`, `listing-page`, `category-page`, `api`, `mcp-registry`, `llms`, `markdown`, `feed`, `sitemap`, `robots`, or `mcp-discovery`. |
 | `traffic_kind` | `human_browser`, `agent`, `crawler`, or `unknown`. |
 | `agent_family` | Best-effort family such as `chatgpt`, `claude`, `perplexity`, `mcp-client`, `developer-agent`, `script`, or the agent-readable surface name. |
 | `status` | HTTP status returned by the static asset layer. |

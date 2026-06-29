@@ -62,6 +62,8 @@ add one narrow bypass for agent-readable files:
    ```txt
    http.host in {"mcp.film" "www.mcp.film"} and (
      starts_with(http.request.uri.path, "/api/") or
+     starts_with(http.request.uri.path, "/v0.1/") or
+     starts_with(http.request.uri.path, "/.well-known/mcp/") or
      ends_with(http.request.uri.path, ".md") or
      http.request.uri.path in {
        "/llms.txt"
@@ -69,7 +71,6 @@ add one narrow bypass for agent-readable files:
        "/feed.xml"
        "/robots.txt"
        "/sitemap.xml"
-       "/.well-known/mcp/server-card"
      }
    )
    ```
