@@ -665,7 +665,8 @@ const serverJson = {
   $schema: "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   name: "film.mcp/directory",
   title: "mcp.film directory",
-  description: "Search the curated directory of MCP servers for AI filmmaking, get install configs for any client, and plan a full production stack.",
+  // Registry hard limit: description <= 100 chars.
+  description: "Search the curated directory of MCP servers for AI filmmaking and plan a full production stack.",
   version: mcpPkg.version,
   websiteUrl: site.url,
   repository: { url: `https://github.com/${site.github_repo}`, source: "github", subfolder: "packages/mcp-server" },

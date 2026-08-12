@@ -9,8 +9,8 @@
 #
 # Registry auth secret:
 #   MCP_REGISTRY_KEY — Ed25519 private key (64 hex chars) whose public half
-#                      is in the mcp.film DNS TXT record (v=MCPv1; k=ed25519; ...)
-#                      Registry step skips gracefully if unset.
+#                      build.mjs serves at mcp.film/.well-known/mcp-registry-auth
+#                      (HTTP domain auth). Registry step skips gracefully if unset.
 name: Release (npm + MCP Registry)
 
 on:
@@ -65,7 +65,7 @@ jobs:
           fi
           curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
           cp dist/api/server.json server.json
-          ./mcp-publisher login dns --domain mcp.film --private-key "$MCP_REGISTRY_KEY"
+          ./mcp-publisher login http --domain mcp.film --private-key "$MCP_REGISTRY_KEY"
           ./mcp-publisher publish
           echo "Published film.mcp/directory to registry.modelcontextprotocol.io" >> "$GITHUB_STEP_SUMMARY"
 
