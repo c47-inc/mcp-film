@@ -151,14 +151,14 @@
     "install": {
       "claude_code": null,
       "remote_url": null,
-      "stdio_command": null
+      "stdio_command": "One binary per model. Install them all with the repo's script — curl -sL https://raw.githubusercontent.com/GoogleCloudPlatform/vertex-ai-creative-studio/main/experiments/mcp-genmedia/mcp-genmedia-go/install-online.sh | bash — or build from source with go install ./mcp-avtool-go ./mcp-chirp3-go ./mcp-gemini-go ./mcp-nanobanana-go ./mcp-imagen-go ./mcp-lyria-go ./mcp-veo-go, then point your client at each binary (mcp-veo-go for Veo) with GOOGLE_CLOUD_PROJECT set"
     },
     "auth": { "type": "api_key", "env_var": "GOOGLE_CLOUD_PROJECT", "key_url": "Google Cloud project with Vertex AI enabled; uses Application Default Credentials (gcloud auth application-default login)" },
     "pricing": "paid",
     "links": { "repo": "https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia", "docs": "https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/blob/main/experiments/mcp-genmedia/mcp-genmedia-go/README.md", "site": "https://ai.google.dev/gemini-api/docs/video" },
     "added": "2026-06-11",
     "verified": "2026-08-11",
-    "notes": "Official Google Cloud code but explicitly experimental (lives in /experiments). Repo is busy — 1.2k stars, pushed 2026-08-11 — and the mcp-genmedia tree is intact. Install via the Go toolchain or their pre-built binary installer; supports stdio/HTTP/SSE and GCS or local output. Ships agent skills for storyboarding. With Sora leaving the API on 2026-09-24, this is the most direct official route to Veo 3.1 for an agent."
+    "notes": "Official Google Cloud code but explicitly experimental (lives in /experiments). Repo is busy — 1.2k stars, pushed 2026-08-11 — and the mcp-genmedia tree is intact. Install is the one rough edge: there is no npx one-liner and no published claude mcp add command, so you either pipe their install-online.sh to bash for pre-built binaries or run go install over the seven server directories, then wire each binary into your client yourself. Supports stdio/HTTP/SSE and GCS or local output. Ships agent skills for storyboarding. With Sora leaving the API on 2026-09-24, this is the most direct official route to Veo 3.1 for an agent."
   },
   {
     "slug": "sora",

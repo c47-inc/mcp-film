@@ -7,8 +7,8 @@
     "category": "avatars-performance",
     "featured": false,
     "tagline": "Hosted MCP for avatar videos, lipsync, and 175-language video translation.",
-    "description": "HeyGen's official hosted MCP endpoint lets agents create and manage HeyGen videos with no local install and no API key — auth is a one-time OAuth flow tied to your HeyGen account. Covers Video Agent one-prompt generation, video translation (audio-only or lip-synced, 175+ languages), lipsync jobs, and Photo Avatar / Digital Twin creation, using any custom avatar or voice in your account.",
-    "capabilities": ["avatar-video", "lip-sync", "video-translation", "digital-twin", "voice-library"],
+    "description": "HeyGen's official hosted MCP endpoint lets agents create and manage HeyGen videos with no local install and no API key — auth is a one-time OAuth flow tied to your HeyGen account. The published tool surface spans Video Agent one-prompt and multi-turn generation, video translation with lip-sync (175+ languages), lipsync jobs, avatar groups and looks, templates, voice design and cloning, music and SFX search, AI clipping of long footage, filler-word removal, brand kits and glossaries, and batches of up to 100 videos, translations, or lipsyncs per request.",
+    "capabilities": ["avatar-video", "lip-sync", "video-translation", "digital-twin", "voice-library", "ai-clipping", "batch-processing"],
     "tools_sample": null,
     "install": {
       "claude_code": "claude mcp add --transport http heygen https://mcp.heygen.com/mcp/v1/",
@@ -19,8 +19,8 @@
     "pricing": "credits",
     "links": { "repo": null, "docs": "https://developers.heygen.com/mcp/overview", "site": "https://www.heygen.com/model-context-protocol" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Available on all HeyGen plans; generation consumes plan credits. HeyGen's legacy stdio package (heygen-mcp) is abandoned — the repo 404s; the maintained community fork is sbroenne/heygen-mcp (uvx heygen-mcp-sbroenne with HEYGEN_API_KEY) if you need a local server. HeyGen also ships official Agent Skills (heygen-com/skills)."
+    "verified": "2026-08-12",
+    "notes": "Available on all HeyGen plans; generation consumes plan credits. There is no longer a local option: HeyGen's own heygen-com/heygen-mcp 404s, and the community fork this entry used to recommend (sbroenne/heygen-mcp) has now 404'd too — its PyPI package heygen-mcp-sbroenne is still installable but frozen at 0.3.1 from 2026-01-31 with its source gone, so treat it as abandoned. The hosted remote is the only maintained route. HeyGen's official Agent Skills (heygen-com/skills) remain active — 391 stars, pushed 2026-07-14."
   },
   {
     "slug": "hedra",
@@ -30,20 +30,20 @@
     "category": "avatars-performance",
     "featured": false,
     "tagline": "Character-3 talking-avatar video, TTS, and image generation through Hedra's API.",
-    "description": "Node MCP server for Hedra's generation API: lip-synced character video from an image plus audio (Character-3), text-to-speech, image generation, and asset/credit management. Also routes to third-party models available in Hedra Studio (Veo 3.1, Sora 2, Kling, MiniMax).",
+    "description": "Node MCP server for Hedra's generation API: lip-synced character video from an image plus audio (Character-3), text-to-speech, image generation, and asset/credit management. Its README also advertises third-party models reachable through Hedra Studio, though that list dates from the server's only release and has since drifted from Hedra's own roster.",
     "capabilities": ["avatar-video", "lip-sync", "tts", "text-to-image", "asset-management"],
-    "tools_sample": ["generate_video", "generate_video_with_tts", "generate_text_to_speech", "generate_image", "upload_asset", "get_generation_status", "get_credits"],
+    "tools_sample": ["generate_video", "generate_video_with_tts", "generate_text_to_speech", "generate_image", "upload_asset", "list_models", "get_generation_status", "get_credits"],
     "install": {
       "claude_code": "claude mcp add hedra -e HEDRA_API_KEY=YOUR_KEY -- npx -y mcp-server-hedra",
       "remote_url": null,
       "stdio_command": "npx -y mcp-server-hedra"
     },
-    "auth": { "type": "api_key", "env_var": "HEDRA_API_KEY", "key_url": "https://www.hedra.com/api-profile (requires Creator plan or above)" },
+    "auth": { "type": "api_key", "env_var": "HEDRA_API_KEY", "key_url": "https://www.hedra.com/develop/api-keys (requires a paid Hedra subscription)" },
     "pricing": "credits",
     "links": { "repo": "https://github.com/pasie15/mcp-server-hedra", "docs": "https://www.hedra.com/docs/pages/developer/getting_started/quickstart", "site": "https://www.hedra.com" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "New (Feb 2026), MIT, minimal adoption so far; no official Hedra MCP exists. Requires Node 18+. Hedra API access requires a paid Creator plan and API credits."
+    "verified": "2026-08-12",
+    "notes": "MIT, Node 18+, and effectively frozen: npm mcp-server-hedra is still at the 1.0.0 published on 2026-02-08, the repo has had no push since the same day, and it sits at 2 stars. Still the only Hedra MCP — no official one exists. Two drifts to expect: the key page moved to hedra.com/develop/api-keys (the README's /api-profile link is stale), and where the README lists Veo 3.1, Sora 2, Kling and MiniMax, Hedra's current quickstart advertises Nano Banana Pro, Veo, Grok and Kling — Sora 2 leaves OpenAI's API on 2026-09-24 regardless. The API bills against the same Studio credit balance as the app and needs a paid subscription."
   },
   {
     "slug": "tavus",
@@ -59,14 +59,14 @@
     "install": {
       "claude_code": null,
       "remote_url": null,
-      "stdio_command": "Build from source: clone rakeshdavid/Tavus-MCP, npm install && npm run build, then run node build/index.js with TAVUS_API_KEY"
+      "stdio_command": "Build from source: clone rakeshdavid/Tavus-MCP, npm install && npm run build, then run node build/index.js with TAVUS_API_KEY. Smithery is the documented alternative: npx -y @smithery/cli install @rakeshdavid/tavus-mcp --client claude"
     },
     "auth": { "type": "api_key", "env_var": "TAVUS_API_KEY", "key_url": "https://platform.tavus.io" },
     "pricing": "freemium",
     "links": { "repo": "https://github.com/rakeshdavid/Tavus-MCP", "docs": "https://docs.tavus.io", "site": "https://www.tavus.io" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Install caveat: the README's npm package (tavus-mcp) is NOT actually on npm — install from source or via Smithery. Tavus free developer plan: ~25 min conversational video + 5 min generation. Built on an old MCP SDK version."
+    "verified": "2026-08-12",
+    "notes": "Install caveat, re-confirmed on 2026-08-12: the README's npm package (tavus-mcp) is still NOT on npm — the registry 404s — so install from source or via Smithery. The 25 documented tools still match the README, but the repo has had no commit since 2025-07-09 and holds 2 stars, so treat it as unmaintained rather than merely quiet; it is listed because Tavus still ships no first-party MCP and this remains the most complete open implementation. Tavus free developer plan: ~25 min conversational video + 5 min generation. Built on an old MCP SDK version."
   },
   {
     "slug": "d-id",
@@ -88,7 +88,7 @@
     "pricing": "freemium",
     "links": { "repo": null, "docs": "https://docs.d-id.com/docs/mcp", "site": "https://www.d-id.com" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Docs-platform-hosted (ReadMe-powered) remote MCP; exact tool list not published openly. Landscape note: Synthesia has no official MCP as of June 2026 (only marginal community wrappers and generic Zapier/viaSocket gateways)."
+    "verified": "2026-08-12",
+    "notes": "Docs-platform-hosted (ReadMe-powered) remote MCP; endpoint re-confirmed on 2026-08-12 but the exact tool list is still not published openly. Auth is whatever your client can send: D-ID's own guidance is that you pass API credentials as headers or query parameters through the MCP client, so there is no OAuth flow and no standard env var. Landscape note: Synthesia still has no official MCP (only marginal community wrappers and generic Zapier/viaSocket gateways)."
   }
 ]
