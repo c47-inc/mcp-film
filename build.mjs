@@ -682,6 +682,10 @@ write("api/server.json", JSON.stringify(serverJson, null, 2));
 write(".well-known/mcp/server-card", JSON.stringify(serverJson, null, 2));
 write(".well-known/mcp/server.json", JSON.stringify(serverJson, null, 2));
 
+// Domain-auth proof for publishing film.mcp/* to the official MCP registry.
+// Public key only — the signing key lives outside the repo.
+write(".well-known/mcp-registry-auth", "v=MCPv1; k=ed25519; p=KmVf/w3mT54WLsD3gBpRlEw3vbkWsfWDS+EeuHkYb5s=\n");
+
 // MCP Registry-compatible read-only API. This implements the generic
 // subregistry browse shape from the official registry OpenAPI spec while
 // preserving mcp.film's richer editorial fields under custom _meta.
@@ -716,6 +720,9 @@ write("_headers", `# Cloudflare Pages response headers for extensionless machine
 /.well-known/mcp/*
   Content-Type: application/json; charset=utf-8
   Access-Control-Allow-Origin: *
+
+/.well-known/mcp-registry-auth
+  Content-Type: text/plain; charset=utf-8
 `);
 
 // Cloudflare Pages glue. When deployed to Cloudflare Pages, _worker.js runs in
