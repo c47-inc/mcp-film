@@ -69,7 +69,14 @@ jobs:
         if: steps.gate.outputs.skip != 'true'
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          claude_args: "--max-turns 80"
+          # Bash is denied by default, so the curator could read and search but never
+          # validate, commit, or open a PR — it burned 27 turns and exited green with
+          # 10 permission denials and nothing to show. Grant exactly what its prompt
+          # needs: node for the build gate and logo fetcher, git/gh to ship the PR,
+          # and the web tools it verifies primary sources with. Not Bash(*).
+          claude_args: |
+            --max-turns 80
+            --allowedTools "Read,Glob,Grep,Edit,Write,WebSearch,WebFetch,Bash(node:*),Bash(git:*),Bash(gh:*)"
           prompt: |
             You are the daily curator for mcp.film, the directory of MCP servers
             for AI filmmaking. Read AGENTS.md first — it is your operating manual.
