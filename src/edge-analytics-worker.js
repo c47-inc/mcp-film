@@ -242,6 +242,20 @@ async function captureRequest(request, response, env) {
       referrer_domain: referrerDomain(request.headers.get("referer")),
       accept: compactHeader(request.headers.get("accept")),
       content_type: compactHeader(response.headers.get("content-type")),
+      // Most sessions arrive with no referrer, and a user-agent cannot tell a person who
+      // clicked a link in ChatGPT from a headless fetcher — both look like a browser.
+      // Sec-Fetch can: `none` is a typed, pasted or bookmarked navigation (a person),
+      // while `cross-site` with no Referer is the signature of a referrer-stripped click
+      // out of a chat client. classifyTraffic already reads sec-fetch-dest and discards it.
+      sec_fetch_site: request.headers.get("sec-fetch-site") || null,
+      sec_fetch_mode: request.headers.get("sec-fetch-mode") || null,
+      sec_fetch_dest: request.headers.get("sec-fetch-dest") || null,
+      // Our own agent_family is a user-agent guess and the runbook says to treat it as
+      // one. Cloudflare verifies bot identity by signature and IP range, so where these
+      // are populated they are ground truth — and disagreements measure our classifier.
+      // Availability varies by plan; null here just means the field was not exposed.
+      verified_bot: request.cf?.botManagement?.verifiedBot ?? null,
+      verified_bot_category: request.cf?.verifiedBotCategory ?? null,
       country: request.cf?.country || null,
       colo: request.cf?.colo || null,
       asn: request.cf?.asn || null,

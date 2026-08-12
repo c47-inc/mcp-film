@@ -160,6 +160,10 @@ Browser events include:
 | `agent_family` | Best-effort family such as `chatgpt`, `claude`, `perplexity`, `mcp-client`, `developer-agent`, `script`, or the agent-readable surface name. |
 | `status` | HTTP status returned by the static asset layer. |
 | `country`, `colo`, `asn` | Coarse Cloudflare request metadata. |
+| `sec_fetch_site` | `none` = typed, pasted or bookmarked navigation (a person). `cross-site` with no referrer = a referrer-stripped click, the chat-client signature. Absent = not a browser engine. |
+| `sec_fetch_mode`, `sec_fetch_dest` | Navigation vs subresource fetch, and what the client asked for. |
+| `verified_bot` | Cloudflare's cryptographically verified bot flag. `null` where the plan does not expose it. |
+| `verified_bot_category` | Cloudflare's verified bot category, e.g. `AI Crawler`, `Search Engine Crawler`. Ground truth to check `agent_family` against. |
 
 `mcpfilm_martini_handoff` includes:
 
@@ -446,6 +450,55 @@ GROUP BY event, placement
 ORDER BY events DESC
 LIMIT 50
 ```
+
+## Who are the no-referrer sessions?
+
+The largest open question about this site: most browser-classified traffic arrives
+with no referrer. That is either people clicking through from a chat client (which
+strips referrers) or headless automation reporting a browser user-agent. The answer
+changes strategy — the first means the AI citation channel already converts.
+
+`accept` has always been recorded, so the first pass needs no new data:
+
+```sql
+SELECT
+  properties.accept AS accept,
+  properties.sec_fetch_site AS sec_fetch_site,
+  count() AS requests,
+  count(DISTINCT distinct_id) AS clients
+FROM events
+WHERE event = 'mcpfilm_edge_request'
+  AND properties.traffic_kind = 'human_browser'
+  AND properties.referrer_domain IS NULL
+  AND timestamp > now() - interval 30 day
+GROUP BY accept, sec_fetch_site
+ORDER BY requests DESC
+```
+
+Read it this way: a dominant `*/*` accept is automation. A long negotiated accept list
+plus `sec_fetch_site = none` is a person who typed or bookmarked the URL. A long accept
+list plus `cross-site` and no referrer is a person arriving from a chat client.
+
+## How accurate is our own bot classification?
+
+`agent_family` is a user-agent guess. Where Cloudflare populates `verified_bot_category`
+it is verified identity, so disagreement between the two measures our classifier:
+
+```sql
+SELECT
+  properties.agent_family AS our_guess,
+  properties.verified_bot_category AS cloudflare_says,
+  properties.verified_bot AS verified,
+  count() AS requests
+FROM events
+WHERE event = 'mcpfilm_edge_request'
+  AND timestamp > now() - interval 7 day
+GROUP BY our_guess, cloudflare_says, verified
+ORDER BY requests DESC
+```
+
+If `verified_bot_category` is null across the board after a day of traffic, the plan does
+not expose the field and `agent_family` remains the best available signal.
 
 ## Caveats
 
