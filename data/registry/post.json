@@ -481,5 +481,28 @@
     "added": "2026-08-12",
     "verified": "2026-08-12",
     "notes": "MIT and source-installable while the npm packages are still being published. The working path requires Node 22+, pnpm, a source build, and ffmpeg/ffprobe for editing and local media QA. The MCP is local stdio only, and generated media is written to caller-supplied filesystem paths. The core composition, editing, analysis, transcription, and render path needs no provider key; speech, image, and video generation require separately configured provider credentials."
+  },
+  {
+    "slug": "avclabs",
+    "name": "AVCLabs Media MCP",
+    "vendor": "AVCLabs",
+    "official": true,
+    "category": "enhancement",
+    "featured": false,
+    "tagline": "Cloud video upscaling, image restoration, and SAM3 segmentation without a local GPU.",
+    "description": "AVCLabs' first-party MCP wraps its cloud enhancement backend: upscale and denoise video to 1080p/2K, enhance or colorize stills, and run Meta's SAM3 to pull pixel-level masks from an image by text prompt. Video runs as an async job (create_task then poll get_task_status) so long clips survive the client timeout. For an agent, this is the desktop Video Enhancer AI workflow reachable as tools — useful for cleaning up archival plates or lifting generated footage that came out soft.",
+    "capabilities": ["video-upscaling", "denoising", "image-enhancement", "colorization", "restoration", "segmentation"],
+    "tools_sample": ["create_task", "get_task_status", "enhance_video_sync", "enhance_image_sync", "colorize_image_sync", "denoise_image_sync", "sam3_predict", "get_sam3_task_status"],
+    "install": {
+      "claude_code": "claude mcp add avclabs -e API_KEY=YOUR_KEY -- npx -y @avclabs.ai/media-mcp@latest",
+      "remote_url": null,
+      "stdio_command": "npx -y @avclabs.ai/media-mcp@latest"
+    },
+    "auth": { "type": "api_key", "env_var": "API_KEY", "key_url": "https://mcp.avc.ai/" },
+    "pricing": "paid",
+    "links": { "repo": "https://github.com/avclabs/media-mcp", "docs": "https://www.avclabs.com/avclabs-mcp.html", "site": "https://mcp.avc.ai" },
+    "added": "2026-08-12",
+    "verified": "2026-08-12",
+    "notes": "Official but barely trafficked: the repo has 0 stars and was last pushed 15 Jun 2026, and npm @avclabs.ai/media-mcp is on 0.2.1 from 22 May 2026. MIT, Node 18+, thin client over AVCLabs' HTTP backend. Ceiling is 1080p/2K — below what Topaz or the Topaz models on fal will give you, so this is the cheap-and-cloud option, not the finishing one. enhance_video_sync blocks and truncates around 50s; use create_task plus get_task_status for anything real. SAM3 segmentation is image-only, so it is a masking tool, not video roto. The vendor documents a JSON mcpServers block rather than a CLI one-liner — the command above is the same command/args/env in claude mcp add form. Pricing is behind a Buy Now page at mcp.avc.ai/pricing that did not render for verification, so per-job cost is unconfirmed; the generic env var name API_KEY will also collide if you set it globally."
   }
 ]
