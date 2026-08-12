@@ -1765,7 +1765,8 @@ export const renderForAgentsMd = (ctx) => `# mcp.film — agent access guide
 - Capability markdown for repeated clusters: ${ctx.site.url}/capabilities/{capability}.md
 - Catalog pulse markdown: ${ctx.site.url}/pulse.md
 - New additions feed: ${ctx.site.url}/feed.xml
-- Meta-MCP server: \`claude mcp add mcp-film -- npx -y mcp-film\`
+- Hosted MCP endpoint: \`claude mcp add --transport http mcp-film ${ctx.site.url}/mcp\`
+- Meta-MCP server (local): \`claude mcp add mcp-film -- npx -y mcp-film\`
   (tools: search_film_mcps, get_film_mcp, get_install_config,
   list_film_playbooks, get_film_playbook, plan_film_stack, and submit_listing
   — propose a new server; validated, deduped, returned as a ready-to-file
@@ -1953,6 +1954,7 @@ export const renderLlmsTxt = (ctx) => {
     "## Start here",
     "",
     `- [Full registry JSON](${site.url}/api/registry.json): every server, structured`,
+    `- Hosted MCP endpoint (streamable HTTP, no install): ${site.url}/mcp — the whole directory as callable tools`,
     `- [Brief router](${site.url}/router.md): route a free-form film brief to recommendations, hosted-only picks, playbooks, and Martini handoff`,
     `- [Hosted remotes](${site.url}/remotes.md): remote MCP endpoints that need no local stdio process`,
     `- [Client setup profiles](${site.url}/clients.md): choose Claude Code, Claude Desktop, Cursor, hosted remote, or meta-MCP setup shapes`,

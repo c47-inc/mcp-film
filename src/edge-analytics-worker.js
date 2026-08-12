@@ -40,6 +40,7 @@ const agentReadableSurfaces = new Set([
   "listing-json",
   "listing-markdown",
   "mcp-discovery",
+  "mcp-endpoint",
   "mcp-registry",
   "playbooks-json",
   "playbooks-markdown",
@@ -57,6 +58,9 @@ const agentReadableSurfaces = new Set([
 
 export default {
   async fetch(request, env, ctx) {
+    const mcpResponse = await mcpEndpointResponse(request, env, ctx);
+    if (mcpResponse) return mcpResponse;
+
     const canonicalRedirect = canonicalRedirectResponse(request, env);
     if (canonicalRedirect) {
       ctx.waitUntil(captureRequest(request, canonicalRedirect, env));
@@ -126,6 +130,133 @@ function sponsorDestinationFor(request, env) {
   destination.searchParams.set("src_kind", classification.kind);
   return destination;
 }
+
+// ---- /mcp: the directory served as a hosted streamable-HTTP MCP endpoint.
+// Stateless (no sessions, no SSE): every POST is a self-contained JSON-RPC
+// exchange over the same TOOLS/callTool core the npx server uses. Data comes
+// from this deployment's own static JSON, so endpoint and site can't drift.
+const MCP_VERSION = "__MCPFILM_MCP_VERSION__";
+let mcpCallTool = null;
+const mcpAssetCache = {};
+
+function mcpLoaders(env, origin) {
+  const load = (pathname) => async () => {
+    if (mcpAssetCache[pathname]) return mcpAssetCache[pathname];
+    const res = await env.ASSETS.fetch(new Request(new URL(pathname, origin)));
+    if (!res.ok) throw new Error(`registry data unavailable (${pathname} -> ${res.status})`);
+    const data = await res.json();
+    data._source = "live";
+    mcpAssetCache[pathname] = data;
+    return data;
+  };
+  return {
+    loadRegistry: load("/api/registry.min.json"),
+    loadPlaybooks: load("/api/playbooks.json"),
+    loadRecommendations: load("/api/recommendations.json"),
+    loadPulse: load("/api/pulse.json"),
+  };
+}
+
+function mcpHeaders() {
+  const out = jsonHeaders();
+  out.set("access-control-allow-methods", "POST, OPTIONS");
+  out.set("access-control-allow-headers", "content-type, accept, authorization, mcp-protocol-version, mcp-session-id");
+  return out;
+}
+
+async function mcpHandleMessage(msg) {
+  if (!msg || typeof msg !== "object" || msg.jsonrpc !== "2.0" || typeof msg.method !== "string") {
+    return { jsonrpc: "2.0", id: (msg && msg.id) ?? null, error: { code: -32600, message: "Invalid Request" } };
+  }
+  const { id, method, params } = msg;
+  const isNotification = id === undefined;
+  try {
+    if (method === "initialize") {
+      const offered = params?.protocolVersion;
+      return {
+        jsonrpc: "2.0", id,
+        result: {
+          protocolVersion: typeof offered === "string" ? offered : "2025-06-18",
+          capabilities: { tools: {} },
+          serverInfo: { name: "mcp-film", title: "mcp.film directory", version: MCP_VERSION },
+        },
+      };
+    }
+    if (method === "tools/list") return { jsonrpc: "2.0", id, result: { tools: TOOLS } };
+    if (method === "tools/call") {
+      const result = await mcpCallTool(params?.name, params?.arguments);
+      return {
+        jsonrpc: "2.0", id,
+        result: {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+          isError: Boolean(result?.error),
+        },
+      };
+    }
+    if (method === "ping") return { jsonrpc: "2.0", id, result: {} };
+    if (isNotification) return null;
+    return { jsonrpc: "2.0", id, error: { code: -32601, message: `Method not found: ${method}` } };
+  } catch (e) {
+    if (isNotification) return null;
+    return { jsonrpc: "2.0", id, error: { code: -32603, message: String(e?.message ?? e) } };
+  }
+}
+
+async function mcpEndpointResponse(request, env, ctx) {
+  const url = new URL(request.url);
+  if (url.pathname !== "/mcp" && url.pathname !== "/mcp/") return null;
+
+  const reply = (body, status, extras) => {
+    const response = new Response(body === null ? null : JSON.stringify(body, null, 2), {
+      status,
+      headers: mcpHeaders(),
+    });
+    ctx.waitUntil(captureRequest(request, response, env, extras));
+    return response;
+  };
+
+  if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: mcpHeaders() });
+  if (request.method !== "POST") {
+    // No server-initiated stream here; the spec's answer for stream-less servers is 405.
+    const response = new Response(JSON.stringify({
+      error: "POST JSON-RPC 2.0 messages to this endpoint (MCP streamable HTTP, stateless).",
+      connect: "claude mcp add --transport http mcp-film https://mcp.film/mcp",
+      docs: "https://mcp.film/for-agents/",
+    }, null, 2), { status: 405, headers: mcpHeaders() });
+    response.headers.set("allow", "POST, OPTIONS");
+    ctx.waitUntil(captureRequest(request, response, env, { rpc_method: null }));
+    return response;
+  }
+
+  let message;
+  try {
+    message = await request.json();
+  } catch {
+    return reply({ jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error" } }, 400, { rpc_method: "parse-error" });
+  }
+
+  if (!mcpCallTool) mcpCallTool = makeCallTool(mcpLoaders(env, url.origin), MCP_VERSION);
+
+  const describe = (m) => (m && typeof m === "object" && m.method ? String(m.method) : "invalid");
+  const extras = {
+    rpc_method: (Array.isArray(message) ? message.map(describe).join(",") : describe(message)).slice(0, 120),
+    rpc_tool: !Array.isArray(message) && message?.method === "tools/call"
+      ? String(message.params?.name ?? "").slice(0, 60) || null
+      : null,
+  };
+
+  // 2025-06-18 removed JSON-RPC batching, but answering a legacy batch beats erroring on it.
+  if (Array.isArray(message)) {
+    if (!message.length) return reply({ jsonrpc: "2.0", id: null, error: { code: -32600, message: "Invalid Request" } }, 400, extras);
+    const replies = (await Promise.all(message.map(mcpHandleMessage))).filter((r) => r !== null);
+    return replies.length ? reply(replies, 200, extras) : reply(null, 202, extras);
+  }
+
+  const single = await mcpHandleMessage(message);
+  return single === null ? reply(null, 202, extras) : reply(single, 200, extras);
+}
+
+// __MCPFILM_MCP_CORE__ (build.mjs splices packages/mcp-server/core.mjs here)
 
 async function registryApiResponse(request, env) {
   const url = new URL(request.url);
@@ -213,7 +344,7 @@ function assetRequestFor(request) {
   return request;
 }
 
-async function captureRequest(request, response, env) {
+async function captureRequest(request, response, env, extras = null) {
   try {
     if (!shouldCapture(request)) return;
 
@@ -263,6 +394,7 @@ async function captureRequest(request, response, env) {
       "$current_url": url.origin + url.pathname,
       "$geoip_disable": true,
       "$process_person_profile": false,
+      ...(extras || {}),
     };
 
     if (env.ANALYTICS_DEBUG_UA === "true") properties.user_agent = userAgent.slice(0, 240);
@@ -352,8 +484,10 @@ async function sendPosthogEvent(posthog, event, distinctId, properties) {
 }
 
 function shouldCapture(request) {
-  if (request.method !== "GET" && request.method !== "HEAD") return false;
   const url = new URL(request.url);
+  // The MCP endpoint is POST-only; it is exactly the traffic this worker exists to see.
+  if (url.pathname === "/mcp" || url.pathname === "/mcp/") return true;
+  if (request.method !== "GET" && request.method !== "HEAD") return false;
   if (url.pathname.startsWith("/assets/")) return false;
   if (staticAssetPattern.test(url.pathname)) return false;
   return true;
@@ -424,6 +558,7 @@ function routePropertiesFor(pathname) {
   if (pathname === "/feed.xml") return route("feed", "feed");
   if (pathname === "/sitemap.xml") return route("sitemap", "sitemap");
   if (pathname === "/robots.txt") return route("robots", "robots");
+  if (pathname === "/mcp" || pathname === "/mcp/") return route("mcp-endpoint", "mcp-endpoint");
   if (pathname.startsWith("/.well-known/mcp/")) return route("mcp-discovery", "mcp-discovery");
   return route("page", "page");
 }

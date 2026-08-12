@@ -8,6 +8,12 @@ capability, with copy-paste install configs and a full-pipeline planner.
 claude mcp add mcp-film -- npx -y mcp-film
 ```
 
+Or connect the hosted endpoint — same tools, no local install:
+
+```sh
+claude mcp add --transport http mcp-film https://mcp.film/mcp
+```
+
 ## Tools
 
 | Tool | What it does |

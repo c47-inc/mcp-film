@@ -486,6 +486,7 @@ ctx.pulse = {
     { label: "router.md", url: `${site.url}/router.md`, kind: "brief-router" },
     { label: "feed.xml", url: `${site.url}/feed.xml`, kind: "new-additions-feed" },
     { label: "server-card", url: `${site.url}/.well-known/mcp/server-card`, kind: "mcp-discovery" },
+    { label: "hosted MCP endpoint", url: `${site.url}/mcp`, kind: "hosted-mcp" },
     { label: "MCP Registry API", url: `${site.url}/v0.1/servers`, kind: "mcp-registry-api" },
   ],
   operations: {
@@ -670,6 +671,7 @@ const serverJson = {
   version: mcpPkg.version,
   websiteUrl: site.url,
   repository: { url: `https://github.com/${site.github_repo}`, source: "github", subfolder: "packages/mcp-server" },
+  remotes: [{ type: "streamable-http", url: `${site.url}/mcp` }],
   packages: [{
     registryType: "npm",
     registryBaseUrl: "https://registry.npmjs.org",
@@ -729,8 +731,13 @@ write("_headers", `# Cloudflare Pages response headers for extensionless machine
 // Cloudflare Pages glue. When deployed to Cloudflare Pages, _worker.js runs in
 // advanced mode and records server-side request analytics for agent/API traffic
 // that browser JavaScript cannot see. GitHub Pages simply serves it as a file.
+const mcpCoreInline = fs
+  .readFileSync(path.join(ROOT, "packages/mcp-server/core.mjs"), "utf8")
+  .replace(/^export /gm, "");
 const edgeWorker = fs
   .readFileSync(path.join(ROOT, "src/edge-analytics-worker.js"), "utf8")
+  .replace("// __MCPFILM_MCP_CORE__ (build.mjs splices packages/mcp-server/core.mjs here)", () => mcpCoreInline)
+  .replaceAll("__MCPFILM_MCP_VERSION__", mcpPkg.version)
   .replaceAll("__MCPFILM_POSTHOG_KEY__", site.analytics?.posthog_key ?? "")
   .replaceAll("__MCPFILM_POSTHOG_HOST__", site.analytics?.posthog_host ?? "https://us.i.posthog.com")
   .replaceAll("__MCPFILM_CANONICAL_HOST__", site.domain)
