@@ -7,7 +7,7 @@
     "category": "video-generation",
     "featured": false,
     "tagline": "Official hosted MCP: Gen-4.5, Seedance, Kling and Veo video from any agent.",
-    "description": "Runway's hosted MCP server connects agents like Claude, ChatGPT and Cursor to Runway's full generation stack. It routes requests to Gen-4.5, Seedance 2.0, Kling 3.0, Veo 3.1, GPT Image 2 and Nano Banana Pro depending on your plan, making it a one-stop video tool for filmmaker agents with automatic task polling and media URL delivery.",
+    "description": "Runway's hosted MCP server connects agents like Claude, ChatGPT and Cursor to Runway's full generation stack. As of August 2026 the marketing page lists Gen-4.5, Gen-4 Turbo, Gen-4 Image, Seedance 2.0, Kling 3.0, Veo 3.1, GPT Image 2 and Nano Banana Pro, routed by plan, making it a one-stop video tool for filmmaker agents with automatic task polling and media URL delivery.",
     "capabilities": ["text-to-video", "image-to-video", "text-to-image", "video-upscaling", "video-editing"],
     "tools_sample": ["runway_generateVideo", "runway_generateImage", "runway_upscaleVideo", "runway_editVideo", "runway_getTask"],
     "install": {
@@ -17,10 +17,10 @@
     },
     "auth": { "type": "oauth", "env_var": null, "key_url": "Hosted MCP authenticates with your Runway account (OAuth). Self-hosted repo uses RUNWAYML_API_SECRET from dev.runwayml.com" },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/runwayml/runway-api-mcp-server", "docs": "https://help.runwayml.com/hc/en-us/articles/51931843164691-Connecting-to-Runway-MCP", "site": "https://runwayml.com/mcp" },
+    "links": { "repo": "https://github.com/runwayml/runway-api-mcp-server", "docs": "https://help.runwayml.com/hc/en-us/articles/51931843164691-Connecting-to-Runway-MCP", "site": "https://runway.com/mcp" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Hosted server (OAuth, no API key, bills Runway credits) is the flagship; an open-source MIT repo exists for self-hosting. Generated asset URLs from the API expire after 24h — download outputs promptly."
+    "verified": "2026-08-11",
+    "notes": "Hosted server (OAuth, no API key, bills Runway credits) is the flagship; an open-source repo exists for self-hosting and was last pushed 2026-08-10. Runway has moved its web presence from runwayml.com to runway.com — the old host 308s across, and the mcp.runwayml.com endpoint still answers (401 unauthenticated). The Zendesk help article blocks scripted fetches; open it in a browser. Generated asset URLs from the API expire after 24h — download outputs promptly."
   },
   {
     "slug": "minimax",
@@ -30,9 +30,9 @@
     "category": "video-generation",
     "featured": false,
     "tagline": "Official MiniMax server: Hailuo video, image gen, music, TTS and voice cloning.",
-    "description": "MiniMax's official MCP server exposes Hailuo video generation (MiniMax-Hailuo-02, 6s/10s at 768P/1080P), text-to-image, music generation (music-1.5), and best-in-class multilingual TTS with voice cloning and voice design. One vendor and one key covers both your shots and your dialogue — rare breadth for a single official server.",
+    "description": "MiniMax's official MCP server exposes Hailuo video generation, text-to-image, music generation, and best-in-class multilingual TTS with voice cloning and voice design. One vendor and one key covers both your shots and your dialogue — rare breadth for a single official server.",
     "capabilities": ["text-to-video", "image-to-video", "text-to-image", "tts", "voice-cloning", "voice-design", "music"],
-    "tools_sample": ["generate_video", "query_video_generation", "text_to_image", "text_to_audio", "voice_clone", "voice_design", "music_generation", "list_voices"],
+    "tools_sample": ["generate_video", "query_video_generation", "text_to_image", "text_to_audio", "voice_clone", "voice_design", "music_generation", "list_voices", "play_audio"],
     "install": {
       "claude_code": "claude mcp add minimax -e MINIMAX_API_KEY=YOUR_KEY -e MINIMAX_API_HOST=https://api.minimax.io -- uvx minimax-mcp",
       "remote_url": null,
@@ -42,8 +42,8 @@
     "pricing": "paid",
     "links": { "repo": "https://github.com/MiniMax-AI/MiniMax-MCP", "docs": "https://platform.minimax.io/docs/guides/mcp-guide", "site": "https://www.minimax.io" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "MIT, ~1.5k stars, actively maintained, with an official JS sibling (MiniMax-AI/MiniMax-MCP-JS). MINIMAX_API_RESOURCE_MODE toggles URL vs local-file output; MINIMAX_MCP_BASE_PATH sets the output directory."
+    "verified": "2026-08-11",
+    "notes": "MIT, ~1.5k stars, with an official JS sibling (MiniMax-AI/MiniMax-MCP-JS). Maintenance has slowed: last repo push 2026-05-21, PyPI minimax-mcp 0.0.18 from 2026-01-07, and the MCP guide still documents MiniMax-Hailuo-02 plus the older T2V/I2V-01 Director line rather than anything newer. image_to_video is JS-only. MINIMAX_API_RESOURCE_MODE toggles URL vs local-file output; MINIMAX_MCP_BASE_PATH sets the output directory."
   },
   {
     "slug": "higgsfield",
@@ -52,8 +52,8 @@
     "official": true,
     "category": "video-generation",
     "featured": false,
-    "tagline": "Hosted connector to 30+ video/image models: Kling 3, Veo 3, Sora 2, Soul, Seedance.",
-    "description": "Higgsfield's official hosted MCP (launched April 2026) exposes its full platform — 30+ models including Kling 3, Veo 3, Sora 2, Seedance, Wan, Hailuo and its own Soul/Cinema Studio — through one endpoint. Agents can generate 4K images, videos up to 15s, train consistent characters and browse creation history on existing Higgsfield plan credits.",
+    "tagline": "Hosted connector to 30+ models: Seedance 2.5, Kling 3, Soul 2.0, Nano Banana Pro.",
+    "description": "Higgsfield's official hosted MCP exposes its platform — advertised as 30+ models — through one OAuth endpoint. The models named on its own MCP page as of August 2026 are Seedance 2.5, Seedance 2.0, Kling 3, Soul 2.0, Nano Banana Pro, Google Omni Flash, Seedream 5.0 Lite and GPT Image 2, with Cinema Studio, Flux, MiniMax Hailuo and Veo listed in the wider roster. Agents can generate 4K images, videos up to 15s, train consistent characters and browse creation history on existing Higgsfield plan credits.",
     "capabilities": ["text-to-video", "image-to-video", "text-to-image", "character-consistency", "history-browsing"],
     "tools_sample": null,
     "install": {
@@ -65,8 +65,8 @@
     "pricing": "credits",
     "links": { "repo": null, "docs": "https://higgsfield.ai/mcp", "site": "https://higgsfield.ai" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Works with Claude (web/Cowork/Claude Code) and any MCP client; also ships a CLI and agent skills. Community alternatives exist but the official hosted endpoint is the safe pick."
+    "verified": "2026-08-11",
+    "notes": "Endpoint answers 401 unauthenticated, so it is alive and OAuth-gated. Sora is no longer in the roster — OpenAI is retiring it, so do not plan around it here. tools_sample stays null because the endpoint requires auth and Higgsfield publishes no tool list; call tools/list after connecting. Works with Claude and any MCP client; also ships a CLI and agent skills."
   },
   {
     "slug": "pika",
@@ -75,21 +75,21 @@
     "official": true,
     "category": "video-generation",
     "featured": false,
-    "tagline": "'Pikafy' your agent: Pika's video, image, music and voiceover tools in Claude.",
-    "description": "Pika's official hosted MCP connects its creative suite — video, image, music, audio and voiceover generation — to Claude and other MCP clients, backed by 42 atomic media tools. An official Claude Code plugin adds curated /pika:podcast, /pika:explainer and /pika:ugc-ads slash commands for end-to-end short-form production.",
+    "tagline": "Pika's hosted media toolkit plus 17 production skills, now served from pika.art.",
+    "description": "Pika's official hosted MCP connects its creative suite — video, image, music, audio and voiceover generation — to Claude and other MCP clients, routing to Pika Video, Seedance 2.0, Kling, MiniMax, Veo 3, Gemini Image, Seedream and ElevenLabs among others. An official plugin bundle adds 17 curated slash commands including /podcast, /explainer, /ugc-ads, /4k-vfx, /persona-builder and /viral-hook for end-to-end short-form production.",
     "capabilities": ["text-to-video", "image-to-video", "text-to-image", "audio-generation", "voiceover", "video-editing"],
     "tools_sample": null,
     "install": {
-      "claude_code": "claude mcp add --transport http pika https://mcp.pika.me/api/mcp",
-      "remote_url": "https://mcp.pika.me/api/mcp",
+      "claude_code": "claude mcp add --transport http pika https://experiment-mcp.pika.art/api/mcp",
+      "remote_url": "https://experiment-mcp.pika.art/api/mcp",
       "stdio_command": null
     },
     "auth": { "type": "oauth", "env_var": null, "key_url": "Log in to your Pika account when authorizing the connector" },
     "pricing": "credits",
-    "links": { "repo": null, "docs": "https://www.pika.me/mcp", "site": "https://www.pika.me" },
+    "links": { "repo": null, "docs": "https://experiment.pika.art/mcp", "site": "https://experiment.pika.art" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Part of Pika's 2026 pivot to an agent platform. Skill-driven workflows (podcast/explainer/UGC) make it strong for templated content; per-tool documentation is thinner than Runway or fal."
+    "verified": "2026-08-11",
+    "notes": "Pika moved its MCP docs off pika.me: both www.pika.me/mcp and www.pika.me now 307 to experiment.pika.art, and the documented endpoint is experiment-mcp.pika.art. The legacy mcp.pika.me/api/mcp endpoint still answers (401), so existing configs are not dead yet, but expect it to go. The docs also offer a skills install, 'npx skills add Pika-Labs/Pika-Plugins -all -y', which is the plugin bundle rather than the MCP connector. Per-tool documentation is thinner than Runway or fal."
   },
   {
     "slug": "agent-media",
@@ -111,8 +111,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/gitroomhq/agent-media", "docs": "https://agent-media.ai/skills", "site": "https://agent-media.ai" },
     "added": "2026-06-29",
-    "verified": "2026-06-29",
-    "notes": "Apache-2.0, npm @agentmedia/mcp-server 0.7.5, Node >=20, public repo mirrored from a private monorepo. Docs are moving fast: the root README describes the newer make_ugc skill, while the published MCP package documents create_video/show_your_app/product_acting_ugc/list_actors/get_video_status; trust MCP tools/list or /v1/public/skills for the live schema. Social publishing requires the user to complete OAuth for TikTok, Instagram, or X."
+    "verified": "2026-08-11",
+    "notes": "Apache-2.0, 79 stars, npm @agentmedia/mcp-server 0.7.9 published 2026-08-01, repo pushed 2026-08-02 — one of the more actively maintained servers in this category. Node >=20, public repo mirrored from a private monorepo. Docs move fast: the root README describes the newer make_ugc skill while the published package documents create_video/show_your_app/product_acting_ugc/list_actors/get_video_status; trust MCP tools/list or /v1/public/skills for the live schema. Social publishing requires the user to complete OAuth for TikTok, Instagram, or X."
   },
   {
     "slug": "pixverse",
@@ -134,8 +134,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/PixVerseAI/PixVerse-MCP", "docs": "https://docs.platform.pixverse.ai/how-to-get-api-key-882968m0", "site": "https://platform.pixverse.ai" },
     "added": "2026-06-28",
-    "verified": "2026-06-28",
-    "notes": "Official MIT repo, PyPI pixverse-mcp 0.2.2. README says Python 3.10+, but the published package metadata requires Python >=3.12; use a current uv/uvx runtime. PixVerse API credits are separate from consumer app credits."
+    "verified": "2026-08-11",
+    "notes": "Official MIT repo, 51 stars, PyPI pixverse-mcp still 0.2.2 from 2025-10-21 with no repo push since 2025-10-22 — official but effectively frozen for ten months, so assume the model list lags the PixVerse platform. README says Python 3.10+, but the published package metadata requires Python >=3.12; use a current uv/uvx runtime. PixVerse API credits are separate from consumer app credits."
   },
   {
     "slug": "google-genmedia",
@@ -157,8 +157,8 @@
     "pricing": "paid",
     "links": { "repo": "https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia", "docs": "https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/blob/main/experiments/mcp-genmedia/mcp-genmedia-go/README.md", "site": "https://ai.google.dev/gemini-api/docs/video" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Official Google Cloud code but explicitly experimental (lives in /experiments). Install via the Go toolchain or their pre-built binary installer; supports stdio/HTTP/SSE and GCS or local output. Ships 'genmedia-producer' agent skills for storyboarding."
+    "verified": "2026-08-11",
+    "notes": "Official Google Cloud code but explicitly experimental (lives in /experiments). Repo is busy — 1.2k stars, pushed 2026-08-11 — and the mcp-genmedia tree is intact. Install via the Go toolchain or their pre-built binary installer; supports stdio/HTTP/SSE and GCS or local output. Ships agent skills for storyboarding. With Sora leaving the API on 2026-09-24, this is the most direct official route to Veo 3.1 for an agent."
   },
   {
     "slug": "sora",
@@ -167,8 +167,8 @@
     "official": false,
     "category": "video-generation",
     "featured": false,
-    "tagline": "Community MCP for OpenAI's Sora 2 API: create, remix and manage video jobs.",
-    "description": "The most-starred community MCP for OpenAI's Sora 2 video API: create videos from text, track job status, list, download and remix generations. OpenAI ships no official Sora MCP as of June 2026, so this is the practical way to put Sora directly in an agent pipeline — or reach Sora via the Runway and Higgsfield hubs.",
+    "tagline": "Retiring: OpenAI removes the Videos API and all sora-2 models on 2026-09-24.",
+    "description": "OpenAI announced the deprecation of the Videos API and the sora-2 family on 2026-03-24, with removal from the API scheduled for 2026-09-24; the consumer Sora app was discontinued on 2026-04-26. This community server — the most-starred Sora MCP — still builds and still calls the API, but it stops working the day the endpoint goes. Listed so agents that ask for Sora find the retirement date instead of a dead install, not because you should build on it.",
     "capabilities": ["text-to-video", "remix", "job-management", "auto-download"],
     "tools_sample": ["create-video", "get-video-status", "list-videos", "download-video", "remix-video", "delete-video"],
     "install": {
@@ -176,12 +176,12 @@
       "remote_url": null,
       "stdio_command": null
     },
-    "auth": { "type": "api_key", "env_var": "OPENAI_API_KEY", "key_url": "https://platform.openai.com/api-keys (account must have Sora API access)" },
+    "auth": { "type": "api_key", "env_var": "OPENAI_API_KEY", "key_url": "https://platform.openai.com/api-keys — access ends when the Videos API is removed on 2026-09-24" },
     "pricing": "paid",
-    "links": { "repo": "https://github.com/Doriandarko/sora-mcp", "docs": null, "site": null },
+    "links": { "repo": "https://github.com/Doriandarko/sora-mcp", "docs": "https://developers.openai.com/api/docs/deprecations", "site": null },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "MIT, 211 stars; install is clone + npm install + npm run build (no published npx package); includes stdio and HTTP variants. Alternative: writingmate/sora-2-mcp adds sora-2-pro, 720p-4K, 4-12s durations and FFmpeg merging."
+    "verified": "2026-08-11",
+    "notes": "OpenAI's deprecation table lists sora-2, sora-2-pro and their snapshots with a 2026-09-24 shutdown and names no recommended replacement. The repo (MIT, 209 stars) has had no commit since 2025-10-08, so nobody is migrating it anywhere; the writingmate/sora-2-mcp alternative is likewise stale. Migrate now: Veo 3.1 via the Google GenMedia MCP, Kling 3.0 or Seedance 2.0 via the Runway MCP, or Seedance 2.5 and Kling 3 via Higgsfield — all confirmed live on 2026-08-11. Export anything still stored on OpenAI before the cutoff."
   },
   {
     "slug": "kling",
@@ -191,7 +191,7 @@
     "category": "video-generation",
     "featured": false,
     "tagline": "Fullest direct Kling API MCP: video, extend, lip-sync, effects, KOLORS images.",
-    "description": "Community server hitting Kuaishou's official Kling API directly, with 13 tools spanning text/image-to-video, video extension, lip-sync with TTS voices, effects, KOLORS image generation and virtual try-on. The most complete option if you want Kling on your own API account rather than via a hub.",
+    "description": "Community server hitting Kuaishou's official Kling API directly, with tools spanning text/image-to-video, video extension, lip-sync with TTS voices, effects, KOLORS image generation and virtual try-on. The most complete option if you want Kling on your own API account rather than via a hub.",
     "capabilities": ["text-to-video", "image-to-video", "video-extension", "lip-sync", "video-effects", "text-to-image"],
     "tools_sample": ["generate_video", "generate_image_to_video", "extend_video", "create_lipsync", "apply_video_effect", "generate_image", "get_account_balance"],
     "install": {
@@ -203,8 +203,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/199-mcp/mcp-kling", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "MIT, 30 stars. README documents models through Kling v1.x/v2-master — for Kling 3.0 access today, the Runway, Higgsfield or fal hub MCPs may be fresher. Auto-downloads results locally."
+    "verified": "2026-08-11",
+    "notes": "MIT, 40 stars. npm mcp-kling is at 5.2.0 (2025-12-22) while the public repo has not been pushed since 2025-06-14 — the published package is well ahead of the visible source, so read the npm tarball, not the README, for the current tool list. The README documents models through Kling v1.x/v2-master; for Kling 3.0 today the Runway, Higgsfield or fal hub MCPs are fresher. Auto-downloads results locally."
   },
   {
     "slug": "luma",
@@ -213,8 +213,8 @@
     "official": false,
     "category": "video-generation",
     "featured": false,
-    "tagline": "Dream Machine API in MCP form: Ray 2 video, Photon images, extend and interpolate.",
-    "description": "Community Python server for Luma's Dream Machine API v1: text/image-to-video on ray-2 and ray-flash-2, video extension and interpolation, Photon image generation, upscaling, audio addition and credit checks. Luma has no official MCP, so this is the main direct-API option.",
+    "tagline": "Community MCP for Luma's legacy Dream Machine API; Luma's current stack is the Agents API.",
+    "description": "Community Python server for Luma's Dream Machine API v1: text/image-to-video on ray-2 and ray-flash-2, video extension and interpolation, Photon image generation, upscaling, audio addition and credit checks. Luma has since moved its platform to the Agents API — uni-1 and uni-1-max for images, ray-3.2 for video, a new base URL and a new key name — which this server does not speak and for which no MCP exists. Still the only direct-API option in MCP form, but it is pointed at the previous generation.",
     "capabilities": ["text-to-video", "image-to-video", "video-extension", "interpolation", "text-to-image", "upscaling"],
     "tools_sample": ["create_generation", "get_generation", "list_generations", "upscale_generation", "add_audio", "generate_image", "get_credits", "get_camera_motions"],
     "install": {
@@ -222,11 +222,34 @@
       "remote_url": null,
       "stdio_command": "uv run --project /path/to/luma-ai-mcp-server -m luma_ai_mcp_server"
     },
-    "auth": { "type": "api_key", "env_var": "LUMA_API_KEY", "key_url": "https://lumalabs.ai/dream-machine/api" },
+    "auth": { "type": "api_key", "env_var": "LUMA_API_KEY", "key_url": "https://lumalabs.ai/dream-machine/api — the Agents API uses a different key under LUMA_AGENTS_API_KEY at agents.lumalabs.ai/v1" },
     "pricing": "paid",
-    "links": { "repo": "https://github.com/bobtista/luma-ai-mcp-server", "docs": "https://docs.lumalabs.ai/docs/api", "site": null },
+    "links": { "repo": "https://github.com/bobtista/luma-ai-mcp-server", "docs": "https://docs.agents.lumalabs.ai", "site": null },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "MIT but tiny (6 stars) — functional rather than polished; runs from a cloned repo via uv. Luma Ray models are also reachable through fal, Replicate, Runway and PiAPI hub MCPs."
+    "verified": "2026-08-11",
+    "notes": "MIT but tiny (7 stars) and last committed 2025-04-01 — functional rather than maintained; runs from a cloned repo via uv. Kept listed because nothing has been switched off: docs.lumalabs.ai still serves the Dream Machine reference and api.lumalabs.ai/dream-machine/v1/ping still returns 200 as of 2026-08-11. Luma publishes no MCP server for the Agents API, so ray-3.2 and uni-1 are reachable only over REST or the Go/Python/JS SDKs, or through fal, Replicate and Runway hub MCPs."
+  },
+  {
+    "slug": "wireflow",
+    "name": "Wireflow",
+    "vendor": "Wireflow",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Exposes whole ad-creative workflows over MCP rather than individual model endpoints.",
+    "description": "Wireflow is a hosted ad-creative platform that fans a single brief out into hundreds of static, carousel, video and UGC variants, with brand kits, compositing, colour grading and publishing to social. Its MCP connector exposes the workflow layer rather than raw models: an agent lists templates and models, clones or authors a workflow from a prompt, runs it, polls the execution and schedules automations. For a filmmaker-agent, that means one call produces a finished, brand-consistent deliverable instead of a shot you still have to assemble.",
+    "capabilities": ["workflow-automation", "text-to-video", "text-to-image", "ugc-video", "batch-generation", "social-publishing"],
+    "tools_sample": ["list_workflows", "get_workflow", "list_templates", "list_models", "clone_template", "create_workflow_from_prompt", "update_workflow_config", "run_workflow", "get_execution", "list_automations", "create_automation", "get_credit_balance"],
+    "install": {
+      "claude_code": "claude mcp add --transport http wireflow https://www.wireflow.ai/api/mcp",
+      "remote_url": "https://www.wireflow.ai/api/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth 2.1 with PKCE and Dynamic Client Registration (RFC 7591) — sign in with a Wireflow account, no pre-shared credentials" },
+    "pricing": "freemium",
+    "links": { "repo": null, "docs": "https://www.wireflow.ai/docs/mcp", "site": "https://www.wireflow.ai" },
+    "added": "2026-08-11",
+    "verified": "2026-08-11",
+    "notes": "Disclosure: a direct competitor to Martini, this directory's sponsor, listed on the same terms as everything else. Endpoint verified alive and auth-gated (401) on 2026-08-11 and the tool list is taken verbatim from Wireflow's own MCP docs. Closed source, no public repo, and the vendor documents only connector-UI setup — the CLI command above is the standard streamable-HTTP form of the documented endpoint. Credits are the real constraint: free tier with starter credits, paid from $24/month for 1,600 credits, roughly 30 credits per image and 17 credits per second of video, so a minute of video is not cheap. Ad-format oriented; it is not a general shot-generation tool."
   }
 ]

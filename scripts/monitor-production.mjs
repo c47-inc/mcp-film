@@ -18,7 +18,62 @@ const agentUserAgents = [
   ["Perplexity", "PerplexityBot-mcpfilm-smoke/1.0"],
 ];
 
+// The crawlers this directory exists to serve. A 200 on /llms.txt proves the request was
+// allowed through; it says nothing about whether robots.txt told the crawler not to ask.
+// Cloudflare can inject a managed block above the site's own rules, which is exactly how a
+// site can welcome GPTBot in prose while disallowing it in the file directly above.
+const mustNotBeDisallowed = [
+  "GPTBot",
+  "OAI-SearchBot",
+  "ChatGPT-User",
+  "ClaudeBot",
+  "Claude-User",
+  "PerplexityBot",
+];
+
+function robotsProblem(body) {
+  const blocked = [];
+  for (const agent of mustNotBeDisallowed) {
+    // Collect every group for this agent, in order, and see whether a bare `Disallow: /`
+    // survives without a matching `Allow: /` in the same group.
+    const groups = body.split(/\n(?=\s*user-agent:)/i);
+    for (const group of groups) {
+      if (!new RegExp(`^\\s*user-agent:\\s*${agent}\\s*$`, "im").test(group)) continue;
+      const disallowsAll = /^\s*disallow:\s*\/\s*$/im.test(group);
+      const allowsAll = /^\s*allow:\s*\/\s*$/im.test(group);
+      if (disallowsAll && !allowsAll) blocked.push(agent);
+    }
+  }
+  if (blocked.length) return `robots.txt disallows ${[...new Set(blocked)].join(", ")}`;
+  if (/content-signal:[^\n]*ai-train=no/i.test(body)) {
+    return "robots.txt carries a Content-Signal restricting AI use — check the Cloudflare managed block";
+  }
+  return null;
+}
+
 const checks = [
+  {
+    name: "robots.txt permits AI crawlers",
+    url: `${base}/robots.txt?monitor=${smoke}`,
+    method: "GET",
+    expect: (status) => status === 200,
+    validateText: robotsProblem,
+  },
+  {
+    // The server card pins an npm version. If that version was never published, every client
+    // that honours the pin gets ETARGET — which is worse than advertising nothing at all.
+    name: "Advertised npm version is published",
+    url: `${base}/.well-known/mcp/server.json?monitor=${smoke}`,
+    method: "GET",
+    accept: "application/json",
+    expect: (status) => status === 200,
+    validateJsonAsync: async (body) => {
+      const pkg = body.packages?.find((p) => p.registryType === "npm");
+      if (!pkg) return "no npm package in server card";
+      const res = await fetch(`https://registry.npmjs.org/${pkg.identifier}/${pkg.version}`);
+      return res.ok ? null : `npm ${pkg.identifier}@${pkg.version} is not published (${res.status})`;
+    },
+  },
   {
     name: "Apex home",
     url: `${base}/`,
@@ -299,6 +354,24 @@ async function runHttpCheck(check) {
     if (ok && check.validateHeaders) {
       ok = Boolean(check.validateHeaders(res.headers));
       detail += ok ? ", headers valid" : ", headers invalid";
+    }
+
+    if (ok && check.validateJsonAsync && res.status >= 200 && res.status < 300) {
+      try {
+        const problem = await check.validateJsonAsync(await res.json());
+        ok = !problem;
+        detail += ok ? ", version published" : `, ${problem}`;
+      } catch (error) {
+        ok = false;
+        detail += `, check failed: ${error.message}`;
+      }
+    }
+
+    if (ok && check.validateText && res.status >= 200 && res.status < 300) {
+      const body = await res.text();
+      const problem = check.validateText(body);
+      ok = !problem;
+      detail += ok ? ", body valid" : `, ${problem}`;
     }
 
     if (!ok && check.wafSensitive && res.status === 403) {

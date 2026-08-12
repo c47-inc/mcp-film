@@ -55,6 +55,9 @@ jobs:
       - name: Full build smoke test
         if: steps.paths.outputs.ok == 'true'
         run: node build.mjs
+      - name: Build contract checks
+        if: steps.paths.outputs.ok == 'true'
+        run: node scripts/check-build.mjs
       - name: Merge
         if: steps.paths.outputs.ok == 'true'
         env:

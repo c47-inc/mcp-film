@@ -1,14 +1,14 @@
 {
   "name": "mcp-film",
   "version": "1.0.0",
-  "description": "mcp.film — the agent-first directory of MCP servers for AI filmmaking. Zero-dependency static site generator.",
+  "description": "mcp.film \u2014 the agent-first directory of MCP servers for AI filmmaking. Zero-dependency static site generator.",
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "node build.mjs",
+    "build": "node build.mjs && node scripts/check-build.mjs",
     "validate": "node build.mjs --validate-only",
     "dev": "node build.mjs && node scripts/serve.mjs",
-    "test": "node build.mjs --validate-only"
+    "test": "node build.mjs --validate-only && node build.mjs && node scripts/check-build.mjs"
   },
   "engines": {
     "node": ">=20"

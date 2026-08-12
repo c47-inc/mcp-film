@@ -7,20 +7,21 @@
     "category": "model-hub",
     "featured": false,
     "tagline": "One hosted endpoint to search, run and chain 1,000+ image, video and audio models.",
-    "description": "fal's official stateless MCP server gives agents the entire fal platform: discover models, read schemas and pricing, run inference, submit async jobs and upload files. For filmmakers it is the broadest single gateway — Veo, Kling, LTX-2, Hailuo, FLUX, Ideogram, plus audio like Stable Audio 2.5, CassetteAI SFX and Beatoven — behind one connector.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "image-editing", "music", "sfx", "tts", "transcription", "model-search", "file-upload", "async-jobs"],
-    "tools_sample": ["search_models", "get_model_schema", "get_pricing", "run_model", "submit_job", "check_job"],
+    "description": "fal's official stateless MCP server gives agents the entire fal platform through nine tools: discover models, search docs, read schemas and pricing, run inference, submit async jobs and upload files. For filmmakers it is the broadest single gateway — Veo, Kling, LTX-2, Hailuo, FLUX, Ideogram, plus audio like Stable Audio 2.5, CassetteAI SFX and Beatoven — behind one connector.",
+    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "image-editing", "music", "sfx", "tts", "transcription", "model-search", "docs-search", "file-upload", "async-jobs"],
+    "tools_sample": ["search_models", "get_model_schema", "get_pricing", "search_docs", "run_model", "submit_job", "check_job", "upload_file", "recommend_model"],
     "install": {
       "claude_code": "claude mcp add --transport http fal https://mcp.fal.ai/mcp --header \"Authorization: Bearer YOUR_FAL_KEY\"",
       "remote_url": "https://mcp.fal.ai/mcp",
+      "remote_headers": ["Authorization"],
       "stdio_command": null
     },
     "auth": { "type": "api_key", "env_var": "FAL_KEY", "key_url": "fal.ai dashboard → API Keys (sent as Authorization: Bearer header, never stored server-side)" },
     "pricing": "credits",
     "links": { "repo": null, "docs": "https://docs.fal.ai/model-apis/mcp", "site": "https://fal.ai" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Hosted and fully stateless; the MCP itself is free, you pay standard fal per-run pricing. Arguably the best single 'everything' server for a generative film pipeline, and the practical MCP route to models with no first-party server (LTX-2, Stable Audio, CassetteAI, Beatoven)."
+    "verified": "2026-08-11",
+    "notes": "Hosted and fully stateless; the MCP itself is free, you pay standard fal per-run pricing. There is no OAuth flow — the key rides in an Authorization header, so clients that cannot attach custom headers are out. Arguably the best single 'everything' server for a generative film pipeline, and the practical MCP route to models with no first-party server (LTX-2, Stable Audio, CassetteAI, Beatoven)."
   },
   {
     "slug": "krea",
@@ -40,10 +41,10 @@
     },
     "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth browser flow; API-token fallback from https://www.krea.ai/app/api/tokens sent as Authorization: Bearer." },
     "pricing": "credits",
-    "links": { "repo": null, "docs": "https://docs.krea.ai/developers/mcp", "site": "https://www.krea.ai" },
+    "links": { "repo": null, "docs": "https://www.krea.ai/docs/developers/mcp", "site": "https://www.krea.ai" },
     "added": "2026-06-29",
-    "verified": "2026-06-29",
-    "notes": "Official hosted Streamable HTTP. OAuth was added Jun 13 2026 and bills the workspace selected during consent; API-token auth still works for clients without OAuth but bills a separate workspace API balance. Ask the agent to call list_models/get_model_schema first because Krea surfaces deprecation metadata there, and provider models do disappear — Sora 2 and older Seedance/Seedream endpoints are already sunset. get_upload_url returns presigned upload URLs valid for three hours."
+    "verified": "2026-08-11",
+    "notes": "Official hosted Streamable HTTP, endpoint answering as of Aug 11 2026. OAuth was added Jun 13 2026 and bills the workspace selected during consent; API-token auth still works for clients without OAuth but bills a separate workspace API balance. Provider models do disappear: video/openai/sora-2 and video/bytedance/seedance-1.0-lite were sunset Apr 27 2026 and image/bytedance/seedream-3 on May 13 2026, and a sunset endpoint returns a terminal 410. Have the agent call list_models/get_model_schema first — Krea surfaces deprecation metadata there, and the live shelf now runs Krea 2, Veo 3.1, Kling 3.0/o3, Runway Gen-4.5, Seedance 2.x, Seedream 5 and LTX-2. get_upload_url returns presigned upload URLs valid for three hours. Docs moved from docs.krea.ai to www.krea.ai/docs."
   },
   {
     "slug": "replicate",
@@ -53,20 +54,20 @@
     "category": "model-hub",
     "featured": false,
     "tagline": "Official remote MCP for discovering and running thousands of models on Replicate.",
-    "description": "Replicate's official MCP server (remote, plus a self-hostable npm package auto-generated from their HTTP API) lets agents search, compare and run any Replicate model — Veo, Kling, Wan, FLUX, SDXL, LTX and more. Experimental 'code mode' lets the model write sandboxed TypeScript against the Replicate SDK for faster multi-step chains.",
+    "description": "Replicate's official MCP server (remote, plus a self-hostable npm package generated from their HTTP API) lets agents search, compare and run any Replicate model — Veo, Kling, Wan, FLUX, SDXL, LTX and more. Experimental 'code mode' lets the model write sandboxed TypeScript against the Replicate SDK for faster multi-step chains.",
     "capabilities": ["text-to-video", "image-to-video", "text-to-image", "model-search", "predictions", "upscaling"],
-    "tools_sample": ["search_models", "create_predictions", "list_hardware"],
+    "tools_sample": null,
     "install": {
-      "claude_code": "claude mcp add --transport sse replicate https://mcp.replicate.com/sse",
+      "claude_code": "claude mcp add replicate https://mcp.replicate.com/sse --transport sse --scope user",
       "remote_url": "https://mcp.replicate.com/sse",
-      "stdio_command": "npx replicate-mcp"
+      "stdio_command": "npx -y replicate-mcp"
     },
-    "auth": { "type": "api_key", "env_var": "REPLICATE_API_TOKEN", "key_url": "https://replicate.com/account/api-tokens (remote server stores token via web auth flow)" },
+    "auth": { "type": "oauth", "env_var": "REPLICATE_API_TOKEN", "key_url": "https://replicate.com/account/api-tokens (the remote server runs an OAuth flow and stores the token on your behalf)" },
     "pricing": "paid",
     "links": { "repo": "https://github.com/replicate/replicate-mcp-code-mode", "docs": "https://replicate.com/docs/reference/mcp", "site": "https://mcp.replicate.com" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Remote server recommended; check mcp.replicate.com for the current endpoint (SSE at launch, streamable-HTTP may follow). The npm package tracks the full HTTP API and is auto-updated. Also a strong route to upscalers (Real-ESRGAN, Topaz-style models) with no first-party MCP."
+    "verified": "2026-08-11",
+    "notes": "Remote SSE endpoint at mcp.replicate.com/sse is live and OAuth-gated (WWW-Authenticate: Bearer realm=\"OAuth\"); mcp.replicate.com/mcp answers the same way, but /sse is what the docs still publish. Caveat: Replicate's docs call the npm package 'automatically updated', yet replicate-mcp@latest is still 0.9.0 from Jun 2025 and the only recent publishes are 2.0.0-alpha, last cut Dec 18 2025 — code mode wants `npx -y replicate-mcp@alpha --tools=code`. The code-mode repo has not been touched since Nov 2025. Prefer the remote server. Also a strong route to upscalers (Real-ESRGAN, Topaz-style models) with no first-party MCP. Tool names are generated from the HTTP API surface (models.search, predictions.create) rather than a fixed published list."
   },
   {
     "slug": "runapi",
@@ -76,20 +77,20 @@
     "category": "model-hub",
     "featured": false,
     "tagline": "Browse, price, and run 130+ image, video, audio and voice models through one MCP.",
-    "description": "RunAPI's official MCP server gives agents catalog discovery, input-schema inspection, prompt search, pricing lookup, media task creation, polling and balance checks across its model marketplace. For filmmakers it is a pragmatic aggregator for Flux, Kling, Seedance, Veo, Suno, ElevenLabs and related media endpoints when you want the agent to pick a model from current constraints instead of memorized slugs.",
-    "capabilities": ["model-search", "pricing", "text-to-video", "image-to-video", "text-to-image", "music", "tts", "async-jobs"],
-    "tools_sample": ["list_models", "get_model_info", "list_actions", "check_pricing", "search_prompts", "create_task", "get_task", "check_balance"],
+    "description": "RunAPI's official MCP server gives agents catalog discovery, input-schema inspection, prompt search, pricing lookup, media task creation, polling and balance checks across its model marketplace. It now ships in two forms: a hosted remote at mcp.runapi.ai and the local stdio npm package. For filmmakers it is a pragmatic aggregator for Flux, Kling, Seedance, Veo, Suno, ElevenLabs and related media endpoints when you want the agent to pick a model from current constraints instead of memorized slugs.",
+    "capabilities": ["model-search", "pricing", "prompt-search", "text-to-video", "image-to-video", "text-to-image", "music", "tts", "async-jobs"],
+    "tools_sample": ["list_models", "get_model_info", "list_actions", "check_pricing", "search_prompts", "login", "create_task", "get_task", "check_balance"],
     "install": {
       "claude_code": "claude mcp add runapi -s user -- npx -y @runapi.ai/mcp",
-      "remote_url": null,
+      "remote_url": "https://mcp.runapi.ai/mcp",
       "stdio_command": "npx -y @runapi.ai/mcp"
     },
-    "auth": { "type": "api_key", "env_var": "RUNAPI_API_KEY", "key_url": "https://runapi.ai" },
+    "auth": { "type": "api_key", "env_var": "RUNAPI_API_KEY", "key_url": "https://runapi.ai/mcp (hosted remote takes OAuth or an API key as bearer; the local package adds a browser `login` tool that writes ~/.config/runapi/config.json)" },
     "pricing": "credits",
     "links": { "repo": "https://github.com/runapi-ai/mcp", "docs": "https://github.com/runapi-ai/mcp#readme", "site": "https://runapi.ai" },
     "added": "2026-06-29",
-    "verified": "2026-06-29",
-    "notes": "Apache-2.0, npm @runapi.ai/mcp 0.1.13, Node >=22, pushed Jun 25 2026, 51 stars. Catalog, pricing and input constraints ship as build-time data, so the package must be updated when RunAPI changes its marketplace. Narrow sibling: @runapi.ai/runway-aleph-mcp wraps only Runway Aleph."
+    "verified": "2026-08-11",
+    "notes": "Apache-2.0, npm @runapi.ai/mcp 0.9.0 published Aug 10 2026, Node >=22, 54 stars. The hosted remote at https://mcp.runapi.ai/mcp answers and is auth-gated (401 without a token); it exposes the eight business tools, while `login` stays local-only. Discovery tools run without a key because the catalog is embedded at build time, so slugs and input constraints go stale between releases — pricing is fetched live, the catalog is not. Narrow sibling: @runapi.ai/runway-aleph-mcp wraps only Runway Aleph."
   },
   {
     "slug": "runware",
@@ -99,9 +100,9 @@
     "category": "model-hub",
     "featured": false,
     "tagline": "Official Runware MCP for image, video, audio, 3D, upscaling, and model search.",
-    "description": "Runware's official npm MCP package gives agents access to the Runware API: image generation, video generation, audio generation, 3D, upscaling, background removal, captioning, model discovery, pricing, task lookup, and account balance. For filmmaker-agents it is another broad media workbench, especially useful when a prompt needs model search plus schema validation before spending credits.",
-    "capabilities": ["text-to-image", "text-to-video", "image-to-video", "audio-generation", "3d-generation", "upscaling", "background-removal", "image-captioning", "model-search", "pricing", "task-inspection", "custom-model-upload"],
-    "tools_sample": ["run", "model_schema", "list_models", "model_details", "model_examples", "model_pricing", "list_capabilities", "model_search", "image_upload", "model_upload", "account", "get_task_details"],
+    "description": "Runware's official npm MCP package gives agents access to the Runware API: image generation, video generation, audio generation, 3D, upscaling, background removal, captioning, model discovery, pricing, task lookup, and account balance. It also searches the community catalog, so an agent can pull a Civitai fine-tune or a custom upload into a shot. For filmmaker-agents it is a broad media workbench, especially useful when a prompt needs model search plus schema validation before spending credits.",
+    "capabilities": ["text-to-image", "text-to-video", "image-to-video", "audio-generation", "3d-generation", "upscaling", "background-removal", "image-captioning", "model-search", "pricing", "task-inspection", "media-storage", "custom-model-upload"],
+    "tools_sample": ["run", "model_schema", "list_models", "model_details", "model_examples", "model_pricing", "list_capabilities", "model_search", "media_storage", "model_upload", "account", "get_task_details"],
     "install": {
       "claude_code": "claude mcp add runware -e RUNWARE_API_KEY=YOUR_KEY -- npx -y @runware/mcp",
       "remote_url": null,
@@ -109,10 +110,10 @@
     },
     "auth": { "type": "api_key", "env_var": "RUNWARE_API_KEY", "key_url": "https://my.runware.ai" },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/Runware/MCP-Runware", "docs": "https://www.npmjs.com/package/@runware/mcp", "site": "https://runware.ai" },
+    "links": { "repo": "https://github.com/Runware/mcp", "docs": "https://github.com/Runware/mcp#readme", "site": "https://runware.ai" },
     "added": "2026-06-29",
-    "verified": "2026-06-29",
-    "notes": "npm @runware/mcp 1.1.0, Node >=18, MIT, published Jun 23 2026; package docs list Claude Desktop, Cursor, and Codex stdio configs. Caveat: the npm package metadata points to github.com/Runware/mcp, which returned 404 during verification, so this listing links the older public Runware/MCP-Runware repo for provenance and the npm package page for the current install. It is a local stdio package, not a hosted remote MCP."
+    "verified": "2026-08-11",
+    "notes": "MIT, npm @runware/mcp 1.3.4 published Jul 31 2026, Node >=18; README documents Claude Desktop, Cursor and Codex stdio configs. The canonical repo is now github.com/Runware/mcp — the older Runware/MCP-Runware was archived Oct 2025 and should not be used. It is a local stdio package, not a hosted remote MCP, and the repo carries almost no stars, so treat the package registry rather than GitHub activity as the health signal."
   },
   {
     "slug": "kie-ai",
@@ -122,9 +123,9 @@
     "category": "model-hub",
     "featured": false,
     "tagline": "Run Veo, Seedance, Kling, Runway, Suno, ElevenLabs, FLUX and more through one local MCP.",
-    "description": "Community MCP server and sibling CLI for Kie.ai's media API, covering image, video, music and speech models from one local connector. It is useful for filmmaker-agents that need a broad current model shelf, async task polling, and token-conscious tool loading by category or explicit tool list. The agent still has to treat it as an aggregator, not as first-party access to every underlying model.",
-    "capabilities": ["model-hub", "text-to-video", "image-to-video", "text-to-image", "image-editing", "music", "tts", "sfx", "async-jobs", "task-polling", "tool-filtering"],
-    "tools_sample": ["nano_banana_image", "veo3_generate_video", "bytedance_seedance_video", "kling_video", "runway_aleph_video", "suno_generate_music", "elevenlabs_tts", "wait_for_task", "list_tasks"],
+    "description": "Community MCP server and sibling CLI for Kie.ai's media API, covering image, video, music and speech models from one connector. It is useful for filmmaker-agents that need a broad current model shelf, async task polling, and token-conscious tool loading by category or explicit tool list. The agent still has to treat it as an aggregator, not as first-party access to every underlying model.",
+    "capabilities": ["model-hub", "text-to-video", "image-to-video", "text-to-image", "image-editing", "music", "tts", "sfx", "lip-sync", "upscaling", "async-jobs", "task-polling", "tool-filtering"],
+    "tools_sample": ["nano_banana_image", "veo3_generate_video", "bytedance_seedance_video", "kling_video", "runway_aleph_video", "midjourney_generate", "suno_generate_music", "elevenlabs_tts", "wait_for_task", "list_tasks"],
     "install": {
       "claude_code": "claude mcp add kie-ai -e KIE_AI_API_KEY=YOUR_KEY -- npx -y @felores/kie-ai-mcp-server",
       "remote_url": null,
@@ -134,8 +135,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/felores/kie-cli-mcp", "docs": "https://github.com/felores/kie-cli-mcp#readme", "site": "https://kie.ai" },
     "added": "2026-06-29",
-    "verified": "2026-06-29",
-    "notes": "MIT, npm @felores/kie-ai-mcp-server 3.5.0, Node >=18, pushed Jun 7 2026, 28 stars. It can load all tools, but the README recommends KIE_AI_ENABLED_TOOLS or KIE_AI_TOOL_CATEGORIES=image,video to avoid burning context on unused schemas. Caveat: Kie.ai is an aggregator/reseller path for models from many vendors; rights, availability and ToS safety depend on the underlying provider, and Midjourney/Suno-style access should be treated as gray until verified for your use case."
+    "verified": "2026-08-11",
+    "notes": "MIT, npm @felores/kie-ai-mcp-server 3.6.0, Node >=18, pushed Jul 23 2026, 54 stars. Stdio by default; it can also run as a self-hosted Streamable HTTP service (Dockerfile plus Coolify compose) if you want one shared instance, and there is a zero-context CLI sibling, @felores/kie-cli. It can load all tools, but the README recommends KIE_AI_ENABLED_TOOLS or KIE_AI_TOOL_CATEGORIES=image,video to avoid burning context on unused schemas. Caveat: Kie.ai is an aggregator/reseller path for models from many vendors; rights, availability and ToS safety depend on the underlying provider, and Midjourney/Suno-style access should be treated as gray until verified for your use case."
   },
   {
     "slug": "promptibus",
@@ -157,8 +158,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/promptibus/mcp", "docs": "https://github.com/promptibus/mcp#readme", "site": "https://promptibus.com/mcp" },
     "added": "2026-06-29",
-    "verified": "2026-06-29",
-    "notes": "MIT, npm @promptibus/mcp 0.9.0, created Apr 2026 and pushed May 2026, only 3 stars so far. Anonymous mode works without a key but is limited to 25 requests/day and 10 free-tier models; an API key unlocks higher limits and broader model coverage. Caveat: it is a catalogue/preflight server, not a generation router."
+    "verified": "2026-08-11",
+    "notes": "MIT, npm @promptibus/mcp 0.9.0. The hosted endpoint answers tools/list unauthenticated and returns the same seven tools listed here. Caveats: it is a catalogue/preflight server, not a generation router, and it has had no npm release or commit since May 11 2026 with only 3 stars — a model-intelligence service that stops updating is worse than no model-intelligence service, so spot-check anything it tells you about a 2026 model. Anonymous mode works without a key but is capped at 25 requests/day and 10 free-tier models."
   },
   {
     "slug": "comfyui",
@@ -172,16 +173,16 @@
     "capabilities": ["text-to-image", "image-to-image", "text-to-video", "audio-generation", "3d-generation", "workflow-execution", "local-inference"],
     "tools_sample": ["run_workflow", "validate_workflow", "search_templates", "get_example_workflow", "build_node", "list_models", "get_queue", "recommend_workflow"],
     "install": {
-      "claude_code": null,
+      "claude_code": "claude mcp add comfyui --transport stdio -- docker run -i --rm --pull always -e COMFYUI_URL=http://host.docker.internal:8000 ghcr.io/shawnrushefsky/comfyui-mcp:latest",
       "remote_url": null,
       "stdio_command": "docker run -i --rm --pull always -e COMFYUI_URL=http://host.docker.internal:8000 ghcr.io/shawnrushefsky/comfyui-mcp:latest"
     },
-    "auth": { "type": "none", "env_var": "COMFYUI_URL", "key_url": "Points at your own ComfyUI instance (default port 8188) — no cloud account needed" },
+    "auth": { "type": "none", "env_var": "COMFYUI_URL", "key_url": "Points at your own ComfyUI instance — port 8000 for the Desktop app, 8188 for a manual install — no cloud account needed" },
     "pricing": "free",
-    "links": { "repo": "https://github.com/shawnrushefsky/comfyui-mcp", "docs": null, "site": "https://www.comfy.org" },
+    "links": { "repo": "https://github.com/shawnrushefsky/comfyui-mcp", "docs": "https://github.com/shawnrushefsky/comfyui-mcp#readme", "site": "https://comfy.org" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "MIT; the most comprehensive ComfyUI MCP. Notable alternatives: artokun/comfyui-mcp (Claude Code plugin with slash commands/skills) and joenorton/comfyui-mcp-server (lightweight Python). Requires you to run ComfyUI yourself."
+    "verified": "2026-08-11",
+    "notes": "MIT; still the most comprehensive ComfyUI MCP, and the ghcr.io/shawnrushefsky/comfyui-mcp:latest image is published. Caveat: the repo has had no commits since Jan 28 2026 at 18 stars, so newer ComfyUI node packs may outrun its bundled workflows. On Linux swap host.docker.internal for --network=host. Notable alternatives: artokun/comfyui-mcp (Claude Code plugin with slash commands/skills) and joenorton/comfyui-mcp-server (lightweight Python). Requires you to run ComfyUI yourself."
   },
   {
     "slug": "piapi",
@@ -190,20 +191,20 @@
     "official": false,
     "category": "model-hub",
     "featured": false,
-    "tagline": "Midjourney in an agent — plus Kling, Luma, Hunyuan, Wan, Suno/Udio via PiAPI.",
-    "description": "TypeScript MCP server over PiAPI's unified API, best known as the practical Midjourney route since Midjourney has no public API or official MCP. Also covers FLUX, Kling video and effects, Luma Dream Machine, Hunyuan/Skyreels/Wan video, Trellis 3D and Suno/Udio music — a budget multi-model hub for film agents.",
-    "capabilities": ["text-to-image", "midjourney", "text-to-video", "image-to-video", "music", "3d-generation"],
-    "tools_sample": null,
+    "tagline": "Midjourney in an agent — plus Kling, Luma, Hailuo, Hunyuan, Wan, Suno via PiAPI.",
+    "description": "TypeScript MCP server over PiAPI's unified API, best known as the practical Midjourney route since Midjourney has no public API or official MCP. Also covers FLUX, Kling video and effects, Luma Dream Machine, Hailuo, Hunyuan/Skyreels/Wan video, Trellis 3D, MMAudio scoring and Suno music. Since Jul 2026 it also generates a contract-backed tool for every committed PiAPI (model, task_type) pair, so the exposed surface tracks the upstream catalog instead of only the hand-written convenience tools.",
+    "capabilities": ["text-to-image", "midjourney", "text-to-video", "image-to-video", "music", "tts", "3d-generation", "upscaling", "background-removal", "faceswap"],
+    "tools_sample": ["generate_image", "midjourney_imagine", "generate_video_kling", "generate_video_hailuo", "generate_video_luma", "generate_video_wan", "generate_music_suno", "generate_music_for_video", "image_upscale", "generate_3d_model"],
     "install": {
       "claude_code": null,
       "remote_url": null,
-      "stdio_command": null
+      "stdio_command": "Multi-step: git clone https://github.com/apinetwork/piapi-mcp-server, npm install, npm run build, then point your client at node /absolute/path/to/dist/index.js with PIAPI_API_KEY in env. Node 16+."
     },
-    "auth": { "type": "api_key", "env_var": "PIAPI_API_KEY", "key_url": "https://piapi.ai (workspace → key management)" },
+    "auth": { "type": "api_key", "env_var": "PIAPI_API_KEY", "key_url": "https://piapi.ai/workspace/key" },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/apinetwork/piapi-mcp-server", "docs": "https://piapi.ai/docs", "site": "https://piapi.ai" },
+    "links": { "repo": "https://github.com/apinetwork/piapi-mcp-server", "docs": "https://piapi.ai/docs/overview", "site": "https://piapi.ai" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "MIT, 70 stars; install is clone + npm build. Caveats: unofficial Midjourney access (ToS gray area) and long video jobs can exceed MCP client timeouts — raise timeouts. Hosted Midjourney alternative: AceDataCloud/MidjourneyMCP."
+    "verified": "2026-08-11",
+    "notes": "MIT, 73 stars, actively maintained — catalog refreshed Aug 10 2026 by a drift detector that diffs PiAPI's contract. There is no published npm package: install is clone plus npm run build, or the Smithery installer for Claude Desktop. Caveats: unofficial Midjourney access is a ToS gray area and only `imagine` is implemented, and long video jobs can exceed MCP client timeouts — raise them. Hosted Midjourney alternative: AceDataCloud/MidjourneyMCP."
   }
 ]

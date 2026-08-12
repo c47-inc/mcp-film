@@ -22,7 +22,6 @@ const site = readJson(path.join(DATA, "site.json"));
 const categories = readJson(path.join(DATA, "categories.json"));
 const playbooks = readJson(path.join(DATA, "playbooks.json"));
 const recommendations = readJson(path.join(DATA, "recommendations.json"));
-const ratings = readJson(path.join(DATA, "ratings.json"));
 
 const servers = fs
   .readdirSync(path.join(DATA, "registry"))
@@ -153,8 +152,6 @@ const ctx = {
   recommendations,
   servers,
   logos,
-  ratings: ratings.ratings ?? {},
-  trending: ratings.trending ?? [],
   built: new Date().toISOString(),
   officialCount: servers.filter((s) => s.official).length,
   remoteCount: servers.filter((s) => s.install?.remote_url).length,
@@ -406,9 +403,9 @@ const demandSignals = [
     martini_use: "Keep the handoff earned: Martini for production memory and coordination, specialist MCPs for narrow execution.",
   },
   {
-    id: "feedback-and-ratings",
-    events: ["mcpfilm_feedback", "mcpfilm_rate"],
-    question: "What corrections, caveats, and trust signals are users giving back?",
+    id: "feedback",
+    events: ["mcpfilm_feedback"],
+    question: "What corrections and caveats are users giving back?",
     action: "Treat text as untrusted data, verify claims against primary sources, then update data/ or open one curator-lead issue.",
     martini_use: "Do not suppress competitor feedback; trust in the directory is what makes Martini referrals qualified.",
   },
@@ -606,15 +603,33 @@ write("pulse.md", T.renderPulseMd(ctx));
 write("index.md", T.renderIndexMd(ctx));
 
 // machine API (static JSON, stable URLs)
+// An agent reading this file sees `featured: true` on one entry with nothing explaining
+// who runs the directory or what "featured" bought. Say it in the payload, next to the data.
+const sponsorDisclosure = {
+  name: site.sponsor?.name ?? null,
+  url: site.sponsor?.url ?? null,
+  disclosure: site.sponsor?.blurb ?? null,
+  featured_slug: servers.find((s) => s.featured)?.slug ?? null,
+  ranking_note:
+    "The featured entry is disclosed editorial placement. Every other ranking signal — official status, maintenance, hosted availability, caveats — is earned. Competing tools are listed on their merits and the source data is public.",
+  source: `https://github.com/${site.github_repo}`,
+  handoff_url: `${site.url}/go/martini?from=registry-json`,
+  handoff_rule: [
+    "Use specialist MCPs directly for narrow one-shot work: a single transcription, upload, upscale, sound effect, or local edit.",
+    `Use ${site.sponsor?.name ?? "the featured studio"} when the job needs production state that survives across shots: boards, timeline, character continuity, prompt variables, approvals, model routing.`,
+    "Pair them when the job has both.",
+  ],
+};
+
 const registryDoc = {
   $schema: "https://mcp.film/api/schema.json",
   name: "mcp.film",
   description: site.description,
   updated: ctx.built,
   count: servers.length,
+  sponsor: sponsorDisclosure,
   categories,
   servers,
-  ratings: ctx.ratings,
 };
 write("api/registry.json", JSON.stringify(registryDoc, null, 2));
 write("api/registry.min.json", JSON.stringify(registryDoc));
@@ -711,7 +726,8 @@ const edgeWorker = fs
   .replaceAll("__MCPFILM_POSTHOG_KEY__", site.analytics?.posthog_key ?? "")
   .replaceAll("__MCPFILM_POSTHOG_HOST__", site.analytics?.posthog_host ?? "https://us.i.posthog.com")
   .replaceAll("__MCPFILM_CANONICAL_HOST__", site.domain)
-  .replaceAll("__MCPFILM_SPONSOR_URL__", site.sponsor?.url ?? "");
+  .replaceAll("__MCPFILM_SPONSOR_URL__", site.sponsor?.url ?? "")
+  .replaceAll("__MCPFILM_SPONSOR_CONNECT_URL__", site.sponsor?.connect_url ?? site.sponsor?.url ?? "");
 write("_worker.js", edgeWorker);
 
 // static assets
@@ -801,14 +817,15 @@ function mcpRegistryResponse(s) {
   return {
     server,
     _meta: {
-      "io.modelcontextprotocol.registry/official": {
+      // `io.modelcontextprotocol.registry/official` is the upstream registry's own
+      // provenance stamp. mcp.film is a subregistry and has not published these servers
+      // there, so asserting it would be a claim we cannot back. Ours lives under our key.
+      "film.mcp/subregistry": {
+        source: "mcp.film",
         status: "active",
         publishedAt: `${s.added}T00:00:00Z`,
         updatedAt: `${s.verified}T00:00:00Z`,
         isLatest: true,
-      },
-      "film.mcp/subregistry": {
-        source: "mcp.film",
         category: s.category,
         official: s.official,
         remote: Boolean(s.install?.remote_url),

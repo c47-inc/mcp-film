@@ -26,6 +26,8 @@ jobs:
           node-version: 24
       - name: Build site
         run: node build.mjs
+      - name: Build contract checks
+        run: node scripts/check-build.mjs
       - name: Check Cloudflare secrets
         id: cloudflare
         env:

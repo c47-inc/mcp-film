@@ -29,6 +29,9 @@
 }
 
 * { box-sizing: border-box; }
+/* Author display rules (.card, .cat-section) outrank the UA sheet's [hidden] rule,
+   so search and the quick filters silently did nothing. This restores them. */
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; scroll-padding-top: 5.5rem; }
 body {
   margin: 0;
@@ -79,6 +82,8 @@ code {
   border-radius: 50%; background: var(--green);
   margin-right: 5px; vertical-align: 1.5px;
 }
+/* The featured listing is the sponsor's. Say so wherever the boost applies. */
+.tag-featured { color: var(--ink-3); }
 
 /* page transitions: native cross-document crossfade where supported */
 @view-transition { navigation: auto; }
@@ -381,19 +386,6 @@ img.avatar { object-fit: cover; background: var(--paper); }
 }
 .server-tag { font-size: 1.02rem; color: var(--ink-2); max-width: 42em; margin: 0.5rem 0 1.1rem; line-height: 1.6; text-wrap: pretty; }
 
-.rate { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
-.rate-label { color: var(--ink-3); font-size: 12px; }
-.stars { display: inline-flex; }
-.star {
-  background: none; border: none; cursor: pointer;
-  color: var(--hairline-2); font-size: 15px; padding: 0 2px; line-height: 1;
-  transition: color 0.1s;
-}
-.stars:hover .star { color: var(--ink); }
-.star:hover ~ .star { color: var(--hairline-2); }
-.star.is-set { color: var(--ink); }
-.rate-agg { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
-.rate.is-rated .rate-label::after { content: " — thanks"; color: var(--ink); }
 
 .server-body {
   display: grid; gap: clamp(1.6rem, 4vw, 3.2rem); margin: 1.4rem 0 4rem;

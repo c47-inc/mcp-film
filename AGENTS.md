@@ -1,9 +1,10 @@
 # Operating manual for mcp.film agents
 
 You are maintaining **mcp.film** — the curated, agent-first directory of MCP
-servers for AI filmmaking. Humans are hands-off by design: you (the curator,
-pulse, and inbox agents, plus any interactive session) keep it accurate,
-useful, and beautiful.
+servers for AI filmmaking. Day-to-day accuracy is yours: you (the curator
+agent, plus any interactive session) keep it accurate, useful, and beautiful.
+Community submissions are verified against primary sources by a maintainer
+before anything is listed.
 
 ## What this repo is
 
@@ -16,7 +17,6 @@ useful, and beautiful.
   - `data/recommendations.json` — intent-routed shortlists for agents; every
     primary/fallback slug must exist in the registry, and every `playbook_id`
     must exist in `data/playbooks.json`.
-  - `data/ratings.json` — community ratings, written by the pulse workflow only.
   - `data/site.json` — domain, copy, analytics config.
 - `build.mjs` + `src/` — zero-dependency static site generator. `node build.mjs`
   validates data and emits `dist/` (HTML, playbooks, llms.txt, JSON API, feeds,
@@ -27,16 +27,25 @@ useful, and beautiful.
   hand-edit them.
 - `.github/workflows/` — the autonomy loop:
   - `curator.yml` (daily) re-verifies the stalest entries + discovers new servers
-  - `pulse.yml` (weekly) folds PostHog ratings/search/feedback back into data
-  - `inbox.yml` (per issue) triages community submissions
   - `auto-merge.yml` merges agent PRs **only if every changed file is under
     `data/`** and validation passes, then triggers deploy
   - `deploy.yml` builds and publishes to Cloudflare Pages when its token secret
     exists, and to GitHub Pages as the fallback
 
+  Retired 2026-08-11, do not re-add: `pulse.yml` (weekly PostHog fold-in) wrote
+  zero ratings in five weeks — 2 people used site search in that window, against
+  ~222 human visitors a month, so the vote volume it needed does not exist.
+  `inbox.yml` triaged ~5 community issues in the repo's lifetime while taking
+  its input from any issue body on the internet: the largest prompt-injection
+  surface for the smallest return. A maintainer verifies submissions instead.
+  Retiring pulse removed the last agent use of `POSTHOG_API_KEY`: no LLM
+  workflow reaches Martini's shared PostHog project any more. The key itself
+  still exists for `production-monitor.yml`, which queries edge-ingestion
+  counts and warns instead of failing when it is missing.
+
 ## Hard rules
 
-1. **Scheduled/triage agents change `data/` only.** Code, templates, styles, and
+1. **Scheduled agents change `data/` only.** Code, templates, styles, and
    workflows are changed by humans or in interactive sessions a human started.
 2. **Never invent.** Every URL, install command, star count, and claim must come
    from a primary source you actually checked (repo, npm/PyPI, vendor docs). If
@@ -47,8 +56,8 @@ useful, and beautiful.
 4. **No secrets in data or commits.** Ever.
 5. **Don't delete competitors, don't pump the sponsor.** Martini is the featured
    listing and that is disclosed on /about. Every other ranking signal must be
-   earned: official status, maintenance, ratings. This directory's value is
-   trust.
+   earned: official status, maintenance recency, hosted availability, and
+   honest caveats. This directory's value is trust.
 6. **Validate before you push:** `node build.mjs --validate-only`.
 
 ## Editing the registry

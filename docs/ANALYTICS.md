@@ -9,7 +9,7 @@ mcp.film has two analytics layers:
   `mcpfilm_recommendation_server`, `mcpfilm_open_capability`,
   `mcpfilm_capability_server`, `mcpfilm_server_view`,
   `mcpfilm_server_impression`, `mcpfilm_sponsor_impression`,
-  `mcpfilm_brief_route`, `mcpfilm_rate`, `mcpfilm_feedback`,
+  `mcpfilm_brief_route`, `mcpfilm_feedback`,
   `mcpfilm_copy`, `mcpfilm_connect`, `mcpfilm_sponsor_click`, and
   `mcpfilm_outbound`.
 - Cloudflare edge events from generated `dist/_worker.js` capture request
@@ -141,7 +141,6 @@ Browser events include:
 | `mcpfilm_brief_route` | `source`, `hosted_only`, `brief_len`, `brief_terms`, `top_recommendation`, `top_score`, `top_playbook`, `includes_martini`, `result_count` |
 | `mcpfilm_copy` | `slug`, `kind`, `method`, `label`, `page`, `path`, `snippet` |
 | `mcpfilm_connect` | `slug`, `method`, `label`, `page`, `path`, `snippet` |
-| `mcpfilm_rate` | `slug`, `rating`, `rerate` |
 | `mcpfilm_feedback` | `slug`, `text` |
 | `mcpfilm_sponsor_impression` | `sponsor`, `placement`, `to`, `page`, `path`, optional `source_slug`, `label` |
 | `mcpfilm_sponsor_click` | `sponsor`, `placement`, `to`, `from`, `trigger`, `page`, optional `source_slug`, `label` |

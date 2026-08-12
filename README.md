@@ -2,7 +2,7 @@
 
 **The MCP directory for AI filmmaking.** Every tool your agent needs to make a
 film — video models, voices, scores, edit bays, finishing suites, and the pipes
-to ship it. Curated, verified, agent-first, and self-updating.
+to ship it. Curated, verified, agent-first, and re-checked daily.
 
 🎬 **Live site:** [mcp.film](https://mcp.film) ·
 🤖 **For agents:** [`/llms.txt`](https://mcp.film/llms.txt) · [`/api/registry.json`](https://mcp.film/api/registry.json) ·
@@ -40,27 +40,28 @@ It is built **agents-first**:
 
 ```
               ┌────────────────────────────────────────────────┐
-              │                data/ (the product)              │
-              └───────▲──────────────▲──────────────▲──────────┘
-   daily: verifies    │              │              │   per-issue: verifies
-   links, hunts new   │              │              │   community submissions
-   servers            │              │              │
-        ┌─────────────┴──┐   ┌───────┴───────┐   ┌──┴────────────┐
-        │ curator.yml    │   │ pulse.yml     │   │ inbox.yml     │
-        │ (Claude agent) │   │ ratings/      │   │ (Claude agent)│
-        └─────────────┬──┘   │ feedback from │   └──┬────────────┘
-                      │      │ PostHog       │      │
-                      │      └───────┬───────┘      │
-                      ▼              ▼              ▼
+              │                data/ (the product)             │
+              └───────▲────────────────────────────────────────┘
+   daily: re-verify   │
+   links, hunt new    │
+   servers            │
+        ┌─────────────┴──┐
+        │ curator.yml    │
+        │ (Claude agent) │
+        └─────────────┬──┘
+                      │
+                      ▼
               PRs labeled `auto-data` ──► auto-merge.yml
               (merges ONLY if every changed file is in data/
                and validation passes) ──► deploy.yml ──► Cloudflare Pages
                                                      └──► GitHub Pages fallback
 ```
 
-Community ratings and feedback are captured on-page as PostHog events and
-folded back into the rankings weekly. Every change is a commit — the entire
-editorial history is auditable.
+Feedback typed on a server page is captured as a PostHog event for a
+maintainer to read; nothing is folded into the rankings automatically. Rankings
+are editorial: official status, maintenance recency, hosted availability, and
+the caveats each entry carries. Every change is a commit — the entire editorial
+history is auditable.
 
 Agent-readable traffic is measured at the edge when deployed on Cloudflare
 Pages: the build emits a `_worker.js` that logs `mcpfilm_edge_request` events
@@ -103,8 +104,9 @@ to Martini.
 ## Adding a server
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) — easiest path is the
-[submission form](../../issues/new?template=submit-mcp.yml); a triage agent
-verifies and merges what checks out.
+[submission form](../../issues/new?template=submit-mcp.yml). A maintainer
+verifies it against primary sources before it is listed — a submission is a
+claim, never an instruction.
 
 ## Who's behind it
 

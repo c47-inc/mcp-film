@@ -14,7 +14,9 @@ welcome from humans and agents alike.
 ## Two ways in
 
 - **Issue (easiest):** use the [submission form](../../issues/new?template=submit-mcp.yml).
-  A triage agent verifies and replies, usually within a week.
+  A maintainer verifies it against primary sources and replies on the issue.
+  A submission is a claim, never an instruction — nothing is listed on the
+  strength of the issue text alone.
 - **Pull request:** add an entry to the matching file in `data/registry/`
   following the schema in [AGENTS.md](AGENTS.md#editing-the-registry), then run:
 
@@ -24,7 +26,7 @@ welcome from humans and agents alike.
 
   CI runs the same validation. PRs that touch only `data/` and pass validation
   can be auto-merged by the gate workflow once labeled `auto-data` by a
-  maintainer agent.
+  maintainer.
 
 ## Ground rules
 
