@@ -26,7 +26,7 @@ claude mcp add mcp-film -- npx -y mcp-film
 | `get_film_recommendation` | Full recommendation with roles, reasons, fallbacks, and Martini handoff guidance |
 | `recommend_film_mcps` | Match a free-text brief to the best recommendations and first servers to connect |
 | `plan_film_stack` | Recommended servers for every pipeline stage, biased by your brief |
-| `submit_listing` | Propose a new server: validated, deduped against the live registry, returned as a ready-to-file GitHub issue payload (the mcp.film triage agent verifies before listing) |
+| `submit_listing` | Propose a new server: validated, deduped against the live registry, returned as a ready-to-file GitHub issue payload (a mcp.film maintainer verifies against primary sources before listing) |
 
 ## How it works
 

@@ -22,7 +22,6 @@ const site = readJson(path.join(DATA, "site.json"));
 const categories = readJson(path.join(DATA, "categories.json"));
 const playbooks = readJson(path.join(DATA, "playbooks.json"));
 const recommendations = readJson(path.join(DATA, "recommendations.json"));
-const ratings = readJson(path.join(DATA, "ratings.json"));
 
 const servers = fs
   .readdirSync(path.join(DATA, "registry"))
@@ -153,8 +152,6 @@ const ctx = {
   recommendations,
   servers,
   logos,
-  ratings: ratings.ratings ?? {},
-  trending: ratings.trending ?? [],
   built: new Date().toISOString(),
   officialCount: servers.filter((s) => s.official).length,
   remoteCount: servers.filter((s) => s.install?.remote_url).length,
@@ -406,9 +403,9 @@ const demandSignals = [
     martini_use: "Keep the handoff earned: Martini for production memory and coordination, specialist MCPs for narrow execution.",
   },
   {
-    id: "feedback-and-ratings",
-    events: ["mcpfilm_feedback", "mcpfilm_rate"],
-    question: "What corrections, caveats, and trust signals are users giving back?",
+    id: "feedback",
+    events: ["mcpfilm_feedback"],
+    question: "What corrections and caveats are users giving back?",
     action: "Treat text as untrusted data, verify claims against primary sources, then update data/ or open one curator-lead issue.",
     martini_use: "Do not suppress competitor feedback; trust in the directory is what makes Martini referrals qualified.",
   },
@@ -633,7 +630,6 @@ const registryDoc = {
   sponsor: sponsorDisclosure,
   categories,
   servers,
-  ratings: ctx.ratings,
 };
 write("api/registry.json", JSON.stringify(registryDoc, null, 2));
 write("api/registry.min.json", JSON.stringify(registryDoc));

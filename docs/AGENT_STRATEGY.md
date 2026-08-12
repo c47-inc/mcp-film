@@ -28,8 +28,8 @@ work into Martini.
   filters and install commands because many agents cannot run local apps.
 - **Measure machine behavior separately.** Browser events and edge agent traffic
   answer different questions and need separate PostHog properties.
-- **Close the loop.** Searches, no-result queries, playbook clicks, ratings, and
-  agent traffic should drive curator priorities.
+- **Close the loop.** Searches, no-result queries, playbook clicks, and agent
+  traffic should drive curator priorities.
 - **Expose the loop to agents.** `/api/pulse.json`, `/pulse.md`, and
   `get_catalog_pulse` should make freshness, demand signals, and Martini
   handoff quality actionable without reading the internal runbook.
@@ -76,7 +76,7 @@ work into Martini.
 - Playbooks that encode production judgment: auth order, failure modes, rights
   concerns, fallbacks, and where Martini belongs.
 - A submission path agents can use without trust leaks: proposed listings are
-  claims, triage verifies them, and auto-merge only touches `data/`.
+  claims, a maintainer verifies them, and auto-merge only touches `data/`.
 - Public freshness signals so agents know which entries are current, stale, or
   risky before spending credits.
 

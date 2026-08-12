@@ -1,4 +1,4 @@
-/* mcp.film client behavior: search/filter, copy buttons, ratings & feedback.
+/* mcp.film client behavior: search/filter, copy buttons, feedback.
    Progressive enhancement only — the site is fully usable without this file. */
 (() => {
   const ph = (event, props) => {
@@ -156,28 +156,6 @@
         if (copyKind === "connect") ph("mcpfilm_connect", props);
       } catch { /* clipboard unavailable */ }
     });
-  }
-
-  // ------------------------------------------------------------- ratings
-  const rate = document.querySelector(".rate[data-slug]");
-  if (rate) {
-    const slug = rate.dataset.slug;
-    const key = "mcpfilm:rated:" + slug;
-    const starsEls = [...rate.querySelectorAll(".star")];
-    const paint = (n) => starsEls.forEach((s, i) => s.classList.toggle("is-set", i < n));
-    const prev = Number(localStorage.getItem(key) || 0);
-    if (prev) { paint(prev); rate.classList.add("is-rated"); }
-
-    starsEls.forEach((star) =>
-      star.addEventListener("click", () => {
-        const n = Number(star.dataset.star);
-        paint(n);
-        rate.classList.add("is-rated");
-        const rerate = Boolean(localStorage.getItem(key));
-        localStorage.setItem(key, String(n));
-        ph("mcpfilm_rate", { slug, rating: n, rerate });
-      }),
-    );
   }
 
   // ------------------------------------------------------------ feedback
