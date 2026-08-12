@@ -7,20 +7,20 @@
     "category": "voice-speech",
     "featured": false,
     "tagline": "Official ElevenLabs server: TTS, voice cloning, SFX, music, and dialogue isolation.",
-    "description": "The official ElevenLabs MCP server exposes the full audio platform: text-to-speech with thousands of voices, voice cloning and design, text-to-sound-effects, Eleven Music composition, transcription, and audio isolation. For a filmmaker-agent it covers dialogue, SFX, and score from a single API key — the most complete one-stop audio MCP for a film pipeline.",
-    "capabilities": ["tts", "voice-cloning", "voice-design", "sfx", "music", "transcription", "audio-isolation", "speech-to-speech"],
-    "tools_sample": ["text_to_speech", "speech_to_text", "text_to_sound_effects", "voice_clone", "text_to_voice", "isolate_audio", "compose_music", "create_composition_plan", "search_voice_library", "play_audio"],
+    "description": "The official ElevenLabs MCP server exposes the full audio platform: text-to-speech with thousands of voices, voice cloning and design, text-to-sound-effects, Eleven Music composition, transcription, and audio isolation. Recent releases add video_to_music, which scores an existing cut, and music inpainting for replacing a section of a generated track. For a filmmaker-agent it covers dialogue, SFX, and score from a single API key — the most complete one-stop audio MCP for a film pipeline.",
+    "capabilities": ["tts", "voice-cloning", "voice-design", "sfx", "music", "video-to-music", "music-inpainting", "transcription", "audio-isolation", "speech-to-speech"],
+    "tools_sample": ["text_to_speech", "speech_to_text", "text_to_sound_effects", "voice_clone", "text_to_voice", "isolate_audio", "compose_music", "create_composition_plan", "video_to_music", "upload_music_for_inpainting", "search_voice_library", "play_audio"],
     "install": {
       "claude_code": "claude mcp add elevenlabs -e ELEVENLABS_API_KEY=YOUR_KEY -- uvx elevenlabs-mcp",
       "remote_url": null,
       "stdio_command": "uvx elevenlabs-mcp"
     },
-    "auth": { "type": "api_key", "env_var": "ELEVENLABS_API_KEY", "key_url": "ElevenLabs dashboard at elevenlabs.io (free tier: 10k credits/month)" },
+    "auth": { "type": "api_key", "env_var": "ELEVENLABS_API_KEY", "key_url": "ElevenLabs dashboard at elevenlabs.io" },
     "pricing": "freemium",
     "links": { "repo": "https://github.com/elevenlabs/elevenlabs-mcp", "docs": "https://elevenlabs.io/blog/introducing-elevenlabs-mcp", "site": "https://elevenlabs.io" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Actively maintained (v0.9.1, Jan 2026, ~1.4k stars); also published as Docker image mcp/elevenlabs and on PyPI. Optional env: ELEVENLABS_MCP_BASE_PATH, ELEVENLABS_MCP_OUTPUT_MODE, ELEVENLABS_API_RESIDENCY. Local stdio only — no hosted remote MCP as of June 2026."
+    "verified": "2026-08-11",
+    "notes": "Actively maintained: PyPI elevenlabs-mcp 0.12.2 (4 Aug 2026), MIT, ~1.5k stars, Python >=3.11. ELEVENLABS_MCP_BASE_PATH (default ~/Desktop) is now a hard security boundary for input files as well as output — any local path a tool reads must resolve inside it, so point it at your media root or reads will be rejected. Other env: ELEVENLABS_MCP_OUTPUT_MODE (files/resources/both), ELEVENLABS_API_RESIDENCY. Credits are consumed by every tool. Local stdio only — ElevenLabs' hosted MCP is for managing Agents, not this audio toolset."
   },
   {
     "slug": "cartesia",
@@ -29,10 +29,10 @@
     "official": true,
     "category": "voice-speech",
     "featured": false,
-    "tagline": "Official Cartesia (Sonic) server: low-latency TTS, voice cloning, infill, localization.",
-    "description": "Cartesia's official MCP server exposes its Sonic voice stack: TTS, speech-to-text, voice cloning, voice changing, and notably audio infill (generate speech between two existing clips) and voice localization into other languages. Strong for ADR-style dialogue patching and localizing a character's voice across language versions.",
-    "capabilities": ["tts", "stt", "voice-cloning", "voice-changing", "infill", "localization"],
-    "tools_sample": ["text_to_speech", "speech_to_text", "list_voices", "clone_voice", "voice_change", "localize_voice", "infill", "get_credit_usage"],
+    "tagline": "Official Cartesia (Sonic) server: low-latency TTS, cloning, voice change, localization.",
+    "description": "Cartesia's official MCP server exposes its Sonic voice stack: TTS with speed, volume and emotion controls, speech-to-text, voice cloning, voice changing, voice localization into other languages, and pronunciation dictionaries. For a filmmaker-agent it is strongest on ADR-style voice replacement and on holding a character's pronunciation of invented names consistent across every line and language version.",
+    "capabilities": ["tts", "stt", "voice-cloning", "voice-changing", "localization", "pronunciation-dictionaries"],
+    "tools_sample": ["text_to_speech", "speech_to_text", "list_voices", "get_voice", "clone_voice", "voice_change", "localize_voice", "create_pronunciation_dict", "download_file", "get_credit_usage"],
     "install": {
       "claude_code": "claude mcp add cartesia -e CARTESIA_API_KEY=YOUR_KEY -- uvx cartesia-mcp",
       "remote_url": null,
@@ -42,8 +42,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/cartesia-ai/cartesia-mcp", "docs": "https://docs.cartesia.ai/tools/ai/mcp", "site": "https://www.cartesia.ai" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Officially supported, on PyPI as cartesia-mcp; ~16 tools. Optional CARTESIA_ADMIN_API_KEY enables account-management tools; OUTPUT_DIRECTORY controls where audio is saved."
+    "verified": "2026-08-11",
+    "notes": "Correction: the audio `infill` tool this directory previously listed is no longer in the README's tool table (16 tools, none of them infill) as of PyPI 0.18.2, 31 Jul 2026 — do not plan an ADR patch workflow around it. Requires Python 3.13+, which uvx will fetch but which breaks older pinned toolchains. Repo carries no LICENSE file and only ~14 stars despite being first-party. get_credit_usage needs a separate CARTESIA_ADMIN_API_KEY; admin and standard keys are not interchangeable. TTS defaults to save=true, returning a file_id and a download_url that expires in 24 hours."
   },
   {
     "slug": "hume",
@@ -53,7 +53,7 @@
     "category": "voice-speech",
     "featured": false,
     "tagline": "Official Hume server for Octave TTS — emotionally expressive, acting-directed speech.",
-    "description": "Hume's official MCP server drives Octave, a speech-language model that 'performs' text rather than just pronouncing it, with prompt-directed emotion and delivery. Ideal for film dialogue and narration where acting nuance matters; agents can iterate on takes, save designed voices, and replay prior audio.",
+    "description": "Hume's official MCP server drives Octave, a speech-language model that performs text rather than merely pronouncing it, with prompt-directed emotion and delivery. Ideal for film dialogue and narration where acting nuance matters; agents can iterate on takes, save designed voices to a library, and replay prior audio without regenerating.",
     "capabilities": ["tts", "voice-design", "expressive-performance", "voice-library"],
     "tools_sample": ["tts", "play_previous_audio", "list_voices", "save_voice", "delete_voice"],
     "install": {
@@ -65,8 +65,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/HumeAI/mcp-server-hume", "docs": "https://dev.hume.ai/docs/text-to-speech-tts/mcp-server", "site": "https://www.hume.ai" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Official, published as @humeai/mcp-server on npm with first-party docs. Smaller tool surface than ElevenLabs/Cartesia (TTS-focused). Octave 2 multilingual model strengthens its case for character performance."
+    "verified": "2026-08-11",
+    "notes": "Official and current: npm @humeai/mcp-server 0.3.0, registry-modified 20 Jul 2026; repo last pushed 24 Jun 2026 but only ~9 stars and no LICENSE file. Five tools — a much narrower surface than ElevenLabs or Cartesia, and TTS-only, so pair it with something else for SFX and transcription. Set --workdir (or WORKDIR) or audio lands in the system temp directory; local playback wants ffplay or another CLI player on PATH."
   },
   {
     "slug": "allvoicelab",
@@ -88,8 +88,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/allvoicelab/AllVoiceLab-MCP", "docs": "https://github.com/allvoicelab/AllVoiceLab-MCP#readme", "site": "https://www.allvoicelab.com" },
     "added": "2026-06-29",
-    "verified": "2026-06-29",
-    "notes": "MIT, PyPI allvoicelab-mcp 0.0.5, Python >=3.11, 56 stars; official but last pushed Aug 2025. Region matters: global keys use https://api.allvoicelab.com, mainland keys use https://api.allvoicelab.cn. The README is explicit that credits are required."
+    "verified": "2026-08-11",
+    "notes": "The stale one in this category: MIT, PyPI allvoicelab-mcp 0.0.5 released 1 Aug 2025, repo last pushed 5 Aug 2025 — a full year without a commit, at ~57 stars. Official, but treat the pin as frozen. Region matters: global keys use https://api.allvoicelab.com, mainland-China keys use https://api.allvoicelab.cn. Requires Python >=3.11 and paid credits."
   },
   {
     "slug": "suno-acedata",
@@ -99,20 +99,21 @@
     "category": "music",
     "featured": false,
     "tagline": "Full Suno workflow via a third-party API: songs, lyrics, stems, extends, personas.",
-    "description": "The most complete Suno bridge available as an MCP server, built on AceDataCloud's Suno API: generate songs from prompts or custom lyrics, extend/cover/remaster tracks, split stems, replace sections, and export WAV/MIDI. Useful for temp score and full songs with vocals — capabilities Suno itself does not expose via any official API or MCP.",
-    "capabilities": ["music", "lyrics", "song-extension", "stems", "covers", "vocal-extraction"],
-    "tools_sample": ["generate_music", "generate_custom_music", "extend_music", "cover_music", "stems_music", "generate_lyrics", "get_wav", "get_midi"],
+    "description": "The most complete Suno bridge available as an MCP server, built on AceDataCloud's reseller API: generate songs from prompts or custom lyrics, extend, cover, remaster, mash up, replace a time range, split stems, and export WAV, MIDI or MP4. Personas keep one vocalist consistent across cues. It reaches capabilities Suno itself exposes through no official API or MCP — which is precisely the problem.",
+    "capabilities": ["music", "lyrics", "song-extension", "stems", "covers", "personas", "vocal-extraction"],
+    "tools_sample": ["suno_generate_music", "suno_generate_custom_music", "suno_extend_music", "suno_cover_music", "suno_stems_music", "suno_replace_section", "suno_generate_with_persona", "suno_generate_lyrics", "suno_get_wav", "suno_get_midi", "suno_get_task"],
     "install": {
-      "claude_code": "claude mcp add suno -e ACEDATACLOUD_API_TOKEN=YOUR_TOKEN -- uvx mcp-suno",
-      "remote_url": null,
+      "claude_code": "claude mcp add suno --transport http https://suno.mcp.acedata.cloud/mcp -h \"Authorization: Bearer YOUR_API_TOKEN\"",
+      "remote_url": "https://suno.mcp.acedata.cloud/mcp",
+      "remote_headers": ["Authorization"],
       "stdio_command": "uvx mcp-suno"
     },
     "auth": { "type": "api_key", "env_var": "ACEDATACLOUD_API_TOKEN", "key_url": "https://platform.acedata.cloud" },
     "pricing": "credits",
     "links": { "repo": "https://github.com/AceDataCloud/SunoMCP", "docs": null, "site": "https://platform.acedata.cloud" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Important caveat: Suno has NO official public API as of 2026 — all Suno APIs/MCPs are unofficial resellers and may violate Suno's ToS; commercial-rights claims cannot be guaranteed. The same applies to all Udio wrappers. For licensed-by-design music, prefer Lyria (Google GenMedia) or Stable Audio via the fal hub."
+    "verified": "2026-08-11",
+    "notes": "Suno still has NO official public API as of August 2026 — its CPO posted an intake form in July 2026 saying the company is only exploring a developer API, partner-curated, with no public endpoints, docs or date. So this and every other Suno wrapper is an unofficial reseller, plausibly against Suno's ToS, and no commercial-rights claim on the output can be guaranteed. Same for all Udio wrappers. For music you can actually clear, prefer Lyria (Google GenMedia) or Stable Audio via the fal hub. Mechanically it is alive and moving: PyPI mcp-suno 2026.8.10.0, MIT, ~41 stars, and a hosted streamable-HTTP endpoint that answers 401 to an unauthenticated tools/list. Tools are all suno_-prefixed — the older unprefixed names in the lower half of the README are out of date."
   },
   {
     "slug": "mureka",
@@ -122,7 +123,7 @@
     "category": "music",
     "featured": false,
     "tagline": "Official Mureka server for lyrics, songs, and instrumental background music.",
-    "description": "Mureka's official MCP server lets agents generate lyrics, turn lyrics into songs, and create instrumental background music through the Mureka API, saving audio files locally. For a filmmaker-agent, it is a cleaner first-party alternative to Suno resellers when you need temp songs, cue sketches, or quick underscore drafts from the same client.",
+    "description": "Mureka's official MCP server lets agents generate lyrics, turn lyrics into songs, and create instrumental background music through the Mureka API, saving audio files locally. For a filmmaker-agent it is a first-party alternative to Suno resellers when you need temp songs, cue sketches, or quick underscore drafts without the licensing cloud hanging over them.",
     "capabilities": ["music", "lyrics", "song-generation", "instrumental", "background-music", "local-playback"],
     "tools_sample": ["generate_lyrics", "generate_song", "generate_instrumental", "play_audio"],
     "install": {
@@ -134,8 +135,54 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/SkyworkAI/Mureka-mcp", "docs": "https://platform.mureka.ai/docs/en/quickstart.html", "site": "https://platform.mureka.ai" },
     "added": "2026-06-29",
-    "verified": "2026-06-29",
-    "notes": "Official MIT server, PyPI mureka-mcp 0.0.13, Python >=3.10, 106 stars; last repo push was May 2025. The README warns that Mureka credits are required. The broader Mureka API now includes prompt-to-song, soundtrack, stems, remix, region editing, and TTS endpoints, but this MCP exposes only lyrics, lyric-to-song, instrumental generation, and local playback. Audio saves to Desktop by default; set MUREKA_MCP_BASE_PATH and TIME_OUT_SECONDS for production runs."
+    "verified": "2026-08-11",
+    "notes": "Official and MIT, but effectively abandoned as a package: PyPI mureka-mcp 0.0.13 and the last repo commit are both 13 May 2025 — fifteen months untouched at ~109 stars. The wider Mureka API has since grown prompt-to-song, soundtrack, stems, remix, region editing and TTS endpoints; this MCP still exposes only four tools. Credits required. Audio saves to Desktop by default; set MUREKA_MCP_BASE_PATH and TIME_OUT_SECONDS before any production run."
+  },
+  {
+    "slug": "reaper-mcp",
+    "name": "REAPER MCP",
+    "vendor": "Community (bonfire-systems / Youssef Hemimy)",
+    "official": false,
+    "category": "sound-design",
+    "featured": false,
+    "tagline": "Drives a live REAPER session: tracks, MIDI, FX, mixing, stems, and loudness analysis.",
+    "description": "The first server in this directory that puts an agent inside an actual DAW session rather than beside it. 58 tools cover project and track management, MIDI item and note writing, FX chains and parameters, sends and busses, volume and pan automation, mastering chains, and rendering to stems or a time selection. For a filmmaker-agent it closes the loop after generative SFX and dialogue: import the clips, lay them against picture, mix, then analyze loudness, dynamics and clipping before delivery.",
+    "capabilities": ["daw-control", "mixing", "mastering", "midi", "fx-chains", "automation", "stem-render", "loudness-analysis"],
+    "tools_sample": ["create_track", "import_audio_file", "add_fx", "set_fx_parameter", "set_track_volume", "add_volume_automation", "render_stems", "analyze_loudness", "detect_clipping", "apply_limiter"],
+    "install": {
+      "claude_code": "claude mcp add reaper -- reaper-mcp-server",
+      "remote_url": null,
+      "stdio_command": "reaper-mcp-server (after `pip install reaper-mcp-server` — note the package name is NOT `reaper-mcp`)"
+    },
+    "auth": { "type": "local-app", "env_var": null, "key_url": "No key; requires a licensed REAPER install running locally with its distant API enabled" },
+    "pricing": "free",
+    "links": { "repo": "https://github.com/bonfire-systems/reaper-mcp", "docs": "https://github.com/bonfire-systems/reaper-mcp#readme", "site": "https://www.reaper.fm" },
+    "added": "2026-08-11",
+    "verified": "2026-08-11",
+    "notes": "Install friction is the story. The PyPI package is `reaper-mcp-server`, not `reaper-mcp` — `reaper-mcp` on PyPI is an unrelated project by a different author (nbdy), so a wrong `pip install` silently gets you someone else's server. Setup is also two-stage: the server talks to REAPER through python-reapy, which requires REAPER's distant API to be switched on by running `scripts/enable_reapy.py` via Actions > Run ReaScript, then restarting REAPER. MIT, Python >=3.10, ~117 stars, self-classified Alpha. PyPI sits at 0.1.1 (27 Mar 2026) while the repo has moved on to 21 Jun 2026 — install from source if you want the newer tools. REAPER itself is a paid licence after its evaluation period, and pulls in librosa, numpy and soundfile for the analysis tools."
+  },
+  {
+    "slug": "ableton-mcp",
+    "name": "AbletonMCP",
+    "vendor": "Community (Siddharth Ahuja)",
+    "official": false,
+    "category": "music",
+    "featured": false,
+    "tagline": "Composes and arranges inside a running Ableton Live set — tracks, clips, devices, transport.",
+    "description": "Connects Claude to a live Ableton Live set over a socket, so an agent can create MIDI and audio tracks, write clips note by note, pull instruments and effects out of Live's browser, set tempo, and build a full Arrangement View structure with intro, build, drop and outro. For a filmmaker-agent this is the scoring and temp-music counterpart to a generative music API: the cue stays an editable session you can re-conform when the cut changes, not a rendered stereo file you have to regenerate.",
+    "capabilities": ["daw-control", "scoring", "midi", "clip-authoring", "arrangement", "instrument-browser", "transport-control"],
+    "tools_sample": ["get_session_info", "create_midi_track", "create_clip", "add_notes_to_clip", "load_instrument_or_effect", "load_drum_kit", "set_tempo", "switch_to_arrangement_view", "duplicate_to_arrangement", "get_arrangement_clips", "fire_clip"],
+    "install": {
+      "claude_code": "claude mcp add ableton -- uvx ableton-mcp",
+      "remote_url": null,
+      "stdio_command": "uvx ableton-mcp (then manually copy AbletonMCP_Remote_Script/__init__.py into Live's MIDI Remote Scripts folder and enable it as a Control Surface)"
+    },
+    "auth": { "type": "local-app", "env_var": null, "key_url": "No key; requires a licensed Ableton Live 10 or newer running locally" },
+    "pricing": "free",
+    "links": { "repo": "https://github.com/ahujasid/ableton-mcp", "docs": "https://github.com/ahujasid/ableton-mcp#readme", "site": "https://www.ableton.com" },
+    "added": "2026-08-11",
+    "verified": "2026-08-11",
+    "notes": "By Siddharth Ahuja, the maintainer of Blender MCP already listed in this directory — the same architecture, and a fair maintenance signal rather than an endorsement: MIT, PyPI ableton-mcp 1.3.5 (3 Aug 2026), ~2.9k stars, repo pushed the day this entry was verified. The install is not one command: the MIDI Remote Script has to be hand-copied into Live's MIDI Remote Scripts directory, whose path differs by OS and Live version, then selected under Settings > Link, Tempo & MIDI. Run only one instance of the server across your clients. It ships anonymous telemetry on by default — set ABLETON_MCP_DISABLE_TELEMETRY=true to turn it off. Known limits: long arrangements time out and must be broken into smaller prompts, it works best with Live's stock devices, and reading notes back out of existing clips is unreliable. Save your set first."
   },
   {
     "slug": "freesound",
@@ -144,21 +191,21 @@
     "official": false,
     "category": "sound-design",
     "featured": false,
-    "tagline": "Search freesound.org's 600k+ CC-licensed sounds by natural language for SFX pulls.",
-    "description": "Community MCP server for the Freesound.org API: agents search real recorded sound effects, ambiences, and loops with natural-language queries and get back duration, tags, license info, and preview URLs. For a film pipeline this covers the classic library-pull workflow ('thunder for a storm scene, under 30s') with proper license metadata, complementing generative SFX tools.",
+    "tagline": "Search freesound.org's CC-licensed sound library by natural language for SFX pulls.",
+    "description": "Community MCP server for the Freesound.org API: agents search real recorded sound effects, ambiences, and loops with natural-language queries and get back duration, tags, license info, and preview URLs. For a film pipeline this covers the classic library-pull workflow ('thunder for a storm scene, under 30s') with the license metadata attached, complementing generative SFX tools.",
     "capabilities": ["sfx-search", "audio-metadata", "license-info", "preview-urls"],
     "tools_sample": ["search_sounds"],
     "install": {
       "claude_code": null,
       "remote_url": null,
-      "stdio_command": "uv run freesound-mcp (after cloning the repo and `uv sync`)"
+      "stdio_command": "Clone the repo, then `docker build -t freesound-mcp .` or run from source with uv — no published package"
     },
-    "auth": { "type": "api_key", "env_var": "FREESOUND_API_KEY", "key_url": "https://freesound.org/api/apply/" },
+    "auth": { "type": "api_key", "env_var": "FREESOUND_API_KEY", "key_url": "https://freesound.org/apiv2/apply/ (login required)" },
     "pricing": "free",
     "links": { "repo": "https://github.com/johnkimdw/freesound-mcp-server", "docs": null, "site": "https://freesound.org" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "MIT, small, search-only (no in-tool download); install from source or Docker. Alternatives: MuShan-bit/freesound-mcp (adds download by sound ID) and timjrobinson/FreesoundMCPServer (Node.js). Check individual sound licenses (some CC-BY/NC) before use in a film."
+    "verified": "2026-08-11",
+    "notes": "MIT, ~7 stars, last pushed 24 Jun 2025 and unchanged since. Search-only — it returns preview URLs, not downloads, so a separate fetch step is still on you. The README's API-key link (freesound.org/api/apply/) now 404s; the working one is freesound.org/apiv2/apply/. No PyPI release: clone and build. Alternatives worth checking first: MuShan-bit/freesound-mcp adds download by sound ID, timjrobinson/FreesoundMCPServer is Node.js. Freesound licences are per-sound and include CC-BY and non-commercial terms — read each one before it goes in a film."
   },
   {
     "slug": "audiogen",
@@ -167,21 +214,21 @@
     "official": false,
     "category": "sound-design",
     "featured": false,
-    "tagline": "Free, local sound-effect generation with Meta's AudioGen — no API key needed.",
-    "description": "Community MCP server that runs Meta's AudioGen (AudioCraft) locally to generate sound effects from text descriptions, with async job tracking. Attractive for filmmakers who want unlimited, offline, no-cost SFX drafts without sending prompts to a cloud API; the model (~2GB) downloads from Hugging Face on first run.",
-    "capabilities": ["sfx", "local-inference", "job-queue"],
+    "tagline": "Local, offline sound-effect generation with Meta's AudioGen — no API key, no credits.",
+    "description": "Community MCP server that runs Meta's AudioGen (AudioCraft) on-device to generate sound effects from text descriptions, with async job tracking so long generations do not block the agent. The draw is unlimited offline SFX drafts at zero cost and with nothing leaving the machine; the cost is a fragile install and a model that is well behind current cloud SFX quality.",
+    "capabilities": ["sfx", "local-inference", "offline", "job-queue"],
     "tools_sample": ["generate_sound_effect", "check_generation_status", "list_generated_sounds"],
     "install": {
-      "claude_code": null,
+      "claude_code": "claude mcp add audiogen ~/.audiogen-env/bin/python -- -m audiogen_mcp.server",
       "remote_url": null,
-      "stdio_command": null
+      "stdio_command": "Multi-step: create a Python 3.11 venv, `uv pip install audiocraft --no-deps`, install its deps by hand (xformers must be skipped), then `uv pip install audiogen-mcp`"
     },
-    "auth": { "type": "none", "env_var": null, "key_url": "No key needed; model auto-downloads from Hugging Face Hub" },
+    "auth": { "type": "none", "env_var": null, "key_url": "No key needed; model weights auto-download from Hugging Face Hub on first run" },
     "pricing": "free",
     "links": { "repo": "https://github.com/peerjakobsen/audiogen-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Very early stage (v0.1.0, Jan 2026), Apple Silicon only, manual Python 3.11 venv setup required. For higher-quality cloud SFX, prefer ElevenLabs text_to_sound_effects or CassetteAI SFX via the fal MCP."
+    "verified": "2026-08-11",
+    "notes": "The weakest entry in this category and listed only for the offline use case: v0.1.0, one star, last commit 25 Jan 2026 and nothing since. Apple Silicon only, Python 3.9-3.11 (audiocraft does not support 3.12+), needs ffmpeg, ~4GB of disk for weights and ~8GB RAM. The install ordering is manual because xformers will not build on Apple Silicon. For quality, prefer ElevenLabs text_to_sound_effects or CassetteAI SFX via the fal MCP; come here only when the audio must not leave the machine."
   },
   {
     "slug": "auphonic-zapier",
@@ -190,7 +237,7 @@
     "official": false,
     "category": "sound-design",
     "featured": false,
-    "tagline": "Auphonic's AI audio post (loudness, leveling, denoise) reachable through Zapier MCP.",
+    "tagline": "Auphonic's automated audio post (loudness, leveling, denoise) reachable through Zapier MCP.",
     "description": "Auphonic is the de facto automated audio post-production service — loudness normalization to broadcast specs, speech leveling, denoising, de-essing, and filler-word cutting. It has no first-party MCP server; Zapier's hosted MCP exposes Auphonic actions to agents, making it the verified route for agent-driven dialogue cleanup and final-mix loudness compliance.",
     "capabilities": ["audio-cleanup", "loudness-normalization", "denoising", "leveling", "mastering"],
     "tools_sample": null,
@@ -199,12 +246,12 @@
       "remote_url": null,
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Zapier account + Auphonic connection; per-user MCP endpoint generated in the Zapier MCP dashboard" },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Zapier account plus an Auphonic connection; the MCP endpoint is generated per-user in the Zapier MCP dashboard" },
     "pricing": "freemium",
     "links": { "repo": null, "docs": "https://auphonic.com/help/", "site": "https://zapier.com/mcp/auphonic" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "A generic Zapier MCP wrapper, not a dedicated audio MCP — tool granularity depends on Zapier's Auphonic actions, and the endpoint URL is per-user. Auphonic offers 2 free processing hours/month. Listed because audio cleanup/mastering otherwise has no notable dedicated MCP as of June 2026 (ElevenLabs isolate_audio is the nearest alternative for dialogue denoise)."
+    "verified": "2026-08-11",
+    "notes": "A generic Zapier gateway, not a dedicated audio MCP — tool granularity is whatever Zapier's Auphonic actions expose, the endpoint URL is per-user so it cannot be published here, and every call routes your audio through a third integration layer. Auphonic gives 2 free processing hours per month. Both listed pages still resolve as of 11 Aug 2026. Now that REAPER MCP is in this directory, an agent that needs measured loudness compliance has a local alternative: analyze_loudness plus apply_limiter in a REAPER session. ElevenLabs isolate_audio remains the nearest one-shot dialogue denoiser."
   },
   {
     "slug": "deepgram",
@@ -214,31 +261,31 @@
     "category": "transcription",
     "featured": false,
     "tagline": "Official Deepgram server: Nova transcription, diarization, and audio intelligence.",
-    "description": "Deepgram's official MCP server gives agents access to its speech platform — fast, accurate transcription with speaker diarization plus audio-intelligence features, with tools fetched dynamically from the API at runtime so new capabilities appear without upgrades. For film work it handles dailies and interview transcription and dialogue logging at production scale.",
+    "description": "Deepgram's official MCP server gives agents access to its speech platform — fast, accurate transcription with speaker diarization plus audio-intelligence features. Its tool list is fetched from Deepgram's API at runtime rather than hardcoded, so new capabilities appear without a package upgrade. For film work it handles dailies, interview transcription, and dialogue logging at production scale.",
     "capabilities": ["transcription", "diarization", "audio-intelligence", "tts"],
     "tools_sample": null,
     "install": {
       "claude_code": "claude mcp add deepgram -e DEEPGRAM_API_KEY=YOUR_KEY -- deepgram-mcp",
       "remote_url": null,
-      "stdio_command": "deepgram-mcp (after `pip install deepgram-mcp`; also bundled with the Deepgram CLI as `dg mcp`)"
+      "stdio_command": "deepgram-mcp (after `pip install deepgram-mcp`; also bundled with the Deepgram CLI, where `dg mcp` wraps it)"
     },
     "auth": { "type": "api_key", "env_var": "DEEPGRAM_API_KEY", "key_url": "https://console.deepgram.com (free signup credit)" },
     "pricing": "freemium",
     "links": { "repo": "https://github.com/deepgram/mcp", "docs": "https://developers.deepgram.com", "site": "https://deepgram.com" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Official but young (v0.1.1, Apr 2026). Tool list is fetched from Deepgram's API at runtime; an SSE HTTP mode exists (`deepgram-mcp --transport sse`). Note: AssemblyAI's only official MCP is a docs server, not transcription — Deepgram is the strongest official cloud-STT MCP."
+    "verified": "2026-08-11",
+    "notes": "Official but thin on the ground: PyPI deepgram-mcp 0.1.1 (4 Apr 2026), repo last pushed 6 May 2026, MIT, one star. The runtime tool fetch is genuinely useful but means you cannot see the tool surface before connecting, and it depends on Deepgram's developer API at https://api.dx.deepgram.com staying up. An SSE HTTP mode exists: `deepgram-mcp --transport sse --port 8000`. AssemblyAI's only official MCP is a documentation server, not transcription, so Deepgram remains the strongest official cloud-STT MCP."
   },
   {
     "slug": "sanzaru",
-    "name": "Sanzaru (Whisper MCP)",
+    "name": "Sanzaru (OpenAI audio MCP)",
     "vendor": "Community (TJC-LP)",
     "official": false,
     "category": "transcription",
     "featured": false,
-    "tagline": "OpenAI Whisper/GPT-4o transcription, audio chat, and TTS in one local MCP server.",
-    "description": "Community MCP server wrapping OpenAI's audio APIs: Whisper and GPT-4o transcription with enhancement templates, interactive 'chat with audio' analysis, format conversion/compression, and OpenAI TTS. A filmmaker-agent can transcribe and interrogate dailies, then generate scratch narration, all against a single OpenAI key.",
-    "capabilities": ["transcription", "audio-analysis", "tts", "format-conversion"],
+    "tagline": "Whisper and GPT-4o transcription, audio chat, and TTS against one OpenAI key.",
+    "description": "Community MCP server wrapping OpenAI's audio APIs: Whisper and GPT-4o transcription with enhancement templates, interactive 'chat with audio' analysis, format conversion and compression, and OpenAI TTS. A filmmaker-agent can transcribe dailies, interrogate them in place, then generate scratch narration without leaving the same credential. Recent versions have widened well past audio into Sora video and gpt-image generation.",
+    "capabilities": ["transcription", "audio-analysis", "tts", "format-conversion", "video-generation", "image-generation"],
     "tools_sample": ["transcribe_audio", "transcribe_with_enhancement", "chat_with_audio", "create_audio", "convert_audio", "compress_audio"],
     "install": {
       "claude_code": "claude mcp add sanzaru -e OPENAI_API_KEY=YOUR_KEY -e SANZARU_MEDIA_PATH=/absolute/path/to/media -- uvx \"sanzaru[all]\"",
@@ -249,7 +296,7 @@
     "pricing": "paid",
     "links": { "repo": "https://github.com/TJC-LP/sanzaru", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Successor to the widely-listed (now deprecated) arcaputo3/mcp-server-whisper. v0.6.2, Apr 2026, MIT. For fully local/offline transcription: jwulff/whisper-mcp and SmartLittleApps/local-stt-mcp (whisper.cpp, Apple Silicon, diarization)."
+    "verified": "2026-08-11",
+    "notes": "Successor to the widely-listed and now-deprecated arcaputo3/mcp-server-whisper. Actively developed: PyPI sanzaru 0.9.1 (7 Aug 2026), MIT, Python >=3.10, but only ~7 stars for a project of this scope. Scope creep is the caveat — it now also wraps Sora video and gpt-image, so installing `sanzaru[all]` for transcription hands the agent generation tools you may not want; `sanzaru[audio]` is the narrower extra. No local moderation: content guardrails are OpenAI's. Every call bills your OpenAI account. For fully offline transcription use jwulff/whisper-mcp or SmartLittleApps/local-stt-mcp (whisper.cpp, Apple Silicon, diarization)."
   }
 ]

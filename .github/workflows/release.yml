@@ -15,6 +15,12 @@ name: Release (npm + MCP Registry)
 
 on:
   workflow_dispatch:
+  # The published artifact silently drifted three versions behind the repo because releasing
+  # was a manual step nobody remembered. A version bump landing on main is the release signal.
+  push:
+    branches: [main]
+    paths:
+      - "packages/mcp-server/package.json"
 
 permissions:
   contents: read

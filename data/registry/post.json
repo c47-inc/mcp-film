@@ -19,8 +19,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/twelvelabs-io/twelvelabs-js", "docs": "https://www.npmjs.com/package/twelvelabs-mcp", "site": "https://www.twelvelabs.io" },
     "added": "2026-06-28",
-    "verified": "2026-06-28",
-    "notes": "npm twelvelabs-mcp 1.0.0, published May 2026, maintained by the `twelvelabs` npm account plus Teraflop. The stdio bin is `twelvelabs-mcp-stdio`; the explicit `--package=twelvelabs-mcp` npx form avoids npm confusing the package name with the bin name. Local file and folder uploads only work over stdio; hosted HTTP expects API-key headers and public/direct video URLs."
+    "verified": "2026-08-11",
+    "notes": "npm twelvelabs-mcp is still 1.0.0, published May 12 2026 and untouched since — three months without a release, so treat the tool list as frozen. Maintained by the `twelvelabs` npm account plus Teraflop; the linked repo is the JS SDK (18 stars, pushed Jul 23 2026), not the MCP server, so there is no source to read for the server itself. The stdio bin is `twelvelabs-mcp-stdio`; the explicit `--package=twelvelabs-mcp` npx form avoids npm confusing the package name with the bin name. Local file and folder uploads only work over stdio; hosted HTTP expects API-key headers and public/direct video URLs."
   },
   {
     "slug": "video-jungle",
@@ -42,8 +42,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/burningion/video-editing-mcp", "docs": "https://github.com/burningion/video-editing-mcp#readme", "site": "https://www.video-jungle.com" },
     "added": "2026-06-29",
-    "verified": "2026-06-29",
-    "notes": "PyPI video-editor-mcp 0.1.59, Python >=3.11, 276 stars, last pushed Oct 2025, no repo license detected. Video Jungle's site advertises 6 free generated videos, then usage depends on the hosted account. The API key is passed as a positional CLI argument rather than an env var, and local Photos search requires LOAD_PHOTOS_DB=1 plus macOS file access."
+    "verified": "2026-08-11",
+    "notes": "Gone quiet: PyPI video-editor-mcp 0.1.59 was uploaded Oct 9 2025 and the repo (285 stars) was last pushed the same day — ten months with no commit and no repo license detected. The hosted Video Jungle service is still up and its site advertises 6 free generated videos before usage depends on the account, but nobody is maintaining the client. The API key is passed as a positional CLI argument rather than an env var, and local Photos search requires LOAD_PHOTOS_DB=1 plus macOS file access."
   },
   {
     "slug": "plainly-videos",
@@ -65,8 +65,8 @@
     "pricing": "paid",
     "links": { "repo": "https://github.com/plainly-videos/mcp-server", "docs": "https://github.com/plainly-videos/mcp-server#readme", "site": "https://plainlyvideos.com" },
     "added": "2026-06-29",
-    "verified": "2026-06-29",
-    "notes": "Official, npm @plainly-videos/mcp-server 1.0.5, Node >=18, package MIT, v1.0.5 released Jan 8 2026. The GitHub repo has only 6 stars and no license file surfaced via GitHub metadata, so treat it as a vendor integration rather than a community signal. No prompts/resources yet; it is four focused tools around template discovery and rendering."
+    "verified": "2026-08-11",
+    "notes": "Official, npm @plainly-videos/mcp-server 1.0.5 (MIT, Node >=18) released Jan 8 2026; the repo has 6 stars and was last pushed Jan 30 2026 — over six months without a commit, so this is a shipped-and-parked vendor integration rather than a living project. Four focused tools around template discovery and rendering, no prompts or resources. Templates must already exist in a paid Plainly account; the MCP renders them, it does not author them."
   },
   {
     "slug": "shotstack",
@@ -88,8 +88,8 @@
     "pricing": "freemium",
     "links": { "repo": null, "docs": "https://www.npmjs.com/package/@shotstack/shotstack-mcp-server", "site": "https://shotstack.io" },
     "added": "2026-06-29",
-    "verified": "2026-06-29",
-    "notes": "Official npm package @shotstack/shotstack-mcp-server 1.1.0, MIT, Node >=18, published by author Shotstack with a shotstack.io maintainer; latest modified May 8 2026. Local stdio uses SHOTSTACK_API_KEY; the hosted endpoint at https://mcp.shotstack.io/ responds as an OAuth-protected MCP resource for web clients. No public source repo was advertised in npm metadata, so verify behavior against package docs and the live endpoint rather than GitHub stars."
+    "verified": "2026-08-11",
+    "notes": "Official npm @shotstack/shotstack-mcp-server 1.1.0, MIT, Node >=18, released May 8 2026 and unchanged since. The hosted endpoint at https://mcp.shotstack.io/ answers an unauthenticated tools/list probe with 401 — alive and auth-gated. No public source repo is advertised in npm metadata, so there are no stars or commits to read; verify behaviour against the package docs and the live endpoint rather than GitHub signals."
   },
   {
     "slug": "davinci-resolve",
@@ -111,8 +111,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/samuelgursky/davinci-resolve-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "~1.2k stars, v2.45.0 (Jun 2026), 78 releases, MIT; 331/336 Resolve API methods live-tested. Requires Resolve STUDIO 18.5+ (the free edition lacks external scripting) and Python 3.10-3.12. The setup wizard auto-configures Claude Desktop/Cursor/VS Code."
+    "verified": "2026-08-11",
+    "notes": "~2.1k stars, MIT, v2.93.0 released Aug 10 2026 — the most actively maintained NLE MCP in this directory, and still shipping. Requires Resolve STUDIO 18.5+ (the free edition has no external scripting) and Python 3.10-3.12. The setup wizard auto-configures Claude Desktop/Cursor/VS Code. tools_sample is null because the exposed tool list tracks Resolve's scripting API and moves between releases — read tools/list rather than trusting a cached name."
   },
   {
     "slug": "palmier-pro",
@@ -134,8 +134,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/palmier-io/palmier-pro", "docs": "https://github.com/palmier-io/palmier-pro#readme", "site": "https://palmier.io" },
     "added": "2026-06-29",
-    "verified": "2026-06-29",
-    "notes": "GPL-3.0 editor, 9.3k stars, v0.4.5 released Jun 28 2026. The MCP server and agent chat are open source, but the generative AI processing is closed. Hard platform caveat: macOS 26 Tahoe on Apple Silicon only, and the editor is early: no transitions, masking or graphics yet."
+    "verified": "2026-08-11",
+    "notes": "GPL-3.0 editor, 13.4k stars, v0.7.3 released Aug 10 2026 — one of the fastest-moving projects in this file. The editor, the MCP server and the agent chat are open source; the generative AI processing is closed and needs login plus a subscription. Hard platform caveat that rules out most crews: macOS 26 (Tahoe) on Apple Silicon only — no Windows, no Linux, no Intel Macs. The MCP endpoint is local-only and exists only while the app is running with a project open."
   },
   {
     "slug": "fcp-mcp",
@@ -147,7 +147,7 @@
     "tagline": "Final Cut Pro MCP with FCPXML editing, live control, media QC and Compressor dispatch.",
     "description": "fcp-mcp gives agents a broad Final Cut Pro bench: parse and rewrite FCPXML, run QC for flash frames and gaps, build rough cuts, control FCP through AppleScript, analyze media through ffprobe, and send jobs to Apple Compressor. It matters when a filmmaker lives in Final Cut but still wants agent-operated timeline repair, captions, cross-NLE handoff, and export automation.",
     "capabilities": ["final-cut-pro", "fcpxml", "nle-control", "timeline-qc", "media-analysis", "compressor", "cross-nle-export"],
-    "tools_sample": ["fcpxml_qc_report", "fcpxml_fix_flash_frames", "fcpxml_auto_rough_cut", "fcpxml_export_resolve", "fcp_open_library", "fcp_share", "media_loudness", "compressor_encode"],
+    "tools_sample": ["fcpxml_qc_report", "fcpxml_detect_flash_frames", "fcpxml_workflow_prepare", "fcpxml_workflow_commit", "fcpxml_export_resolve", "fcpxml_export_fcp7", "fcpxml_apply_template", "fcp_open_library", "fcp_share", "fcp_doctor"],
     "install": {
       "claude_code": "claude mcp add-json fcp '{\"type\":\"stdio\",\"command\":\"fcp-mcp\"}' --scope user",
       "remote_url": null,
@@ -157,8 +157,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/dreliq9/fcp-mcp", "docs": "https://github.com/dreliq9/fcp-mcp#readme", "site": "https://pypi.org/project/fcp-mcp/" },
     "added": "2026-06-29",
-    "verified": "2026-06-29",
-    "notes": "MIT, PyPI fcp-mcp 0.2.0 uploaded Apr 23 2026, Python >=3.10, server.json present, 88 tools and 107 tests claimed by the repo. The caveat is maturity: only 1 GitHub star and last pushed May 21 2026. Treat it as the most complete-looking Final Cut MCP, not a battle-tested standard; local live-control depends on AppleScript and a running Final Cut Pro install. Optional FCP_MCP_OUTPUT_DIR changes where modified FCPXML files are written."
+    "verified": "2026-08-11",
+    "notes": "Name collision warning: this is dreliq9's Python server, PyPI package `fcp-mcp`. The `fcpxml-mcp` entry in this directory is DareDev256/fcp-mcp-server — a different maintainer with a nearly identical name. MIT. PyPI is still on 0.2.0 from Apr 23 2026 while `main` (pushed Aug 7 2026) carries an untagged v0.3 release candidate claiming up to 93 tools, so the published package is behind its own README; install from git if you want what the README describes. Maturity caveat: 6 GitHub stars. Live control depends on AppleScript and a running Final Cut Pro; optional FCP_MCP_OUTPUT_DIR changes where modified FCPXML is written."
   },
   {
     "slug": "fcpxml-mcp",
@@ -170,18 +170,18 @@
     "tagline": "Turn Final Cut Pro XML into QC, markers, rough cuts, and cross-NLE handoffs.",
     "description": "FCPXML MCP gives agents a deep Final Cut Pro XML workbench: inspect timelines, detect flash frames and gaps, add marker batches, build rough cuts, reformat cuts, export EDL/CSV, and write Resolve or FCP7 handoff files. It fits the assistant-editor jobs that do not require eyes on the frame: count, QC, annotate, restructure, and push a clean XML back into the edit bay.",
     "capabilities": ["final-cut-pro", "fcpxml", "timeline-qc", "rough-cuts", "marker-automation", "cross-nle-export", "security-hardened"],
-    "tools_sample": ["analyze_timeline", "detect_flash_frames", "detect_gaps", "batch_add_markers", "auto_rough_cut", "reformat_timeline", "export_resolve_xml", "push_to_fcp"],
+    "tools_sample": ["inspect", "diagnose", "edit", "mark", "generate", "transcript", "deliver"],
     "install": {
-      "claude_code": "claude mcp add fcpxml -e FCP_PROJECTS_DIR=/Users/you/Movies -- uv --directory /path/to/fcpxml-mcp-server run server.py",
+      "claude_code": "claude mcp add fcpxml -e FCP_PROJECTS_DIR=~/Movies -- uvx fcp-mcp-server",
       "remote_url": null,
-      "stdio_command": "uv --directory /path/to/fcpxml-mcp-server run server.py"
+      "stdio_command": "uvx fcp-mcp-server"
     },
     "auth": { "type": "local-app", "env_var": null, "key_url": "XML mode works on exported FCPXML files; Live Mode requires macOS with Final Cut Pro 10.4+ running and a one-time Automation permission grant" },
     "pricing": "free",
-    "links": { "repo": "https://github.com/DareDev256/fcpxml-mcp-server", "docs": "https://github.com/DareDev256/fcpxml-mcp-server#readme", "site": null },
+    "links": { "repo": "https://github.com/DareDev256/fcp-mcp-server", "docs": "https://github.com/DareDev256/fcp-mcp-server#readme", "site": "https://pypi.org/project/fcp-mcp-server/" },
     "added": "2026-06-29",
-    "verified": "2026-06-29",
-    "notes": "MIT, v0.9.0 released Jun 11 2026, 58 stars, Python >=3.10, last pushed Jun 19 2026. This is not an in-FCP plugin: Apple's scriptable import surface lets Live Mode push XML into Final Cut, but current timelines still come back by manual File > Export XML. The repo has been renamed to fcpxml-mcp-server while some README/pyproject install paths still say fcp-mcp-server; GitHub redirects, but use the canonical repo path in new configs."
+    "verified": "2026-08-11",
+    "notes": "Rename direction, corrected — an earlier version of this note had it backwards. `DareDev256/fcpxml-mcp-server` is the OLD path and 301-redirects to the canonical `DareDev256/fcp-mcp-server`; use the latter. Name collision warning: the `fcp-mcp` entry in this directory is dreliq9's separate Final Cut server, not this one. MIT, v0.15.0 released Aug 4 2026, 79 stars, Python >=3.10, PyPI `fcp-mcp-server`. Since v0.14.0 the advertised surface is 7 grouped tools (inspect/diagnose/edit/mark/generate/transcript/deliver) dispatching 62 underlying operations; set FCP_MCP_LEGACY_TOOLS=1 to advertise the old flat tool names. This is not an in-FCP plugin: Live Mode pushes XML into Final Cut via an Apple event, but current timelines still come back by manual File > Export XML."
   },
   {
     "slug": "premiere-pro",
@@ -191,7 +191,7 @@
     "category": "editing-post",
     "featured": false,
     "tagline": "Drive Premiere Pro timelines, effects, and exports from your agent via a CEP bridge.",
-    "description": "97-tool MCP server that controls Premiere Pro through a CEP extension bridge: import media, edit sequences, apply effects and transitions, and export. Lets an agent do real NLE assembly inside the editor filmmakers already use.",
+    "description": "A 283-tool MCP server that controls Premiere Pro through a CEP extension bridge: import media, edit sequences, apply effects and transitions, and export, with context resources and guided prompts alongside the tools. Lets an agent do real NLE assembly inside the editor filmmakers already use, which Adobe's own connector does not offer.",
     "capabilities": ["nle-control", "timeline-editing", "effects", "render", "media-management"],
     "tools_sample": ["import_media", "apply_effect", "add_transition", "get_sequences", "get_active_sequence", "export_sequence"],
     "install": {
@@ -203,8 +203,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/hetpatel-11/Adobe_Premiere_Pro_MCP", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "272 stars, active through Jun 2026, MIT — the most-starred Premiere MCP (Adobe has no official one). Install is git clone + npm setup; macOS is the primary platform. Newer alternative: leancoderkavy/premiere-pro-mcp (269 tools)."
+    "verified": "2026-08-11",
+    "notes": "Correction to an earlier note here: Adobe DOES have an official MCP. The hosted 'Adobe for Creativity' connector went GA Apr 28 2026 and is listed separately in this directory — but it is account-scoped and its video surface is reformat/quick-cut class (video_resize, video_create_quick_cut). Adobe documents no tool that opens, reads or edits a Premiere Pro project, so community CEP/UXP bridges still own real editorial. This one: 455 stars, MIT, last pushed Aug 5 2026, README claims 283 tools plus 13 context resources and 10 guided prompts; CEP is the supported production bridge and UXP is explicitly experimental. Install is git clone + npm setup, macOS primary. Closest alternative: leancoderkavy/premiere-pro-mcp (184 stars, MIT, ~279 tools, pushed Aug 9 2026)."
   },
   {
     "slug": "after-effects",
@@ -226,8 +226,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/Dakkshin/after-effects-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "416 stars, MIT, active Jun 2026 — the most popular AE MCP. Install: git clone, npm install/build, install-bridge. For template-based AE rendering in the cloud, see plainly-videos/mcp-server (official Plainly API MCP)."
+    "verified": "2026-08-11",
+    "notes": "540 stars, MIT — still the most popular After Effects MCP, but last pushed Apr 1 2026: over four months quiet, so do not expect fixes for newer AE builds. Install: git clone, npm install/build, install-bridge; the ExtendScript bridge panel must stay open in AE. For template-based AE rendering in the cloud without a local install, see plainly-videos in this directory."
   },
   {
     "slug": "ffmpeg",
@@ -249,31 +249,31 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/video-creator/ffmpeg-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "134 stars, pushed May 2026 — the best-maintained ffmpeg MCP (egoist/ffmpeg-mcp is dormant since Mar 2025). Caveat: README states macOS only. Cross-platform lighter alternatives: kevinwatt/ffmpeg-mcp-lite and KyaniteLabs/mcp-video (guardrailed, active Jun 2026)."
+    "verified": "2026-08-11",
+    "notes": "142 stars, last pushed May 20 2026 — nearly three months quiet, though still the best-maintained thin FFmpeg wrapper. Caveats: README states macOS only, and install means cloning the repo (no published package). The older egoist/ffmpeg-mcp has been dormant since Mar 2025. Cross-platform alternatives: kevinwatt/ffmpeg-mcp-lite (26 stars, pushed May 2026) and Kinocut (listed here under the mcp-video slug), which is far more active and adds guardrails on top of FFmpeg."
   },
   {
     "slug": "mcp-video",
-    "name": "mcp-video",
+    "name": "Kinocut",
     "vendor": "Community (KyaniteLabs)",
     "official": false,
     "category": "editing-post",
     "featured": false,
-    "tagline": "Guardrailed local video editing MCP with FFmpeg, subtitles, QC, SFX and Hyperframes.",
-    "description": "KyaniteLabs' mcp-video wraps FFmpeg and adjacent media tools behind typed, preflighted MCP operations. For filmmaker agents it is the safer local post bench: inspect clips, trim and merge, burn captions, normalize audio, render variants, create thumbnails, run release checkpoints, and fail early when an edit would produce bad media.",
+    "tagline": "Guardrailed local video editing MCP — FFmpeg, receipts, quality gates, and repurposing.",
+    "description": "Kinocut, formerly mcp-video, wraps FFmpeg and adjacent media tools behind typed, preflighted MCP operations, with a `kino` CLI and Python client over the same engine. For filmmaker agents it is the safer local post bench: inspect clips, trim and merge, burn captions, normalize audio, render variants, run release checkpoints, and fail early when an edit would produce bad media. Every operation writes a Video Receipt with input and output hashes so another agent or a human can verify what actually happened.",
     "capabilities": ["transcode", "trim-concat", "captioning", "audio-normalization", "quality-check", "repurposing", "hyperframes", "local-post"],
-    "tools_sample": ["search_tools", "video_info", "video_trim", "video_merge", "video_subtitles", "video_normalize_audio", "video_release_checkpoint", "video_repurpose", "hyperframes_render", "video_quality_check"],
+    "tools_sample": ["search_tools", "video_info", "video_trim", "video_merge", "video_subtitles", "video_normalize_audio", "video_release_checkpoint", "video_repurpose", "video_workflow_render", "video_review_run", "hyperframes_render"],
     "install": {
-      "claude_code": "claude mcp add mcp-video -- uvx --from mcp-video mcp-video",
+      "claude_code": "claude mcp add kinocut -- uvx --from kinocut kino",
       "remote_url": null,
-      "stdio_command": "uvx --from mcp-video mcp-video"
+      "stdio_command": "uvx --from kinocut kino"
     },
     "auth": { "type": "none", "env_var": null, "key_url": null },
     "pricing": "free",
-    "links": { "repo": "https://github.com/KyaniteLabs/mcp-video", "docs": "https://kyanitelabs.github.io/mcp-video/", "site": "https://pypi.org/project/mcp-video/" },
+    "links": { "repo": "https://github.com/KyaniteLabs/kinocut", "docs": "https://github.com/KyaniteLabs/kinocut#readme", "site": "https://kinocut.dev/" },
     "added": "2026-06-28",
-    "verified": "2026-06-28",
-    "notes": "Apache-2.0, PyPI mcp-video 1.5.1, Python >=3.11, listed in the official MCP Registry. Core editing needs FFmpeg on PATH; optional AI features pull in heavy extras (Whisper, demucs, upscalers), so install only the extras you actually need."
+    "verified": "2026-08-11",
+    "notes": "Renamed: KyaniteLabs' mcp-video is now Kinocut. The slug here stays `mcp-video` so existing links keep resolving, but the project, package, CLI and docs have all moved. The old docs site kyanitelabs.github.io/mcp-video now 404s; product docs live at kinocut.dev. PyPI `mcp-video` is only a compatibility installer these days (1.6.6 pulls kinocut 1.13.2) — install `kinocut` and drive it with the `kino` CLI. Apache-2.0, 107 stars, Python >=3.11, pushed Aug 11 2026, registered in the official MCP Registry as io.github.KyaniteLabs/kinocut; GitHub is a mirror, the canonical source is the maintainer's own Forgejo. Core editing needs FFmpeg on PATH and AI extras (Whisper, demucs, upscalers) add gigabytes, so install only the extras you need. The 194-tool count is self-reported, and the README openly lists surfaces that are gated or unreleased — desktop packaging, the trusted-execution kernel, paid generative and dubbing plans."
   },
   {
     "slug": "vibeframe",
@@ -295,8 +295,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/vericontext/vibeframe", "docs": "https://github.com/vericontext/vibeframe#readme", "site": "https://vibeframe.ai" },
     "added": "2026-06-28",
-    "verified": "2026-06-28",
-    "notes": "MIT, npm @vibeframe/mcp-server 0.113.11. Requires Node 20+, FFmpeg, and Chrome/Chromium; AI generation bills whichever provider keys you wire in. The project warns that the CLI is the stable runtime and MCP is the host surface, so shell-capable agents may prefer direct `vibe` commands for long builds."
+    "verified": "2026-08-11",
+    "notes": "MIT, npm @vibeframe/mcp-server 0.115.2 published Jul 26 2026; the repo (164 stars) was pushed the same day. Still pre-1.0 and releasing fast, so pin a version rather than tracking latest. Requires Node 20+, FFmpeg, and Chrome/Chromium; AI generation bills whichever provider keys you wire in. The project warns that the CLI is the stable runtime and MCP is the host surface, so shell-capable agents may prefer direct `vibe` commands for long builds."
   },
   {
     "slug": "remotion",
@@ -305,8 +305,8 @@
     "official": true,
     "category": "editing-post",
     "featured": false,
-    "tagline": "Official Remotion docs MCP — grounds agents in the programmatic-video framework.",
-    "description": "Remotion's official MCP server indexes the entire Remotion documentation into a vector store so coding agents can correctly build React-based videos, animated graphics, and captions. It is a knowledge server, not a renderer — pair it with the Remotion CLI for actual rendering.",
+    "tagline": "Remotion's docs MCP, deprecated — the hosted server shuts down no earlier than Aug 31 2026.",
+    "description": "Remotion's official MCP server indexed the entire Remotion documentation into a vector store so coding agents could correctly build React-based videos, animated graphics, and captions. Remotion has now deprecated it: the docs direct you to install Remotion Agent Skills and use /remotion-docs instead, and the hosted MCP is scheduled to shut down. Listed for continuity, not as a recommendation — do not wire it into a new pipeline.",
     "capabilities": ["docs-search", "programmatic-video", "code-assist"],
     "tools_sample": null,
     "install": {
@@ -318,8 +318,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/remotion-dev/remotion", "docs": "https://www.remotion.dev/docs/ai/mcp", "site": "https://www.remotion.dev" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Official; npm @remotion/mcp versioned with Remotion core (v4.0.470, Jun 2026). Currently in test phase, open without authentication. Remotion itself requires a paid company license for teams >3 people. For a Remotion-powered video-making MCP, see gyoridavid/short-video-maker (1.2k stars)."
+    "verified": "2026-08-11",
+    "notes": "Deprecated by Remotion. Its docs page (last updated Aug 11 2026) is titled 'MCP (deprecated)' and states plainly: new installations are not recommended, and the hosted MCP will shut down no earlier than Aug 31 2026. Remotion's stated reasons are that it pays the token costs for MCP requests and that agents do not invoke MCP servers reliably. The replacement is `npx remotion skills add` plus the /remotion-docs skill — a skill, not an MCP server, so it falls outside this directory. The npm package @remotion/mcp is still published and versioned with Remotion core (4.0.508, Aug 11 2026), so the install command still resolves today; that is not a reason to use it. Remotion itself requires a paid company license for teams over three people. gyoridavid/short-video-maker (1.3k stars) is often cited as a Remotion-powered video MCP but has not been pushed since Jun 2025."
   },
   {
     "slug": "json2video",
@@ -341,8 +341,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/omergocmen/json2video-mcp-server", "docs": null, "site": "https://json2video.com" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Early-stage but functional npm package. Notable gap it fills: as of June 2026 none of the big video-API platforms (Shotstack, Creatomate) ship an official MCP — this json2video wrapper is the most usable of the bunch."
+    "verified": "2026-08-11",
+    "notes": "The stalest entry in this file. 26 stars; the repo was last pushed May 10 2025 and npm @omerrgocmen/json2video-mcp 1.3.1 was published May 7 2025 — fifteen months with nothing. It still installs, and the json2video service is still up, but nobody is fixing this wrapper. Correction to an earlier note here: Shotstack now ships an official MCP (listed in this directory), so this is no longer the only route to cloud JSON video assembly — prefer the vendor-maintained one where it fits."
   },
   {
     "slug": "capcut",
@@ -364,8 +364,31 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/fancyboi999/capcut-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "84 stars, active Jun 2026; no official ByteDance MCP exists. Workflow caveat: generated draft folders must be manually copied into CapCut's drafts directory; needs ffmpeg + Python 3.8; docs partly Chinese; no license file."
+    "verified": "2026-08-11",
+    "notes": "94 stars, but last pushed Aug 21 2025 — a full year without a commit, against an app that ships breaking draft-format changes. Test that it still produces drafts your CapCut version opens before you build on it. No official ByteDance MCP exists as a replacement. Workflow caveat: generated draft folders must be manually copied into CapCut's drafts directory; needs ffmpeg + Python 3.8; docs are partly Chinese; no license file."
+  },
+  {
+    "slug": "adobe-creativity",
+    "name": "Adobe for Creativity",
+    "vendor": "Adobe",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Adobe's official hosted MCP — 50+ tools across Photoshop, Firefly, Premiere, Express and Stock.",
+    "description": "Adobe's first official Model Context Protocol connector: a hosted remote server that exposes Creative Cloud capabilities as agent tools. Retouch and batch-edit stills, generative-expand plates, design and animate from Express templates, search Adobe Stock, build InDesign data merges, and reformat or quick-cut video. For a filmmaker-agent this is the key-art, poster-variant and social-cutdown bench, not an editorial tool — the video surface reformats and summarizes clips, it does not open a timeline.",
+    "capabilities": ["image-editing", "image-enhancement", "generative-fill", "template-rendering", "video-reformat", "stock-search", "remote-mcp"],
+    "tools_sample": ["adobe_mandatory_init", "asset_add_file", "image_apply_adjustments", "image_crop_and_resize", "image_generative_expand", "image_select_subject", "video_resize", "video_create_quick_cut", "search_design", "animate_design", "create_firefly_board"],
+    "install": {
+      "claude_code": "claude mcp add --transport http adobe-creativity https://adobe-creativity.adobe.io/mcp",
+      "remote_url": "https://adobe-creativity.adobe.io/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Sign in with a free or paid Adobe account in the MCP client; a guest tier works with no Adobe account at reduced capability" },
+    "pricing": "freemium",
+    "links": { "repo": "https://github.com/adobe/skills", "docs": "https://developer.adobe.com/adobe-for-creativity/", "site": "https://www.adobe.com" },
+    "added": "2026-08-11",
+    "verified": "2026-08-11",
+    "notes": "GA Apr 28 2026 per Adobe's own blog; the first entry in this directory with Adobe as vendor. The endpoint https://adobe-creativity.adobe.io/mcp is taken from Adobe's published plugin manifest in github.com/adobe/skills, not from a marketing page; an unauthenticated tools/list probe returns 403, so the tool names here come from Adobe's own skill definitions rather than a live handshake. The video limitation is the thing to know: Adobe documents reformat/resize (video_resize) and sizzle-reel generation (video_create_quick_cut) and nothing that opens, reads or edits a Premiere Pro project — Adobe's own Quick Cut skill instructs the agent to use it 'before suggesting manual editing in Premiere'. Guest access covers roughly 40 of the 50+ tools; video tools and Gen Expand require signing in and a few require a paid subscription. Adobe documents setup through Claude's connector directory (plus Cowork and Claude Desktop) rather than a published mcp-add command, and Team/Enterprise admins must enable third-party connectors before members can use it."
   },
   {
     "slug": "topaz",

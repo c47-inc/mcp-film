@@ -29,6 +29,9 @@
 }
 
 * { box-sizing: border-box; }
+/* Author display rules (.card, .cat-section) outrank the UA sheet's [hidden] rule,
+   so search and the quick filters silently did nothing. This restores them. */
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; scroll-padding-top: 5.5rem; }
 body {
   margin: 0;
@@ -79,6 +82,8 @@ code {
   border-radius: 50%; background: var(--green);
   margin-right: 5px; vertical-align: 1.5px;
 }
+/* The featured listing is the sponsor's. Say so wherever the boost applies. */
+.tag-featured { color: var(--ink-3); }
 
 /* page transitions: native cross-document crossfade where supported */
 @view-transition { navigation: auto; }

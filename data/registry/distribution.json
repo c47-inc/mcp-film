@@ -15,12 +15,12 @@
       "remote_url": "https://mcp.canva.com/mcp",
       "stdio_command": "npx -y mcp-remote@latest https://mcp.canva.com/mcp"
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Canva OAuth/Dynamic Client Registration; popular AI tools may already be allowlisted, custom assistants may need Canva's MCP client approval form" },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Canva OAuth; Client ID Metadata Documents (CIMD) is Canva's recommended method, and custom clients may need redirect URI allowlist approval" },
     "pricing": "freemium",
     "links": { "repo": null, "docs": "https://www.canva.dev/docs/mcp/", "site": "https://www.canva.com/ai-connector/" },
     "added": "2026-06-29",
-    "verified": "2026-06-29",
-    "notes": "Remote endpoint is documented as https://mcp.canva.com/mcp. Most core tools are available on all plans, but resize requires Pro or above and autofill/brand templates are Enterprise-only. Custom MCP clients may need redirect URI allowlist approval; end-user AI assistants like Claude, ChatGPT, Codex, Gemini, and others are called out by Canva as commonly supported."
+    "verified": "2026-08-11",
+    "notes": "Endpoint https://mcp.canva.com/mcp returns 401 on an unauthenticated tools/list — alive and OAuth-gated. Plan gates, per Canva's tools page: resize-design, list-brand-kits, search-brand-templates and create-design-from-brand-template need Pro or above; autofill-design and get-brand-template-dataset are Enterprise-only. Everything else — generate, edit, search, export, comment, upload — is on all plans, with per-tool rate limits from 20 to 100 req/min."
   },
   {
     "slug": "mux",
@@ -40,10 +40,10 @@
     },
     "auth": { "type": "oauth", "env_var": "MUX_TOKEN_ID", "key_url": "Remote: OAuth via dashboard.mux.com. Local: MUX_TOKEN_ID + MUX_TOKEN_SECRET from dashboard.mux.com → Settings → Access Tokens" },
     "pricing": "freemium",
-    "links": { "repo": "https://github.com/muxinc/mux-node-sdk/tree/master/packages/mcp-server", "docs": "https://www.mux.com/docs/integrations/mcp-server", "site": "https://www.mux.com" },
+    "links": { "repo": "https://github.com/muxinc/mux-ts/tree/main/packages/mcp-server", "docs": "https://www.mux.com/docs/integrations/mcp-server", "site": "https://www.mux.com" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "npm @mux/mcp v14.x, Apache-2.0, maintained inside the official mux-node-sdk monorepo. Recent versions use a 'Code Mode' design (docs search + sandboxed code execution against the Mux API) instead of hundreds of per-endpoint tools. Supports resource-filtering query params (e.g. ?resource=video.*); DELETE routes mostly excluded by design."
+    "verified": "2026-08-11",
+    "notes": "npm @mux/mcp v14.1.1 (published 2026-05-28), Apache-2.0. The SDK monorepo was renamed muxinc/mux-node-sdk → muxinc/mux-ts and the old repo URL now redirects; package metadata still points at the old path. 'Code Mode' design: two tools only — docs_search plus execute, which runs TypeScript against @mux/mux-node in a sandbox with no web or filesystem access — instead of hundreds of per-endpoint tools."
   },
   {
     "slug": "youtube-yutu",
@@ -53,20 +53,20 @@
     "category": "distribution",
     "featured": false,
     "tagline": "Automate your whole YouTube channel — including real video uploads — via OAuth.",
-    "description": "A Go-based CLI, MCP server, and agent toolkit for YouTube that automates the full workflow: uploading videos, editing metadata, managing playlists, comments, captions, and thumbnails. The only well-maintained MCP option that does real YouTube uploads via OAuth — there is no official Google/YouTube MCP as of June 2026.",
+    "description": "A Go-based CLI, MCP server, and agent toolkit for YouTube that automates the full workflow: uploading videos, editing metadata, managing playlists, comments, captions, and thumbnails. Still the only well-maintained MCP option that does real YouTube uploads via OAuth — Google ships no official YouTube MCP as of August 2026.",
     "capabilities": ["video-upload", "metadata-editing", "playlists", "comments", "captions", "thumbnails", "channel-management"],
     "tools_sample": null,
     "install": {
-      "claude_code": "claude mcp add yutu -- yutu mcp (after brew install yutu and one-time yutu auth)",
+      "claude_code": "claude mcp add -e YUTU_CREDENTIAL=/absolute/path/to/client_secret.json -e YUTU_CACHE_TOKEN=/absolute/path/to/youtube.token.json yutu -- yutu mcp",
       "remote_url": null,
       "stdio_command": "yutu mcp"
     },
-    "auth": { "type": "oauth", "env_var": "YUTU_CREDENTIAL", "key_url": "Google Cloud Console: enable YouTube Data API v3, create an OAuth client, download client_secret.json, then run yutu auth once" },
+    "auth": { "type": "oauth", "env_var": "YUTU_CREDENTIAL", "key_url": "Google Cloud Console: enable YouTube Data API v3, create a Desktop-app OAuth client, save client_secret.json, then run yutu auth --credential client_secret.json once" },
     "pricing": "free",
     "links": { "repo": "https://github.com/eat-pray-ai/yutu", "docs": null, "site": "https://yutu.ifor.dev" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "496 stars, Apache-2.0, pushed Jun 2026 with regular releases. Quota caveat: videos.insert costs 1,600 units → ~6 uploads/day on the default 10k quota, and unverified API projects can only upload private videos until Google audits the project. Lighter upload-only alternative: anwerj/youtube-uploader-mcp."
+    "verified": "2026-08-11",
+    "notes": "609 stars, Apache-2.0, pushed 2026-08-11; v0.10.10 stable on Homebrew, winget, and npm (@eat-pray-ai/yutu), with v0.10.11 in dev prereleases. Install first — brew install yutu — then authenticate; the MCP server also runs over HTTP (yutu mcp --mode http --auth on :8216). Quota caveat unchanged: videos.insert costs 1,600 units → ~6 uploads/day on the default 10k quota, and unverified API projects can only upload private videos until Google audits them. The bundled multi-agent mode is under active development and only supports Gemini models. Lighter upload-only alternative: anwerj/youtube-uploader-mcp (50 stars)."
   },
   {
     "slug": "youtube-data",
@@ -76,7 +76,7 @@
     "category": "distribution",
     "featured": false,
     "tagline": "Token-optimized YouTube Data API server for video, channel, and trend analytics.",
-    "description": "A high-efficiency MCP server returning structured, token-minimized data from the YouTube Data API v3 (claims up to 87% token reduction vs raw API). Covers video details, search, transcripts (at zero quota cost), channel statistics, trending, and outlier-channel discovery — the research side of distribution: study what works before you publish.",
+    "description": "A high-efficiency MCP server returning structured, token-minimized data from the YouTube Data API v3 (claims up to 87% token reduction vs raw API). Covers video details, search, transcripts, channel statistics, trending, and outlier-channel discovery — the research side of distribution: study what works before you publish.",
     "capabilities": ["video-metadata", "search", "transcripts", "channel-analytics", "trending", "comments"],
     "tools_sample": ["getVideoDetails", "searchVideos", "getTranscripts", "getChannelStatistics", "getTrendingVideos", "getVideoComments", "findConsistentOutlierChannels"],
     "install": {
@@ -84,12 +84,12 @@
       "remote_url": null,
       "stdio_command": "npx -y @kirbah/mcp-youtube"
     },
-    "auth": { "type": "api_key", "env_var": "YOUTUBE_API_KEY", "key_url": "Google Cloud Console → enable YouTube Data API v3 → Credentials → API key" },
+    "auth": { "type": "api_key", "env_var": "YOUTUBE_API_KEY", "key_url": "Google Cloud Console → enable YouTube Data API v3 → Credentials → API key. Transcript-only use runs with no key at all." },
     "pricing": "free",
     "links": { "repo": "https://github.com/kirbah/mcp-youtube", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "MIT, pushed Jun 2026 — the most actively maintained YouTube data MCP. Read-only (no upload — pair with yutu). Higher-starred alternative: ZubeidHendricks/youtube-mcp-server (530 stars, multi-key quota fallback, ~2.5 months stale)."
+    "verified": "2026-08-11",
+    "notes": "MIT, npm v1.1.13 and repo both updated 2026-08-10 — actively maintained, but only 28 stars. Read-only: no upload, so pair it with yutu. Quota reality: searchVideos costs 100 units per call and getChannelTopVideos 101, against a 10k/day default. The 'zero API cost' transcripts do not use the Data API at all — they go through youtube-transcript-plus, which scrapes YouTube's timedtext endpoint, so treat transcript pulls as a ToS gray area and expect them to break when YouTube changes it. findConsistentOutlierChannels additionally requires a MongoDB connection string. Higher-profile alternative: ZubeidHendricks/youtube-mcp-server (561 stars, pushed 2026-08-08, multi-key quota fallback)."
   },
   {
     "slug": "vimeo",
@@ -98,43 +98,43 @@
     "official": true,
     "category": "distribution",
     "featured": false,
-    "tagline": "Official beta MCP connecting your Vimeo video library to AI agents.",
-    "description": "Announced at Vimeo's REFRAME conference (Oct 2025) alongside 'Ask Your Library', Vimeo's official MCP server lets agents connect to Vimeo video libraries — list and search videos, read metadata and stats, update titles/descriptions/tags/privacy, and work with transcripts and captions.",
-    "capabilities": ["video-library", "metadata-editing", "stats", "transcripts", "captions"],
+    "tagline": "Official Vimeo remote MCP: library search, analytics, retention, and metadata editing.",
+    "description": "Vimeo's official remote MCP server, now in public beta, connects an agent to your Vimeo library over OAuth. It searches videos across accounts and teams, reads transcripts, chapters, comments and text tracks, pulls performance metrics including geographic data and viewer retention, edits metadata and privacy, manages showcases, and can even create editing sessions and render videos programmatically. For a delivery pipeline it is the honest post-publish feedback loop: what actually held an audience, shot by shot.",
+    "capabilities": ["video-library", "search", "metadata-editing", "analytics", "retention", "showcases", "transcripts", "captions"],
     "tools_sample": null,
     "install": {
-      "claude_code": null,
-      "remote_url": null,
+      "claude_code": "claude mcp add --transport http vimeo https://mcp.vimeo.com/mcp",
+      "remote_url": "https://mcp.vimeo.com/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": "VIMEO_ACCESS_TOKEN", "key_url": "https://developer.vimeo.com/apps (OAuth app or personal access token with appropriate scopes)" },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth against your Vimeo account; the server advertises https://mcp.vimeo.com/.well-known/oauth-protected-resource and no token is configured by hand" },
     "pricing": "freemium",
     "links": { "repo": null, "docs": "https://developer.vimeo.com/api/mcp-server", "site": "https://www.vimeo.com" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Beta. The official docs page exists at developer.vimeo.com/api/mcp-server but is gated from crawlers, so the endpoint URL and tool list need manual verification — follow the docs to connect. Community fallback: galacoder/vimeo-mcp (stale, transcript-focused)."
+    "verified": "2026-08-11",
+    "notes": "Public beta as of the current docs, upgraded from the private beta announced at REFRAME in Oct 2025 — Vimeo says all of it is subject to change without notice. Endpoint is https://mcp.vimeo.com/mcp (401 with a Bearer challenge on an unauthenticated tools/list — alive); ChatGPT clients use https://mcp.vimeo.com/sse instead, same tools. Destructive actions such as deleting videos are deliberately excluded. Vimeo recommends Pro or above because API rate limits scale with plan, so expect a thin experience on free. The docs page is a client-rendered SPA and invisible to crawlers, so tool names are still unpublished."
   },
   {
     "slug": "frameio",
-    "name": "Frame.io MCP (community plugin)",
+    "name": "Frame.io MCP (community)",
     "vendor": "Community (bowlofarugula)",
     "official": false,
     "category": "distribution",
     "featured": false,
-    "tagline": "74 tools for Frame.io V4 review workflows — comments, shares, versions, uploads.",
-    "description": "Python MCP server for the Frame.io v4 API packaged as a Claude Code plugin: browse workspaces and projects, upload/download footage, leave timestamped review comments, create client review links, manage version stacks, apply metadata in bulk, and manage webhooks. Review-and-approval is the connective tissue of film delivery, and this is currently the most complete MCP for it.",
-    "capabilities": ["review-comments", "share-links", "version-stacks", "asset-upload", "metadata", "webhooks"],
-    "tools_sample": null,
+    "tagline": "74 tools over the Frame.io V4 API — comments, shares, version stacks, uploads.",
+    "description": "A local stdio MCP server for the Frame.io v4 API, built on FastMCP over Adobe's official Python SDK: browse workspaces and projects, upload and download footage, leave timecode-accurate review comments, create client share links, manage version stacks, apply custom metadata in bulk, and manage webhooks. Review-and-approval is the connective tissue of film delivery, and until Adobe opens its own server this is the most complete MCP for it.",
+    "capabilities": ["review-comments", "share-links", "version-stacks", "asset-upload", "metadata", "search", "webhooks"],
+    "tools_sample": ["list_projects", "list_project_contents", "upload_file", "create_comment", "create_share", "create_version_stack", "set_file_metadata", "search"],
     "install": {
-      "claude_code": "/plugin marketplace add bowlofarugula/frameio-plugins, then /plugin install frameio-mcp@frameio-plugins",
+      "claude_code": null,
       "remote_url": null,
-      "stdio_command": "uvx frameio-mcp serve"
+      "stdio_command": "uvx frameio-mcp serve (after a one-time uvx frameio-mcp login --client-id YOUR_ADOBE_SPA_CLIENT_ID)"
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Adobe OAuth (browser one-time login); requires a Frame.io account linked to an Adobe ID" },
+    "auth": { "type": "oauth", "env_var": "FRAMEIO_CLIENT_ID", "key_url": "https://developer.adobe.com/console — add the Frame.io API and an OAuth Single Page App credential with redirect URI https://localhost:8723/callback; tokens land in ~/.frameio-mcp/tokens.json" },
     "pricing": "freemium",
-    "links": { "repo": "https://github.com/bowlofarugula/frameio-plugins", "docs": null, "site": "https://frame.io" },
+    "links": { "repo": "https://github.com/bowlofarugula/frameio-mcp", "docs": "https://pypi.org/project/frameio-mcp/", "site": "https://frame.io" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Brand new (Jun 2026), Apache-2.0, unproven but functional-looking. Adobe ships no polished official Frame.io MCP — the auto-generated 'V4 Developer MCP Server' on the API docs reportedly gets stuck loading tools with IMS auth issues. Watch this space."
+    "verified": "2026-08-11",
+    "notes": "The Claude Code plugin route is dead: github.com/bowlofarugula/frameio-plugins now 404s, so the old '/plugin marketplace add' command cannot work and claude_code is null. PyPI frameio-mcp 0.1.0 (uploaded 2026-06-04, not yanked) is still live and installs clean — verified this session by running uvx frameio-mcp --help and status — but it needs Python 3.13+ and you must register your own Adobe OAuth SPA credential before it does anything. Its stated source repo has since been rewritten into a remote Cloudflare Workers server (0 stars, pushed 2026-06-13) that you would have to deploy yourself, and whose /authorize fails closed behind a redirect-URI allowlist, so there is no public endpoint. Adobe announced an official Frame.io MCP server on 2026-07-29, experimental and selectively available in private beta with access granted by replying in the forum thread — not installable, so not listed: https://forum.frame.io/t/introducing-the-frame-io-mcp-server/3466"
   }
 ]

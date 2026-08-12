@@ -6,10 +6,10 @@
     "official": true,
     "category": "image-generation",
     "featured": false,
-    "tagline": "Official BFL server: FLUX.2 text-to-image, editing, multi-reference and variations.",
-    "description": "Black Forest Labs' official hosted MCP exposes the FLUX.2 toolkit — generation, image editing, multi-reference composition, variations and history — with automatic routing to the right model (Klein for sub-second drafts up to Max for production assets). For filmmakers it is a top-tier stills, concept-art and frame-editing engine inside any agent.",
-    "capabilities": ["text-to-image", "image-editing", "multi-reference-composition", "variations", "generation-history"],
-    "tools_sample": ["generate_image", "generate_variations", "get_history", "get_credits"],
+    "tagline": "Official BFL server: FLUX.2 stills and editing, now with FLUX 3 video generation.",
+    "description": "Black Forest Labs' official hosted MCP exposes the FLUX.2 toolkit — generation, image editing, multi-reference composition, variations and history — with automatic routing to the right model (Klein for sub-second drafts up to Max for production assets). It now also drives FLUX 3 video: text-to-video, keyframe animation and clip continuation, plus a full-quality re-render of a draft that preserves composition and seed. For filmmakers it is a top-tier stills, concept-art and frame-editing engine that can carry a chosen frame straight into motion.",
+    "capabilities": ["text-to-image", "image-editing", "multi-reference-composition", "variations", "outpainting", "text-to-video", "keyframe-animation", "video-enhancement", "generation-history"],
+    "tools_sample": ["generate_image", "generate_variations", "generate_video", "enhance_video", "vto", "get_history", "get_credits"],
     "install": {
       "claude_code": "claude mcp add --transport http flux https://mcp.bfl.ai",
       "remote_url": "https://mcp.bfl.ai",
@@ -19,8 +19,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/black-forest-labs/flux-mcp", "docs": "https://docs.bfl.ml/api_integration/mcp_integration", "site": "https://bfl.ai" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Models: flux2_pro_preview (default), flux2_max, flux2_klein variants, flux2_flex (typography). generate_image batches 1-8 images in parallel. Pricing at bfl.ai/pricing."
+    "verified": "2026-08-11",
+    "notes": "Image models: flux2_pro_preview (default), flux2_max, flux2_klein_9b_preview, flux2_klein_4b, flux2_flex (typography). Video runs on flux3_video. generate_image batches 1-8 images in parallel. Listed under image generation because that is still the bulk of the surface — the video tools are a recent addition, so treat this as an image server that can also move. Pricing at bfl.ai/pricing."
   },
   {
     "slug": "recraft",
@@ -29,21 +29,21 @@
     "official": true,
     "category": "image-generation",
     "featured": false,
-    "tagline": "Official Recraft server: raster + vector image gen, styles, upscale, backgrounds.",
-    "description": "Recraft's official MCP server (remote endpoint or local npm package) covers text-to-image and image-to-image in raster and SVG, custom style creation, vectorization, background removal/replacement and two upscalers. Uniquely useful for film work needing brand-consistent styles, title/poster art and clean vector assets.",
+    "tagline": "Official hosted Recraft server: raster + vector generation, styles, upscale, backgrounds.",
+    "description": "Recraft's official MCP is now a hosted, OAuth-gated endpoint covering text-to-image and image-to-image in raster and SVG, custom style creation, vectorization, background removal and replacement, and upscaling. Uniquely useful for film work needing brand-consistent styles, title and poster art, and clean vector assets. The old local npm package is dead — connect over HTTP instead.",
     "capabilities": ["text-to-image", "image-to-image", "vectorization", "style-creation", "background-removal", "upscaling"],
-    "tools_sample": ["generate_image", "image_to_image", "create_style", "vectorize_image", "remove_background", "replace_background", "crisp_upscale", "creative_upscale"],
+    "tools_sample": null,
     "install": {
-      "claude_code": "claude mcp add recraft -e RECRAFT_API_KEY=YOUR_KEY -- npx -y @recraft-ai/mcp-recraft-server@latest",
+      "claude_code": "claude mcp add --transport http recraft https://mcp.recraft.ai/mcp",
       "remote_url": "https://mcp.recraft.ai/mcp",
-      "stdio_command": "npx -y @recraft-ai/mcp-recraft-server@latest"
+      "stdio_command": null
     },
-    "auth": { "type": "api_key", "env_var": "RECRAFT_API_KEY", "key_url": "https://www.recraft.ai/profile/api (buy API units, generate key)" },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth in the browser on first connect; no API key to manage. Needs a Recraft account at recraft.ai" },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/recraft-ai/mcp-recraft-server", "docs": "https://www.recraft.ai/docs/mcp-reference/getting-started", "site": "https://www.recraft.ai/blog/recraft-mcp" },
+    "links": { "repo": "https://github.com/recraft-ai/mcp-recraft-server", "docs": "https://www.recraft.ai/docs/mcp-reference/remote-server", "site": "https://www.recraft.ai" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "v1.6.5; per-image API pricing roughly $0.04-$0.08, vectorize $0.01, creative upscale $0.25. Local mode supports IMAGE_STORAGE_DIRECTORY for saving outputs to disk."
+    "verified": "2026-08-11",
+    "notes": "The local package @recraft-ai/mcp-recraft-server (last v1.6.5) is deprecated and its repo is archived — the README says so outright and points here; the repo link is kept only for history. Billing changed with the move: the hosted server deducts from your Recraft plan credits, the same balance Recraft Studio spends, not from separately purchased API units. Rates are per operation and are not reproduced here — check Plans and billing at recraft.ai before you budget a job. tools_sample is null because Recraft's docs describe capabilities rather than tool names and the endpoint is OAuth-gated, so the list cannot be enumerated without an account."
   },
   {
     "slug": "freepik",
@@ -65,8 +65,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/freepik-company/freepik-mcp", "docs": "https://github.com/freepik-company/freepik-mcp#readme", "site": "https://www.freepik.com" },
     "added": "2026-06-29",
-    "verified": "2026-06-29",
-    "notes": "Official repo, Python 3.12+, uv/FastMCP, 72 stars, last pushed Jul 2025 and still maintained in GitHub metadata. It is not packaged on npm/PyPI: clone the repo, install with `make install`, then point your MCP client at the local path. GitHub does not detect a LICENSE file, although the repo is company-owned. The server deliberately exposes only icons, resources, image classifier, and Mystic endpoints from Freepik's larger OpenAPI spec."
+    "verified": "2026-08-11",
+    "notes": "Official repo, Python 3.12+, uv/FastMCP, 78 stars, last pushed Jul 2026 and still maintained. It is not packaged on npm/PyPI: clone the repo, install with `make install`, then point your MCP client at the local path. Windows needs WSL. GitHub still detects no LICENSE file, although the repo is company-owned. The server deliberately exposes only icons, resources, image classifier, and Mystic endpoints from Freepik's larger OpenAPI spec."
   },
   {
     "slug": "stability-ai",
@@ -84,34 +84,34 @@
       "remote_url": null,
       "stdio_command": "npx -y mcp-server-stability-ai"
     },
-    "auth": { "type": "api_key", "env_var": "STABILITY_AI_API_KEY", "key_url": "https://platform.stability.ai/account/keys (25 free credits, then $0.01/credit)" },
+    "auth": { "type": "api_key", "env_var": "STABILITY_AI_API_KEY", "key_url": "https://platform.stability.ai/account/keys" },
     "pricing": "freemium",
     "links": { "repo": "https://github.com/tadasant/mcp-server-stability-ai", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "MIT, 83 stars; not affiliated with Stability AI (no official Stability MCP exists). Last release Mar 2025 — aging but the API surface it wraps is stable; per-tool costs $0.01-$0.25."
+    "verified": "2026-08-11",
+    "notes": "MIT, 85 stars, not archived; unaffiliated with Stability AI, which still ships no official MCP. Aging: npm latest is 0.2.0 from Mar 2025 and the last commit landed Jun 2025 — over a year cold, though the REST API it wraps has not moved under it. Supports IMAGE_STORAGE_DIRECTORY for writing outputs to disk. Per-tool cost runs roughly $0.01-$0.25 in Stability credits; confirm current rates at platform.stability.ai."
   },
   {
     "slug": "ideogram",
-    "name": "Ideogram MCP Server",
-    "vendor": "Community (Sunwood AI Labs)",
-    "official": false,
+    "name": "Ideogram MCP",
+    "vendor": "Ideogram",
+    "official": true,
     "category": "image-generation",
     "featured": false,
-    "tagline": "Ideogram 3.0 text-to-image with magic prompt and style refs — strongest text-in-image.",
-    "description": "Community server for the Ideogram API with Ideogram 3.0 support: magic prompt modes, style references, negative prompts, seeds, 15 aspect ratios and batch generation of up to 8 images. Filmmaker-relevant for title cards, posters and any frame where legible rendered text matters.",
-    "capabilities": ["text-to-image", "magic-prompt", "style-reference", "batch-generation"],
-    "tools_sample": ["generate_image"],
+    "tagline": "Official Ideogram server: bulk generation, editing, reframe, upscale and model training.",
+    "description": "Ideogram's official hosted MCP puts the Ideogram 4.0 stack behind OAuth: bulk text-to-image, editing, reframing, upscaling, collections, and dataset upload plus custom model training. Ideogram remains the strongest engine for legible rendered text, which makes it the practical choice for title cards, posters, signage and any frame where type has to survive. The training tools matter for series work — teach it a show's typographic or graphic identity once, then generate against it.",
+    "capabilities": ["text-to-image", "batch-generation", "image-editing", "reframing", "upscaling", "custom-model-training", "asset-collections"],
+    "tools_sample": ["generate_images_bulk", "edit_image", "reframe_image", "upscale_image", "upload_image", "create_collection", "create_dataset", "upload_dataset_assets", "train_model"],
     "install": {
-      "claude_code": "claude mcp add ideogram -e IDEOGRAM_API_KEY=YOUR_KEY -- npx @sunwood-ai-labs/ideagram-mcp-server",
-      "remote_url": null,
-      "stdio_command": "npx @sunwood-ai-labs/ideagram-mcp-server"
+      "claude_code": "claude mcp add ideogram --transport http https://mcp.ideogram.ai/mcp",
+      "remote_url": "https://mcp.ideogram.ai/mcp",
+      "stdio_command": null
     },
-    "auth": { "type": "api_key", "env_var": "IDEOGRAM_API_KEY", "key_url": "Ideogram account → API settings (ideogram.ai)" },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth: a browser window opens on first connect and you sign in with your Ideogram account" },
     "pricing": "paid",
-    "links": { "repo": "https://github.com/sunwood-ai-labs/ideagram-mcp-server", "docs": null, "site": "https://ideogram.ai" },
+    "links": { "repo": null, "docs": "https://ideogram.ai/features/mcp/", "site": "https://ideogram.ai" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "MIT, small; note the 'ideagram' typo in the package/repo name. No official Ideogram MCP exists; Ideogram v3 is also reachable via the fal and Replicate hub MCPs if you want fewer connectors."
+    "verified": "2026-08-11",
+    "notes": "Usage draws on the same subscription as the Ideogram web app, so MCP jobs and hand work compete for one balance. Endpoint answers 401 unauthenticated, which is expected for OAuth. The API also still exposes Ideogram 3.0 endpoints alongside 4.0. This entry previously listed the community wrapper @sunwood-ai-labs/ideagram-mcp-server (MIT, 5 stars, one generate_image tool, untouched since May 2025, and misspelled 'ideagram' throughout) — it is superseded by the official server. Note that developer.ideogram.ai/_mcp/server is a separate documentation-search MCP, not the image server. Ideogram is also reachable via the fal and Replicate hub MCPs if you want fewer connectors."
   }
 ]

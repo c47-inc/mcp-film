@@ -5,6 +5,14 @@ const DEFAULT_POSTHOG_KEY = "__MCPFILM_POSTHOG_KEY__";
 const DEFAULT_POSTHOG_HOST = "__MCPFILM_POSTHOG_HOST__";
 const DEFAULT_CANONICAL_HOST = "__MCPFILM_CANONICAL_HOST__";
 const DEFAULT_SPONSOR_URL = "__MCPFILM_SPONSOR_URL__";
+const DEFAULT_SPONSOR_CONNECT_URL = "__MCPFILM_SPONSOR_CONNECT_URL__";
+
+// Placements that represent "I have decided which tool to use and want to connect it".
+// Those land on the sponsor's connect docs; everything else lands on the homepage.
+const CONNECT_INTENT_PLACEMENT = /^(capability|playbook|recommendation|router|server-links):|^agents-fast-path$/;
+
+// Exported for scripts/check-build.mjs. Cloudflare only reads the default export.
+export const isConnectIntent = (placement) => CONNECT_INTENT_PLACEMENT.test(String(placement || ""));
 
 const staticAssetPattern = /\.(?:avif|css|gif|ico|jpeg|jpg|js|json\.map|map|png|svg|webp|woff2?)$/i;
 
@@ -98,19 +106,58 @@ function sponsorDestinationFor(request, env) {
   if (!sponsorUrl || sponsorUrl.startsWith("__MCPFILM_")) return null;
 
   const requestUrl = new URL(request.url);
-  const destination = new URL(sponsorUrl);
   const placement = cleanPlacement(requestUrl.searchParams.get("from"));
+
+  // Someone arriving from a capability, playbook or server page has already chosen a tool.
+  // Sending them to a marketing homepage loses them; send them to the connect instructions.
+  const connectUrl = env.SPONSOR_CONNECT_URL || DEFAULT_SPONSOR_CONNECT_URL;
+  const useConnect =
+    placement && CONNECT_INTENT_PLACEMENT.test(placement) && connectUrl && !connectUrl.startsWith("__MCPFILM_");
+
+  const destination = new URL(useConnect ? connectUrl : sponsorUrl);
   destination.searchParams.set("utm_source", "mcp.film");
   destination.searchParams.set("utm_medium", "referral");
   destination.searchParams.set("utm_campaign", "mcp_film_handoff");
   if (placement) destination.searchParams.set("utm_content", placement);
+
+  // The destination cannot tell an agent from a person, and on this site most requests are
+  // agents. Hand over the classification so downstream analytics can separate them.
+  const classification = classifyTraffic(requestUrl.pathname, request.headers.get("user-agent") || "", request.headers);
+  destination.searchParams.set("src_kind", classification.kind);
   return destination;
 }
 
 async function registryApiResponse(request, env) {
   const url = new URL(request.url);
   if (url.pathname === "/v0.1/servers") {
-    return jsonAssetResponse(env, url, "/api/mcp-registry.json");
+    const limit = Number.parseInt(url.searchParams.get("limit") || "", 10);
+    const updatedSince = url.searchParams.get("updated_since");
+    // Advertising these parameters and ignoring them is worse than not supporting them:
+    // a client paging through 79 entries 30 at a time silently gets the whole list each time.
+    if (!Number.isFinite(limit) && !updatedSince) {
+      return jsonAssetResponse(env, url, "/api/mcp-registry.json");
+    }
+
+    const full = await jsonAssetResponse(env, url, "/api/mcp-registry.json");
+    if (full.status !== 200) return full;
+    const body = await full.json();
+    let servers = Array.isArray(body.servers) ? body.servers : [];
+
+    if (updatedSince) {
+      const since = Date.parse(updatedSince);
+      if (Number.isNaN(since)) {
+        return jsonResponse({ error: "updated_since must be an RFC 3339 timestamp" }, 400);
+      }
+      servers = servers.filter((entry) => {
+        const updatedAt = entry?._meta?.["film.mcp/subregistry"]?.updatedAt;
+        return updatedAt ? Date.parse(updatedAt) >= since : false;
+      });
+    }
+    if (Number.isFinite(limit)) {
+      if (limit < 1 || limit > 100) return jsonResponse({ error: "limit must be between 1 and 100" }, 400);
+      servers = servers.slice(0, limit);
+    }
+    return jsonResponse({ servers, metadata: { count: servers.length, nextCursor: null } });
   }
 
   const versions = /^\/v0\.1\/servers\/(.+)\/versions$/.exec(url.pathname);
@@ -226,6 +273,19 @@ async function captureMartiniHandoff(request, response, env) {
     const distinctId = await distinctIdFor(request, env);
     const destination = response.headers.get("location") || "";
 
+    // A raw handoff count is ~30x the number of people. Most of these are automated clients
+    // following a link, plus browser prefetch. Mark the ones that represent a person who
+    // actually clicked through from this site, so no report ever quotes the raw number as
+    // "humans we sent you".
+    const purpose = `${request.headers.get("sec-purpose") || ""} ${request.headers.get("purpose") || ""}`;
+    const prefetch = /prefetch|prerender/i.test(purpose);
+    const referrer = referrerDomain(request.headers.get("referer"));
+    const qualified =
+      request.method === "GET" &&
+      !prefetch &&
+      classification.kind === "human_browser" &&
+      isOwnHost(referrer, env);
+
     const properties = {
       sponsor: "martini",
       placement: cleanPlacement(url.searchParams.get("from")) || null,
@@ -236,6 +296,8 @@ async function captureMartiniHandoff(request, response, env) {
       destination_host: destination ? new URL(destination).hostname : null,
       traffic_kind: classification.kind,
       agent_family: classification.family,
+      qualified,
+      prefetch,
       referrer_domain: referrerDomain(request.headers.get("referer")),
       accept: compactHeader(request.headers.get("accept")),
       country: request.cf?.country || null,
@@ -389,6 +451,17 @@ async function sha256(value) {
   const bytes = new TextEncoder().encode(value);
   const digest = await crypto.subtle.digest("SHA-256", bytes);
   return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function isOwnHost(hostname, env) {
+  if (!hostname) return false;
+  const canonicalHost = String(env.CANONICAL_HOST || DEFAULT_CANONICAL_HOST || "mcp.film")
+    .replace(/^https?:\/\//i, "")
+    .replace(/\/.*$/, "")
+    .toLowerCase();
+  if (!canonicalHost || canonicalHost.startsWith("__mcpfilm_")) return false;
+  const host = String(hostname).toLowerCase();
+  return host === canonicalHost || host === `www.${canonicalHost}`;
 }
 
 function referrerDomain(value) {

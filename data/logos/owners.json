@@ -76,5 +76,10 @@
   "google-drive": "googleworkspace",
   "dropbox": "dropbox",
   "cloudinary-assets": "cloudinary",
-  "google-workspace": "taylorwilsdon"
+  "google-workspace": "taylorwilsdon",
+  "adobe-creativity": "adobe",
+  "blender-lab-mcp": "blender",
+  "unreal-mcp-epic": "EpicGames",
+  "reaper-mcp": "bonfire-systems",
+  "ableton-mcp": "Ableton"
 }

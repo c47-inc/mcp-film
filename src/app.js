@@ -67,7 +67,7 @@
       sec.hidden = ![...sec.querySelectorAll(".card")].some((c) => !c.hidden);
     }
     if (noResults) noResults.hidden = shown > 0;
-    if (q.length > 2) phSearchDebounced(q, shown, activeCat || null, [...activeQuick].sort());
+    if (q.length >= 2) phSearchDebounced(q, shown, activeCat || null, [...activeQuick].sort());
   };
 
   let searchTimer;
