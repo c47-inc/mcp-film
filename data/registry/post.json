@@ -458,5 +458,28 @@
     "added": "2026-08-12",
     "verified": "2026-08-12",
     "notes": "The free tier does not reach the MCP: reap's pricing page puts API and MCP access on Creator ($9.99/mo) and above, so the free hour of watermarked 720p clipping is app-only and an agent connecting on a free account has nothing to call. Three of the 29 documented tools — publish_clip, schedule_clips, update_publisher_post — post publicly to connected social accounts, and the docs require the agent to confirm before running them; treat them as irreversible and gate them yourself. Marketing pages still advertise '10 tools', which the API reference contradicts. There is no source repo, and clipping quality depends on reap's moment detection rather than anything you can tune."
+  },
+  {
+    "slug": "orkas-videostudio",
+    "name": "OrkasVideoStudio",
+    "vendor": "Orkas-AI",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Local MCP and CLI toolkit for agent-driven video composition, editing, analysis, and rendering.",
+    "description": "OrkasVideoStudio gives coding agents typed MCP tools for building editable plan.json timelines, rendering HyperFrames compositions, and handling practical post work with ffmpeg. It can trim, concatenate, mix, caption, transcribe, inspect shots, and run deterministic delivery checks before a final render. The zero-key path works locally; image, speech, and video generation are optional provider-backed extensions.",
+    "capabilities": ["video-composition", "timeline-editing", "rendering", "ffmpeg-editing", "transcription", "captioning", "shot-analysis", "delivery-qa"],
+    "tools_sample": ["draft", "render", "edit_trim", "edit_concat", "edit_burnsubs", "edit_mix", "transcribe", "scenes", "quality", "plan_promise_check"],
+    "install": {
+      "claude_code": "claude mcp add ovs -- node /absolute/path/to/Orkas-VideoStudio/packages/mcp/dist/index.js",
+      "remote_url": null,
+      "stdio_command": "node /absolute/path/to/Orkas-VideoStudio/packages/mcp/dist/index.js"
+    },
+    "auth": { "type": "none", "env_var": null, "key_url": null },
+    "pricing": "free",
+    "links": { "repo": "https://github.com/Orkas-AI/Orkas-VideoStudio", "docs": "https://github.com/Orkas-AI/Orkas-VideoStudio#readme", "site": null },
+    "added": "2026-08-12",
+    "verified": "2026-08-12",
+    "notes": "MIT and source-installable while the npm packages are still being published. The working path requires Node 22+, pnpm, a source build, and ffmpeg/ffprobe for editing and local media QA. The MCP is local stdio only, and generated media is written to caller-supplied filesystem paths. The core composition, editing, analysis, transcription, and render path needs no provider key; speech, image, and video generation require separately configured provider credentials."
   }
 ]
