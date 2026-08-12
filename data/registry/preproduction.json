@@ -67,5 +67,48 @@
     "added": "2026-06-11",
     "verified": "2026-06-11",
     "notes": "Public beta; also installable as a Claude Code plugin (/plugin install miro@miro-ai). Tool schemas live at developers.miro.com — the server itself is the source of truth. Enterprise plans add admin controls."
+  },
+  {
+    "slug": "framethrower",
+    "name": "FrameThrower",
+    "vendor": "FrameThrower AI, Inc.",
+    "official": true,
+    "category": "story-preproduction",
+    "featured": false,
+    "tagline": "Cinematography reference: search film stills from 5,489 films by lighting, lens, shot size, colour and mood.",
+    "description": "A remote MCP server over one of the largest film still libraries on the internet \u2014 5,489 films indexed frame by frame on lighting key and quality, lens character, shot size, camera angle, colour palette in hex, mood and era. An agent searches in plain language, narrows by craft attribute, and refines from any frame the user reacts to, which is the loop a director or DP actually works in when building a lookbook or shot list. Returns metadata, thumbnails, colour palettes and deep links \u2014 never raw image bytes, so it is a reference tool rather than a source of generation inputs.",
+    "capabilities": [
+      "reference-search",
+      "craft-filtering",
+      "visual-similarity",
+      "colour-palettes",
+      "moodboard-research",
+      "lookbook-research"
+    ],
+    "tools_sample": [
+      "search_frames",
+      "find_by_craft",
+      "find_similar",
+      "get_frame_details"
+    ],
+    "install": {
+      "claude_code": "claude mcp add --transport http framethrower https://framethrower.ai/api/mcp",
+      "remote_url": "https://framethrower.ai/api/mcp",
+      "stdio_command": "npx -y mcp-remote https://framethrower.ai/api/mcp"
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "OAuth 2.1 \u2014 the client opens a FrameThrower sign-in; the agent then acts as that account. No API key."
+    },
+    "pricing": "freemium",
+    "links": {
+      "repo": "https://github.com/framethrower-ai/framethrower-mcp",
+      "docs": "https://framethrower.ai/mcp",
+      "site": "https://framethrower.ai"
+    },
+    "added": "2026-08-12",
+    "verified": "2026-08-12",
+    "notes": "Remote and hosted, so nothing to install or keep running. Free tier is $2 of credits on signup with no card; each tool call costs 2 credits at $1 = 1,000 credits, so $1 covers 500 calls. No rate limits. Frames are shown at reduced resolution as references for commentary and study \u2014 rights remain with their owners, and the server never returns image bytes. Submitted by the vendor."
   }
 ]
