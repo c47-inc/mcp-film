@@ -435,5 +435,28 @@
     "added": "2026-06-29",
     "verified": "2026-06-29",
     "notes": "Remote streamable HTTP only; no local package or source repo is published for the official MCP. The docs say tools draw from the same Magnific credit balance as the app/API, and live `tools/list` is the source of truth. The MCP surface is broader than pure upscaling — image/video generation, Soul references, TTS, 3D, folders, and prior-creation browsing — so use explicit prompts when you want faithful enhancement rather than creative reinterpretation."
+  },
+  {
+    "slug": "reap",
+    "name": "reap MCP",
+    "vendor": "reap",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Hosted MCP that clips, captions, dubs, reframes, and publishes long-form footage.",
+    "description": "reap's official remote MCP turns a finished long cut into distribution assets without a timeline: prompt-driven moment detection pulls short clips out of a video or YouTube URL, then captions them in 100+ languages, dubs them into 80+ with voice matching, and auto-reframes to 9:16 or 1:1 with face tracking. It also carries the last mile — connected-account publishing and scheduling to YouTube, TikTok, Instagram, LinkedIn and X — which makes it the delivery end of an agent pipeline rather than another generation tool.",
+    "capabilities": ["ai-clipping", "captioning", "dubbing", "subtitle-translation", "transcription", "aspect-ratio-reframing", "social-publishing"],
+    "tools_sample": ["create_clips", "add_captions", "dub_video", "reframe", "transcribe", "publish_clip", "schedule_clips", "get_status", "get_results"],
+    "install": {
+      "claude_code": "claude mcp add --transport http --scope user reap https://mcp.reap.video/mcp",
+      "remote_url": "https://mcp.reap.video/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "One-time browser OAuth against a reap account; the endpoint serves OAuth protected-resource metadata and no API key is needed for MCP." },
+    "pricing": "freemium",
+    "links": { "repo": null, "docs": "https://docs.reap.video/api-reference/mcp", "site": "https://reap.video/mcp" },
+    "added": "2026-08-12",
+    "verified": "2026-08-12",
+    "notes": "The free tier does not reach the MCP: reap's pricing page puts API and MCP access on Creator ($9.99/mo) and above, so the free hour of watermarked 720p clipping is app-only and an agent connecting on a free account has nothing to call. Three of the 29 documented tools — publish_clip, schedule_clips, update_publisher_post — post publicly to connected social accounts, and the docs require the agent to confirm before running them; treat them as irreversible and gate them yourself. Marketing pages still advertise '10 tools', which the API reference contradicts. There is no source repo, and clipping quality depends on reap's moment detection rather than anything you can tune."
   }
 ]
