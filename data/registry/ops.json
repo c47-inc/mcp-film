@@ -76,8 +76,8 @@
     "category": "production-ops",
     "featured": false,
     "tagline": "Dropbox's official remote MCP (beta) for dailies, footage folders, and file ops.",
-    "description": "Dropbox's hosted MCP server (beta) connects agents to Dropbox files and folders with OAuth: list, search, upload, download, move, copy, delete, and share, plus content fetch for drafting and summarization. Supports Dynamic Client Registration for trusted clients like Claude and Cursor.",
-    "capabilities": ["file-search", "upload-download", "file-ops", "sharing-links", "content-fetch"],
+    "description": "Dropbox's hosted MCP server (beta) connects agents to Dropbox files and folders with OAuth: list, search, upload, download, move, copy, delete, and share, plus revision history, transcription, and Markdown conversion for drafting and summarization. Supports Dynamic Client Registration for trusted clients like Claude and Cursor.",
+    "capabilities": ["file-search", "upload-download", "file-ops", "sharing-links", "content-fetch", "transcription"],
     "tools_sample": null,
     "install": {
       "claude_code": "claude mcp add --transport http dropbox https://mcp.dropbox.com/mcp",
@@ -88,8 +88,8 @@
     "pricing": "freemium",
     "links": { "repo": null, "docs": "https://help.dropbox.com/integrations/connect-dropbox-mcp-server", "site": "https://www.dropbox.com" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Beta; exact tool names not published on the public help page. A separate official Dash MCP exists for enterprise search (dropbox/mcp-server-dash). Community Go alternative for classic file access: ngs/dropbox-mcp-server (brew install dropbox-mcp-server)."
+    "verified": "2026-08-13",
+    "notes": "Endpoint unchanged on re-check, and still beta — Dropbox's beta terms apply on top of your plan. The help page (last revised 18 Mar 2026) now advertises 25+ tools spanning file ops, search, shared links and file requests, revisions, transcription, and Markdown conversion, but still publishes no exact tool names, so the server is the source of truth. Dynamic Client Registration only covers a curated client list (Claude Code, Claude web, Cursor, ChatGPT web and Codex); everyone else registers manually. Change your Dropbox app scopes and you must reconnect the server. A separate official Dash MCP covers enterprise search (dropbox/mcp-server-dash, updated Jun 2026). The community Go alternative ngs/dropbox-mcp-server has had no commit since Sep 2025 — use the hosted server instead."
   },
   {
     "slug": "cloudinary-assets",
@@ -123,7 +123,7 @@
     "category": "production-ops",
     "featured": false,
     "tagline": "Full Google Workspace control — Drive, Docs, Sheets, Slides, Gmail, Calendar and more.",
-    "description": "The most comprehensive community Workspace MCP, covering 12 Google services with OAuth 2.0/2.1 multi-user support and tool tiers. For film teams: Drive media file search/read/share plus Docs (scripts), Sheets (budgets and shot lists), Slides (pitch decks), Gmail, and Calendar — one server for the whole production office.",
+    "description": "The most comprehensive community Workspace MCP: 120+ tools across 12 Google services, with OAuth 2.0/2.1 multi-user support and tool tiers. For film teams: Drive media file search/read/share plus Docs (scripts), Sheets (budgets and shot lists), Slides (pitch decks), Gmail, and Calendar — one server for the whole production office.",
     "capabilities": ["drive-files", "docs", "sheets", "slides", "gmail", "calendar", "permissions"],
     "tools_sample": ["search_drive_files", "get_drive_file_content", "create_drive_file", "create_doc", "modify_sheet_values", "send_gmail_message", "manage_event"],
     "install": {
@@ -133,9 +133,32 @@
     },
     "auth": { "type": "oauth", "env_var": "GOOGLE_OAUTH_CLIENT_ID", "key_url": "OAuth client from Google Cloud Console (https://console.cloud.google.com/apis/credentials)" },
     "pricing": "free",
-    "links": { "repo": "https://github.com/taylorwilsdon/google_workspace_mcp", "docs": null, "site": null },
+    "links": { "repo": "https://github.com/taylorwilsdon/google_workspace_mcp", "docs": "https://workspacemcp.com/docs", "site": "https://workspacemcp.com" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "2.6k stars, 87 releases, MIT, very active. Tool tiers keep the context small (--tool-tier core). npx-only Drive-focused alternative: piotr-agier/google-drive-mcp (166 stars, Apr 2026)."
+    "verified": "2026-08-13",
+    "notes": "3.0k stars, 95 releases, MIT, still shipping — v1.24.0 landed 12 Aug 2026 and the env vars and uvx command above are unchanged. Tool tiers keep the context small (--tool-tier core; extended and complete exist), and --tools gmail drive calendar plus --read-only trim it further. You still supply your own Google Cloud OAuth client, which is the real setup cost: about five minutes of console work per deployment. For Claude web, desktop, and mobile the project now recommends running it in HTTP mode and adding it as a Connector rather than stdio; Claude Code takes either. Documentation moved to workspacemcp.com, where the maintainer also sells a managed cloud instance — the self-hosted server remains free and MIT. npx-only Drive-focused alternative: piotr-agier/google-drive-mcp (201 stars, Jul 2026)."
+  },
+  {
+    "slug": "getty-images",
+    "name": "Getty Images MCP Server",
+    "vendor": "Getty Images",
+    "official": true,
+    "category": "production-ops",
+    "featured": false,
+    "tagline": "Official remote MCP for searching and downloading licensed Getty stills and footage.",
+    "description": "Getty Images' hosted MCP server, launched 12 Aug 2026, exposes the creative, editorial, news, sport, and archival library to agents: search stills and video, read asset metadata, and download files under your organization's existing licence. For a film team it is the licensed-archive counterpart to generative video — the route an agent takes when a cut needs real news footage, sports plates, or historical material that no model can lawfully fabricate. Tools are meant to be discovered at runtime rather than hard-coded.",
+    "capabilities": ["stock-search", "video-search", "media-search", "asset-download", "metadata", "remote-mcp"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": null,
+      "remote_url": "https://mcp.gettyimages.com/v1",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "API key and secret from your Getty Images account representative — https://engage.gettyimages.com/MCP-contact-sales" },
+    "pricing": "paid",
+    "links": { "repo": null, "docs": "https://developer.gettyimages.com/mcp/", "site": "https://www.gettyimages.com/ai/mcp" },
+    "added": "2026-08-13",
+    "verified": "2026-08-13",
+    "notes": "Enterprise-gated, not self-serve: access needs an active Getty agreement (Premium Access or Editorial Subscription), acceptance of the Web Service Terms, and an API key plus secret issued by an account rep — there is no signup link, only contact-sales. The endpoint above is published, but the auth handshake is OAuth 2.0 client-credentials or authorization-code to mint a token, and Getty documents neither the header form nor a client config snippet, so claude_code stays null until the connect recipe is public; point your agent at the server and let it read the auth and tool descriptions there. No tool names are published either, by design. Throttled at 20 queries per second. The sharp edge is licensing, not plumbing: search spans the whole library while downloads are bounded by your subscription, so an agent can surface an asset it has no right to deliver — check the licence before you cut it in. Nothing here generates; for royalty-free stills with an open API see freepik in this directory."
   }
 ]

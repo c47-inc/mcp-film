@@ -398,7 +398,7 @@
     "category": "enhancement",
     "featured": false,
     "tagline": "Official Topaz Labs MCP — enhance and upscale images with Topaz AI models.",
-    "description": "Topaz Labs' own MCP server: send an image, get back an enhanced/upscaled version using 9 Topaz models (Standard V2, Wonder 2, Recover 3, and more), defaulting to auto-upscale to 2K. The official path to Topaz-grade enhancement for stills, plates, and frames in an agent pipeline.",
+    "description": "Topaz Labs' own MCP server: send an image path or URL, get back an enhanced/upscaled version from one of 8 Topaz models — four standard (Standard V2, Low Resolution V2, CGI, High Fidelity V2) and four generative (Redefine, Recover 3, Standard MAX, Wonder 2) — defaulting to Standard V2 with auto-upscale to 2K. The official path to Topaz-grade enhancement for stills, plates, and frames in an agent pipeline.",
     "capabilities": ["upscaling", "image-enhancement", "denoise", "restoration"],
     "tools_sample": ["image-enhance"],
     "install": {
@@ -406,12 +406,12 @@
       "remote_url": null,
       "stdio_command": "npx -y @topazlabs/mcp"
     },
-    "auth": { "type": "api_key", "env_var": "TOPAZ_API_KEY", "key_url": "https://developer.topazlabs.com/" },
+    "auth": { "type": "api_key", "env_var": "TOPAZ_API_KEY", "key_url": "https://developer.topazlabs.com/getting-started/how-do-i-get-my-api-key" },
     "pricing": "credits",
     "links": { "repo": "https://github.com/TopazLabs/topaz-mcp", "docs": "https://developer.topazlabs.com/", "site": "https://www.topazlabs.com/api" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Official but brand new, MIT, TypeScript. IMAGE ONLY for now — the README says video is 'not yet supported' via MCP even though Topaz's developer API covers Video AI, Photo AI, and Gigapixel. For Topaz VIDEO upscaling today, use the Topaz models hosted on fal.ai via the fal MCP. Needs a filesystem-capable client (Claude Code, not Claude web chat)."
+    "verified": "2026-08-13",
+    "notes": "Official, MIT, TypeScript — and dormant: v0.1.14 on npm and the last repo commit both date to 16 Feb 2026, six months ago, with 5 stars. It still installs and runs, but nobody is extending it. IMAGE ONLY — the README still says video is 'not yet supported' via MCP even though Topaz's developer API covers Video AI, Photo AI, and Gigapixel, and HTTP streaming transport is also listed as unsupported, so remote and web clients are out. One tool, image-enhance, taking a local path or URL: a filesystem-capable client is required (Claude Code, Cursor, Windsurf, VS Code — not Claude's browser chat). For Topaz VIDEO upscaling today, go around it to the Topaz models hosted on fal.ai via the fal MCP (fal-ai/topaz/upscale/video, $0.01–0.08 per second of output depending on resolution)."
   },
   {
     "slug": "magnific",
