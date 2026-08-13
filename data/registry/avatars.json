@@ -90,5 +90,28 @@
     "added": "2026-06-11",
     "verified": "2026-08-12",
     "notes": "Docs-platform-hosted (ReadMe-powered) remote MCP; endpoint re-confirmed on 2026-08-12 but the exact tool list is still not published openly. Auth is whatever your client can send: D-ID's own guidance is that you pass API credentials as headers or query parameters through the MCP client, so there is no OAuth flow and no standard env var. Landscape note: Synthesia still has no official MCP (only marginal community wrappers and generic Zapier/viaSocket gateways)."
+  },
+  {
+    "slug": "sync-labs",
+    "name": "Sync MCP Server",
+    "vendor": "Sync (sync.so)",
+    "official": true,
+    "category": "avatars-performance",
+    "featured": false,
+    "tagline": "Official Sync MCP for lipsync generation, voice cloning, and TTS on existing footage.",
+    "description": "Sync's own MCP server wraps the sync.so API: take a video plus an audio track and regenerate the performer's mouth to match, with cost estimation before you spend, asset and project management, voice cloning, and TTS. Unlike avatar platforms that synthesize a presenter, this retimes lips on footage you already shot — the practical tool for dub passes, ADR fixes, and localized versions that keep the original take. Tools are generated from the Sync OpenAPI spec at startup, so new endpoints appear without a server update.",
+    "capabilities": ["lip-sync", "video-dubbing", "voice-cloning", "tts", "asset-management", "credit-estimation", "async-jobs"],
+    "tools_sample": ["models_get", "generate_create-generation", "generate_get-generation", "generate_estimate-cost", "assets_create-upload-url", "voices_clone-voice", "tts_create", "projects_create"],
+    "install": {
+      "claude_code": "claude mcp add sync -- npx -y @sync.so/mcp-server --api-key YOUR_API_KEY",
+      "remote_url": "https://mcp.sync.so/mcp",
+      "stdio_command": "npx -y @sync.so/mcp-server"
+    },
+    "auth": { "type": "api_key", "env_var": "SYNC_API_KEY", "key_url": "https://sync.so/settings/api-keys" },
+    "pricing": "paid",
+    "links": { "repo": "https://github.com/synchronicity-labs/mcp-server", "docs": "https://sync.so/docs/plugins-and-extensions/mcp-server", "site": "https://sync.so" },
+    "added": "2026-08-13",
+    "verified": "2026-08-13",
+    "notes": "Official and MIT, with both routes live: the hosted endpoint above takes OAuth in Claude web (no key needed), while stdio needs SYNC_API_KEY — or omit it and the server runs a device-auth flow, caching a token at ~/.config/sync/mcp-credentials.json. Node 18+. No free tier: plans run from $5/month Hobbyist to $249/month Scale, all with per-second generation charges of roughly $0.04–0.05, and the tiers also cap clip length (1 min at the bottom, 30 min at the top), concurrent jobs, and voice clones — call generate_estimate-cost before long renders. Models named on the pricing page are Lipsync-2-Pro, Sync-3, and React-1; ask models_get rather than assuming. Repo activity is thin, 1 star and last pushed 16 Jul 2026, and npm @sync.so/mcp-server still sits at 0.1.4 from 16 Mar 2026 — tolerable only because tools are read from the live OpenAPI spec, so API changes land without a package bump. Ethics and rights: relighting someone's mouth to say new words needs the performer's consent, and many jurisdictions and union agreements now require it explicitly."
   }
 ]
