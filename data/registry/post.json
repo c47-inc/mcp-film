@@ -391,6 +391,29 @@
     "notes": "GA Apr 28 2026 per Adobe's own blog; the first entry in this directory with Adobe as vendor. The endpoint https://adobe-creativity.adobe.io/mcp is taken from Adobe's published plugin manifest in github.com/adobe/skills, not from a marketing page; an unauthenticated tools/list probe returns 403, so the tool names here come from Adobe's own skill definitions rather than a live handshake. The video limitation is the thing to know: Adobe documents reformat/resize (video_resize) and sizzle-reel generation (video_create_quick_cut) and nothing that opens, reads or edits a Premiere Pro project — Adobe's own Quick Cut skill instructs the agent to use it 'before suggesting manual editing in Premiere'. Guest access covers roughly 40 of the 50+ tools; video tools and Gen Expand require signing in and a few require a paid subscription. Adobe documents setup through Claude's connector directory (plus Cowork and Claude Desktop) rather than a published mcp-add command, and Team/Enterprise admins must enable third-party connectors before members can use it."
   },
   {
+    "slug": "descript",
+    "name": "Descript MCP",
+    "vendor": "Descript",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Descript's official hosted MCP — import media, run Underlord edits, publish, from your agent.",
+    "description": "Descript's first-party remote MCP server hands an agent the transcript-based editor: import media from a URL or local file with automatic transcription, then drive Underlord to strip filler words, apply Studio Sound, generate captions, build scenes and highlight reels, or create a whole project from a prompt. It also finds and organizes projects and compositions and publishes to a shareable Descript link. The natural home for interview, doc and podcast-adjacent cutting, where the edit is really a text edit.",
+    "capabilities": ["transcript-editing", "captioning", "filler-word-removal", "audio-cleanup", "highlight-reels", "project-management", "publishing", "remote-mcp"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http descript https://api.descript.com/v2/mcp",
+      "remote_url": "https://api.descript.com/v2/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth via your Descript login — no API token; the connection binds to whichever Descript drive your browser session is in" },
+    "pricing": "paid",
+    "links": { "repo": null, "docs": "https://help.descript.com/hc/en-us/articles/46056322186509-Descript-MCP-overview", "site": "https://www.descript.com/api" },
+    "added": "2026-08-15",
+    "verified": "2026-08-15",
+    "notes": "Official and hosted, so nothing to install, but the export story is the catch: Descript documents no direct media-file export over MCP — an agent can publish to a Descript web link or hand off a signed URL, and anything else you fetch by exporting from the app yourself. Other documented limits: YouTube URLs cannot be imported, job history is kept 30 days, and one connection sees exactly one drive (switching drives means re-authenticating, and editing a project on another drive errors). API and MCP access is included for paying subscribers at no extra cost but every import and Underlord edit burns your plan's media minutes and AI credits. Descript points Claude users at the connector directory and gives the raw URL above for custom clients; tool names are not published, so this entry lists capabilities rather than inventing them."
+  },
+  {
     "slug": "topaz",
     "name": "Topaz Labs MCP",
     "vendor": "Topaz Labs",
