@@ -9,7 +9,7 @@
     "tagline": "Breaks screenplays into shot lists and generates Sora/Veo/Runway-ready video prompts.",
     "description": "An LLM-powered agent that parses scripts in any format, performs shot-by-shot breakdowns, and emits coherent text-to-video prompts with cross-shot character consistency. Runs as an MCP server, Python SDK, REST API, or LangGraph node — the missing link between a screenplay and a generation pipeline.",
     "capabilities": ["screenplay-parsing", "shot-breakdown", "storyboard-scripts", "t2v-prompt-generation", "character-consistency"],
-    "tools_sample": ["breakdown_script", "get_task_result"],
+    "tools_sample": ["breakdown_script", "get_task_status", "get_task_result", "cancel_task", "get_queue_status"],
     "install": {
       "claude_code": "claude mcp add penshot -- python -m penshot.mcp_server (after pip install penshot)",
       "remote_url": null,
@@ -17,10 +17,10 @@
     },
     "auth": { "type": "api_key", "env_var": null, "key_url": "Bring your own LLM API key for the underlying agent (per its docs)" },
     "pricing": "free",
-    "links": { "repo": "https://github.com/neopen/story-shot-agent", "docs": "https://pengline.cn", "site": null },
+    "links": { "repo": "https://github.com/neopen/story-shot-agent", "docs": "https://pengline.cn/2026/02/b027d930c0b84ba6abd24bbef7d78afc/", "site": "https://shot.helpenx.com" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "94 stars, actively updated (Jun 2026); docs are bilingual Chinese/English. Directory finding: no dedicated MCP exists for Final Draft, Celtx, WriterDuet, or Fountain as of June 2026 — script writing itself is best done with your agent directly (Fountain is plain text), stored via the Notion or Google Drive MCPs."
+    "verified": "2026-08-15",
+    "notes": "Growing: 139 stars, PyPI 0.3.6 shipped 23 Jul 2026, MIT. Setup is heavier than the one-line install suggests — it wants an LLM endpoint, an embedding model, and a Redis URL in .env before the MCP server is useful, and the maintainers state it is optimized for Chinese scripts with full English support still on the roadmap. Async is the sane mode: submit with breakdown_script, poll get_task_status, collect get_task_result. Directory finding, still true: no dedicated MCP exists for Final Draft, Celtx, WriterDuet, or Fountain — script writing itself is best done with your agent directly (Fountain is plain text), stored via the Notion or Google Drive MCPs."
   },
   {
     "slug": "studio-state",
@@ -42,8 +42,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/dkf2studios/studio-state-public", "docs": "https://github.com/dkf2studios/studio-state-public/blob/main/INSTALL.md", "site": "https://dkf2studios.gumroad.com/l/flplx" },
     "added": "2026-06-28",
-    "verified": "2026-06-28",
-    "notes": "MIT, pushed Jun 2026, tiny adoption so far (0 stars) but unusually film-native. It is a state shim, not a generator: it expects your production to follow its folder convention and the paid Studio Method pack is upsold in the README. The useful bit is safe by design — only `update_shot` writes, and only to a per-scene `shot_status.json` sidecar."
+    "verified": "2026-08-15",
+    "notes": "MIT, still live but static: last commit 16 Jun 2026 and still 0 stars, so treat it as one studio's shim published rather than a maintained project. Prerequisites the README front-loads: Python 3.9+ and `pip install \"mcp[cli]\"`, plus a project root containing _pipeline/STATE.json and episodes/ — run tests/test_acceptance.py against the bundled demo project first (expect 4/4). It is a state shim, not a generator, and the paid Studio Method pack is upsold in the README. The useful bit is safe by design — only `update_shot` writes, and only to a per-scene `shot_status.json` sidecar."
   },
   {
     "slug": "miro",
@@ -57,16 +57,16 @@
     "capabilities": ["storyboarding", "board-creation", "diagrams", "mood-boards", "comments", "image-retrieval"],
     "tools_sample": null,
     "install": {
-      "claude_code": "claude mcp add --transport http miro https://mcp.miro.com/",
-      "remote_url": "https://mcp.miro.com/",
+      "claude_code": "claude mcp add --transport http miro https://mcp.miro.com",
+      "remote_url": "https://mcp.miro.com",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth 2.1 browser flow, per-team authorization" },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth 2.1 with dynamic client registration; run /mcp auth in Claude Code and complete the Miro browser flow" },
     "pricing": "freemium",
     "links": { "repo": "https://github.com/miroapp/miro-ai", "docs": "https://developers.miro.com/docs/miro-mcp", "site": "https://miro.com/ai/mcp/" },
     "added": "2026-06-11",
-    "verified": "2026-06-11",
-    "notes": "Public beta; also installable as a Claude Code plugin (/plugin install miro@miro-ai). Tool schemas live at developers.miro.com — the server itself is the source of truth. Enterprise plans add admin controls."
+    "verified": "2026-08-15",
+    "notes": "Still public beta six months after the 2 Feb 2026 launch — Miro's own marketplace listing says so. Endpoint re-confirmed 15 Aug 2026 as https://mcp.miro.com (no trailing slash in Miro's docs); also installable as a Claude Code plugin (/plugin install miro@miro-ai) from the miroapp/miro-ai repo. Enterprise seats are the catch: an admin must enable MCP for the org before anyone can authorize, while other plans authorize directly. Tool schemas live at developers.miro.com/docs/miro-mcp-tools — the server itself is the source of truth."
   },
   {
     "slug": "framethrower",
