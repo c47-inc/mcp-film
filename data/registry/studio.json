@@ -59,7 +59,7 @@
       "site": "https://www.martini.film"
     },
     "added": "2026-06-11",
-    "verified": "2026-06-29",
-    "notes": "Remote MCP server maintained first-party by Martini (YC-backed), with live production endpoint https://www.martini.film/mcp returning OAuth protected-resource metadata and a Supabase-backed bearer challenge. The full profile exposes 59 registered tools in the backend source; the narrower core profile at https://www.martini.film/mcp-core omits direct generation tools for clients or directories that do not allow AI media generation. Generation tools require explicit user approval of model, prompt, count, target shot, and estimated olive cost before spending credits. Public setup docs include Claude Desktop/Web, Claude Code, Gemini CLI, ChatGPT, Cursor, Hermes, OpenClaw, and generic Streamable HTTP clients."
+    "verified": "2026-08-16",
+    "notes": "Remote MCP server maintained first-party by Martini (YC-backed), with live production endpoint https://www.martini.film/mcp returning OAuth protected-resource metadata and a Supabase-backed bearer challenge. The 59-tool figure in the description comes from the backend source read in June 2026 and is not independently checkable from outside: the public docs publish a representative catalogue of 30+ read and write tools and say so explicitly, so treat live `tools/list` as the count that matters. The narrower core profile at https://www.martini.film/mcp-core omits direct generation tools for clients or directories that do not allow AI media generation. Generation tools require explicit user approval of model, prompt, count, target shot, and estimated olive cost before spending credits. Public setup docs include Claude Desktop/Web, Claude Code, Gemini CLI, ChatGPT, Cursor, Hermes, OpenClaw, and generic Streamable HTTP clients."
   }
 ]
