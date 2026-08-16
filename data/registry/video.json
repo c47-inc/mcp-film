@@ -274,5 +274,28 @@
     "added": "2026-08-12",
     "verified": "2026-08-12",
     "notes": "Short-form and social first — this is a faceless TikTok/Reels/Shorts factory, not shot-level cinematic control, and nothing here gives you frame continuity across a scene. Treat publish_now and schedule_publish as live-fire tools: they push to your connected accounts with no staging step, so gate them behind explicit approval. Renders burn credits from your account or active workspace; call calculate_credits first. Endpoint verified live on 12 Aug 2026 — GET returns 405 and /.well-known/oauth-protected-resource advertises scope mcp:use against https://www.revid.ai. Closed source: there is no public repo for the server, and the companion CLI (npm revid-cli 0.1.4, published 4 May 2026) ships UNLICENSED, so read the terms before you build on it."
+  },
+  {
+    "slug": "reelsfarm",
+    "name": "ReelsFarm MCP",
+    "vendor": "ReelsFarm",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Hosted short-form studio for AI avatars, product scenes, UGC videos, and social delivery.",
+    "description": "ReelsFarm is a hosted short-form content studio for agent-driven production: one MCP connection covers AI avatar generation, product scenes, UGC videos, slideshows, asset libraries, and social delivery. For short-form filmmakers and ad teams, creation, scheduling, and publishing share one authenticated workflow instead of separate model endpoints.",
+    "capabilities": ["ugc-video", "avatar-generation", "product-video", "slideshow-video", "asset-management", "workflow-automation", "social-publishing", "scheduled-publishing"],
+    "tools_sample": ["reelsfarm_prepare_generate_avatar", "reelsfarm_prepare_generate_ugc_video", "reelsfarm_list_gallery", "reelsfarm_list_slideshows", "reelsfarm_prepare_create_automation", "reelsfarm_prepare_schedule_post", "reelsfarm_prepare_publish_now", "reelsfarm_get_video_job_status"],
+    "install": {
+      "claude_code": "claude mcp add --transport http reelsfarm https://mcp.reelsfarm.com/mcp",
+      "remote_url": "https://mcp.reelsfarm.com/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "https://reelsfarm.com/docs/mcp — sign in with a ReelsFarm account and authorize the MCP client" },
+    "pricing": "freemium",
+    "links": { "repo": "https://github.com/mateohysa/reelsfarm-mcp", "docs": "https://reelsfarm.com/docs/mcp", "site": "https://reelsfarm.com" },
+    "added": "2026-08-16",
+    "verified": "2026-08-16",
+    "notes": "Hosted remote MCP verified alive and OAuth-gated on 2026-08-16; the public server card reports version 2.0.1 and 106 tools. Write actions default to Review mode and require explicit reelsfarm_confirm_action; generation and publishing may consume credits or require a paid plan, and publishing also needs connected social accounts. The linked GitHub repository is the public TypeScript client SDK/CLI, not the hosted server source."
   }
 ]
