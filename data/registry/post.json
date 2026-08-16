@@ -456,8 +456,8 @@
     "pricing": "credits",
     "links": { "repo": null, "docs": "https://docs.magnific.com/modelcontextprotocol", "site": "https://www.magnific.com/api" },
     "added": "2026-06-29",
-    "verified": "2026-06-29",
-    "notes": "Remote streamable HTTP only; no local package or source repo is published for the official MCP. The docs say tools draw from the same Magnific credit balance as the app/API, and live `tools/list` is the source of truth. The MCP surface is broader than pure upscaling — image/video generation, Soul references, TTS, 3D, folders, and prior-creation browsing — so use explicit prompts when you want faithful enhancement rather than creative reinterpretation."
+    "verified": "2026-08-16",
+    "notes": "Remote streamable HTTP only; no local package or source repo is published for the official MCP, and a plain browser GET on the endpoint just redirects to the web app. The docs say tools draw from the same Magnific credit balance as the app/API, and live `tools/list` is the source of truth — the published catalogue is grouped by domain (account balance and project reports, creation browsing and uploads, image, video, TTS, 3D, Soul character training, folders, tool discovery) rather than enumerated tool by tool. The MCP surface is broader than pure upscaling — image/video generation, Soul references, TTS, 3D, folders, and prior-creation browsing — so use explicit prompts when you want faithful enhancement rather than creative reinterpretation."
   },
   {
     "slug": "reap",

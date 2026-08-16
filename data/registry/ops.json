@@ -112,8 +112,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/cloudinary/asset-management-mcp", "docs": "https://cloudinary.com/documentation/cloudinary_llm_mcp", "site": "https://cloudinary.com" },
     "added": "2026-06-29",
-    "verified": "2026-06-29",
-    "notes": "npm @cloudinary/asset-management-mcp 0.9.3, official, published May 25 2026. The hosted Streamable HTTP endpoint is listed in server.json but requires Cloudinary credential headers, so many clients will use stdio with env vars instead. Node 20+ is recommended for local use. Cloudinary also publishes separate official MCPs for analysis, structured metadata, and environment configuration; this listing picks the broad asset-management server as the filmmaker-facing entry."
+    "verified": "2026-08-16",
+    "notes": "npm @cloudinary/asset-management-mcp 0.11.0, official, published 11 Aug 2026 — the same day as the last repo commit, so this one is actively maintained. The hosted Streamable HTTP endpoint is live but POST-only (a browser GET returns 405) and expects Cloudinary credentials as headers: either the three named above or a single cloudinary-url header carrying cloudinary://key:secret@cloud. Many clients will use stdio with env vars instead. Cloudinary's own docs invoke the server through its SDK package (npx -y --package @cloudinary/asset-management -- mcp start); both packages expose the same bin/mcp-server.js, but that SDK package last shipped Sep 2025, so the dedicated MCP package used above is the fresher route. Cloudinary also publishes separate official MCPs for analysis (SSE, not streamable HTTP), structured metadata, and environment configuration; this listing picks the broad asset-management server as the filmmaker-facing entry."
   },
   {
     "slug": "google-workspace",
@@ -160,5 +160,28 @@
     "added": "2026-08-13",
     "verified": "2026-08-13",
     "notes": "Enterprise-gated, not self-serve: access needs an active Getty agreement (Premium Access or Editorial Subscription), acceptance of the Web Service Terms, and an API key plus secret issued by an account rep — there is no signup link, only contact-sales. The endpoint above is published, but the auth handshake is OAuth 2.0 client-credentials or authorization-code to mint a token, and Getty documents neither the header form nor a client config snippet, so claude_code stays null until the connect recipe is public; point your agent at the server and let it read the auth and tool descriptions there. No tool names are published either, by design. Throttled at 20 queries per second. The sharp edge is licensing, not plumbing: search spans the whole library while downloads are bounded by your subscription, so an agent can surface an asset it has no right to deliver — check the licence before you cut it in. Nothing here generates; for royalty-free stills with an open API see freepik in this directory."
+  },
+  {
+    "slug": "stockfilm",
+    "name": "Stockfilm",
+    "vendor": "Stockfilm",
+    "official": true,
+    "category": "production-ops",
+    "featured": false,
+    "tagline": "Remote MCP for searching and licensing restored 8mm and Super 8 home-movie footage.",
+    "description": "Stockfilm's hosted MCP puts a vintage home-movie archive — real 8mm and Super 8 reels scanned in 4K, spanning the 1930s to the 1980s — behind six agent tools: text, year and location search, clip metadata, visual similarity lookup, a rights check, an auto-assembled rough cut, and per-clip licensing. For a filmmaker it covers the one thing generative video cannot legitimately produce: authentic period texture with provenance. Connecting takes no account or key, so an agent can search and build a timeline before anyone spends anything.",
+    "capabilities": ["archival-footage", "stock-search", "video-search", "rough-cuts", "rights-check", "license-info", "metadata", "remote-mcp"],
+    "tools_sample": ["search_vintage_footage", "get_clip_details", "find_similar_footage", "build_rough_cut", "check_clip_rights", "license_clip"],
+    "install": {
+      "claude_code": "claude mcp add --transport http stockfilm https://api.stockfilm.com/mcp",
+      "remote_url": "https://api.stockfilm.com/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "none", "env_var": null, "key_url": "No credentials to connect; payment happens per clip at licensing time — https://stockfilm.com/for-ai-agents" },
+    "pricing": "freemium",
+    "links": { "repo": null, "docs": "https://stockfilm.com/for-ai-agents", "site": "https://stockfilm.com" },
+    "added": "2026-08-16",
+    "verified": "2026-08-16",
+    "notes": "Verified live on 16 Aug 2026 by initialising the endpoint and reading tools/list: six tools, no auth on connect. The catch is checkout. license_clip does not deliver a file — it returns an x402 payment endpoint and wants $10 in USDC on Solana or Base, so you need an x402-capable agent framework or wallet; there is no card path inside the MCP. Stockfilm's own site quotes $149 per clip for a royalty-free 4K master direct, and $79–$299 through Pond5, so confirm what resolution and rights the $10 buys before you build a delivery on it. Its numbers also disagree with themselves: the server advertises 217,000+ clips, the website says 162,000+ from ~1,600 reels across 121 countries. Scope is narrow by design — amateur home movies only, no news, sport or studio material; for those see getty-images in this directory. Listed in the official MCP registry since Mar 2026 under a second hostname, https://mcp.stockfilm.com/mcp, which also answers; the vendor's own docs point at api.stockfilm.com, used above."
   }
 ]
