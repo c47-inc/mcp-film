@@ -297,5 +297,28 @@
     "added": "2026-08-16",
     "verified": "2026-08-16",
     "notes": "Hosted remote MCP verified alive and OAuth-gated on 2026-08-16; the public server card reports version 2.0.1 and 106 tools. Write actions default to Review mode and require explicit reelsfarm_confirm_action; generation and publishing may consume credits or require a paid plan, and publishing also needs connected social accounts. The linked GitHub repository is the public TypeScript client SDK/CLI, not the hosted server source."
+  },
+  {
+    "slug": "invideo",
+    "name": "invideo MCP Server",
+    "vendor": "invideo",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Official remote MCP that turns a prompt into a scripted, narrated, subtitled cut.",
+    "description": "invideo's official hosted MCP hands an agent the whole assembly-line version of video: write the script from a prompt, pull clips from a stock library, lay in AI voiceover, and burn subtitles in 50+ languages, returning a full-length edit rather than a single shot. For a filmmaker-agent it is a blocking tool, not a finishing one — useful for animatics, pitch reels, explainer inserts, and social cutdowns where speed beats frame-level control. Unlike almost every other server here it needs no key or account to connect, which makes it the cheapest thing to try and the hardest to reason about at scale.",
+    "capabilities": ["text-to-video", "script-generation", "stock-footage", "voiceover", "subtitles", "localization"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport sse invideo https://mcp.invideo.io/sse",
+      "remote_url": "https://mcp.invideo.io/sse",
+      "stdio_command": "npx mcp-remote https://mcp.invideo.io/sse"
+    },
+    "auth": { "type": "none", "env_var": null, "key_url": "None — invideo's help centre says the remote MCP requires no authorisation" },
+    "pricing": "freemium",
+    "links": { "repo": null, "docs": "https://help.invideo.io/en/articles/11316042-invideo-model-context-protocol-server", "site": "https://invideo.io/ai/mcp/" },
+    "added": "2026-08-17",
+    "verified": "2026-08-17",
+    "notes": "invideo labels this Beta in its own help centre and publishes no tool names, no quota, and no credit model, so plan on reading tools/list rather than hard-coding anything. Two transport wrinkles found on 17 Aug 2026: the documented endpoint is the deprecated SSE form at /sse — a GET holds the stream open rather than returning headers, consistent with a live server but not a completed handshake — while an undocumented https://mcp.invideo.io/mcp answers 405 to a GET, the POST-only signature of Streamable HTTP, which is the path to try if your client refuses SSE. The vendor documents only Claude Desktop, Cursor and Windsurf, all via `npx mcp-remote`; the CLI form above is the generic Claude Code SSE syntax, not a command invideo publishes. No auth means no account linkage: expect anonymous rate limits, watermarking, or invideo-hosted output URLs you do not own the lifecycle of, and do not build a paid pipeline on it until the beta label comes off. Output is a templated stock-and-voiceover assembly — for shot-level generative control stay with the model servers in this category."
   }
 ]

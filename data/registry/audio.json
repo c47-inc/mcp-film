@@ -19,8 +19,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/elevenlabs/elevenlabs-mcp", "docs": "https://elevenlabs.io/blog/introducing-elevenlabs-mcp", "site": "https://elevenlabs.io" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "Actively maintained: PyPI elevenlabs-mcp 0.12.2 (4 Aug 2026), MIT, ~1.5k stars, Python >=3.11. ELEVENLABS_MCP_BASE_PATH (default ~/Desktop) is now a hard security boundary for input files as well as output — any local path a tool reads must resolve inside it, so point it at your media root or reads will be rejected. Other env: ELEVENLABS_MCP_OUTPUT_MODE (files/resources/both), ELEVENLABS_API_RESIDENCY. Credits are consumed by every tool. Local stdio only — ElevenLabs' hosted MCP is for managing Agents, not this audio toolset."
+    "verified": "2026-08-17",
+    "notes": "Actively maintained and unchanged on re-check: PyPI elevenlabs-mcp 0.12.2 (4 Aug 2026), repo pushed 14 Aug 2026, MIT, ~1.5k stars, Python >=3.11. ELEVENLABS_MCP_BASE_PATH (default ~/Desktop) is a hard security boundary for input files as well as output — any local path a tool reads must resolve inside it, so point it at your media root or reads will be rejected. Other env: ELEVENLABS_MCP_OUTPUT_MODE (files/resources/both, default files), ELEVENLABS_API_RESIDENCY (enterprise-only, so ignore it on a normal plan). Credits are consumed by every tool. Local stdio only — ElevenLabs' hosted MCP is for managing Agents, not this audio toolset. If uvx is awkward in your setup the README also documents `pip install elevenlabs-mcp` plus `python -m elevenlabs_mcp --api-key=KEY --print` to emit a config block."
   },
   {
     "slug": "cartesia",
@@ -34,16 +34,16 @@
     "capabilities": ["tts", "stt", "voice-cloning", "voice-changing", "localization", "pronunciation-dictionaries"],
     "tools_sample": ["text_to_speech", "speech_to_text", "list_voices", "get_voice", "clone_voice", "voice_change", "localize_voice", "create_pronunciation_dict", "download_file", "get_credit_usage"],
     "install": {
-      "claude_code": "claude mcp add cartesia -e CARTESIA_API_KEY=YOUR_KEY -- uvx cartesia-mcp",
-      "remote_url": null,
+      "claude_code": "claude mcp add --transport http --scope user cartesia-mcp https://mcp.cartesia.ai/mcp",
+      "remote_url": "https://mcp.cartesia.ai/mcp",
       "stdio_command": "uvx cartesia-mcp"
     },
     "auth": { "type": "api_key", "env_var": "CARTESIA_API_KEY", "key_url": "https://play.cartesia.ai/keys" },
     "pricing": "freemium",
     "links": { "repo": "https://github.com/cartesia-ai/cartesia-mcp", "docs": "https://docs.cartesia.ai/tools/ai/mcp", "site": "https://www.cartesia.ai" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "Correction: the audio `infill` tool this directory previously listed is no longer in the README's tool table (16 tools, none of them infill) as of PyPI 0.18.2, 31 Jul 2026 — do not plan an ADR patch workflow around it. Requires Python 3.13+, which uvx will fetch but which breaks older pinned toolchains. Repo carries no LICENSE file and only ~14 stars despite being first-party. get_credit_usage needs a separate CARTESIA_ADMIN_API_KEY; admin and standard keys are not interchangeable. TTS defaults to save=true, returning a file_id and a download_url that expires in 24 hours."
+    "verified": "2026-08-17",
+    "notes": "Changed since last check: Cartesia now runs a hosted MCP at https://mcp.cartesia.ai/mcp and the docs lead with it — the endpoint is alive and answers 401 unauthenticated. Two rough edges. It serves no /.well-known/oauth-protected-resource metadata (404 on 17 Aug 2026), so clients that need OAuth discovery may not complete the handshake; and the docs never say where the token goes — the install link signs you in through the browser and mints an org 'Cartesia MCP' key for you. The local route is the one with published credentials: `claude mcp add -e CARTESIA_API_KEY=<your-api-key> cartesia-mcp -- uvx cartesia-mcp` (PyPI cartesia-mcp 0.19.0, 14 Aug 2026), but it needs Python 3.13+, which uvx will fetch and which breaks older pinned toolchains. Still 16 tools and still no audio `infill` — do not plan an ADR patch workflow around it. Repo carries no LICENSE file and only ~14 stars despite being first-party. get_credit_usage needs a separate CARTESIA_ADMIN_API_KEY; admin and standard keys are not interchangeable. TTS defaults to save=true, returning a file_id and a download_url that expires in 24 hours."
   },
   {
     "slug": "hume",
@@ -65,8 +65,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/HumeAI/mcp-server-hume", "docs": "https://dev.hume.ai/docs/text-to-speech-tts/mcp-server", "site": "https://www.hume.ai" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "Official and current: npm @humeai/mcp-server 0.3.0, registry-modified 20 Jul 2026; repo last pushed 24 Jun 2026 but only ~9 stars and no LICENSE file. Five tools — a much narrower surface than ElevenLabs or Cartesia, and TTS-only, so pair it with something else for SFX and transcription. Set --workdir (or WORKDIR) or audio lands in the system temp directory; local playback wants ffplay or another CLI player on PATH."
+    "verified": "2026-08-17",
+    "notes": "Official but drifting toward dormant, and nothing moved between the last two checks: npm @humeai/mcp-server is still 0.3.0, published 8 Jan 2026, with no release since; repo last pushed 24 Jun 2026, ~9 stars, no LICENSE file in the tree even though npm metadata declares ISC. Five tools — a much narrower surface than ElevenLabs or Cartesia, and TTS-only, so pair it with something else for SFX and transcription. Set --workdir/-w (or WORKDIR) or audio lands in the system temp directory under /hume-tts; local playback wants ffplay or another CLI player on PATH. EMBEDDED_AUDIO_MODE (default false) returns audio inline instead, which is what you want in a client that cannot reach your filesystem."
   },
   {
     "slug": "allvoicelab",
@@ -243,15 +243,16 @@
     "tools_sample": null,
     "install": {
       "claude_code": null,
-      "remote_url": null,
+      "remote_url": "https://mcp.zapier.com/api/v1/connect",
+      "remote_headers": ["Authorization"],
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Zapier account plus an Auphonic connection; the MCP endpoint is generated per-user in the Zapier MCP dashboard" },
+    "auth": { "type": "api_key", "env_var": null, "key_url": "Create a server at https://mcp.zapier.com, connect Auphonic, then copy the connection token" },
     "pricing": "freemium",
-    "links": { "repo": null, "docs": "https://auphonic.com/help/", "site": "https://zapier.com/mcp/auphonic" },
+    "links": { "repo": null, "docs": "https://help.zapier.com/hc/en-us/articles/36265392843917-Use-Zapier-MCP-with-your-client", "site": "https://zapier.com/mcp/auphonic" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "A generic Zapier gateway, not a dedicated audio MCP — tool granularity is whatever Zapier's Auphonic actions expose, the endpoint URL is per-user so it cannot be published here, and every call routes your audio through a third integration layer. Auphonic gives 2 free processing hours per month. Both listed pages still resolve as of 11 Aug 2026. Now that REAPER MCP is in this directory, an agent that needs measured loudness compliance has a local alternative: analyze_loudness plus apply_limiter in a REAPER session. ElevenLabs isolate_audio remains the nearest one-shot dialogue denoiser."
+    "verified": "2026-08-17",
+    "notes": "Connect details filled in on 17 Aug 2026: Zapier's help centre now documents one shared Streamable HTTP endpoint, https://mcp.zapier.com/api/v1/connect (live, 401 unauthenticated), with `Authorization: Bearer <token>` as the recommended form — the older per-user URL with the token in a query string still works but leaks the secret into logs. The token is minted per MCP server you create at mcp.zapier.com after connecting Auphonic, is shown exactly once, and grants whatever tools that server exposes, so treat it as a password; there is no published CLI one-liner, so add it through your client's header config. Still a generic Zapier gateway rather than a dedicated audio MCP: the surface is two Auphonic actions — Create Production and its trigger — so an agent gets 'submit a job with a preset', not per-parameter mastering control, and every call routes your audio through a third integration layer. Tool names stay null because Zapier mints them from the actions you enable rather than publishing a fixed list — read tools/list once connected. Auphonic gives 2 free processing hours per month, and its own docs at auphonic.com/help still make no mention of MCP. For measured loudness compliance without the middleman, REAPER MCP in this directory does analyze_loudness plus apply_limiter locally; ElevenLabs isolate_audio remains the nearest one-shot dialogue denoiser."
   },
   {
     "slug": "deepgram",

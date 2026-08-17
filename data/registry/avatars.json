@@ -113,5 +113,28 @@
     "added": "2026-08-13",
     "verified": "2026-08-13",
     "notes": "Official and MIT, with both routes live: the hosted endpoint above takes OAuth in Claude web (no key needed), while stdio needs SYNC_API_KEY — or omit it and the server runs a device-auth flow, caching a token at ~/.config/sync/mcp-credentials.json. Node 18+. No free tier: plans run from $5/month Hobbyist to $249/month Scale, all with per-second generation charges of roughly $0.04–0.05, and the tiers also cap clip length (1 min at the bottom, 30 min at the top), concurrent jobs, and voice clones — call generate_estimate-cost before long renders. Models named on the pricing page are Lipsync-2-Pro, Sync-3, and React-1; ask models_get rather than assuming. Repo activity is thin, 1 star and last pushed 16 Jul 2026, and npm @sync.so/mcp-server still sits at 0.1.4 from 16 Mar 2026 — tolerable only because tools are read from the live OpenAPI spec, so API changes land without a package bump. Ethics and rights: relighting someone's mouth to say new words needs the performer's consent, and many jurisdictions and union agreements now require it explicitly."
+  },
+  {
+    "slug": "veed-fabric",
+    "name": "VEED Fabric MCP",
+    "vendor": "VEED",
+    "official": true,
+    "category": "avatars-performance",
+    "featured": false,
+    "tagline": "VEED's hosted MCP for talking-head video: pick a character, pick a voice, send a script.",
+    "description": "VEED's official remote MCP drives Fabric, its talking-head engine: agents browse 24+ stock characters and multi-language voices, price a render before committing, submit a script, then poll for the finished MP4. It is deliberately one job rather than an editing suite — the piece a film pipeline reaches for when a scene needs a presenter, a spokesperson insert, or a localized to-camera read without booking a shoot. Credit balance and workspace tools are exposed too, so an agent can check what a batch will cost before it spends.",
+    "capabilities": ["avatar-video", "talking-head", "voice-library", "cost-estimation", "credit-management", "aspect-ratio-control"],
+    "tools_sample": ["list_characters", "list_voices", "confirm_fabric_video", "create_fabric_video", "get_generation_status", "list_workspaces", "get_credit_balance"],
+    "install": {
+      "claude_code": null,
+      "remote_url": "https://www.veed.io/api/v1/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth 2.0 against a VEED account — in Claude, add VEED Fabric from Settings › Connectors" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/veedstudio/veed-fabric-mcp", "docs": "https://veedstudio.github.io/veed-fabric-mcp/", "site": "https://www.veed.io/tools/veed-mcp" },
+    "added": "2026-08-17",
+    "verified": "2026-08-17",
+    "notes": "Endpoint verified alive on 17 Aug 2026 (401 unauthenticated), Streamable HTTP, OAuth 2.0. Seven tools, and that is the whole surface: stock characters only — nothing in the documented toolset uploads your own plate or clones a voice, so this does not replace Sync or Hedra for footage you shot. Costs roughly 8 credits per second of output, billed against AI Playground credits that come with paid VEED plans or are bought separately, so call confirm_fabric_video first; create_fabric_video is async and returns a job id you poll with get_generation_status. VEED publishes no CLI one-liner — the documented Claude path is the connector directory at claude.ai, and the command shown here is the generic Streamable HTTP form. The linked repo is documentation plus an Agent Skill, not the server: the server is closed-source and hosted, the repo has ~6 stars, and it was last pushed 1 Aug 2026, so judge maintenance by VEED the product rather than by repo activity."
   }
 ]
