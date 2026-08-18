@@ -195,16 +195,16 @@
     "capabilities": ["nle-control", "timeline-editing", "effects", "render", "media-management"],
     "tools_sample": ["import_media", "apply_effect", "add_transition", "get_sequences", "get_active_sequence", "export_sequence"],
     "install": {
-      "claude_code": null,
+      "claude_code": "claude mcp add premiere-pro -- premiere-pro-mcp",
       "remote_url": null,
-      "stdio_command": null
+      "stdio_command": "premiere-pro-mcp (after `npm install -g adobe-premiere-pro-mcp`, then `premiere-pro-mcp --install-cep` and `premiere-pro-mcp --doctor`; restart Premiere and start the bridge from Window > Extensions > MCP Bridge (CEP)). Node 20+, macOS or Windows, same machine as Premiere."
     },
     "auth": { "type": "local-app", "env_var": null, "key_url": "Requires Premiere Pro 2020+ running with the bundled 'MCP Bridge' CEP extension" },
     "pricing": "free",
     "links": { "repo": "https://github.com/hetpatel-11/Adobe_Premiere_Pro_MCP", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "Correction to an earlier note here: Adobe DOES have an official MCP. The hosted 'Adobe for Creativity' connector went GA Apr 28 2026 and is listed separately in this directory — but it is account-scoped and its video surface is reformat/quick-cut class (video_resize, video_create_quick_cut). Adobe documents no tool that opens, reads or edits a Premiere Pro project, so community CEP/UXP bridges still own real editorial. This one: 455 stars, MIT, last pushed Aug 5 2026, README claims 283 tools plus 13 context resources and 10 guided prompts; CEP is the supported production bridge and UXP is explicitly experimental. Install is git clone + npm setup, macOS primary. Closest alternative: leancoderkavy/premiere-pro-mcp (184 stars, MIT, ~279 tools, pushed Aug 9 2026)."
+    "verified": "2026-08-18",
+    "notes": "No longer a clone-and-build job: the project now publishes to npm as adobe-premiere-pro-mcp (first release 5 Aug 2026, 1.2.0 on 17 Aug 2026, MIT), so a global install plus `--install-cep` is the documented path and the client just runs the premiere-pro-mcp binary. Nothing connects until you open the CEP panel in Premiere and click Start Bridge; run `verify_premiere_connection` first. Adobe DOES have an official MCP — the hosted 'Adobe for Creativity' connector, GA Apr 28 2026, listed separately here — but it is account-scoped and its video surface is reformat/quick-cut class (video_resize, video_create_quick_cut), with no tool that opens or edits a Premiere project, so community CEP/UXP bridges still own real editorial. This one: 480 stars, pushed Aug 17 2026, README claims 283 tools plus 13 context resources and 10 guided prompts (the repo blurb says 282 — treat both as marketing and read live tools/list). CEP is the supported production bridge; UXP is explicitly experimental. Alternatives: leancoderkavy/premiere-pro-mcp (200 stars, MIT, 280 tools, pushed Aug 17 2026) and ayushozha/AdobePremiereProMCP (85 stars, MIT, pushed Aug 16 2026, claims 1,027 tools) — neither is packaged, both are clone-and-build."
   },
   {
     "slug": "after-effects",
@@ -220,14 +220,14 @@
     "install": {
       "claude_code": null,
       "remote_url": null,
-      "stdio_command": null
+      "stdio_command": "Multi-step, no published package: git clone https://github.com/Dakkshin/after-effects-mcp, then `npm install`, `npm run build`, `npm run install-bridge`, and point your client at `node /absolute/path/to/after-effects-mcp/build/index.js`. Node 14+, After Effects 2022+."
     },
     "auth": { "type": "local-app", "env_var": null, "key_url": "Requires After Effects 2022+ with the 'mcp-bridge-auto' panel open" },
     "pricing": "free",
     "links": { "repo": "https://github.com/Dakkshin/after-effects-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "540 stars, MIT — still the most popular After Effects MCP, but last pushed Apr 1 2026: over four months quiet, so do not expect fixes for newer AE builds. Install: git clone, npm install/build, install-bridge; the ExtendScript bridge panel must stay open in AE. For template-based AE rendering in the cloud without a local install, see plainly-videos in this directory."
+    "verified": "2026-08-18",
+    "notes": "555 stars, MIT — still the most popular After Effects MCP, but last pushed Apr 1 2026: four and a half months quiet, so do not expect fixes for newer AE builds. The bridge is a polling panel, not a socket: open Window > mcp-bridge-auto.jsx in AE and leave 'Auto-run commands' enabled, or every tool call silently waits. For template-based AE rendering in the cloud without a local install, see plainly-videos in this directory."
   },
   {
     "slug": "ffmpeg",
@@ -358,14 +358,14 @@
     "install": {
       "claude_code": null,
       "remote_url": null,
-      "stdio_command": null
+      "stdio_command": "Not stdio and not packaged: git clone https://github.com/fancyboi999/capcut-mcp, install ffmpeg, `pip install -r requirements.txt` on Python 3.8.20, copy config.json.example to config.json, then `python main.py` — it serves streamable HTTP MCP at http://localhost:9000/mcp, which you add to your client as an http-transport server."
     },
     "auth": { "type": "none", "env_var": null, "key_url": null },
     "pricing": "free",
     "links": { "repo": "https://github.com/fancyboi999/capcut-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "94 stars, but last pushed Aug 21 2025 — a full year without a commit, against an app that ships breaking draft-format changes. Test that it still produces drafts your CapCut version opens before you build on it. No official ByteDance MCP exists as a replacement. Workflow caveat: generated draft folders must be manually copied into CapCut's drafts directory; needs ffmpeg + Python 3.8; docs are partly Chinese; no license file."
+    "verified": "2026-08-18",
+    "notes": "94 stars, but last pushed Aug 21 2025 — a full year without a commit, against an app that ships breaking draft-format changes. Test that it still produces drafts your CapCut version opens before you build on it. No official ByteDance MCP exists as a replacement. Workflow caveats: it is a local HTTP service on port 9000, not a stdio server, so nothing works until you start it yourself; generated draft folders must be manually copied into CapCut's drafts directory; the pinned Python 3.8.20 is end-of-life; docs are partly Chinese; no license file, which means no license."
   },
   {
     "slug": "adobe-creativity",
