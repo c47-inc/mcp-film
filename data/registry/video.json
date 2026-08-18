@@ -1,5 +1,29 @@
 [
   {
+    "slug": "vivideo",
+    "name": "Vivideo MCP",
+    "vendor": "Vivideo",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Hosted MCP over a multi-model video roster, with avatars, voices, and brand kits.",
+    "description": "Vivideo's official MCP server fronts its generation API with thirteen tools: an auto mode that turns a brief into a finished video, a manual mode for shot-level control, and roster lookups for models, avatars, voices and brand kits. estimate_credits prices a job before you spend, and get_video/wait_for_video/list_videos handle the polling an agent would otherwise hand-roll. Useful when you want one connection covering generation plus voiceover, captions and brand-consistent assembly rather than wiring three servers together.",
+    "capabilities": ["text-to-video", "image-to-video", "multi-model-generation", "voiceover", "captioning", "avatars", "brand-kits", "cost-estimation"],
+    "tools_sample": ["create_auto_video", "create_manual_video", "list_models", "list_avatars", "list_voices", "estimate_credits", "wait_for_video", "render_preview"],
+    "install": {
+      "claude_code": "claude mcp add --transport http vivideo https://api.vivideo.ai/mcp -h \"Authorization: Bearer YOUR_API_KEY\"",
+      "remote_url": "https://api.vivideo.ai/mcp",
+      "remote_headers": ["Authorization"],
+      "stdio_command": "npx -y @vivideo/mcp"
+    },
+    "auth": { "type": "api_key", "env_var": "VIVIDEO_API_KEY", "key_url": "https://app.vivideo.ai/account/api-keys" },
+    "pricing": "freemium",
+    "links": { "repo": null, "docs": "https://developers.vivideo.ai/mcp", "site": "https://vivideo.ai" },
+    "added": "2026-08-18",
+    "verified": "2026-08-18",
+    "notes": "Listed in the official MCP registry with both the npm package and the hosted remote, and the endpoint answers 405 to a GET — correct behaviour for a POST-only streamable HTTP server. Everything else is vendor-stated: the package is closed source with no public repo, so you cannot audit what the wrapper sends, and @vivideo/mcp has sat at 1.0.2 since 28 Jul 2026 while the API around it moves. The site advertises ~30 models 'including Sora 2', which OpenAI removes from its API on 2026-09-24 — call list_models before you plan a shoot around any published roster. The free tier's claim of unlimited, watermark-free generation with full commercial rights is marketing copy we could not verify against machine-readable terms; read the plan before delivering client work. Bearer keys are vv_live_-prefixed."
+  },
+  {
     "slug": "runway",
     "name": "Runway MCP",
     "vendor": "Runway",

@@ -88,8 +88,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/allvoicelab/AllVoiceLab-MCP", "docs": "https://github.com/allvoicelab/AllVoiceLab-MCP#readme", "site": "https://www.allvoicelab.com" },
     "added": "2026-06-29",
-    "verified": "2026-08-11",
-    "notes": "The stale one in this category: MIT, PyPI allvoicelab-mcp 0.0.5 released 1 Aug 2025, repo last pushed 5 Aug 2025 — a full year without a commit, at ~57 stars. Official, but treat the pin as frozen. Region matters: global keys use https://api.allvoicelab.com, mainland-China keys use https://api.allvoicelab.cn. Requires Python >=3.11 and paid credits."
+    "verified": "2026-08-18",
+    "notes": "The stale one in this category: MIT, PyPI allvoicelab-mcp 0.0.5 released 1 Aug 2025, repo last pushed 5 Aug 2025 — twelve months without a commit, at 59 stars. Official, but treat the pin as frozen. Region matters: global keys use https://api.allvoicelab.com, mainland-China keys use https://api.allvoicelab.cn. Requires Python >=3.11 and paid credits. Renders land in your home directory unless you set ALLVOICELAB_BASE_PATH — point it at the shot folder before a dubbing pass or you will be hunting for files."
   },
   {
     "slug": "suno-acedata",
@@ -112,8 +112,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/AceDataCloud/SunoMCP", "docs": null, "site": "https://platform.acedata.cloud" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "Suno still has NO official public API as of August 2026 — its CPO posted an intake form in July 2026 saying the company is only exploring a developer API, partner-curated, with no public endpoints, docs or date. So this and every other Suno wrapper is an unofficial reseller, plausibly against Suno's ToS, and no commercial-rights claim on the output can be guaranteed. Same for all Udio wrappers. For music you can actually clear, prefer Lyria (Google GenMedia) or Stable Audio via the fal hub. Mechanically it is alive and moving: PyPI mcp-suno 2026.8.10.0, MIT, ~41 stars, and a hosted streamable-HTTP endpoint that answers 401 to an unauthenticated tools/list. Tools are all suno_-prefixed — the older unprefixed names in the lower half of the README are out of date."
+    "verified": "2026-08-18",
+    "notes": "Suno still has NO official public API as of August 2026 — its CPO posted an intake form in July 2026 saying the company is only exploring a developer API, partner-curated, with no public endpoints, docs or date. So this and every other Suno wrapper is an unofficial reseller, plausibly against Suno's ToS, and no commercial-rights claim on the output can be guaranteed. Same for all Udio wrappers. For music you can actually clear, prefer Sonilo, Lyria (Google GenMedia) or Stable Audio via the fal hub. Mechanically it is alive and moving: PyPI mcp-suno 2026.8.17.0 shipped 17 Aug 2026, MIT, 43 stars, ~29 suno_-prefixed tools, and a hosted streamable-HTTP endpoint that still answers 401 unauthenticated. Defaults worth knowing: SUNO_DEFAULT_MODEL is chirp-v5-5 and SUNO_REQUEST_TIMEOUT is 1800s, because renders are slow. The older unprefixed tool names in the lower half of the README are out of date."
   },
   {
     "slug": "mureka",
@@ -135,8 +135,31 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/SkyworkAI/Mureka-mcp", "docs": "https://platform.mureka.ai/docs/en/quickstart.html", "site": "https://platform.mureka.ai" },
     "added": "2026-06-29",
-    "verified": "2026-08-11",
-    "notes": "Official and MIT, but effectively abandoned as a package: PyPI mureka-mcp 0.0.13 and the last repo commit are both 13 May 2025 — fifteen months untouched at ~109 stars. The wider Mureka API has since grown prompt-to-song, soundtrack, stems, remix, region editing and TTS endpoints; this MCP still exposes only four tools. Credits required. Audio saves to Desktop by default; set MUREKA_MCP_BASE_PATH and TIME_OUT_SECONDS before any production run."
+    "verified": "2026-08-18",
+    "notes": "Official and MIT, but effectively abandoned as a package: PyPI mureka-mcp 0.0.13 and the last repo commit are both 13 May 2025 — fifteen months untouched at 111 stars. The wider Mureka API has since grown prompt-to-song, soundtrack, stems, remix, region editing and TTS endpoints; this MCP still exposes only four tools. Credits required. Confirmed in the source: audio saves to $HOME/Desktop unless MUREKA_MCP_BASE_PATH is set, and TIME_OUT_SECONDS defaults to 60 — far too short for a full song, so raise it (the README's own example uses 300) before any production run."
+  },
+  {
+    "slug": "sonilo",
+    "name": "Sonilo MCP",
+    "vendor": "Sonilo",
+    "official": true,
+    "category": "music",
+    "featured": false,
+    "tagline": "Score and effects generated against the cut, from a catalogue trained on licensed music.",
+    "description": "Sonilo's official MCP server scores picture rather than prompts: video_to_music watches a clip and composes to its pacing and cut points, video_to_sfx lays effects against the same timing, and the video_to_video_* variants hand back the muxed file instead of a loose stem. Text-only tools cover fixed-length cues, plus dubbing and audio ducking under dialogue. The reason a filmmaker-agent should care is provenance: Sonilo says its models are trained exclusively on professionally licensed music including Shutterstock's catalogue, which is the claim no Suno wrapper can make.",
+    "capabilities": ["music", "sound-effects", "video-to-music", "video-to-sfx", "dubbing", "audio-ducking", "licensed-audio"],
+    "tools_sample": ["video_to_music", "text_to_music", "video_to_sfx", "text_to_sfx", "video_to_video_music", "dubbing", "audio_ducking", "analyze_video", "get_usage"],
+    "install": {
+      "claude_code": "claude mcp add sonilo -- uvx sonilo-mcp",
+      "remote_url": null,
+      "stdio_command": "uvx sonilo-mcp"
+    },
+    "auth": { "type": "api_key", "env_var": "SONILO_API_KEY", "key_url": "https://platform.sonilo.com/dashboard/api-keys" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/sonilo-ai/sonilo-mcp", "docs": "https://github.com/sonilo-ai/sonilo-mcp#readme", "site": "https://sonilo.com" },
+    "added": "2026-08-18",
+    "verified": "2026-08-18",
+    "notes": "MIT, Python >=3.10, PyPI sonilo-mcp 0.18.0 shipped 17 Aug 2026 — seventeen releases since mid-July, so it is the fastest-moving music server in this directory, at 54 stars and listed in the official MCP registry. Set SONILO_API_KEY or run `sonilo login` from the sonilo-cli npm package first; the server has no hosted remote. Read the licensing page before you deliver: commercial-use rights are plan-gated to Pro, Premium, Enterprise and 'eligible API users' — Free and Creator output is personal use only — and Sonilo states plainly that those rights 'do not remove every copyright, platform, client, or broadcast review'. The training-data claim is Sonilo's, not independently audited. Hard limits: music 1–360s, SFX 1–180s, uploads typically 300 MB, H.264/HEVC/VP9/AV1 in mp4/mov/m4v/webm. Billing is per second generated with a couple of free runs per tool, except dubbing, which bills from the first call."
   },
   {
     "slug": "reaper-mcp",
