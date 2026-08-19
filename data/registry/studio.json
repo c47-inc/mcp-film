@@ -61,5 +61,62 @@
     "added": "2026-06-11",
     "verified": "2026-08-16",
     "notes": "Remote MCP server maintained first-party by Martini (YC-backed), with live production endpoint https://www.martini.film/mcp returning OAuth protected-resource metadata and a Supabase-backed bearer challenge. The 59-tool figure in the description comes from the backend source read in June 2026 and is not independently checkable from outside: the public docs publish a representative catalogue of 30+ read and write tools and say so explicitly, so treat live `tools/list` as the count that matters. The narrower core profile at https://www.martini.film/mcp-core omits direct generation tools for clients or directories that do not allow AI media generation. Generation tools require explicit user approval of model, prompt, count, target shot, and estimated olive cost before spending credits. Public setup docs include Claude Desktop/Web, Claude Code, Gemini CLI, ChatGPT, Cursor, Hermes, OpenClaw, and generic Streamable HTTP clients."
+  },
+  {
+    "slug": "nomi",
+    "name": "Nomi",
+    "vendor": "Community (aqm857886159)",
+    "official": false,
+    "category": "studio",
+    "featured": false,
+    "tagline": "Open-source desktop workbench your agent directs: storyboard, generate, cut on a timeline.",
+    "description": "Nomi is a local-first Electron workbench that exposes its own production surface over MCP, so Claude Code, Codex, or Cursor can create a project, lay out shots on a canvas, wire reference images between nodes, start a durable generation run, and land the result on an editable first cut. The model layer is bring-your-own: roughly ten hosted providers come pre-wired, and anything OpenAI-compatible or a local ComfyUI graph slots in beside them. That combination is rare — most studio-tier servers in this directory are hosted products that own the models, whereas here the agent directs software on your own machine against whatever engines you are already paying for. Run-control tools make it more than fire-and-forget: the agent can subscribe to a run, decide a gate, and pull artifacts back.",
+    "capabilities": [
+      "storyboarding",
+      "shot-planning",
+      "canvas-collaboration",
+      "multi-model-generation",
+      "comfyui-integration",
+      "reference-management",
+      "timeline-editing",
+      "run-control",
+      "local-first",
+      "asset-management"
+    ],
+    "tools_sample": [
+      "nomi_create_project",
+      "nomi_list_projects",
+      "nomi_list_models",
+      "nomi_read_canvas",
+      "nomi_add_nodes",
+      "nomi_connect_nodes",
+      "nomi_set_node_prompt",
+      "nomi_generate",
+      "nomi_start_playbook",
+      "nomi_control_run",
+      "nomi_decide_gate",
+      "nomi_get_run",
+      "nomi_subscribe_run",
+      "nomi_get_artifact"
+    ],
+    "install": {
+      "claude_code": null,
+      "remote_url": null,
+      "stdio_command": "Multi-step: install the Nomi desktop app (Nomi-mac-arm64.dmg, Nomi-mac-intel.dmg, or Nomi-windows-setup.exe from GitHub Releases), launch it once so it mints the local token, then use the app's one-click MCP integration to register the bundled stdio server with your client. No published `claude mcp add` one-liner."
+    },
+    "auth": {
+      "type": "local-app",
+      "env_var": null,
+      "key_url": "No key for the MCP link — a local token is written to ~/.nomi/capability-core/token on first launch. Model providers still need their own API keys, entered in the app."
+    },
+    "pricing": "free",
+    "links": {
+      "repo": "https://github.com/aqm857886159/Nomi",
+      "docs": "https://github.com/aqm857886159/Nomi/blob/main/docs/guide/capability-core-cli-mcp.md",
+      "site": null
+    },
+    "added": "2026-08-19",
+    "verified": "2026-08-19",
+    "notes": "Fifteen documented tools, all `nomi_`-prefixed. Active: ~420 stars, v0.20.0 released 17 Aug 2026, repo pushed 18 Aug 2026 — but it is a single personal GitHub account, not an org, and it is only three months old. Licence is the thing to read before you build on it: AGPL-3.0-only for current releases, with historical releases still under Apache-2.0 and a separate commercial licence offered on request, so shipping a derivative product is a conversation, not a default. Desktop-only and macOS arm64/x64 plus Windows x64 — no Linux build. The binaries are unsigned: Gatekeeper and SmartScreen both block the first launch, and updates are a manual re-download. Registration goes through the app's one-click integration; the older scripts/nomi-mcp.mjs path is deprecated, and the helper will start a headless instance so the app does not have to stay open. Parts of the developer docs are Chinese-first. 'No account, no telemetry' is the project's claim, not something this directory measured, and every generation still bills whichever provider key you supplied."
   }
 ]
