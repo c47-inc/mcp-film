@@ -527,5 +527,60 @@
     "added": "2026-08-12",
     "verified": "2026-08-12",
     "notes": "Official but barely trafficked: the repo has 0 stars and was last pushed 15 Jun 2026, and npm @avclabs.ai/media-mcp is on 0.2.1 from 22 May 2026. MIT, Node 18+, thin client over AVCLabs' HTTP backend. Ceiling is 1080p/2K — below what Topaz or the Topaz models on fal will give you, so this is the cheap-and-cloud option, not the finishing one. enhance_video_sync blocks and truncates around 50s; use create_task plus get_task_status for anything real. SAM3 segmentation is image-only, so it is a masking tool, not video roto. The vendor documents a JSON mcpServers block rather than a CLI one-liner — the command above is the same command/args/env in claude mcp add form. Pricing is behind a Buy Now page at mcp.avc.ai/pricing that did not render for verification, so per-job cost is unconfirmed; the generic env var name API_KEY will also collide if you set it globally."
+  },
+  {
+    "slug": "opusclip",
+    "name": "OpusClip MCP",
+    "vendor": "OpusClip",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Turns long footage into ranked short clips, then captions, edits, and schedules them.",
+    "description": "OpusClip's first-party hosted MCP gives an agent the whole repurposing chain: submit a file or URL, get back clips ranked by a virality score, pull the word-timed transcript, then apply a frame-level editing script to fix a trim, a caption, or the retiming. From there it captions, censors profanity, generates thumbnails and per-platform social copy, groups clips into collections, and schedules or posts them to connected accounts. For a film pipeline this is the tail end — the trailer cutdowns, the festival teasers, the vertical social pulls off a finished piece — not the edit itself. Export is the part filmmakers care about: HD, 4K, or an Adobe Premiere XML project you can finish properly.",
+    "capabilities": [
+      "clip-curation",
+      "transcript-editing",
+      "captioning",
+      "reframing",
+      "thumbnails",
+      "social-copy",
+      "scheduling",
+      "publishing",
+      "premiere-xml-export",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "opusclip_submit_project",
+      "opusclip_list_clips",
+      "opusclip_describe_clip",
+      "opusclip_get_transcript",
+      "opusclip_get_editing_script",
+      "opusclip_apply_editing_script",
+      "opusclip_create_censor_job",
+      "opusclip_export_clip",
+      "opusclip_create_social_copy_job",
+      "opusclip_create_thumbnail_job",
+      "opusclip_schedule_publish",
+      "opusclip_get_usage"
+    ],
+    "install": {
+      "claude_code": "claude mcp add --transport http opusclip https://mcp.opus.pro/mcp",
+      "remote_url": "https://mcp.opus.pro/mcp",
+      "stdio_command": "npx -y @opusclip/mcp (a launcher for the same hosted server, not a local one — the npm package is still 0.1.0 from 2 Jul 2026, so prefer the HTTP endpoint)"
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "OAuth in the browser on first connect — no API key; sign in at https://www.opus.pro"
+    },
+    "pricing": "credits",
+    "links": {
+      "repo": "https://github.com/opus-pro/opusclip-mcp",
+      "docs": "https://help.opus.pro/api-reference/agent-setup",
+      "site": "https://www.opus.pro/mcp"
+    },
+    "added": "2026-08-19",
+    "verified": "2026-08-19",
+    "notes": "Official, hosted, and still labelled beta by OpusClip's own changelog — which advertised 25 tools while the docs now list 27 workflow tools plus 2 thumbnail-generation ones, so trust live `tools/list` over any published count. The endpoint at https://mcp.opus.pro/mcp is live and returns OAuth protected-resource metadata pointing at a WorkOS AuthKit authorization server. Entitlement is not universal: the docs say Pro Beta and Max organizations get API access automatically and business customers run under their contract, so a free account may connect and find the write tools locked. Quotas are per workspace and real — 15h / 900 credits a month, a 10-credit floor charged per project regardless of length, and 4 concurrent projects, resetting on the 1st UTC. Fourteen of the tools are writes that spend credits and prompt for approval per call. The public repo is a thin 2-star wrapper (MIT, pushed 14 Aug 2026) under an org with a GitHub IP allow list, so you cannot browse its source anonymously; the docs are the real reference. Scored for short-form social, not for narrative: virality ranking and vertical reframe are the product's opinion, and it will impose it."
   }
 ]

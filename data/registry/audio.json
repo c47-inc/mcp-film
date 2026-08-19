@@ -181,8 +181,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/bonfire-systems/reaper-mcp", "docs": "https://github.com/bonfire-systems/reaper-mcp#readme", "site": "https://www.reaper.fm" },
     "added": "2026-08-11",
-    "verified": "2026-08-11",
-    "notes": "Install friction is the story. The PyPI package is `reaper-mcp-server`, not `reaper-mcp` — `reaper-mcp` on PyPI is an unrelated project by a different author (nbdy), so a wrong `pip install` silently gets you someone else's server. Setup is also two-stage: the server talks to REAPER through python-reapy, which requires REAPER's distant API to be switched on by running `scripts/enable_reapy.py` via Actions > Run ReaScript, then restarting REAPER. MIT, Python >=3.10, ~117 stars, self-classified Alpha. PyPI sits at 0.1.1 (27 Mar 2026) while the repo has moved on to 21 Jun 2026 — install from source if you want the newer tools. REAPER itself is a paid licence after its evaluation period, and pulls in librosa, numpy and soundfile for the analysis tools."
+    "verified": "2026-08-19",
+    "notes": "Install friction is the story. The PyPI package is `reaper-mcp-server`, not `reaper-mcp` — `reaper-mcp` on PyPI is an unrelated project by a different author (nbdy), so a wrong `pip install` silently gets you someone else's server. Setup is also two-stage: the server talks to REAPER through python-reapy, which requires REAPER's distant API to be switched on by running `scripts/enable_reapy.py` via Actions > Run ReaScript, then restarting REAPER. MIT, Python >=3.10, ~121 stars, self-classified Alpha. PyPI still sits at 0.1.1 (27 Mar 2026) and the repo has not been pushed since 21 Jun 2026 — install from source if you want the newer tools, and treat two quiet months as the maintenance signal it is. REAPER itself is a paid licence after its evaluation period, and pulls in librosa, numpy and soundfile for the analysis tools."
   },
   {
     "slug": "ableton-mcp",
@@ -198,14 +198,14 @@
     "install": {
       "claude_code": "claude mcp add ableton -- uvx ableton-mcp",
       "remote_url": null,
-      "stdio_command": "uvx ableton-mcp (then manually copy AbletonMCP_Remote_Script/__init__.py into Live's MIDI Remote Scripts folder and enable it as a Control Surface)"
+      "stdio_command": "uvx ableton-mcp (then run `uvx --from ableton-mcp ableton-mcp-install-script` once to place the Remote Script, and enable AbletonMCP as a Control Surface in Live)"
     },
     "auth": { "type": "local-app", "env_var": null, "key_url": "No key; requires a licensed Ableton Live 10 or newer running locally" },
     "pricing": "free",
     "links": { "repo": "https://github.com/ahujasid/ableton-mcp", "docs": "https://github.com/ahujasid/ableton-mcp#readme", "site": "https://www.ableton.com" },
     "added": "2026-08-11",
-    "verified": "2026-08-11",
-    "notes": "By Siddharth Ahuja, the maintainer of Blender MCP already listed in this directory — the same architecture, and a fair maintenance signal rather than an endorsement: MIT, PyPI ableton-mcp 1.3.5 (3 Aug 2026), ~2.9k stars, repo pushed the day this entry was verified. The install is not one command: the MIDI Remote Script has to be hand-copied into Live's MIDI Remote Scripts directory, whose path differs by OS and Live version, then selected under Settings > Link, Tempo & MIDI. Run only one instance of the server across your clients. It ships anonymous telemetry on by default — set ABLETON_MCP_DISABLE_TELEMETRY=true to turn it off. Known limits: long arrangements time out and must be broken into smaller prompts, it works best with Live's stock devices, and reading notes back out of existing clips is unreliable. Save your set first."
+    "verified": "2026-08-19",
+    "notes": "By Siddharth Ahuja, the maintainer of Blender MCP already listed in this directory — the same architecture, and a fair maintenance signal rather than an endorsement: MIT, PyPI ableton-mcp 1.3.8 (17 Aug 2026), ~2.9k stars, repo pushed 16 Aug 2026. The hand-copy step this entry used to warn about is gone: the Remote Script now ships inside the package and `uvx --from ableton-mcp ableton-mcp-install-script` writes it into Live's MIDI Remote Scripts directory for you. You still have to select AbletonMCP as a Control Surface under Settings > Link, Tempo & MIDI with Input and Output set to None. Run only one instance of the server across your clients. It ships anonymous telemetry on by default — set ABLETON_MCP_DISABLE_TELEMETRY=true to turn it off. Known limits: long arrangements time out and must be broken into smaller prompts, it works best with Live's stock devices, and reading notes back out of existing clips is unreliable. Save your set first."
   },
   {
     "slug": "freesound",
@@ -227,8 +227,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/johnkimdw/freesound-mcp-server", "docs": null, "site": "https://freesound.org" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "MIT, ~7 stars, last pushed 24 Jun 2025 and unchanged since. Search-only — it returns preview URLs, not downloads, so a separate fetch step is still on you. The README's API-key link (freesound.org/api/apply/) now 404s; the working one is freesound.org/apiv2/apply/. No PyPI release: clone and build. Alternatives worth checking first: MuShan-bit/freesound-mcp adds download by sound ID, timjrobinson/FreesoundMCPServer is Node.js. Freesound licences are per-sound and include CC-BY and non-commercial terms — read each one before it goes in a film."
+    "verified": "2026-08-19",
+    "notes": "MIT, ~6 stars, last pushed 24 Jun 2025 and untouched for over a year — listed because it is the tidiest option for a library nothing else covers, not because anyone is maintaining it. Search-only: it returns preview URLs, not downloads, so a separate fetch step is still on you. The README's API-key link (freesound.org/api/apply/) 404s; the working one is freesound.org/apiv2/apply/, which bounces you through a Freesound login first. No PyPI release: clone and build. The alternatives are no healthier — MuShan-bit/freesound-mcp adds download by sound ID (1 star, Jan 2026) and timjrobinson/FreesoundMCPServer is Node.js (2 stars, Jul 2025). Freesound licences are per-sound and include CC-BY and non-commercial terms — read each one before it goes in a film."
   },
   {
     "slug": "audiogen",
