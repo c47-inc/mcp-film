@@ -206,5 +206,28 @@
     "added": "2026-06-11",
     "verified": "2026-08-11",
     "notes": "MIT, 73 stars, actively maintained — catalog refreshed Aug 10 2026 by a drift detector that diffs PiAPI's contract. There is no published npm package: install is clone plus npm run build, or the Smithery installer for Claude Desktop. Caveats: unofficial Midjourney access is a ToS gray area and only `imagine` is implemented, and long video jobs can exceed MCP client timeouts — raise them. Hosted Midjourney alternative: AceDataCloud/MidjourneyMCP."
+  },
+  {
+    "slug": "griptape-nodes",
+    "name": "Griptape Nodes",
+    "vendor": "Griptape (Foundry)",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "Foundry's node-based AI workflow engine, drivable by an outside agent over local HTTP.",
+    "description": "Griptape Nodes is a drag-and-drop generative-AI workflow builder from Foundry — the Nuke company — with libraries covering Google Veo and Imagen, FLUX, Luma, Topaz, ElevenLabs, WAN and LTX, plus first-party bridges out to Nuke, Blender and USD. The engine you run locally exposes its own Streamable HTTP MCP endpoint, so an external agent can drive the graph rather than only operating inside Griptape's editor. For a filmmaker that makes it the rare hub where the model roster and the compositing app share one orchestration layer.",
+    "capabilities": ["workflow-orchestration", "multi-model-generation", "image-generation", "video-generation", "node-graph", "nuke-bridge", "blender-bridge", "usd", "local-inference"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http griptape-nodes http://localhost:8125/mcp/",
+      "remote_url": null,
+      "stdio_command": "uv tool install griptape-nodes (shorthand `gtn`), or the managed Griptape Nodes Desktop app for macOS/Windows/Linux; the engine must be running before a client can connect"
+    },
+    "auth": { "type": "local-app", "env_var": "GT_CLOUD_API_KEY", "key_url": "https://nodes.griptape.ai — sign in to generate the Griptape API key the engine needs; the MCP endpoint itself has no auth" },
+    "pricing": "freemium",
+    "links": { "repo": null, "docs": "https://docs.griptapenodes.com/en/stable/guides/mcp/external_clients/", "site": "https://www.griptapenodes.com" },
+    "added": "2026-08-20",
+    "verified": "2026-08-20",
+    "notes": "Read the licence before you bill a client: Foundry's pricing page puts the free tier under 'Non-Commercial', single user, testing only. Professional is $40/user/month (or $400/year, capped at three users) and includes $40 of model credits — running open-source models locally or wiring in your own provider keys does not spend them. The engine is closed source, so links.repo is null: PyPI griptape-nodes is proprietary-licensed (0.95.1, published 20 Aug 2026, 199 releases — the cadence is real), and github.com/griptape-ai/griptape-nodes-app 404s to the public. The node libraries are open, Apache-2.0, and moving: griptape-nodes-library-nuke was pushed the same day. Two things to know about the MCP endpoint — it binds to localhost:8125 with no authentication at all (Griptape's own docs warn you not to bind 0.0.0.0), and the tool surface is not published anywhere, so run tools/list once connected; tools_sample stays null rather than guessed. Override the bind with GTN_MCP_SERVER_HOST and GTN_MCP_SERVER_PORT. Foundry acquired Griptape on 18 Feb 2026 and the deeper Nuke agent work shown at NAB is still early access, so this endpoint is what you can actually connect to today."
   }
 ]
