@@ -205,5 +205,28 @@
     "added": "2026-06-11",
     "verified": "2026-08-11",
     "notes": "Official (meshy-dev org), npm @meshy-ai/meshy-mcp-server 0.4.0, pushed Aug 10 2026, MIT, TypeScript, stdio and HTTP transports. Only 30 stars — vendor-maintained rather than community-loved, so judge it on the push cadence, which is good. API access requires a Meshy Pro plan or above, and every call spends credits: text-to-3D and image-to-3D vary by mode, ultra_mode adds 5, Creative Lab is 36 (62 for keycap), remesh 5, rig 5, animate 3, convert 1, resize 1, uv-unwrap 5, repair-printability 10, multicolor 10. Budget before you loop an agent over it."
+  },
+  {
+    "slug": "maya-mcp",
+    "name": "Maya MCP Server",
+    "vendor": "Community (chadrik)",
+    "official": false,
+    "category": "3d-vfx",
+    "featured": false,
+    "tagline": "Drive live Autodesk Maya sessions from an agent — arbitrary Python, streamed back.",
+    "description": "A stdio MCP server that talks to running Maya sessions over Maya's Python command port, with no plugin to install inside Maya itself. Rather than a fixed tool menu it hands the agent `execute_code` and `write_module`, so anything the Maya Python API can do is reachable and output streams back as it runs. It also scans for sessions as artists open and close them, so one server can address several Mayas at once — useful when layout, animation and lighting are open side by side.",
+    "capabilities": ["3d-modeling", "scene-control", "animation", "python-execution", "multi-session", "layout"],
+    "tools_sample": ["list_sessions", "add_session", "write_module", "execute_code"],
+    "install": {
+      "claude_code": "claude mcp add --transport stdio maya -- uvx maya-mcp-server",
+      "remote_url": null,
+      "stdio_command": "uvx maya-mcp-server (or `pip install maya-mcp-server`); first enable the port inside Maya with cmds.commandPort(name=\":7002\", sourceType=\"python\")"
+    },
+    "auth": { "type": "local-app", "env_var": null, "key_url": "No key; needs a running Maya with its Python command port open — put the commandPort call in userSetup.py to make it automatic" },
+    "pricing": "free",
+    "links": { "repo": "https://github.com/chadrik/maya-mcp-server", "docs": null, "site": null },
+    "added": "2026-08-20",
+    "verified": "2026-08-20",
+    "notes": "Maya is the last major DCC in this directory without a first-party MCP, and the community field is fragmented rather than deep — this is the healthiest of the bunch (MIT, 39 stars, pushed 15 Jul 2026), not a mature product. Note the gap between the repo and the release: PyPI maya-mcp-server is still 0.1.0 from 5 Jan 2026, so `uvx maya-mcp-server` gets you January's code while the repo has six months more; clone and `uv run --directory` if you want current. The design trade is the whole story — `execute_code` is arbitrary Python inside your Maya session, which is why the tool count is four instead of three hundred, and also why you should not point it at a scene you cannot afford to lose. The command port is unauthenticated on localhost. Alternatives if you want typed tools instead: GimbalGoats/GG_MayaMCP (MIT, 15 stars, pushed 14 Aug 2026, Maya 2024+) and PatrickPalmer/MayaMCP (MIT, 96 stars but frozen since May 2025 — the one Griptape's docs still point at)."
   }
 ]

@@ -250,8 +250,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/peerjakobsen/audiogen-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "The weakest entry in this category and listed only for the offline use case: v0.1.0, one star, last commit 25 Jan 2026 and nothing since. Apple Silicon only, Python 3.9-3.11 (audiocraft does not support 3.12+), needs ffmpeg, ~4GB of disk for weights and ~8GB RAM. The install ordering is manual because xformers will not build on Apple Silicon. For quality, prefer ElevenLabs text_to_sound_effects or CassetteAI SFX via the fal MCP; come here only when the audio must not leave the machine."
+    "verified": "2026-08-20",
+    "notes": "The weakest entry in this category and listed only for the offline use case, and re-checked unchanged on 20 Aug 2026: PyPI audiogen-mcp 0.2.1 and repo both frozen at 25 Jan 2026, still one star, still MIT. Apple Silicon only, Python 3.9-3.11 (audiocraft does not support 3.12+), needs ffmpeg, ~4GB of disk for weights and ~8GB RAM. The install ordering is manual because xformers will not build on Apple Silicon. For quality, prefer ElevenLabs text_to_sound_effects or CassetteAI SFX via the fal MCP; come here only when the audio must not leave the machine."
   },
   {
     "slug": "auphonic-zapier",
@@ -297,8 +297,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/deepgram/mcp", "docs": "https://developers.deepgram.com", "site": "https://deepgram.com" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "Official but thin on the ground: PyPI deepgram-mcp 0.1.1 (4 Apr 2026), repo last pushed 6 May 2026, MIT, one star. The runtime tool fetch is genuinely useful but means you cannot see the tool surface before connecting, and it depends on Deepgram's developer API at https://api.dx.deepgram.com staying up. An SSE HTTP mode exists: `deepgram-mcp --transport sse --port 8000`. AssemblyAI's only official MCP is a documentation server, not transcription, so Deepgram remains the strongest official cloud-STT MCP."
+    "verified": "2026-08-20",
+    "notes": "Official but thin on the ground, and re-checked unchanged on 20 Aug 2026: PyPI deepgram-mcp still 0.1.1 (4 Apr 2026), repo still last pushed 6 May 2026, MIT, one star, seven open issues. Deepgram's own summary calls it a 'standalone MCP proxy… remote-proxy architecture with zero client upgrades', which is the honest framing — the package is a thin shim and the capability lives upstream. The runtime tool fetch is genuinely useful but means you cannot see the tool surface before connecting, and it depends on Deepgram's developer API at https://api.dx.deepgram.com staying up. An SSE HTTP mode exists: `deepgram-mcp --transport sse --port 8000`. AssemblyAI's only official MCP is a documentation server, not transcription, so Deepgram remains the strongest official cloud-STT MCP."
   },
   {
     "slug": "sanzaru",
@@ -308,9 +308,9 @@
     "category": "transcription",
     "featured": false,
     "tagline": "Whisper and GPT-4o transcription, audio chat, and TTS against one OpenAI key.",
-    "description": "Community MCP server wrapping OpenAI's audio APIs: Whisper and GPT-4o transcription with enhancement templates, interactive 'chat with audio' analysis, format conversion and compression, and OpenAI TTS. A filmmaker-agent can transcribe dailies, interrogate them in place, then generate scratch narration without leaving the same credential. Recent versions have widened well past audio into Sora video and gpt-image generation.",
-    "capabilities": ["transcription", "audio-analysis", "tts", "format-conversion", "video-generation", "image-generation"],
-    "tools_sample": ["transcribe_audio", "transcribe_with_enhancement", "chat_with_audio", "create_audio", "convert_audio", "compress_audio"],
+    "description": "Community MCP server wrapping OpenAI's audio APIs: Whisper and GPT-4o transcription with enhancement templates, interactive 'chat with audio' analysis, format conversion and compression, and OpenAI TTS. A filmmaker-agent can transcribe dailies, interrogate them in place, then generate scratch narration without leaving the same credential. Its own blurb is now 'lightweight multimodal MCP server' rather than an audio one — recent releases have widened into Sora video, gpt-image, two-host podcast synthesis, and optional ElevenLabs TTS.",
+    "capabilities": ["transcription", "audio-analysis", "tts", "format-conversion", "podcast-synthesis", "video-generation", "image-generation"],
+    "tools_sample": ["transcribe_audio", "transcribe_with_enhancement", "chat_with_audio", "create_audio", "convert_audio", "compress_audio", "generate_podcast", "view_media"],
     "install": {
       "claude_code": "claude mcp add sanzaru -e OPENAI_API_KEY=YOUR_KEY -e SANZARU_MEDIA_PATH=/absolute/path/to/media -- uvx \"sanzaru[all]\"",
       "remote_url": null,
@@ -320,7 +320,7 @@
     "pricing": "paid",
     "links": { "repo": "https://github.com/TJC-LP/sanzaru", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "Successor to the widely-listed and now-deprecated arcaputo3/mcp-server-whisper. Actively developed: PyPI sanzaru 0.9.1 (7 Aug 2026), MIT, Python >=3.10, but only ~7 stars for a project of this scope. Scope creep is the caveat — it now also wraps Sora video and gpt-image, so installing `sanzaru[all]` for transcription hands the agent generation tools you may not want; `sanzaru[audio]` is the narrower extra. No local moderation: content guardrails are OpenAI's. Every call bills your OpenAI account. For fully offline transcription use jwulff/whisper-mcp or SmartLittleApps/local-stt-mcp (whisper.cpp, Apple Silicon, diarization)."
+    "verified": "2026-08-20",
+    "notes": "Successor to the widely-listed and now-deprecated arcaputo3/mcp-server-whisper. Still moving fast: PyPI sanzaru 0.10.0 (14 Aug 2026), MIT, Python >=3.10, but only ~6 stars for a project of this scope, so it is one maintainer's momentum. Buy the audio, not the bundle: the video tools target sora-2 and sora-2-pro, which OpenAI removes from the API on 2026-09-24, so that third of `sanzaru[all]` has a shutdown date and the README does not mention it. The extras are now video, audio, image, elevenlabs and databricks — pick `sanzaru[audio]` for transcription work and add `sanzaru[elevenlabs]` if you want ElevenLabs TTS instead of OpenAI's. No local moderation: content guardrails are OpenAI's. Every call bills your OpenAI account. For fully offline transcription use jwulff/whisper-mcp or SmartLittleApps/local-stt-mcp (whisper.cpp, Apple Silicon, diarization)."
   }
 ]
