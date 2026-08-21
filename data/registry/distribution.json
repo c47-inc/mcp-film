@@ -8,10 +8,10 @@
     "featured": false,
     "tagline": "Official Canva remote MCP for campaign designs, thumbnails, decks, exports, and comments.",
     "description": "Canva's official remote MCP connects agents to editable design workflows: generate and edit designs, search libraries, manage assets and brand materials, export in delivery formats, resize for channels, and handle comments. For film teams it is the campaign and pitch-collateral bench: YouTube thumbnails, posters, social cutdowns, pitch decks, review decks, and branded variants around the actual film.",
-    "capabilities": ["design-generation", "design-editing", "design-search", "template-autofill", "design-export", "resize", "comments", "asset-management", "brand-management"],
-    "tools_sample": ["generate-design", "search-designs", "get-design", "export-design", "resize-design", "autofill-design", "comment-on-design", "upload-asset-from-url"],
+    "capabilities": ["design-generation", "design-editing", "design-search", "template-autofill", "design-export", "design-import", "resize", "comments", "asset-management", "brand-management", "folder-management"],
+    "tools_sample": ["generate-design", "search-designs", "get-design-content", "start-editing-transaction", "perform-editing-operations", "export-design", "resize-design", "autofill-design", "comment-on-design", "upload-asset-from-url"],
     "install": {
-      "claude_code": null,
+      "claude_code": "claude mcp add --transport http canva https://mcp.canva.com/mcp",
       "remote_url": "https://mcp.canva.com/mcp",
       "stdio_command": "npx -y mcp-remote@latest https://mcp.canva.com/mcp"
     },
@@ -19,8 +19,8 @@
     "pricing": "freemium",
     "links": { "repo": null, "docs": "https://www.canva.dev/docs/mcp/", "site": "https://www.canva.com/ai-connector/" },
     "added": "2026-06-29",
-    "verified": "2026-08-11",
-    "notes": "Endpoint https://mcp.canva.com/mcp returns 401 on an unauthenticated tools/list — alive and OAuth-gated. Plan gates, per Canva's tools page: resize-design, list-brand-kits, search-brand-templates and create-design-from-brand-template need Pro or above; autofill-design and get-brand-template-dataset are Enterprise-only. Everything else — generate, edit, search, export, comment, upload — is on all plans, with per-tool rate limits from 20 to 100 req/min."
+    "verified": "2026-08-21",
+    "notes": "Endpoint https://mcp.canva.com/mcp still returns 401 unauthenticated — alive and OAuth-gated. The published tools table now lists 33 tools, including a four-call editing-transaction flow (start / perform-operations / commit / cancel) and folder management, so agents that only know generate-and-export are leaving the edit surface unused. Plan gates unchanged: resize-design, list-brand-kits, search-brand-templates and create-design-from-brand-template need Pro or above; autofill-design and get-brand-template-dataset are Enterprise-only. Everything else is on all plans, rate-limited 20–100 req/min per tool. Canva documents the endpoint rather than a per-client command; CIMD is its recommended auth method and custom OAuth clients may need redirect-URI allowlisting."
   },
   {
     "slug": "mux",
@@ -30,7 +30,7 @@
     "category": "distribution",
     "featured": false,
     "tagline": "Official Mux MCP: upload, manage, and analyze video via API or hosted remote server.",
-    "description": "The official MCP server for the full Mux Video + Mux Data platform: upload videos, create and manage assets and live streams, mint playback IDs, manage webhooks, and query video performance analytics. Available both as a hosted remote at mcp.mux.com (OAuth, pick your environment) and as the @mux/mcp npm package — the strongest official offering in video infrastructure.",
+    "description": "The official MCP server for the full Mux Video + Mux Data platform: upload videos, create and manage assets and live streams, mint playback IDs, manage webhooks, and query video performance analytics. Available both as a hosted remote at mcp.mux.com (OAuth, pick your environment) and as the @mux/mcp npm package — the strongest official offering in video infrastructure. Its two tools are a docs search and a sandboxed TypeScript executor over the Mux SDK, so the whole API surface is reachable without hundreds of tool definitions.",
     "capabilities": ["video-hosting", "asset-upload", "live-streams", "playback-ids", "analytics", "webhooks"],
     "tools_sample": ["docs_search", "execute"],
     "install": {
@@ -42,8 +42,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/muxinc/mux-ts/tree/main/packages/mcp-server", "docs": "https://www.mux.com/docs/integrations/mcp-server", "site": "https://www.mux.com" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "npm @mux/mcp v14.1.1 (published 2026-05-28), Apache-2.0. The SDK monorepo was renamed muxinc/mux-node-sdk → muxinc/mux-ts and the old repo URL now redirects; package metadata still points at the old path. 'Code Mode' design: two tools only — docs_search plus execute, which runs TypeScript against @mux/mux-node in a sandbox with no web or filesystem access — instead of hundreds of per-endpoint tools."
+    "verified": "2026-08-21",
+    "notes": "npm @mux/mcp v15.0.0 (published 2026-08-12), Apache-2.0; package metadata now correctly points at muxinc/mux-ts, directory packages/mcp-server, so the stale mux-node-sdk path is gone. v15 is a breaking SDK release: @mux/mux-node was renamed @mux/ts (old name kept as an alias), client.robotsPreview became client.robots, and deprecated Mux Data filters/exports endpoints were removed — code your agent wrote against v14 may need MIGRATION.md. 'Code Mode' design is unchanged: two tools only — docs_search plus execute, which runs TypeScript against the SDK in a sandbox with no web or filesystem access — instead of hundreds of per-endpoint tools."
   },
   {
     "slug": "youtube-yutu",
@@ -65,8 +65,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/eat-pray-ai/yutu", "docs": null, "site": "https://yutu.ifor.dev" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "609 stars, Apache-2.0, pushed 2026-08-11; v0.10.10 stable on Homebrew, winget, and npm (@eat-pray-ai/yutu), with v0.10.11 in dev prereleases. Install first — brew install yutu — then authenticate; the MCP server also runs over HTTP (yutu mcp --mode http --auth on :8216). Quota caveat unchanged: videos.insert costs 1,600 units → ~6 uploads/day on the default 10k quota, and unverified API projects can only upload private videos until Google audits them. The bundled multi-agent mode is under active development and only supports Gemini models. Lighter upload-only alternative: anwerj/youtube-uploader-mcp (50 stars)."
+    "verified": "2026-08-21",
+    "notes": "618 stars, Apache-2.0, pushed 2026-08-20; v0.10.10 (2026-07-25) is still the stable release on Homebrew, winget, and npm (@eat-pray-ai/yutu), with v0.10.11-dev3 the newest prerelease. Install first — brew install yutu — then authenticate; the MCP server also runs over HTTP (yutu mcp --mode http --auth on :8216). Quota caveat unchanged: videos.insert costs 1,600 units → ~6 uploads/day on the default 10k quota, and unverified API projects can only upload private videos until Google audits them. The bundled multi-agent mode is under active development and only supports Gemini models. Lighter upload-only alternative: anwerj/youtube-uploader-mcp (50 stars)."
   },
   {
     "slug": "youtube-data",
