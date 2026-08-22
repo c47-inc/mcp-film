@@ -1,4 +1,6 @@
 {
+  "filmlab": null,
+  "filmmap": "Flightmussy",
   "runway": "runwayml",
   "minimax": "MiniMax-AI",
   "higgsfield": "higgsfield-ai",

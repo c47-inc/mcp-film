@@ -78,7 +78,7 @@
     "tagline": "Token-optimized YouTube Data API server for video, channel, and trend analytics.",
     "description": "A high-efficiency MCP server returning structured, token-minimized data from the YouTube Data API v3 (claims up to 87% token reduction vs raw API). Covers video details, search, transcripts, channel statistics, trending, and outlier-channel discovery — the research side of distribution: study what works before you publish.",
     "capabilities": ["video-metadata", "search", "transcripts", "channel-analytics", "trending", "comments"],
-    "tools_sample": ["getVideoDetails", "searchVideos", "getTranscripts", "getChannelStatistics", "getTrendingVideos", "getVideoComments", "findConsistentOutlierChannels"],
+    "tools_sample": ["getVideoDetails", "searchVideos", "getTranscripts", "getChannelStatistics", "getChannelTopVideos", "getTrendingVideos", "getVideoCategories", "getVideoComments", "findConsistentOutlierChannels"],
     "install": {
       "claude_code": "claude mcp add youtube -e YOUTUBE_API_KEY=YOUR_KEY -- npx -y @kirbah/mcp-youtube",
       "remote_url": null,
@@ -88,8 +88,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/kirbah/mcp-youtube", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "MIT, npm v1.1.13 and repo both updated 2026-08-10 — actively maintained, but only 28 stars. Read-only: no upload, so pair it with yutu. Quota reality: searchVideos costs 100 units per call and getChannelTopVideos 101, against a 10k/day default. The 'zero API cost' transcripts do not use the Data API at all — they go through youtube-transcript-plus, which scrapes YouTube's timedtext endpoint, so treat transcript pulls as a ToS gray area and expect them to break when YouTube changes it. findConsistentOutlierChannels additionally requires a MongoDB connection string. Higher-profile alternative: ZubeidHendricks/youtube-mcp-server (561 stars, pushed 2026-08-08, multi-key quota fallback)."
+    "verified": "2026-08-22",
+    "notes": "MIT, npm v1.1.13 published 2026-08-10 and unchanged since; the repo still moves (pushed 2026-08-16) but every commit after the release bump is a Dependabot dependency bump, not a feature. Still only 28 stars. Read-only: no upload, so pair it with yutu. Quota reality: searchVideos costs 100 units per call and getChannelTopVideos 101 against a 10k/day default, and getVideoComments is 1 unit plus another per top-level comment once you ask for replies. The 'zero API cost' transcripts do not use the Data API at all — they go through youtube-transcript-plus, which scrapes YouTube's timedtext endpoint, so treat transcript pulls as a ToS gray area and expect them to break when YouTube changes it. MongoDB is less optional than it looks: MDB_MCP_CONNECTION_STRING is required for findConsistentOutlierChannels and the README recommends it for caching everything else. Node 20+. Higher-profile alternative: ZubeidHendricks/youtube-mcp-server (566 stars, pushed 2026-08-08, multi-key quota fallback)."
   },
   {
     "slug": "vimeo",
@@ -111,8 +111,8 @@
     "pricing": "freemium",
     "links": { "repo": null, "docs": "https://developer.vimeo.com/api/mcp-server", "site": "https://www.vimeo.com" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "Public beta as of the current docs, upgraded from the private beta announced at REFRAME in Oct 2025 — Vimeo says all of it is subject to change without notice. Endpoint is https://mcp.vimeo.com/mcp (401 with a Bearer challenge on an unauthenticated tools/list — alive); ChatGPT clients use https://mcp.vimeo.com/sse instead, same tools. Destructive actions such as deleting videos are deliberately excluded. Vimeo recommends Pro or above because API rate limits scale with plan, so expect a thin experience on free. The docs page is a client-rendered SPA and invisible to crawlers, so tool names are still unpublished."
+    "verified": "2026-08-22",
+    "notes": "Public beta as of the current docs, upgraded from the private beta announced at REFRAME in Oct 2025 — Vimeo says all of it is subject to change without notice. Endpoint is https://mcp.vimeo.com/mcp; https://mcp.vimeo.com/.well-known/oauth-protected-resource still answers (re-checked 2026-08-22), names mcp.vimeo.com as its own authorization server, accepts the bearer in the header only, and advertises six scopes — public, private, stats, upload, edit, create. Read that list before you consent: the write surface is genuine, and the scopes you grant decide how much of your library an agent can change. ChatGPT clients use https://mcp.vimeo.com/sse instead, same tools. Destructive actions such as deleting videos are deliberately excluded. Vimeo recommends Pro or above because API rate limits scale with plan, so expect a thin experience on free. The docs page is a client-rendered SPA and invisible to crawlers, so tool names are still unpublished."
   },
   {
     "slug": "frameio",
@@ -134,7 +134,7 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/bowlofarugula/frameio-mcp", "docs": "https://pypi.org/project/frameio-mcp/", "site": "https://frame.io" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "The Claude Code plugin route is dead: github.com/bowlofarugula/frameio-plugins now 404s, so the old '/plugin marketplace add' command cannot work and claude_code is null. PyPI frameio-mcp 0.1.0 (uploaded 2026-06-04, not yanked) is still live and installs clean — verified this session by running uvx frameio-mcp --help and status — but it needs Python 3.13+ and you must register your own Adobe OAuth SPA credential before it does anything. Its stated source repo has since been rewritten into a remote Cloudflare Workers server (0 stars, pushed 2026-06-13) that you would have to deploy yourself, and whose /authorize fails closed behind a redirect-URI allowlist, so there is no public endpoint. Adobe announced an official Frame.io MCP server on 2026-07-29, experimental and selectively available in private beta with access granted by replying in the forum thread — not installable, so not listed: https://forum.frame.io/t/introducing-the-frame-io-mcp-server/3466"
+    "verified": "2026-08-22",
+    "notes": "The Claude Code plugin route is dead: github.com/bowlofarugula/frameio-plugins still 404s, so the old '/plugin marketplace add' command cannot work and claude_code is null. PyPI frameio-mcp 0.1.0 (uploaded 2026-06-04, not yanked) remains the only release and still installs clean — a uvx frameio-mcp --help and status run on 2026-08-11 confirmed it — but it needs Python 3.13+ and you must register your own Adobe OAuth SPA credential before it does anything. Its stated source repo has since been rewritten into a remote Cloudflare Workers server (still 0 stars, still last pushed 2026-06-13) that you would have to deploy yourself, and whose /authorize fails closed behind a redirect-URI allowlist, so there is no public endpoint. Adobe announced an official Frame.io MCP server on 2026-07-29 and it has not opened up: as of 2026-08-22 the forum thread is still taking access requests (latest 2026-08-21) that Adobe grants privately by DM, and while beta testers report clean installs there is no published endpoint, package, or docs, so it stays unlisted here until there is something a reader can actually install: https://forum.frame.io/t/introducing-the-frame-io-mcp-server/3466"
   }
 ]
