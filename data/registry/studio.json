@@ -118,5 +118,60 @@
     "added": "2026-08-19",
     "verified": "2026-08-19",
     "notes": "Fifteen documented tools, all `nomi_`-prefixed. Active: ~420 stars, v0.20.0 released 17 Aug 2026, repo pushed 18 Aug 2026 — but it is a single personal GitHub account, not an org, and it is only three months old. Licence is the thing to read before you build on it: AGPL-3.0-only for current releases, with historical releases still under Apache-2.0 and a separate commercial licence offered on request, so shipping a derivative product is a conversation, not a default. Desktop-only and macOS arm64/x64 plus Windows x64 — no Linux build. The binaries are unsigned: Gatekeeper and SmartScreen both block the first launch, and updates are a manual re-download. Registration goes through the app's one-click integration; the older scripts/nomi-mcp.mjs path is deprecated, and the helper will start a headless instance so the app does not have to stay open. Parts of the developer docs are Chinese-first. 'No account, no telemetry' is the project's claim, not something this directory measured, and every generation still bills whichever provider key you supplied."
+  },
+  {
+    "slug": "filmlab",
+    "name": "FilmLab",
+    "vendor": "TheFilmRadar",
+    "official": true,
+    "category": "studio",
+    "featured": false,
+    "tagline": "Hosted film lab: storyboard, generate, review, and export, with the price shown before each run.",
+    "description": "FilmLab is the generative workbench attached to TheFilmRadar, a German-language industry platform for DACH film and TV crews, and it exposes its whole ten-stage pipeline over one OAuth-gated remote MCP. Thirty-four tools cover project and pipeline context, auto-storyboarding, image and clip generation in batches, a review queue with contact sheets and continuity checks, a full location board that can generate variants and panoramas from a reference image, and sequence assembly through to export profiles and render jobs. The two things that distinguish it from the rest of the studio tier are the review stage — assets get a verdict before they reach a sequence — and cost preflight, which quotes credits before a run rather than after. Reading, browsing, and project creation cost nothing, so an agent can survey a project before anything is spent.",
+    "capabilities": [
+      "storyboarding",
+      "image-generation",
+      "image-to-video",
+      "batch-generation",
+      "quality-review",
+      "continuity",
+      "location-scouting",
+      "video-assembly",
+      "export",
+      "cost-estimation",
+      "asset-management",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "lab_get_context",
+      "lab_auto_storyboard",
+      "lab_generate",
+      "lab_animate_batch",
+      "lab_review_queue",
+      "lab_contact_sheet",
+      "lab_continuity_check",
+      "lab_generate_location_variants",
+      "lab_create_sequence",
+      "lab_start_export"
+    ],
+    "install": {
+      "claude_code": "claude mcp add --transport http filmlab https://mcp-lab.thefilmradar.com/mcp",
+      "remote_url": "https://mcp-lab.thefilmradar.com/mcp",
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "OAuth against a FilmRadar account at https://lab.thefilmradar.com — no API key and no token to paste"
+    },
+    "pricing": "credits",
+    "links": {
+      "repo": null,
+      "docs": "https://lab.thefilmradar.com/mcp",
+      "site": "https://lab.thefilmradar.com"
+    },
+    "added": "2026-08-22",
+    "verified": "2026-08-22",
+    "notes": "New and unproven: published to the official MCP registry on 2026-08-17 as com.thefilmradar/filmlab, with three versions shipped that same day and 1.1.1 current. Endpoint confirmed live on 2026-08-22 — https://mcp-lab.thefilmradar.com/.well-known/oauth-protected-resource returns resource metadata naming itself the authorization server, header bearer only; a browser GET on /mcp 302s to the docs page, which is correct for a POST-only streamable HTTP transport. The 34-tool count and the tool names come from the vendor's own docs, not from a tools/list this directory could read, because there is no anonymous access. Closed source, no repo, one operator, and the docs and UI are German-first — the MCP page is entirely in German, which is friction if your agent or your crew is not. It also does not name the models behind lab_generate and lab_animate ('Soul Cinema' is a house label, not an engine), so you are buying credits without knowing which engine renders them; Martini and Nomi both publish their model rosters. Billing is per run with the price quoted first: reads, browsing, previews and project creation are free, while generation, animation, locations and exports draw on credits bought in the Composer, which the vendor says do not expire."
   }
 ]

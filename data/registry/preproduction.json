@@ -110,5 +110,52 @@
     "added": "2026-08-12",
     "verified": "2026-08-12",
     "notes": "Remote and hosted, so nothing to install or keep running. Free tier is $2 of credits on signup with no card; each tool call costs 2 credits at $1 = 1,000 credits, so $1 covers 500 calls. No rate limits. Frames are shown at reduced resolution as references for commentary and study \u2014 rights remain with their owners, and the server never returns image bytes. Submitted by the vendor."
+  },
+  {
+    "slug": "filmmap",
+    "name": "FilmMap",
+    "vendor": "FilmMap (Flightmussy)",
+    "official": true,
+    "category": "story-preproduction",
+    "featured": false,
+    "tagline": "Where films and series were actually shot: 15,000+ locations in 162 countries, from Wikidata.",
+    "description": "A read-only remote MCP over a Wikidata-derived index of filming locations \u2014 15,254 places across 162 countries, tied to 9,181 films and series plus 1,883 games and the indexed anime and manga. An agent can ask where a production was shot, what was shot at a given place, search by coordinates and radius, or rank the most-filmed locations in a country. For recce and reference it answers the question a location scout starts with: who has already shot here, and what did it look like on screen. No signup, no key, no install \u2014 point a client at the endpoint and query.",
+    "capabilities": [
+      "filming-locations",
+      "location-scouting",
+      "geo-search",
+      "reference-search",
+      "metadata",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "where_was_it_filmed",
+      "what_was_filmed_here",
+      "search_productions",
+      "search_locations",
+      "locations_near",
+      "top_locations",
+      "list_countries",
+      "get_statistics"
+    ],
+    "install": {
+      "claude_code": "claude mcp add --transport http filmmap https://thefilmmap.com/mcp",
+      "remote_url": "https://thefilmmap.com/mcp",
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "none",
+      "env_var": null,
+      "key_url": null
+    },
+    "pricing": "free",
+    "links": {
+      "repo": "https://github.com/Flightmussy/filmmap-mcp",
+      "docs": "https://thefilmmap.com/data/",
+      "site": "https://thefilmmap.com"
+    },
+    "added": "2026-08-22",
+    "verified": "2026-08-22",
+    "notes": "Days old: the repo was created 2026-08-18 (MIT, 0 stars, one personal account, no commits since the day it landed) and the registry entry com.thefilmmap/filming-locations v1.1.0 was published 2026-08-21. Endpoint verified live on 2026-08-22 \u2014 a GET on https://thefilmmap.com/mcp returns 405, which is what a POST-only stateless streamable HTTP server should do. The docs publish a JSON client config rather than a per-client command; the claude mcp add line above is that endpoint in Claude Code form. Read the medium distinction before quoting anything: films and series carry real filming locations (Wikidata P915), while games, anime and manga carry narrative settings (P840) and were filmed nowhere, and the server labels each record so an agent does not conflate them. Coverage is honestly incomplete \u2014 834 productions have no precise coordinates and 3,906 cannot be placed at all, listed publicly at thefilmmap.com/gaps/. A place is not a scene: there is no shot-level granularity, so this narrows a recce list, it does not replace one. Licensing is mixed \u2014 the dataset is CC0, but Wikipedia-sourced claims arrive separately labelled under CC BY-SA 4.0 and must be cited as such, and Commons photographs keep their own terms. The counts also disagree with themselves: the repo blurb says 15,272 locations and 12,762 productions where the data page says 15,254 and breaks the productions down differently."
   }
 ]
