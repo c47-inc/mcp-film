@@ -7,21 +7,21 @@
     "category": "model-hub",
     "featured": false,
     "tagline": "One hosted endpoint to search, run and chain 1,000+ image, video and audio models.",
-    "description": "fal's official stateless MCP server gives agents the entire fal platform through nine tools: discover models, search docs, read schemas and pricing, run inference, submit async jobs and upload files. For filmmakers it is the broadest single gateway — Veo, Kling, LTX-2, Hailuo, FLUX, Ideogram, plus audio like Stable Audio 2.5, CassetteAI SFX and Beatoven — behind one connector.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "image-editing", "music", "sfx", "tts", "transcription", "model-search", "docs-search", "file-upload", "async-jobs"],
-    "tools_sample": ["search_models", "get_model_schema", "get_pricing", "search_docs", "run_model", "submit_job", "check_job", "upload_file", "recommend_model"],
+    "description": "fal's official stateless MCP server gives agents the entire fal platform through eleven tools: discover models, search docs, read schemas and pricing, run inference, submit and cancel async jobs, collect results and upload files. For filmmakers it is the broadest single gateway — Veo, Kling, LTX-2, Hailuo, FLUX, Ideogram, plus audio like Stable Audio 2.5, CassetteAI SFX and Beatoven — behind one connector.",
+    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "image-editing", "music", "sfx", "tts", "transcription", "model-search", "docs-search", "file-upload", "async-jobs", "job-cancel"],
+    "tools_sample": ["search_models", "get_model_schema", "get_pricing", "search_docs", "run_model", "submit_job", "check_job", "get_job_result", "cancel_job", "upload_file", "recommend_model"],
     "install": {
-      "claude_code": "claude mcp add --transport http fal https://mcp.fal.ai/mcp --header \"Authorization: Bearer YOUR_FAL_KEY\"",
+      "claude_code": "claude mcp add --transport http fal-ai https://mcp.fal.ai/mcp --header \"Authorization: Bearer YOUR_FAL_KEY\"",
       "remote_url": "https://mcp.fal.ai/mcp",
       "remote_headers": ["Authorization"],
       "stdio_command": null
     },
     "auth": { "type": "api_key", "env_var": "FAL_KEY", "key_url": "fal.ai dashboard → API Keys (sent as Authorization: Bearer header, never stored server-side)" },
     "pricing": "credits",
-    "links": { "repo": null, "docs": "https://docs.fal.ai/model-apis/mcp", "site": "https://fal.ai" },
+    "links": { "repo": null, "docs": "https://fal.ai/docs/model-apis/mcp", "site": "https://fal.ai" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "Hosted and fully stateless; the MCP itself is free, you pay standard fal per-run pricing. There is no OAuth flow — the key rides in an Authorization header, so clients that cannot attach custom headers are out. Arguably the best single 'everything' server for a generative film pipeline, and the practical MCP route to models with no first-party server (LTX-2, Stable Audio, CassetteAI, Beatoven)."
+    "verified": "2026-08-23",
+    "notes": "Hosted and fully stateless; the MCP itself is free, you pay standard fal per-run pricing, and there are no rate limits beyond your normal account concurrency. Still no OAuth — the key rides in an Authorization header, which the docs concede rules out Claude Desktop and claude.ai custom connectors ('OAuth support is coming soon', unchanged since June 2026); Claude Code, Cursor and Windsurf attach headers fine. The tool surface grew to eleven with get_job_result and cancel_job, and the docs moved from docs.fal.ai to fal.ai/docs. Arguably the best single 'everything' server for a generative film pipeline, and the practical MCP route to models with no first-party server (LTX-2, Stable Audio, CassetteAI, Beatoven)."
   },
   {
     "slug": "krea",
@@ -43,8 +43,8 @@
     "pricing": "credits",
     "links": { "repo": null, "docs": "https://www.krea.ai/docs/developers/mcp", "site": "https://www.krea.ai" },
     "added": "2026-06-29",
-    "verified": "2026-08-11",
-    "notes": "Official hosted Streamable HTTP, endpoint answering as of Aug 11 2026. OAuth was added Jun 13 2026 and bills the workspace selected during consent; API-token auth still works for clients without OAuth but bills a separate workspace API balance. Provider models do disappear: video/openai/sora-2 and video/bytedance/seedance-1.0-lite were sunset Apr 27 2026 and image/bytedance/seedream-3 on May 13 2026, and a sunset endpoint returns a terminal 410. Have the agent call list_models/get_model_schema first — Krea surfaces deprecation metadata there, and the live shelf now runs Krea 2, Veo 3.1, Kling 3.0/o3, Runway Gen-4.5, Seedance 2.x, Seedream 5 and LTX-2. get_upload_url returns presigned upload URLs valid for three hours. Docs moved from docs.krea.ai to www.krea.ai/docs."
+    "verified": "2026-08-23",
+    "notes": "Official hosted Streamable HTTP, endpoint answering with an auth challenge as of Aug 23 2026. OAuth was added Jun 13 2026 and bills the workspace selected during consent; API-token auth still works for clients without OAuth but bills a separate workspace API balance. Provider models do disappear: video/openai/sora-2 and video/bytedance/seedance-1.0-lite were sunset Apr 27 2026 and image/bytedance/seedream-3 on May 13 2026, and a sunset endpoint returns a terminal 410. No further sunsets have been announced since. Have the agent call list_models/get_model_schema first — Krea surfaces deprecation metadata there and publishes no static model list, so the shelf is only knowable at runtime; the docs' own examples are image/krea/krea-2/medium and video/google/veo-3.1. get_upload_url returns presigned upload URLs valid for three hours. Docs moved from docs.krea.ai to www.krea.ai/docs."
   },
   {
     "slug": "replicate",
@@ -60,14 +60,14 @@
     "install": {
       "claude_code": "claude mcp add replicate https://mcp.replicate.com/sse --transport sse --scope user",
       "remote_url": "https://mcp.replicate.com/sse",
-      "stdio_command": "npx -y replicate-mcp"
+      "stdio_command": "npx -y replicate-mcp@alpha --tools=code"
     },
     "auth": { "type": "oauth", "env_var": "REPLICATE_API_TOKEN", "key_url": "https://replicate.com/account/api-tokens (the remote server runs an OAuth flow and stores the token on your behalf)" },
     "pricing": "paid",
     "links": { "repo": "https://github.com/replicate/replicate-mcp-code-mode", "docs": "https://replicate.com/docs/reference/mcp", "site": "https://mcp.replicate.com" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "Remote SSE endpoint at mcp.replicate.com/sse is live and OAuth-gated (WWW-Authenticate: Bearer realm=\"OAuth\"); mcp.replicate.com/mcp answers the same way, but /sse is what the docs still publish. Caveat: Replicate's docs call the npm package 'automatically updated', yet replicate-mcp@latest is still 0.9.0 from Jun 2025 and the only recent publishes are 2.0.0-alpha, last cut Dec 18 2025 — code mode wants `npx -y replicate-mcp@alpha --tools=code`. The code-mode repo has not been touched since Nov 2025. Prefer the remote server. Also a strong route to upscalers (Real-ESRGAN, Topaz-style models) with no first-party MCP. Tool names are generated from the HTTP API surface (models.search, predictions.create) rather than a fixed published list."
+    "verified": "2026-08-23",
+    "notes": "Both remote paths are live and OAuth-gated — /sse and /mcp each answer 401, and /.well-known/oauth-protected-resource points the client at https://mcp.replicate.com/. The docs no longer print either path: they now name the bare host and give copy-paste config only for the stdio npm package, with `claude mcp add \"replicate-code-mode\" --scope user --transport stdio -- npx -y replicate-mcp@alpha --tools=code` as the one Claude Code command on the page (code mode also needs Deno installed). Caveat: `latest` on npm is still 0.9.0 while all real work ships on the alpha track, now at 2.0.0-alpha.74, so the unpinned `npx -y replicate-mcp` most guides show installs a year-old build. The code-mode demo repo (4 stars) has not been pushed since Nov 17 2025; Replicate says it is working with Stainless to fold code mode into the remote server. Prefer the remote server. Also a strong route to upscalers (Real-ESRGAN, Topaz-style models) with no first-party MCP. Tool names are generated from the HTTP API surface (models.search, predictions.create) rather than a fixed published list."
   },
   {
     "slug": "runapi",

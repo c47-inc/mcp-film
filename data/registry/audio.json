@@ -162,6 +162,53 @@
     "notes": "MIT, Python >=3.10, PyPI sonilo-mcp 0.18.0 shipped 17 Aug 2026 — seventeen releases since mid-July, so it is the fastest-moving music server in this directory, at 54 stars and listed in the official MCP registry. Set SONILO_API_KEY or run `sonilo login` from the sonilo-cli npm package first; the server has no hosted remote. Read the licensing page before you deliver: commercial-use rights are plan-gated to Pro, Premium, Enterprise and 'eligible API users' — Free and Creator output is personal use only — and Sonilo states plainly that those rights 'do not remove every copyright, platform, client, or broadcast review'. The training-data claim is Sonilo's, not independently audited. Hard limits: music 1–360s, SFX 1–180s, uploads typically 300 MB, H.264/HEVC/VP9/AV1 in mp4/mov/m4v/webm. Billing is per second generated with a couple of free runs per tool, except dubbing, which bills from the first call."
   },
   {
+    "slug": "epidemic-sound",
+    "name": "Epidemic Sound MCP Server",
+    "vendor": "Epidemic Sound",
+    "official": true,
+    "category": "music",
+    "featured": false,
+    "tagline": "Search a cleared music and SFX catalogue, then download stems, from the agent.",
+    "description": "Epidemic Sound's official MCP server (beta) puts the licensed catalogue behind twelve tools: keyword and similarity search across music, a matching search over sound effects, AI voiceover generation with a browsable artist list, and download tools that return full tracks, stems, or WAV effects. search_external_track will take a Spotify reference and find the nearest cleared equivalent, which is the temp-track problem most edits actually have. For an agent cutting to picture it is the alternative to generative score: real recordings with sync, mechanical and performance rights already settled.",
+    "capabilities": ["music-search", "music-licensing", "stems", "sfx-search", "similarity-search", "reference-matching", "tts", "voice-library", "asset-download"],
+    "tools_sample": ["search_music", "find_similar_track", "search_external_track", "search_sound_effects", "find_similar_sound_effects", "browse_voice_artists", "generate_voiceover", "get_voiceover_status", "get_voiceover_details", "download_voiceover", "download_music_track", "download_sound_effect"],
+    "install": {
+      "claude_code": "claude mcp add -s user --transport http epidemic-sound https://www.epidemicsound.com/a/mcp-service/mcp --header 'Authorization: Bearer ${EPIDEMIC_SOUND_API_KEY}'",
+      "remote_url": "https://www.epidemicsound.com/a/mcp-service/mcp",
+      "remote_headers": ["Authorization"],
+      "stdio_command": null
+    },
+    "auth": { "type": "api_key", "env_var": "EPIDEMIC_SOUND_API_KEY", "key_url": "Developer Portal → Authentication settings → API keys, which requires a partnership agreement; clients with OAuth Dynamic Client Registration can instead sign in with an ordinary Epidemic Sound account" },
+    "pricing": "paid",
+    "links": { "repo": null, "docs": "https://developers.epidemicsite.com/docs/mcp/", "site": "https://www.epidemicsound.com/blog/mcp-server/" },
+    "added": "2026-08-23",
+    "verified": "2026-08-23",
+    "notes": "Hosted Streamable HTTP, endpoint answering with a 401 challenge on 23 Aug 2026, and still labelled beta — Epidemic Sound says it expects to be 'squashing bugs and rolling out functionality'. The catch is access: this lives inside the Partner API, and the documented API-key route is gated behind a partnership agreement ('reach out to us to discuss a partnership'), so a solo filmmaker's practical path is the OAuth flow against an existing account in a client that supports Dynamic Client Registration. Keys, once issued, last a year. Rights follow the account, not the API: a free-tier user gets a personal license only, and monetising a cut needs an active paid subscription connected through ES Connect — check the plan before you deliver an ad. No published rate limits. Use it where cleared recordings beat generated score; for generative alternatives see the ElevenLabs, Mureka and Sonilo entries."
+  },
+  {
+    "slug": "mirelo",
+    "name": "Mirelo MCP",
+    "vendor": "Mirelo AI",
+    "official": true,
+    "category": "sound-design",
+    "featured": false,
+    "tagline": "Foley generated against the picture, then extended or patched region by region.",
+    "description": "Mirelo's official remote MCP exposes its SFX V1 video-to-audio model: hand it a clip and it reads the on-screen action, motion and pacing and generates effects synced to what it sees, with an optional text prompt to steer the character of the sound. Text-to-sound covers the cues with no plate, and two repair tools matter more than they sound — extend a bed that came back short, or inpaint one region of a clip while leaving the rest untouched, so a single bad hit does not cost the whole pass. A preflight estimate returns credits and runtime before it generates, which is what makes batching a folder of shots safe.",
+    "capabilities": ["sfx", "video-to-sfx", "audio-extension", "audio-inpainting", "batch-generation", "cost-estimation"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http mirelo https://mcp.mirelo.ai/mcp",
+      "remote_url": "https://mcp.mirelo.ai/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "https://mirelo.ai — browser 'Sign in with Mirelo'; no API key, and OAuth client ID/secret are left empty when adding it as a custom connector" },
+    "pricing": "credits",
+    "links": { "repo": null, "docs": "https://mirelo.ai/mcp", "site": "https://mirelo.ai" },
+    "added": "2026-08-23",
+    "verified": "2026-08-23",
+    "notes": "Announced 30 Jul 2026; hosted endpoint answering with a 401 challenge on 23 Aug 2026. Billed against the same Studio credits as the Mirelo web app, so it needs an account with balance — the preflight tool is worth calling first. Two limits Mirelo states outright: music generation is not in MCP v1, and result download links are temporary, so an agent that generates without saving loses the take. Documented clients are Claude, Claude Code, Cursor, Codex and ChatGPT, though ChatGPT connects it as a developer-mode app rather than through mcpServers JSON. Tool names are not published — call tools/list. Closest comparisons here are ElevenLabs text_to_sound_effects and Sonilo's video_to_sfx; Mirelo is the narrower specialist, and region-level inpainting is the thing neither of those offers."
+  },
+  {
     "slug": "reaper-mcp",
     "name": "REAPER MCP",
     "vendor": "Community (bonfire-systems / Youssef Hemimy)",
