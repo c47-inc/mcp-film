@@ -89,8 +89,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/runapi-ai/mcp", "docs": "https://github.com/runapi-ai/mcp#readme", "site": "https://runapi.ai" },
     "added": "2026-06-29",
-    "verified": "2026-08-11",
-    "notes": "Apache-2.0, npm @runapi.ai/mcp 0.9.0 published Aug 10 2026, Node >=22, 54 stars. The hosted remote at https://mcp.runapi.ai/mcp answers and is auth-gated (401 without a token); it exposes the eight business tools, while `login` stays local-only. Discovery tools run without a key because the catalog is embedded at build time, so slugs and input constraints go stale between releases — pricing is fetched live, the catalog is not. Narrow sibling: @runapi.ai/runway-aleph-mcp wraps only Runway Aleph."
+    "verified": "2026-08-24",
+    "notes": "Apache-2.0, npm @runapi.ai/mcp 0.12.0 published Aug 21 2026, Node >=22, 55 stars — three minor releases since the last check with the tool list unchanged. The hosted remote at https://mcp.runapi.ai/mcp is live (POST-only; a plain GET returns 405) and takes OAuth or a bearer key; it exposes the eight business tools, while `login` stays local-only. Discovery tools run without a key because the catalog is embedded at build time, so slugs and input constraints go stale between releases — pricing is fetched live, the catalog is not, and the README now tells agents to call check_pricing rather than trust its own examples. create_task requires a caller-supplied idempotency key (1-512 chars) and the README warns not to derive it from the JSON-RPC request id; the completion wait tops out at 300s, after which you poll get_task instead of resubmitting. `npx @runapi.ai/mcp init claude|cursor|vscode|windsurf|roo` writes client config if you would rather not hand-edit. Narrow sibling: @runapi.ai/runway-aleph-mcp (0.1.7, Jul 31 2026) wraps only Runway Aleph."
   },
   {
     "slug": "runware",
@@ -112,8 +112,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/Runware/mcp", "docs": "https://github.com/Runware/mcp#readme", "site": "https://runware.ai" },
     "added": "2026-06-29",
-    "verified": "2026-08-11",
-    "notes": "MIT, npm @runware/mcp 1.3.4 published Jul 31 2026, Node >=18; README documents Claude Desktop, Cursor and Codex stdio configs. The canonical repo is now github.com/Runware/mcp — the older Runware/MCP-Runware was archived Oct 2025 and should not be used. It is a local stdio package, not a hosted remote MCP, and the repo carries almost no stars, so treat the package registry rather than GitHub activity as the health signal."
+    "verified": "2026-08-24",
+    "notes": "Unchanged on re-check: MIT, npm @runware/mcp still 1.3.4 from Jul 31 2026, Node >=18, repo last pushed the same day, and the twelve documented tools match what is listed here. README documents Claude Desktop, Cursor and Codex stdio configs but no `claude mcp add` one-liner — the command above is the equivalent. The canonical repo is now github.com/Runware/mcp — the older Runware/MCP-Runware was archived Oct 2025 and should not be used. It is a local stdio package, not a hosted remote MCP, and the repo still sits at zero stars, so treat npm publishes rather than GitHub activity as the health signal; nearly four weeks without a release is the thing to watch here."
   },
   {
     "slug": "kie-ai",
@@ -123,9 +123,9 @@
     "category": "model-hub",
     "featured": false,
     "tagline": "Run Veo, Seedance, Kling, Runway, Suno, ElevenLabs, FLUX and more through one local MCP.",
-    "description": "Community MCP server and sibling CLI for Kie.ai's media API, covering image, video, music and speech models from one connector. It is useful for filmmaker-agents that need a broad current model shelf, async task polling, and token-conscious tool loading by category or explicit tool list. The agent still has to treat it as an aggregator, not as first-party access to every underlying model.",
+    "description": "Community MCP server and sibling CLI for Kie.ai's media API, covering image, video, music and speech models from one connector — 38 tools across image, video, audio and task utilities. Since v4 it no longer fires generations directly: the agent drafts a plan with prepare_media_generation, a human approves it, and submit_media_generation spends the credits. For filmmaker-agents that buys a spend checkpoint in front of a broad model shelf, at the cost of an extra round trip per shot.",
     "capabilities": ["model-hub", "text-to-video", "image-to-video", "text-to-image", "image-editing", "music", "tts", "sfx", "lip-sync", "upscaling", "async-jobs", "task-polling", "tool-filtering"],
-    "tools_sample": ["nano_banana_image", "veo3_generate_video", "bytedance_seedance_video", "kling_video", "runway_aleph_video", "midjourney_generate", "suno_generate_music", "elevenlabs_tts", "wait_for_task", "list_tasks"],
+    "tools_sample": ["prepare_media_generation", "submit_media_generation", "nano_banana_image", "veo3_generate_video", "bytedance_seedance_video", "kling_video", "runway_aleph_video", "suno_generate_music", "elevenlabs_tts", "list_models", "wait_for_task", "list_tasks"],
     "install": {
       "claude_code": "claude mcp add kie-ai -e KIE_AI_API_KEY=YOUR_KEY -- npx -y @felores/kie-ai-mcp-server",
       "remote_url": null,
@@ -135,8 +135,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/felores/kie-cli-mcp", "docs": "https://github.com/felores/kie-cli-mcp#readme", "site": "https://kie.ai" },
     "added": "2026-06-29",
-    "verified": "2026-08-11",
-    "notes": "MIT, npm @felores/kie-ai-mcp-server 3.6.0, Node >=18, pushed Jul 23 2026, 54 stars. Stdio by default; it can also run as a self-hosted Streamable HTTP service (Dockerfile plus Coolify compose) if you want one shared instance, and there is a zero-context CLI sibling, @felores/kie-cli. It can load all tools, but the README recommends KIE_AI_ENABLED_TOOLS or KIE_AI_TOOL_CATEGORIES=image,video to avoid burning context on unused schemas. Caveat: Kie.ai is an aggregator/reseller path for models from many vendors; rights, availability and ToS safety depend on the underlying provider, and Midjourney/Suno-style access should be treated as gray until verified for your use case."
+    "verified": "2026-08-24",
+    "notes": "MIT, npm @felores/kie-ai-mcp-server 5.0.0 published Aug 23 2026, pushed Aug 24 2026, 60 stars — two breaking releases since the last check, so re-read the README before reusing old configs. v4.0.0 (Aug 18) disabled direct media tool calls by default in favour of approval-bound plans: prepare_media_generation validates and creates no provider task, a host confirmation form or `kie-cli --approve <plan-id>` clears it, then submit_media_generation runs it. Set KIE_AI_ALLOW_DIRECT_GENERATION=true to restore the old one-shot behaviour, which is what unattended agents will need. v5.0.0 moved to the split SDK v2 packages and raised the floor to Node >=20 (npm engines; the release notes say the same), returns failures as isError with structuredContent, and gates official MCP Tasks behind KIE_AI_MCP_TASKS=true. Stdio by default, but v5 ships first-class HTTP: MCP_TRANSPORT=http or --http, with MCP_HTTP_HOST/MCP_HTTP_PORT and an optional KIE_MCP_HTTP_TOKEN bearer — self-hosted only via the Dockerfile and Coolify compose, there is no vendor-hosted URL. Filter the 38 tools with KIE_AI_ENABLED_TOOLS, KIE_AI_TOOL_CATEGORIES=image,video or KIE_AI_DISABLED_TOOLS (that precedence order) or you will burn context on unused schemas. Caveat: Kie.ai is an aggregator/reseller path for models from many vendors; rights, availability and ToS safety depend on the underlying provider, and Midjourney/Suno-style access should be treated as gray until verified for your use case."
   },
   {
     "slug": "promptibus",
