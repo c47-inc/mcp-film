@@ -1,5 +1,28 @@
 [
   {
+    "slug": "valossa",
+    "name": "Valossa Video Assistant MCP",
+    "vendor": "Valossa",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Hosted video-understanding MCP: transcripts, shots, visual scenes, soundbites, and clips.",
+    "description": "Valossa's official remote MCP hands an agent a watched-and-indexed copy of your footage: speech transcripts, shot and visual-scene breakdowns, overviews, summaries and highlights, natural-language questions about what is on screen, and clip export that comes back as a download URL. For an assistant editor it is the logging pass — find the take, find the soundbite, pull the selects — run against material Valossa has already analysed instead of against raw files. Uploads are a two-step prepare-then-commit handshake, and get_quota_status exists because everything interesting here costs quota.",
+    "capabilities": ["video-understanding", "transcription", "shot-detection", "scene-detection", "summarization", "highlights", "soundbite-selection", "clip-export", "video-qa"],
+    "tools_sample": ["list_all_videos", "get_video_overview", "get_video_transcript", "get_video_shots", "get_video_visual_scenes", "ask_question", "get_video_summary", "get_video_highlights", "get_best_soundbites", "export_clip", "get_clip_download_url", "get_quota_status"],
+    "install": {
+      "claude_code": "claude mcp add --transport http valossa https://mcp-assistant.valossa.com/mcp",
+      "remote_url": "https://mcp-assistant.valossa.com/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser OAuth against a Valossa Assistant account created at https://assistant.valossa.com/signup — no API key" },
+    "pricing": "paid",
+    "links": { "repo": null, "docs": "https://mcp-assistant.valossa.com/documentation", "site": "https://valossa.com/video-ai-assistant/" },
+    "added": "2026-08-25",
+    "verified": "2026-08-25",
+    "notes": "There is no free tier, only a 7-day trial: 30 analysis minutes, 100 task credits, no card, and a 15-minute cap per video while trialling. After that it is a EUR 29 credit pack or monthly plans from EUR 14.90. Two meters run at once — imports burn analysis minutes, exports and agent questions burn task credits — so check get_quota_status before turning an agent loose on a feature-length rush. Hard ceilings are 7 GB and 5 hours per file. It analyses, it does not edit: clips arrive as download URLs, and there is no NLE round-trip, no EDL, no timeline. Closest comparison is the TwelveLabs entry; the reason to pick this one is jurisdiction — Valossa is Finnish and states that video stays in the EU and is not used to train models. Registered in the official MCP Registry as com.valossa/video-assistant-mcp (v1.0.0, published 2026-06-25). No public source repo, so the documentation page is the only reference, and roughly half the 23 documented tools write data or spend quota."
+  },
+  {
     "slug": "twelvelabs",
     "name": "TwelveLabs MCP",
     "vendor": "TwelveLabs / Teraflop",

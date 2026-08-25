@@ -1,5 +1,28 @@
 [
   {
+    "slug": "wistia",
+    "name": "Wistia MCP Server",
+    "vendor": "Wistia",
+    "official": true,
+    "category": "distribution",
+    "featured": false,
+    "tagline": "Official Wistia remote MCP: upload, trim, caption, dub, publish, and read the analytics.",
+    "description": "Wistia's official hosted MCP puts a whole video library behind an agent: upload or import media, trim and swap versions, order captions, translations, dubs and extended audio descriptions, drive the Remix AI editor, organise folders, tags and channels, then read engagement and visitor analytics back out. For a film team it is the delivery-and-measurement end — festival reels, behind-the-scenes cuts, press kits and webinars hosted somewhere you can see who actually watched, and for how long. A ?toolsets= query parameter on the endpoint narrows the surface to media, analytics, captions, remix or nine other groups instead of exposing everything at once.",
+    "capabilities": ["video-hosting", "captioning", "dubbing", "subtitle-translation", "audio-description", "ai-editing", "channel-publishing", "webinars", "analytics", "asset-organization"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http wistia https://api.wistia.com/mcp/api",
+      "remote_url": "https://api.wistia.com/mcp/api",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser OAuth against a Wistia account, or an access token sent as an Authorization: Bearer header; either way the seat must be Owner or Manager" },
+    "pricing": "freemium",
+    "links": { "repo": null, "docs": "https://docs.wistia.com/docs/mcp-server-guide", "site": "https://wistia.com/blog/wistia-mcp-server" },
+    "added": "2026-08-25",
+    "verified": "2026-08-25",
+    "notes": "Launched 2026-07-22 and free to use on any plan, including the $0 tier (25 GB, one seat) — but role-gated: only Owners and Managers can connect an agent, so a shared editor seat gets nothing. Wistia does not publish individual tool names, only the twelve toolsets, and by default the endpoint exposes every tool it has; pin ?toolsets=media,analytics or similar unless you want the agent paging through the full API. The write surface is a live public library — archive, swap, trim, bulk update and channel publishing are all reachable and some are irreversible, so gate them yourself. Remix and dubbing spend an AI credit balance that the account toolset reports. There is no source repo and the docs are the only reference, and Wistia's own guidance is to ask the agent what it can do because the surface is still expanding. Scope check: this is marketing and B2B video hosting, not a screener or festival delivery platform — no DCP, no watermarked screener workflow. For those, see the Frame.io and Vimeo entries."
+  },
+  {
     "slug": "canva",
     "name": "Canva MCP",
     "vendor": "Canva",
