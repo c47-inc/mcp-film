@@ -194,18 +194,18 @@
     "tagline": "Retiring: OpenAI removes the Videos API and all sora-2 models on 2026-09-24.",
     "description": "OpenAI announced the deprecation of the Videos API and the sora-2 family on 2026-03-24, with removal from the API scheduled for 2026-09-24; the consumer Sora app was discontinued on 2026-04-26. This community server — the most-starred Sora MCP — still builds and still calls the API, but it stops working the day the endpoint goes. Listed so agents that ask for Sora find the retirement date instead of a dead install, not because you should build on it.",
     "capabilities": ["text-to-video", "remix", "job-management", "auto-download"],
-    "tools_sample": ["create-video", "get-video-status", "list-videos", "download-video", "remix-video", "delete-video"],
+    "tools_sample": ["create-video", "get-video-status", "list-videos", "download-video", "save-video", "remix-video", "delete-video"],
     "install": {
       "claude_code": null,
       "remote_url": null,
-      "stdio_command": null
+      "stdio_command": "Multi-step: git clone https://github.com/Doriandarko/sora-mcp, npm install, npm run build, then point your client at node /absolute/path/to/sora-mcp/dist/stdio-server.js with OPENAI_API_KEY in env and an optional DOWNLOAD_DIR. There is no npm package and no hosted endpoint, and the whole thing stops resolving when the Videos API is removed on 2026-09-24."
     },
     "auth": { "type": "api_key", "env_var": "OPENAI_API_KEY", "key_url": "https://platform.openai.com/api-keys — access ends when the Videos API is removed on 2026-09-24" },
     "pricing": "paid",
     "links": { "repo": "https://github.com/Doriandarko/sora-mcp", "docs": "https://developers.openai.com/api/docs/deprecations", "site": null },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "OpenAI's deprecation table lists sora-2, sora-2-pro and their snapshots with a 2026-09-24 shutdown and names no recommended replacement. The repo (MIT, 209 stars) has had no commit since 2025-10-08, so nobody is migrating it anywhere; the writingmate/sora-2-mcp alternative is likewise stale. Migrate now: Veo 3.1 via the Google GenMedia MCP, Kling 3.0 or Seedance 2.0 via the Runway MCP, or Seedance 2.5 and Kling 3 via Higgsfield — all confirmed live on 2026-08-11. Export anything still stored on OpenAI before the cutoff."
+    "verified": "2026-08-25",
+    "notes": "Thirty days left. OpenAI's deprecation table still lists sora-2, sora-2-pro and their snapshots with a 2026-09-24 shutdown and still names no recommended replacement. The repo (MIT, 208 stars) has had no commit since 2025-10-08, so nobody is migrating it anywhere; the writingmate/sora-2-mcp alternative is likewise stale. The install steps above are the README's and were confirmed on 2026-08-25 — they are here so an agent can read the retirement date rather than discover it mid-render, not as a recommendation. Migrate now: Veo 3.1 via the Google GenMedia MCP, Kling 3.0 or Seedance 2.0 via the Runway MCP, or Seedance 2.5 and Kling 3 via Higgsfield. Export anything still stored on OpenAI before the cutoff."
   },
   {
     "slug": "kling",
