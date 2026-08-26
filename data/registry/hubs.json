@@ -1,5 +1,29 @@
 [
   {
+    "slug": "inference-sh",
+    "name": "inference.sh MCP Server",
+    "vendor": "inference.sh",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "Official hosted hub: run any image, video, audio or 3D app, then poll the task.",
+    "description": "inference.sh's official streamable-HTTP server exposes its app catalogue as a small, generic tool set — list and inspect apps, run one, then track the task through logs, status and cancellation. The catalogue is the point for filmmakers: FLUX, GPT-Image-2, Veo 3, Seedance, Wan 2.7, ElevenLabs TTS and 3D generation behind one key, priced per run with the cost shown before you commit. It also proxies other MCP servers you have connected, so an agent can reach a generation app and a production tool through the same endpoint.",
+    "capabilities": ["text-to-image", "text-to-video", "image-to-video", "tts", "3d-generation", "model-search", "async-jobs", "job-cancel", "job-logs", "mcp-proxy"],
+    "tools_sample": ["app_list", "app_get", "app_run", "task_get", "task_list", "task_logs", "task_cancel", "knowledge_search", "skill_use", "mcp_list", "mcp_tools", "mcp_run"],
+    "install": {
+      "claude_code": "claude mcp add --transport http inference https://api.inference.sh/mcp --header \"Authorization: Bearer YOUR_INF_KEY\"",
+      "remote_url": "https://api.inference.sh/mcp",
+      "remote_headers": ["Authorization"],
+      "stdio_command": null
+    },
+    "auth": { "type": "api_key", "env_var": null, "key_url": "inference.sh workspace → Settings → API Keys (an inf_ prefixed token, sent as Authorization: Bearer)" },
+    "pricing": "credits",
+    "links": { "repo": null, "docs": "https://inference.sh/docs/connectors/mcp-server", "site": "https://inference.sh" },
+    "added": "2026-08-26",
+    "verified": "2026-08-26",
+    "notes": "Hosted only — no source repo for the server, and the inference-sh GitHub org publishes SDKs and example apps but nothing MCP. Registered in the official MCP Registry as ac.inference.sh/mcp, v2.0.1, published 27 Jul 2026 and marked active. The docs give a JSON client config rather than a CLI line; the claude_code command here is the standard header-remote translation of it. Auth is documented as a bearer inf_ key, but the endpoint also serves /.well-known/oauth-protected-resource naming itself as its own authorization server with apps:read and apps:execute scopes, so OAuth-capable clients may negotiate instead of taking a key — the key path is the one the docs actually support. Read the tool names before planning around them: this is a thin generic wrapper, so the model you want is a string argument to app_run, not its own tool, and there is no schema tool to check parameters before spending. Pricing is a subscription-plus-credits hybrid — free Starter tier, $20/mo Pro including $20 of credits — and per-run rates are steep at the top end, with video quoted from $0.05 to $17 per second. New to this directory and not yet exercised end to end here; for a broader catalogue with a documented schema tool, `fal` remains the safer default."
+  },
+  {
     "slug": "fal",
     "name": "fal MCP Server",
     "vendor": "fal.ai",

@@ -19,8 +19,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/black-forest-labs/flux-mcp", "docs": "https://docs.bfl.ml/api_integration/mcp_integration", "site": "https://bfl.ai" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "Image models: flux2_pro_preview (default), flux2_max, flux2_klein_9b_preview, flux2_klein_4b, flux2_flex (typography). Video runs on flux3_video. generate_image batches 1-8 images in parallel. Listed under image generation because that is still the bulk of the surface — the video tools are a recent addition, so treat this as an image server that can also move. Pricing at bfl.ai/pricing."
+    "verified": "2026-08-26",
+    "notes": "Re-checked 26 Aug 2026 with no drift: endpoint, OAuth-only auth, all seven tools and every model name still match the docs exactly, and the repo (MIT, not archived) was pushed the same day. Image models: flux2_pro_preview (default), flux2_max, flux2_klein_9b_preview, flux2_klein_4b, flux2_flex (typography). Video runs on flux3_video. generate_image batches 1-8 images in parallel. Listed under image generation because that is still the bulk of the surface — the video tools are a recent addition, so treat this as an image server that can also move. Pricing at bfl.ai/pricing."
   },
   {
     "slug": "recraft",
@@ -36,14 +36,14 @@
     "install": {
       "claude_code": "claude mcp add --transport http recraft https://mcp.recraft.ai/mcp",
       "remote_url": "https://mcp.recraft.ai/mcp",
-      "stdio_command": null
+      "stdio_command": "npx -y mcp-remote https://mcp.recraft.ai/mcp"
     },
     "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth in the browser on first connect; no API key to manage. Needs a Recraft account at recraft.ai" },
     "pricing": "credits",
     "links": { "repo": "https://github.com/recraft-ai/mcp-recraft-server", "docs": "https://www.recraft.ai/docs/mcp-reference/remote-server", "site": "https://www.recraft.ai" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "The local package @recraft-ai/mcp-recraft-server (last v1.6.5) is deprecated and its repo is archived — the README says so outright and points here; the repo link is kept only for history. Billing changed with the move: the hosted server deducts from your Recraft plan credits, the same balance Recraft Studio spends, not from separately purchased API units. Rates are per operation and are not reproduced here — check Plans and billing at recraft.ai before you budget a job. tools_sample is null because Recraft's docs describe capabilities rather than tool names and the endpoint is OAuth-gated, so the list cannot be enumerated without an account."
+    "verified": "2026-08-26",
+    "notes": "The stdio entry is not a local server — it is the mcp-remote bridge Recraft's own docs print for clients that cannot speak streamable HTTP, pointed at the same hosted endpoint. The local package @recraft-ai/mcp-recraft-server (last v1.6.5) is deprecated and its repo is archived — the README says so outright and points here; the repo link is kept only for history. Billing changed with the move: the hosted server deducts from your Recraft plan credits, the same balance Recraft Studio spends, not from separately purchased API units. Rates are per operation and are not reproduced here — check Plans and billing at recraft.ai before you budget a job. tools_sample is null because Recraft's docs describe capabilities rather than tool names and the endpoint is OAuth-gated, so the list cannot be enumerated without an account."
   },
   {
     "slug": "freepik",
@@ -52,21 +52,21 @@
     "official": true,
     "category": "image-generation",
     "featured": false,
-    "tagline": "Official Freepik API bridge for Mystic image generation, resources, icons, and AI detection.",
-    "description": "Freepik's official FastMCP server exposes a curated slice of its API: Mystic AI image generation, resource search and downloads, icon search and downloads, and AI image classification. For filmmaker-agents it is a practical visual-development bench: pull stock references, build pitch-deck assets, create poster or key-art directions, then classify or download assets without leaving the agent session.",
+    "tagline": "Dead: the official repo is deleted and Freepik's developer platform is now Magnific.",
+    "description": "Freepik's official FastMCP server exposed Mystic image generation, stock resource and icon search, and AI image classification. It is gone: github.com/freepik-company/freepik-mcp returns 404, and Freepik's whole developer platform has been rebranded to Magnific — docs.freepik.com now 301s to docs.magnific.com, whose API reference documents only api.magnific.com. Filmmaker-agents who want this surface should connect the Magnific MCP instead, which covers the same Mystic generation plus upscaling, video, TTS and 3D over one OAuth endpoint. Kept listed so old links and configs resolve to an explanation rather than a blank page.",
     "capabilities": ["text-to-image", "stock-search", "icon-search", "asset-download", "ai-image-classification"],
-    "tools_sample": ["text_to_image_mystic_sync", "get_mystic_task_status", "detect_ai_image", "search_resources", "download_resource_by_id", "search_icons", "download_icon_by_id"],
+    "tools_sample": null,
     "install": {
-      "claude_code": "claude mcp add freepik -e FREEPIK_API_KEY=YOUR_KEY -- uv run --directory /path/to/freepik-mcp main.py",
+      "claude_code": null,
       "remote_url": null,
-      "stdio_command": "uv run --directory /path/to/freepik-mcp main.py"
+      "stdio_command": null
     },
-    "auth": { "type": "api_key", "env_var": "FREEPIK_API_KEY", "key_url": "https://www.freepik.com/api" },
+    "auth": { "type": "api_key", "env_var": "FREEPIK_API_KEY", "key_url": null },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/freepik-company/freepik-mcp", "docs": "https://github.com/freepik-company/freepik-mcp#readme", "site": "https://www.freepik.com" },
+    "links": { "repo": null, "docs": null, "site": "https://www.freepik.com" },
     "added": "2026-06-29",
-    "verified": "2026-08-11",
-    "notes": "Official repo, Python 3.12+, uv/FastMCP, 78 stars, last pushed Jul 2026 and still maintained. It is not packaged on npm/PyPI: clone the repo, install with `make install`, then point your MCP client at the local path. Windows needs WSL. GitHub still detects no LICENSE file, although the repo is company-owned. The server deliberately exposes only icons, resources, image classifier, and Mystic endpoints from Freepik's larger OpenAPI spec."
+    "verified": "2026-08-26",
+    "notes": "Use `magnific` instead. This server was never packaged on npm or PyPI — the only documented install was cloning freepik-company/freepik-mcp — so deleting the repo removed the sole install path, and every install field is now null. Checked 26 Aug 2026: the repo 404s to both the GitHub API and an anonymous fetch, and it was not renamed inside the org; freepik-company still exists, its only MCP repo is the unrelated prometheus-mcp, and it now carries a homebrew-magnific tap. Freepik rebranded to Magnific in April 2026 and the developer platform followed — docs.freepik.com 301s to docs.magnific.com, whose llms.txt lists Mystic, upscalers, video, audio and stock endpoints against api.magnific.com with no Freepik references left. The `verified` date records confirming the death, not a working server. Existing FREEPIK_API_KEY values may still authenticate against the REST API, but that is a Magnific billing question now; the Magnific MCP is OAuth and takes no key. Earlier notes here (78 stars, pushed Jul 2026, no LICENSE file) are no longer checkable."
   },
   {
     "slug": "stability-ai",
