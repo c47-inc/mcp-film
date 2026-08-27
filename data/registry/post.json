@@ -40,10 +40,33 @@
     },
     "auth": { "type": "api_key", "env_var": "TWELVELABS_API_KEY", "key_url": "https://playground.twelvelabs.io" },
     "pricing": "freemium",
-    "links": { "repo": "https://github.com/twelvelabs-io/twelvelabs-js", "docs": "https://www.npmjs.com/package/twelvelabs-mcp", "site": "https://www.twelvelabs.io" },
+    "links": { "repo": "https://github.com/twelvelabs-io/twelvelabs-js", "docs": "https://docs.twelvelabs.io/docs/advanced/model-context-protocol", "site": "https://www.twelvelabs.io" },
     "added": "2026-06-28",
-    "verified": "2026-08-11",
-    "notes": "npm twelvelabs-mcp is still 1.0.0, published May 12 2026 and untouched since — three months without a release, so treat the tool list as frozen. Maintained by the `twelvelabs` npm account plus Teraflop; the linked repo is the JS SDK (18 stars, pushed Jul 23 2026), not the MCP server, so there is no source to read for the server itself. The stdio bin is `twelvelabs-mcp-stdio`; the explicit `--package=twelvelabs-mcp` npx form avoids npm confusing the package name with the bin name. Local file and folder uploads only work over stdio; hosted HTTP expects API-key headers and public/direct video URLs."
+    "verified": "2026-08-27",
+    "notes": "This is now the older half of TwelveLabs' MCP surface: the single-video tools. TwelveLabs' docs have moved the hosted copy of them off mcp.twelvelabs.io to mcp-alpic.twelvelabs.io — if you connected a hosted URL before roughly mid-2026, it is stale — and mcp.twelvelabs.io now serves the cross-video Jockey server instead (listed separately as `twelvelabs-jockey`). The docs name only the new host, not a full endpoint path, so `remote_url` stays null here; the stdio install below is the path that is actually documented end to end. npm twelvelabs-mcp is still 1.0.0, published May 12 2026 and untouched since — three and a half months without a release, so treat the tool list as frozen. Maintained by the `twelvelabs` npm account plus Teraflop; the linked repo is the JS SDK (18 stars, pushed Aug 19 2026), not the MCP server — no MCP source exists anywhere in the twelvelabs-io org, so there is nothing to read for the server itself. The stdio bin is `twelvelabs-mcp-stdio`; the explicit `--package=twelvelabs-mcp` npx form avoids npm confusing the package name with the bin name. Local file and folder uploads only work over stdio; hosted HTTP expects API-key headers and public/direct video URLs. For new setups, start with Jockey unless you specifically need per-video embeddings or index-level control."
+  },
+  {
+    "slug": "twelvelabs-jockey",
+    "name": "TwelveLabs Jockey",
+    "vendor": "TwelveLabs",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Cross-video agent MCP: build a knowledge store, then ask your whole library questions.",
+    "description": "Jockey is TwelveLabs' agentic layer over a corpus rather than a clip. You create a knowledge store, add video and images to it, and then ask questions that span the whole collection — Jockey decomposes the query, retrieves, segments and reasons across items, and answers with clip citations rather than a wall of prose. For an editor this is the archive researcher: find every shot of a location across three seasons of footage, track a face or object through unrelated rushes, or have it assemble a highlight lane before anyone opens the NLE. It is a hosted OAuth endpoint, so there is nothing to install and no key to manage.",
+    "capabilities": ["video-search", "video-analysis", "dailies-indexing", "entity-search", "summarization", "highlights", "metadata-extraction"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http --scope user jockey https://mcp.twelvelabs.io/jockey/mcp",
+      "remote_url": "https://mcp.twelvelabs.io/jockey/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser OAuth against a TwelveLabs account — free signup at https://playground.twelvelabs.io" },
+    "pricing": "freemium",
+    "links": { "repo": null, "docs": "https://docs.twelvelabs.io/docs/advanced/model-context-protocol", "site": "https://www.twelvelabs.io/jockey" },
+    "added": "2026-08-27",
+    "verified": "2026-08-27",
+    "notes": "Tool names are null because TwelveLabs does not publish a catalogue — the docs tell you to ask the connected client to list them, so run `tools/list` and see what you get rather than trusting any third-party listing. Hard limits are 4 GB per video and 32 MB per image, and ingestion is asynchronous: adding a corpus is a wait, not a call. Clients without widget support get a text fallback instead of the gallery/timeline/highlight-reel UI, which in practice means the citations are still usable but the assembly view is not. Pricing is not documented for MCP specifically — signup is free and usage draws on your TwelveLabs plan, so confirm rates before pointing it at a real archive. Requires a client that supports remote HTTP servers with OAuth; the docs list Claude and Claude Code by name. Do not confuse this with the single-video `twelvelabs` entry, which is a separate server on a separate host with an API key."
   },
   {
     "slug": "video-jungle",
