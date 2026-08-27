@@ -2356,6 +2356,7 @@ export const renderRobots = (ctx) => {
 # Every HTML page has a markdown twin: append .md to the path.
 
 User-agent: *
+Content-Signal: ai-train=yes, search=yes, ai-input=yes
 Allow: /
 
 # AI crawlers and answer engines are explicitly welcome:
