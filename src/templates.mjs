@@ -2355,12 +2355,13 @@ export const renderRobots = (ctx) => {
 # Machine surfaces: ${ctx.site.url}/llms.txt · ${ctx.site.url}/api/registry.json · ${ctx.site.url}/api/remotes.json · ${ctx.site.url}/api/client-profiles.json · ${ctx.site.url}/v0.1/servers · ${ctx.site.url}/api/playbooks.json · ${ctx.site.url}/api/recommendations.json · ${ctx.site.url}/api/capabilities.json · ${ctx.site.url}/api/pulse.json
 # Every HTML page has a markdown twin: append .md to the path.
 
+# One group so every crawler — named or not — gets the same rules (RFC 9309).
+# Content-Signal (https://contentsignals.org/): search, AI input/RAG, and AI training are all allowed.
+# AI crawlers and answer engines are explicitly welcome.
 User-agent: *
+${aiCrawlers.map((ua) => `User-agent: ${ua}`).join("\n")}
 Content-Signal: ai-train=yes, search=yes, ai-input=yes
 Allow: /
-
-# AI crawlers and answer engines are explicitly welcome:
-${aiCrawlers.map((ua) => `User-agent: ${ua}\nAllow: /`).join("\n\n")}
 
 Sitemap: ${ctx.site.url}/sitemap.xml
 `;
