@@ -88,8 +88,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/burningion/video-editing-mcp", "docs": "https://github.com/burningion/video-editing-mcp#readme", "site": "https://www.video-jungle.com" },
     "added": "2026-06-29",
-    "verified": "2026-08-11",
-    "notes": "Gone quiet: PyPI video-editor-mcp 0.1.59 was uploaded Oct 9 2025 and the repo (285 stars) was last pushed the same day — ten months with no commit and no repo license detected. The hosted Video Jungle service is still up and its site advertises 6 free generated videos before usage depends on the account, but nobody is maintaining the client. The API key is passed as a positional CLI argument rather than an env var, and local Photos search requires LOAD_PHOTOS_DB=1 plus macOS file access."
+    "verified": "2026-08-28",
+    "notes": "Gone quiet: PyPI video-editor-mcp 0.1.59 was uploaded Oct 9 2025 and the repo (288 stars, up 3 since June) was last pushed the same day — ten and a half months with no commit and still no repo license detected. The hosted Video Jungle service is still up and its site advertises 6 free generated videos before usage depends on the account, but nobody is maintaining the client. The API key is passed as a positional CLI argument rather than an env var, and local Photos search requires LOAD_PHOTOS_DB=1 plus macOS file access."
   },
   {
     "slug": "plainly-videos",
@@ -111,8 +111,8 @@
     "pricing": "paid",
     "links": { "repo": "https://github.com/plainly-videos/mcp-server", "docs": "https://github.com/plainly-videos/mcp-server#readme", "site": "https://plainlyvideos.com" },
     "added": "2026-06-29",
-    "verified": "2026-08-11",
-    "notes": "Official, npm @plainly-videos/mcp-server 1.0.5 (MIT, Node >=18) released Jan 8 2026; the repo has 6 stars and was last pushed Jan 30 2026 — over six months without a commit, so this is a shipped-and-parked vendor integration rather than a living project. Four focused tools around template discovery and rendering, no prompts or resources. Templates must already exist in a paid Plainly account; the MCP renders them, it does not author them."
+    "verified": "2026-08-28",
+    "notes": "Official, npm @plainly-videos/mcp-server 1.0.5 (MIT, Node >=18) released Jan 8 2026 and still the latest of six published versions; the repo has 6 stars and was last pushed Jan 30 2026 — seven months without a commit, so this is a shipped-and-parked vendor integration rather than a living project. Four focused tools around template discovery and rendering, no prompts or resources. Templates must already exist in a paid Plainly account; the MCP renders them, it does not author them."
   },
   {
     "slug": "shotstack",
@@ -121,21 +121,22 @@
     "official": true,
     "category": "editing-post",
     "featured": false,
-    "tagline": "Cloud video editing and template rendering through Shotstack's official MCP.",
-    "description": "Shotstack's MCP server exposes its cloud video editing API to agents: create renders from JSON timelines, save reusable templates, render merge-field variants, inspect media, and poll render status. For filmmaker-agents it is the programmable render farm lane: fast campaign variants, data-driven video, and cloud assembly jobs that should not depend on a local NLE being open.",
-    "capabilities": ["cloud-render", "template-rendering", "programmatic-video", "media-inspection", "json-timeline", "remote-mcp"],
-    "tools_sample": ["render_video", "get_render_status", "create_template", "list_templates", "get_template", "render_template", "delete_template", "inspect_media"],
+    "tagline": "Cloud video editing, Studio previews, and template rendering over Shotstack's hosted MCP.",
+    "description": "Shotstack's MCP server exposes its cloud video editing API to agents: render Edit JSON timelines, save reusable templates, render merge-field variants, poll render status, and open an interactive Studio canvas so a human can preview a cut before it burns credits. For filmmaker-agents it is the programmable render farm lane — fast campaign variants, data-driven video, and cloud assembly jobs that should not depend on a local NLE being open. A `get_shotstack_guide` tool ships the Edit JSON conventions so the agent authors valid timelines without guessing at the schema.",
+    "capabilities": ["cloud-render", "template-rendering", "programmatic-video", "studio-preview", "json-timeline", "remote-mcp"],
+    "tools_sample": ["studio", "render_video", "get_render_status", "create_studio_link", "get_shotstack_guide", "create_template", "list_templates", "get_template", "render_template", "delete_template"],
     "install": {
-      "claude_code": "claude mcp add shotstack -e SHOTSTACK_API_KEY=YOUR_KEY -- npx -y @shotstack/shotstack-mcp-server",
+      "claude_code": "claude mcp add --transport http shotstack https://mcp.shotstack.io",
       "remote_url": "https://mcp.shotstack.io/",
-      "stdio_command": "npx -y @shotstack/shotstack-mcp-server"
+      "remote_headers": ["x-api-key"],
+      "stdio_command": "npx -y mcp-remote https://mcp.shotstack.io/ --header x-api-key:YOUR_KEY"
     },
-    "auth": { "type": "api_key", "env_var": "SHOTSTACK_API_KEY", "key_url": "https://app.shotstack.io" },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "https://app.shotstack.io — OAuth is the default; headless clients skip it by sending the same key as an x-api-key header" },
     "pricing": "freemium",
-    "links": { "repo": null, "docs": "https://www.npmjs.com/package/@shotstack/shotstack-mcp-server", "site": "https://shotstack.io" },
+    "links": { "repo": null, "docs": "https://shotstack.io/docs/guide/agents/mcp-server/", "site": "https://shotstack.io" },
     "added": "2026-06-29",
-    "verified": "2026-08-11",
-    "notes": "Official npm @shotstack/shotstack-mcp-server 1.1.0, MIT, Node >=18, released May 8 2026 and unchanged since. The hosted endpoint at https://mcp.shotstack.io/ answers an unauthenticated tools/list probe with 401 — alive and auth-gated. No public source repo is advertised in npm metadata, so there are no stars or commits to read; verify behaviour against the package docs and the live endpoint rather than GitHub signals."
+    "verified": "2026-08-28",
+    "notes": "Rebuilt around the hosted endpoint since the last check: npm @shotstack/shotstack-mcp-server 1.1.0 now carries a deprecation notice — \"This local stdio server is deprecated. Use the hosted Shotstack MCP server instead\" — so the old `-e SHOTSTACK_API_KEY -- npx` recipe listed here is dead and stdio-only clients must bridge through mcp-remote. Shotstack calls the hosted server beta and warns tools may change without notice. The endpoint answers an unauthenticated probe with 401, alive and gated. There is still no readable source: npm points at github.com/shotstack/shotstack-mcp-server, which 404s to both an anonymous fetch and the GitHub API, so there are no stars or commits to judge — trust the vendor docs and the live endpoint, not GitHub signals. Agents should call `get_shotstack_guide` before composing Edit JSON, prefer `studio` over `render_video` when a human is watching, and pass real public HTTPS asset URLs rather than inventing them."
   },
   {
     "slug": "davinci-resolve",
