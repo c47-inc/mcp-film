@@ -154,12 +154,12 @@
       "remote_url": null,
       "stdio_command": "npx davinci-resolve-mcp setup"
     },
-    "auth": { "type": "local-app", "env_var": null, "key_url": "Requires DaVinci Resolve Studio running locally with External Scripting set to Local" },
+    "auth": { "type": "local-app", "env_var": null, "key_url": "Requires DaVinci Resolve 18.5+ running locally — Studio with External Scripting set to Local, or the free edition through the project's in-app bridge script" },
     "pricing": "free",
     "links": { "repo": "https://github.com/samuelgursky/davinci-resolve-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "~2.1k stars, MIT, v2.93.0 released Aug 10 2026 — the most actively maintained NLE MCP in this directory, and still shipping. Requires Resolve STUDIO 18.5+ (the free edition has no external scripting) and Python 3.10-3.12. The setup wizard auto-configures Claude Desktop/Cursor/VS Code. tools_sample is null because the exposed tool list tracks Resolve's scripting API and moves between releases — read tools/list rather than trusting a cached name."
+    "verified": "2026-08-29",
+    "notes": "~2.3k stars, MIT, v2.103.3 released Aug 29 2026 — the most actively maintained NLE MCP in this directory, and now shipping almost daily. The Studio-only wall has come down: Blackmagic still gates external scripting to Studio, but the project ships an in-app bridge that runs from Resolve's ungated Workspace > Scripts menu, so free-edition users can reach the MCP too. Resolve 18.5+ on macOS, Windows or Linux; Python 3.10-3.12 is the low-risk range (3.13/3.14 work on recent Resolve builds and can fail on older ones). The README claims full coverage of the official scripting API across 36 compound tools (353 granular), 93.6% live-tested against Resolve 19.1.3, 20.3.2 and 21.0.3 — that number is the maintainer's, not ours. macOS gotcha: Resolve only looks for Python in PYTHON3HOME or /usr/local/bin/python3, so Homebrew installs need a launchctl fix. tools_sample is null because the exposed tool list tracks Resolve's scripting API and moves between releases — read tools/list rather than trusting a cached name."
   },
   {
     "slug": "palmier-pro",
@@ -168,8 +168,8 @@
     "official": true,
     "category": "editing-post",
     "featured": false,
-    "tagline": "AI-native Mac timeline editor with a built-in local MCP server for agents.",
-    "description": "Palmier Pro is an open-source Swift video editor built around human-agent co-editing. When the app is open, its local HTTP MCP server lets Claude, Codex, Cursor and Claude Desktop inspect the timeline, search media, add and move clips, generate media, caption, color, apply effects and export from the same project the editor is showing.",
+    "tagline": "AI-native Mac timeline editor with a built-in local MCP server — closed source since v0.7.6.",
+    "description": "Palmier Pro is a Swift video editor built around human-agent co-editing. When the app is open, its local HTTP MCP server lets Claude, Codex, Cursor and Claude Desktop inspect the timeline, search media, add and move clips, generate media, caption, color, apply effects and export from the same project the editor is showing. It shipped as GPLv3 open source and went closed in August 2026 — the MCP surface is unchanged, the source behind it is no longer published.",
     "capabilities": ["nle-control", "timeline-editing", "media-search", "captioning", "text-based-editing", "generation", "export"],
     "tools_sample": ["get_timeline", "get_media", "inspect_timeline", "search_media", "add_clips", "insert_clips", "generate_video", "generate_image", "add_captions", "export_project"],
     "install": {
@@ -181,8 +181,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/palmier-io/palmier-pro", "docs": "https://github.com/palmier-io/palmier-pro#readme", "site": "https://palmier.io" },
     "added": "2026-06-29",
-    "verified": "2026-08-11",
-    "notes": "GPL-3.0 editor, 13.4k stars, v0.7.3 released Aug 10 2026 — one of the fastest-moving projects in this file. The editor, the MCP server and the agent chat are open source; the generative AI processing is closed and needs login plus a subscription. Hard platform caveat that rules out most crews: macOS 26 (Tahoe) on Apple Silicon only — no Windows, no Linux, no Intel Macs. The MCP endpoint is local-only and exists only while the app is running with a project open."
+    "verified": "2026-08-29",
+    "notes": "License change, checked 29 Aug 2026: Palmier Pro is no longer open source. The README now states that releases through v0.7.6 (Aug 19 2026) and source through the `last-gpl-source` tag were GPLv3, that later binary releases are proprietary with their source unpublished, and that the repo no longer accepts code contributions. Current release is v0.8.1 (Aug 28 2026) at 14.1k stars — still one of the fastest-moving projects in this file, but you are now trusting a binary. If a published-source editor matters to your pipeline, pin v0.7.6 or use `davinci-resolve`. Generative AI processing was always closed and needs login plus a subscription. Hard platform caveat that rules out most crews: macOS 26 (Tahoe) on Apple Silicon only — no Windows, no Linux, no Intel Macs. The MCP endpoint at 127.0.0.1:19789 is local-only and exists only while the app is running with a project open."
   },
   {
     "slug": "fcp-mcp",
@@ -200,12 +200,12 @@
       "remote_url": null,
       "stdio_command": "fcp-mcp"
     },
-    "auth": { "type": "local-app", "env_var": null, "key_url": "Requires macOS with Final Cut Pro for live-control tools; FCPXML tools work without FCP, FFmpeg is required for media tools, and Apple Compressor is optional" },
+    "auth": { "type": "local-app", "env_var": null, "key_url": "Requires macOS 15.6+ with Final Cut Pro for live-control tools; FCPXML tools work without FCP, Python 3.10+ and FFmpeg on PATH are required for media tools, and Apple Compressor is optional" },
     "pricing": "free",
     "links": { "repo": "https://github.com/dreliq9/fcp-mcp", "docs": "https://github.com/dreliq9/fcp-mcp#readme", "site": "https://pypi.org/project/fcp-mcp/" },
     "added": "2026-06-29",
-    "verified": "2026-08-11",
-    "notes": "Name collision warning: this is dreliq9's Python server, PyPI package `fcp-mcp`. The `fcpxml-mcp` entry in this directory is DareDev256/fcp-mcp-server — a different maintainer with a nearly identical name. MIT. PyPI is still on 0.2.0 from Apr 23 2026 while `main` (pushed Aug 7 2026) carries an untagged v0.3 release candidate claiming up to 93 tools, so the published package is behind its own README; install from git if you want what the README describes. Maturity caveat: 6 GitHub stars. Live control depends on AppleScript and a running Final Cut Pro; optional FCP_MCP_OUTPUT_DIR changes where modified FCPXML is written."
+    "verified": "2026-08-29",
+    "notes": "Name collision warning: this is dreliq9's Python server, PyPI package `fcp-mcp`. The `fcpxml-mcp` entry in this directory is DareDev256/fcp-mcp-server — a different maintainer with a nearly identical name. MIT. The release drift has not been fixed and has widened: PyPI is still on 0.2.0 from Apr 23 2026 — also the only git tag — while `main` (pushed Aug 13 2026) now documents a v0.3.0 with 94 tools across 13 categories. `pipx install fcp-mcp` therefore gets you the April build, not the README; install from git if you want what the README describes. Tool count is also profile-gated: FCP_MCP_PROFILE picks inspect/workflow/edit/full and defaults to `workflow`, so a fresh connection does not expose everything. Maturity caveat: 6 GitHub stars. Live control depends on AppleScript, a running Final Cut Pro and FCP_MCP_ENABLE_LIVE_CONTROL; optional FCP_MCP_OUTPUT_DIR changes where modified FCPXML is written and FCP_MCP_ALLOWED_ROOTS widens the readable paths."
   },
   {
     "slug": "fcpxml-mcp",

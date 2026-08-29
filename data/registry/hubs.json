@@ -186,6 +186,29 @@
     "notes": "MIT, npm @promptibus/mcp 0.9.0 — still the only release, published May 11 2026, and neither the package nor the repo has moved since; 3 stars. The hosted endpoint and the npx package both work, and anonymous mode needs no key at 25 calls/day and 500/month across 10 free-tier models. The staleness is the whole caveat, and it now shows on the vendor's own page: the free tier is still headlined by Claude 4 Sonnet, GPT-4o, DALL-E 3 and Midjourney v6.1. Confirm pricing and prompt syntax at the model vendor before you spend against its advice. It is a catalogue and preflight layer, not a generation router — nothing here renders a frame."
   },
   {
+    "slug": "comfy-mcp",
+    "name": "Comfy MCP",
+    "vendor": "Comfy Org",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "Comfy Org's own MCP: drive your local ComfyUI, or Comfy Cloud, from an agent.",
+    "description": "The official server for ComfyUI, in two connections that speak the same tool surface: a stdio server that drives the ComfyUI on your own machine through comfy-cli, and a hosted endpoint at cloud.comfy.org for people without a GPU. It reads your actual install — custom nodes, installed models, GPU specs — so an agent can tell you a model will not fit before it downloads 20GB, then run the workflow, poll the job and fetch the outputs. For a filmmaker that means local open video models on your own hardware with the vendor's own maintenance behind the server.",
+    "capabilities": ["text-to-image", "text-to-video", "workflow-execution", "workflow-authoring", "local-inference", "model-management", "hardware-introspection", "job-monitoring"],
+    "tools_sample": ["run_workflow", "generate_image", "partner_generate", "run_template", "job", "fetch_outputs", "validate_workflow", "search_templates", "search_models", "system_stats", "launch_comfyui", "install_node"],
+    "install": {
+      "claude_code": "claude mcp add --transport http comfy-cloud https://cloud.comfy.org/mcp",
+      "remote_url": "https://cloud.comfy.org/mcp",
+      "stdio_command": "pip install comfy-mcp \"comfy-cli>=1.14.0\" then: claude mcp add comfy-mcp -e COMFY_BIN=/path/to/venv/bin/comfy -- comfy-mcp"
+    },
+    "auth": { "type": "oauth", "env_var": "COMFY_API_KEY", "key_url": "https://platform.comfy.org/profile/api-keys" },
+    "pricing": "freemium",
+    "links": { "repo": "https://github.com/Comfy-Org/comfy-mcp", "docs": "https://docs.comfy.org/agent-tools/local", "site": "https://comfy.org" },
+    "added": "2026-08-29",
+    "verified": "2026-08-29",
+    "notes": "Comfy Org open-sourced the local server on Aug 18 2026; PyPI `comfy-mcp` is at 0.10.0 (tagged Aug 10 2026) and the repo was pushed Aug 28 2026 at 185 stars, so this is the live one. Read the licence before you ship it inside a product: AGPL-3.0-or-later OR Commercial, not the MIT most of this directory carries. The local route is not a one-liner — it needs Python 3.10+, comfy-cli 1.14.0+ on PATH and a ComfyUI workspace, and the server refuses to start against an older comfy-cli. Local runs are free on your own hardware; the partner models (Flux, Ideogram, Kling, Veo, Runway and ~30 others) bill credits and each spend needs explicit confirmation. Cloud is the other half: `https://cloud.comfy.org/mcp` authenticates over OAuth in Claude Code and by X-API-Key header elsewhere, discovery tools are free, generation needs a Comfy Cloud subscription past five complimentary runs. Caveats: it is a stdio subprocess, so it cannot coordinate an external LLM runtime, and pointing it at a remote ComfyUI disables the lifecycle tools (launch/stop/update). The older community `comfyui` entry still works but has not moved since January."
+  },
+  {
     "slug": "comfyui",
     "name": "ComfyUI MCP",
     "vendor": "Community (shawnrushefsky)",
@@ -205,8 +228,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/shawnrushefsky/comfyui-mcp", "docs": "https://github.com/shawnrushefsky/comfyui-mcp#readme", "site": "https://comfy.org" },
     "added": "2026-06-11",
-    "verified": "2026-08-25",
-    "notes": "MIT; still the most comprehensive ComfyUI MCP, and the ghcr.io/shawnrushefsky/comfyui-mcp:latest image is published. Caveat: nothing has moved since Jan 28 2026 — no commits, and the container image was last built the same day — at 18 stars, so newer ComfyUI node packs may outrun its bundled 70+ workflows. On Linux swap host.docker.internal for --network=host. Notable alternatives: artokun/comfyui-mcp (Claude Code plugin with slash commands/skills) and joenorton/comfyui-mcp-server (lightweight Python). Requires you to run ComfyUI yourself."
+    "verified": "2026-08-29",
+    "notes": "Superseded on Aug 18 2026, when Comfy Org open-sourced its own local MCP — start at `comfy-mcp` and come here only if you want the Docker-image install or the 70+ bundled workflows. MIT; the ghcr.io/shawnrushefsky/comfyui-mcp:latest image is published and still runs. Caveat: nothing has moved since Jan 28 2026 — no commits, and the container image was last built the same day — at 18 stars, so newer ComfyUI node packs may outrun its bundled workflows. On Linux swap host.docker.internal for --network=host. Other alternatives: artokun/comfyui-mcp (Claude Code plugin with slash commands/skills) and joenorton/comfyui-mcp-server (lightweight Python). Requires you to run ComfyUI yourself."
   },
   {
     "slug": "piapi",
