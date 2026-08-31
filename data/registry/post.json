@@ -361,12 +361,12 @@
       "remote_url": null,
       "stdio_command": "npx -y @vibeframe/mcp-server"
     },
-    "auth": { "type": "api_key", "env_var": "FAL_API_KEY", "key_url": "Provider keys are bring-your-own: FAL_API_KEY, OPENAI_API_KEY, GOOGLE_API_KEY, ELEVENLABS_API_KEY and others depending on the models you enable." },
+    "auth": { "type": "api_key", "env_var": "FAL_API_KEY", "key_url": "Provider keys are bring-your-own and only generation needs one: FAL_API_KEY (video, via Seedance), OPENAI_API_KEY (images), plus optional GOOGLE_API_KEY, RUNWAY_API_SECRET and KLING_API_KEY." },
     "pricing": "freemium",
     "links": { "repo": "https://github.com/vericontext/vibeframe", "docs": "https://github.com/vericontext/vibeframe#readme", "site": "https://vibeframe.ai" },
     "added": "2026-06-28",
-    "verified": "2026-08-11",
-    "notes": "MIT, npm @vibeframe/mcp-server 0.115.2 published Jul 26 2026; the repo (164 stars) was pushed the same day. Still pre-1.0 and releasing fast, so pin a version rather than tracking latest. Requires Node 20+, FFmpeg, and Chrome/Chromium; AI generation bills whichever provider keys you wire in. The project warns that the CLI is the stable runtime and MCP is the host surface, so shell-capable agents may prefer direct `vibe` commands for long builds."
+    "verified": "2026-08-31",
+    "notes": "Correction to an earlier note here: ELEVENLABS_API_KEY was listed as a provider key and the README does not mention ElevenLabs at all. Narration is local Kokoro, and the README is explicit that generation is the only thing needing a key — FFmpeg edits, scene composition, detection, timeline work and rendering all run on your machine. The documented keys are OPENAI_API_KEY, FAL_API_KEY, GOOGLE_API_KEY, RUNWAY_API_SECRET and KLING_API_KEY. MIT, npm @vibeframe/mcp-server still 0.115.2 (Jul 26 2026, Node >=20, bin `vibeframe-mcp`); the repo is 165 stars and was last pushed the same day, so the fast release cadence noted in June has been five weeks of silence — pin a version anyway, but check the repo before you build on it. Requires Node 20+, FFmpeg, and Chrome/Chromium. The cost gate is real and worth using: `--max-cost` refuses to start a build whose estimate exceeds your ceiling. Claude Desktop users can skip npx entirely — the repo ships a vibeframe.mcpb extension bundle on its latest release. The project still frames the CLI as the runtime and MCP as the host surface, so shell-capable agents may prefer direct `vibe` commands for long builds."
   },
   {
     "slug": "remotion",
@@ -388,8 +388,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/remotion-dev/remotion", "docs": "https://www.remotion.dev/docs/ai/mcp", "site": "https://www.remotion.dev" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "Deprecated by Remotion. Its docs page (last updated Aug 11 2026) is titled 'MCP (deprecated)' and states plainly: new installations are not recommended, and the hosted MCP will shut down no earlier than Aug 31 2026. Remotion's stated reasons are that it pays the token costs for MCP requests and that agents do not invoke MCP servers reliably. The replacement is `npx remotion skills add` plus the /remotion-docs skill — a skill, not an MCP server, so it falls outside this directory. The npm package @remotion/mcp is still published and versioned with Remotion core (4.0.508, Aug 11 2026), so the install command still resolves today; that is not a reason to use it. Remotion itself requires a paid company license for teams over three people. gyoridavid/short-video-maker (1.3k stars) is often cited as a Remotion-powered video MCP but has not been pushed since Jun 2025."
+    "verified": "2026-08-31",
+    "notes": "Deprecated by Remotion, and today is the day the shutdown window opens. The docs page is still titled 'MCP (deprecated)' and still says the hosted MCP will shut down no earlier than Aug 31 2026 — that date is now, so assume the hosted side can go dark at any moment and do not wire it into anything. Remotion's stated reasons are that it pays the token costs for MCP requests and that agents do not invoke MCP servers reliably. The replacement is `npx remotion skills add` plus the /remotion-docs skill — a skill, not an MCP server, so it falls outside this directory. The npm package @remotion/mcp is still published and still version-locked to Remotion core (now 4.0.518, up from 4.0.508 three weeks ago), so the install command keeps resolving; that is release automation dragging the package along with the monorepo, not maintenance, and the package README says nothing about the deprecation at all. Remotion itself requires a paid company license for teams over three people. gyoridavid/short-video-maker (1.3k stars) is often cited as a Remotion-powered video MCP but has not been pushed since Jun 2025."
   },
   {
     "slug": "json2video",
@@ -398,8 +398,8 @@
     "official": false,
     "category": "editing-post",
     "featured": false,
-    "tagline": "Render JSON-defined videos in the cloud with the json2video API.",
-    "description": "Community MCP wrapper for json2video.com: assemble scenes of video, images, text, HTML, voice, and subtitles as JSON and render server-side. Good for agentic batch assembly (social cuts, slates, data-driven edits) without a local NLE.",
+    "tagline": "Superseded community wrapper — JSON2Video now ships its own MCP.",
+    "description": "Community MCP wrapper for json2video.com: assemble scenes of video, images, text, HTML, voice, and subtitles as JSON and render server-side. JSON2Video has since shipped an official MCP of its own, listed here as `json2video-cli`, with thirteen tools against this one's four and a vendor keeping it current. This entry stays for the configs that already point at it; new pipelines should use the official server.",
     "capabilities": ["cloud-render", "template-video", "captioning", "video-assembly"],
     "tools_sample": ["generate_video", "get_video_status", "create_template", "list_templates"],
     "install": {
@@ -411,8 +411,31 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/omergocmen/json2video-mcp-server", "docs": null, "site": "https://json2video.com" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "The stalest entry in this file. 26 stars; the repo was last pushed May 10 2025 and npm @omerrgocmen/json2video-mcp 1.3.1 was published May 7 2025 — fifteen months with nothing. It still installs, and the json2video service is still up, but nobody is fixing this wrapper. Correction to an earlier note here: Shotstack now ships an official MCP (listed in this directory), so this is no longer the only route to cloud JSON video assembly — prefer the vendor-maintained one where it fits."
+    "verified": "2026-08-31",
+    "notes": "Use `json2video-cli` instead. Re-checked 31 Aug 2026 and nothing here has moved: still 26 stars, repo last pushed May 10 2025, npm @omerrgocmen/json2video-mcp still 1.3.1 from May 7 2025 — sixteen months untouched, and the GitHub repo carries no LICENSE file even though the npm manifest claims MIT. It still installs and json2video.com is still up, so it is not broken, merely abandoned. What changed is the alternative: JSON2Video published its own MCP inside the @json2video/cli package (Apr 2026), covering render, status, validation, templates, examples, account and full media-library management. Between an official server and a wrapper nobody has touched since the year before last, take the official one. Shotstack's official MCP, also in this directory, remains the other vendor-maintained route to cloud JSON video assembly."
+  },
+  {
+    "slug": "json2video-cli",
+    "name": "JSON2Video MCP",
+    "vendor": "JSON2Video",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "The vendor's own MCP: render JSON movies, validate them, and manage the media library.",
+    "description": "JSON2Video's official MCP server, shipped as the `mcp` subcommand of its CLI. An agent describes a movie as JSON — scenes of video, images, text, HTML, voice-over and subtitles — validates it before spending credits, renders it server-side, then polls for the MP4. It also exposes the template catalogue and full media-library CRUD, which is what makes it usable for batch work: upload plates once, reference them across a hundred data-driven cuts without re-uploading.",
+    "capabilities": ["cloud-render", "template-video", "captioning", "video-assembly", "tts", "asset-management"],
+    "tools_sample": ["render_video", "check_status", "validate_movie", "list_templates", "get_template", "get_example", "get_account", "media_list", "media_upload", "media_delete"],
+    "install": {
+      "claude_code": "claude mcp add json2video -e JSON2VIDEO_API_KEY=YOUR_KEY -- npx -y @json2video/cli mcp",
+      "remote_url": null,
+      "stdio_command": "npx -y @json2video/cli mcp"
+    },
+    "auth": { "type": "api_key", "env_var": "JSON2VIDEO_API_KEY", "key_url": "https://json2video.com" },
+    "pricing": "freemium",
+    "links": { "repo": null, "docs": "https://json2video.com/docs/v2/help-for-ai-agents/mcp-server", "site": "https://json2video.com" },
+    "added": "2026-08-31",
+    "verified": "2026-08-31",
+    "notes": "Do not run `npx @json2video/mcp` — JSON2Video's own marketing page tells you to, and that package does not exist on npm (404). The working command is the CLI's subcommand, `npx -y @json2video/cli mcp`, which is what the actual MCP docs specify. The server is not open source: npm @json2video/cli is MIT-licensed but has no repository field and no public repo exists, so the thirteen tools listed in the docs are the only description of the surface you get. Two versions ever, 1.0.0 and 1.0.1 (Apr 14 2026), and nothing since — young and quiet rather than proven, though the API behind it is mature and the vendor advertises 99.9% uptime. Node >=20, stdio only, no hosted endpoint. Needs outbound HTTPS to api.json2video.com and cdn.json2video.com, which matters in locked-down CI. Free tier is 600 credits (~10 minutes of render); paid starts around $50/month, so make the agent call validate_movie before render_video — a malformed movie that fails late still costs you. `json2video auth` writes credentials to ~/.config/json2video/config.json instead of the env var; pick one and stay with it."
   },
   {
     "slug": "capcut",
