@@ -108,5 +108,7 @@
   "opusclip": "opus-pro",
   "nomi": "aqm857886159",
   "griptape-nodes": "griptape-ai",
-  "maya-mcp": "chadrik"
+  "maya-mcp": "chadrik",
+  "json2video-cli": "JSON2Video",
+  "maxvideoai": "camgraphe"
 }

@@ -163,6 +163,29 @@
     "notes": "MIT, npm @felores/kie-ai-mcp-server 5.0.0 published Aug 23 2026, pushed Aug 24 2026, 60 stars — two breaking releases since the last check, so re-read the README before reusing old configs. v4.0.0 (Aug 18) disabled direct media tool calls by default in favour of approval-bound plans: prepare_media_generation validates and creates no provider task, a host confirmation form or `kie-cli --approve <plan-id>` clears it, then submit_media_generation runs it. Set KIE_AI_ALLOW_DIRECT_GENERATION=true to restore the old one-shot behaviour, which is what unattended agents will need. v5.0.0 moved to the split SDK v2 packages and raised the floor to Node >=20 (npm engines; the release notes say the same), returns failures as isError with structuredContent, and gates official MCP Tasks behind KIE_AI_MCP_TASKS=true. Stdio by default, but v5 ships first-class HTTP: MCP_TRANSPORT=http or --http, with MCP_HTTP_HOST/MCP_HTTP_PORT and an optional KIE_MCP_HTTP_TOKEN bearer — self-hosted only via the Dockerfile and Coolify compose, there is no vendor-hosted URL. Filter the 38 tools with KIE_AI_ENABLED_TOOLS, KIE_AI_TOOL_CATEGORIES=image,video or KIE_AI_DISABLED_TOOLS (that precedence order) or you will burn context on unused schemas. Caveat: Kie.ai is an aggregator/reseller path for models from many vendors; rights, availability and ToS safety depend on the underlying provider, and Midjourney/Suno-style access should be treated as gray until verified for your use case."
   },
   {
+    "slug": "maxvideoai",
+    "name": "MaxVideoAI",
+    "vendor": "MaxVideoAI (camgraphe)",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "Quote a shot across the video model zoo, then approve the one you want to pay for.",
+    "description": "A hosted router over the frontier video models — Seedance, Kling, Veo, LTX, Wan, MiniMax, Pika and more — built around pricing rather than throughput. Its `plan` tool reads the live catalogue and costs a whole shot list without spending anything; `generate` returns an exact quote for one attempt and refuses to run until the agent explicitly approves it. For a filmmaker-agent deciding whether a 12-shot sequence is worth $9 or $90 before committing, that budget-first shape is the point.",
+    "capabilities": ["model-routing", "price-comparison", "text-to-video", "image-to-video", "cost-gates", "job-recovery"],
+    "tools_sample": ["plan", "generate"],
+    "install": {
+      "claude_code": "claude mcp add --transport http maxvideoai https://api.maxvideoai.com/mcp",
+      "remote_url": "https://api.maxvideoai.com/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "https://maxvideoai.com" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/camgraphe/maxvideoai-plugin", "docs": "https://maxvideoai.com/mcp", "site": "https://maxvideoai.com" },
+    "added": "2026-08-31",
+    "verified": "2026-08-31",
+    "notes": "Brand new — the repo was created 28 Aug 2026 with 0 stars and the MCP registry listing is from the 29th, so nobody has run this in anger yet. The vendor is admirably blunt about it: its own Claude doc says 'fresh exact-host Claude installation and end-to-end generation evidence has not been published'. We verified the endpoint is live (it 406s a plain GET, as a streamable-HTTP server should), the OAuth flow is documented, and the config matches the registry entry, but we could not run a paid generation to confirm the round trip. The README's connect line, `claude mcp add https://api.maxvideoai.com/mcp`, is malformed — it omits the server name and transport; the command above is the corrected form. Auth is browser OAuth with no key or header, and Claude free accounts only get one custom connector, so this may cost you your slot. Two tools only, `plan` and `generate` — coarse and skill-shaped, not a fine-grained API surface, and approving a quote buys exactly one attempt: an interrupted job needs a fresh quote and fresh approval. The plugin repo is a manifest, not the server, and it is Business Source License 1.1, so treat 'open on GitHub' as marketing rather than something you can self-host. Promptibus, also in this directory, covers model pricing intelligence without asking for an account."
+  },
+  {
     "slug": "promptibus",
     "name": "Promptibus MCP",
     "vendor": "Promptibus",
