@@ -467,10 +467,10 @@
     "official": true,
     "category": "editing-post",
     "featured": false,
-    "tagline": "Adobe's official hosted MCP — 50+ tools across Photoshop, Firefly, Premiere, Express and Stock.",
-    "description": "Adobe's first official Model Context Protocol connector: a hosted remote server that exposes Creative Cloud capabilities as agent tools. Retouch and batch-edit stills, generative-expand plates, design and animate from Express templates, search Adobe Stock, build InDesign data merges, and reformat or quick-cut video. For a filmmaker-agent this is the key-art, poster-variant and social-cutdown bench, not an editorial tool — the video surface reformats and summarizes clips, it does not open a timeline.",
-    "capabilities": ["image-editing", "image-enhancement", "generative-fill", "template-rendering", "video-reformat", "stock-search", "remote-mcp"],
-    "tools_sample": ["adobe_mandatory_init", "asset_add_file", "image_apply_adjustments", "image_crop_and_resize", "image_generative_expand", "image_select_subject", "video_resize", "video_create_quick_cut", "search_design", "animate_design", "create_firefly_board"],
+    "tagline": "Adobe's official hosted MCP — 50+ tools across Photoshop, Lightroom, Firefly, Premiere, Express and Stock.",
+    "description": "Adobe's first official Model Context Protocol connector: a hosted remote server that exposes Creative Cloud capabilities as agent tools across Photoshop, Lightroom, Illustrator, Firefly, Premiere, Express, InDesign and Adobe Stock. Retouch and batch-edit stills to a consistent look, auto-tone and reframe, design and animate from Express templates, search Stock, and reformat or quick-cut video. For a filmmaker-agent this is the key-art, poster-variant and social-cutdown bench, not an editorial tool — the video surface reformats and summarizes clips, it does not open a timeline.",
+    "capabilities": ["image-editing", "image-enhancement", "batch-processing", "template-rendering", "video-reformat", "stock-search", "remote-mcp"],
+    "tools_sample": ["adobe_mandatory_init", "asset_add_file", "image_apply_auto_tone", "image_apply_adjustments", "image_apply_preset", "image_crop_and_resize", "image_select_subject", "image_apply_gaussian_blur", "video_resize", "video_create_quick_cut", "search_design", "animate_design", "download_design", "create_firefly_board"],
     "install": {
       "claude_code": "claude mcp add --transport http adobe-creativity https://adobe-creativity.adobe.io/mcp",
       "remote_url": "https://adobe-creativity.adobe.io/mcp",
@@ -480,8 +480,32 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/adobe/skills", "docs": "https://developer.adobe.com/adobe-for-creativity/", "site": "https://www.adobe.com" },
     "added": "2026-08-11",
-    "verified": "2026-08-11",
-    "notes": "GA Apr 28 2026 per Adobe's own blog; the first entry in this directory with Adobe as vendor. The endpoint https://adobe-creativity.adobe.io/mcp is taken from Adobe's published plugin manifest in github.com/adobe/skills, not from a marketing page; an unauthenticated tools/list probe returns 403, so the tool names here come from Adobe's own skill definitions rather than a live handshake. The video limitation is the thing to know: Adobe documents reformat/resize (video_resize) and sizzle-reel generation (video_create_quick_cut) and nothing that opens, reads or edits a Premiere Pro project — Adobe's own Quick Cut skill instructs the agent to use it 'before suggesting manual editing in Premiere'. Guest access covers roughly 40 of the 50+ tools; video tools and Gen Expand require signing in and a few require a paid subscription. Adobe documents setup through Claude's connector directory (plus Cowork and Claude Desktop) rather than a published mcp-add command, and Team/Enterprise admins must enable third-party connectors before members can use it."
+    "verified": "2026-09-01",
+    "notes": "GA Apr 28 2026 per Adobe's own blog. Re-checked 1 Sep 2026: the endpoint https://adobe-creativity.adobe.io/mcp and the http transport are still what Adobe ships in its own plugin manifest, now at github.com/adobe/skills → plugins/creative-cloud/adobe-for-creativity (plugin v2.1.0, repo pushed 31 Aug 2026). An unauthenticated tools/list probe returns 403, so tool names come from Adobe's skill definitions rather than a live handshake. The video limitation is still the thing to know: Adobe documents reformat/resize (video_resize) and sizzle-reel generation (video_create_quick_cut) and nothing that opens, reads or edits a Premiere Pro project — Quick Cut explicitly punts semantic speech trimming, frame-precise cuts and dialogue editing to Premiere Rush or Premiere Pro. Worse, Quick Cut returns a temporary presigned URL rather than a Creative Cloud asset ID, so you cannot chain its output into video_resize without downloading and re-uploading. Guest access covers roughly 40 of the 50+ tools; video tools and Gen Expand require signing in, and replace_image and animate_design return 403 if the feature is not on your plan. Express results are deleted after 12 hours unless saved. Adobe documents setup through Claude's connector directory, Cowork and Claude Desktop rather than a published mcp-add command; connectors cannot be browsed or installed from the Claude iOS/Android apps, and Team/Enterprise admins must enable third-party connectors first. Enterprise teams that want batch pipelines rather than one-off edits should look at adobe-run-workflow instead."
+  },
+  {
+    "slug": "adobe-run-workflow",
+    "name": "Adobe Run-Workflow MCP",
+    "vendor": "Adobe",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Adobe's second hosted MCP — compose and run Firefly Creative Production batch pipelines.",
+    "description": "The agent front end to Firefly Creative Production, Adobe's graph-based batch pipeline for images, video and 3D. An agent lists the available workflow actions, reads their schemas, composes a graph from a plain-language brief, uploads assets, submits the batch, and polls until the outputs land — then publishes the graph as a reusable endpoint or saves it into Workflow Builder. Where Adobe for Creativity edits one asset at a time in conversation, this is the thing you point at 400 frames, product turntables or a delivery matrix of aspect ratios.",
+    "capabilities": ["batch-processing", "workflow-automation", "background-removal", "color-grade", "video-processing", "3d-render", "remote-mcp"],
+    "tools_sample": ["list_actions", "get_action_schema", "compose_workflow", "upload_asset", "run_workflow_submit", "run_workflow_get_status", "cancel_workflow", "list_workflow_history", "inspect_run", "get_workflow_examples", "publish_workflow", "save_workflow_to_acp"],
+    "install": {
+      "claude_code": "claude mcp add --transport http run-workflow https://run-workflow.adobe.io/mcp --header \"Authorization: Bearer YOUR_IMS_TOKEN\" --header \"x-api-key: YOUR_API_KEY\"",
+      "remote_url": "https://run-workflow.adobe.io/mcp",
+      "remote_headers": ["Authorization", "x-api-key"],
+      "stdio_command": null
+    },
+    "auth": { "type": "api_key", "env_var": null, "key_url": "Both an Adobe IMS access token and a Run-Workflow API key are issued by your org admin — there is no self-serve signup" },
+    "pricing": "paid",
+    "links": { "repo": "https://github.com/adobe/skills", "docs": "https://helpx.adobe.com/firefly/web/work-with-enterprise-features/creative-production/run-workflow-mcp-overview.html", "site": "https://business.adobe.com/products/firefly-business/firefly-creative-production.html" },
+    "added": "2026-09-01",
+    "verified": "2026-09-01",
+    "notes": "Enterprise-gated and priced that way: Firefly Creative Production is an add-on to select Adobe enterprise plans, and both credentials come from your org admin rather than a developer console, so an independent filmmaker cannot connect this. Bearer tokens are IMS access tokens and expire — expect to re-add the server, not set it once. Everything is async: run_workflow_submit returns a batchId and you poll run_workflow_get_status, which matters for video and large batches. Presigned asset URLs expire in about an hour and break if a single character is retyped. The framing is marketing production, not editorial — the shipped starter templates are standardized packshots, 360-degree spin video and composite imagery, and the broadly available preset actions are remove background, crop and colour grade. Verified 1 Sep 2026 from Adobe's own sources: the endpoint and http transport from the .mcp.json in github.com/adobe/skills (plugins/creative-cloud/run-workflow), the tool names from the run-workflow SKILL.md in the same repo, and the install command from Adobe's helpx install page. helpx.adobe.com times out for automated fetchers, so the entitlement details here come from Adobe documentation read through search excerpts rather than a direct page load, and no live handshake was possible without an org token. For conversational single-asset work on a personal Adobe account, use adobe-creativity instead."
   },
   {
     "slug": "descript",
