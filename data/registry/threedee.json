@@ -7,9 +7,9 @@
     "category": "3d-vfx",
     "featured": false,
     "tagline": "The most-adopted Blender MCP — model, texture, and assemble 3D scenes by prompt.",
-    "description": "Two-way bridge between AI agents and Blender: inspect scenes, create/modify objects and materials, and execute arbitrary Python in Blender. With Poly Haven, Sketchfab, and Hyper3D Rodin integrations, an agent can pull assets and build previz sets or full shots. Community-maintained, but the de facto standard by install base.",
-    "capabilities": ["3d-scene-control", "asset-import", "python-scripting", "render", "previz"],
-    "tools_sample": ["execute_blender_code"],
+    "description": "Two-way bridge between AI agents and Blender: inspect scenes, pull viewport screenshots, create and modify objects and materials, and execute arbitrary Python in Blender. Poly Haven, Sketchfab, Poly Pizza, Hyper3D Rodin and Hunyuan3D integrations let an agent source or generate assets and build previz sets or full shots without leaving the chat. Community-maintained, but the de facto standard by install base.",
+    "capabilities": ["3d-scene-control", "asset-import", "text-to-3d", "python-scripting", "render", "previz"],
+    "tools_sample": ["get_scene_info", "get_object_info", "get_viewport_screenshot", "execute_blender_code", "search_polyhaven_assets", "download_polyhaven_asset", "search_sketchfab_models", "search_polypizza_models", "generate_hyper3d_model_via_text", "generate_hunyuan3d_model", "import_generated_asset"],
     "install": {
       "claude_code": "claude mcp add blender -- uvx blender-mcp",
       "remote_url": null,
@@ -19,8 +19,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/ahujasid/blender-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "25.7k stars, MIT, pushed Aug 11 2026; PyPI blender-mcp 1.8.0. execute_blender_code runs arbitrary Python — save your work first. Anonymous tool telemetry is on by default (disable via DISABLE_TELEMETRY). Asset integrations: Poly Haven (free), Sketchfab, Hyper3D Rodin. GUI-launched clients often fail with 'spawn uvx ENOENT' — use uvx's absolute path. The Blender Foundation now ships its own server (see blender-lab-mcp): official, but Blender 5.1+ and a harder install. This one is the pragmatic choice on 3.x/4.x."
+    "verified": "2026-09-01",
+    "notes": "26.6k stars, MIT, pushed Aug 30 2026; PyPI blender-mcp 1.9.0 (Aug 30 2026), Python 3.10+. Installing the addon no longer means hunting for addon.py — `uvx blender-mcp install-addon` does it, though you still start the socket server from Blender's sidebar. execute_blender_code runs arbitrary Python — save your work first. Anonymous tool telemetry is on by default (disable in Blender preferences or with DISABLE_TELEMETRY=true). Asset integrations have grown to Poly Haven (free), Sketchfab, Poly Pizza, Hyper3D Rodin and Hunyuan3D; the last two are text/image-to-3D generators with their own keys and quotas. GUI-launched clients often fail with 'spawn uvx ENOENT' because they don't inherit your shell PATH — use uvx's absolute path, or wrap in `cmd /c` on Windows. The Blender Foundation ships its own server (see blender-lab-mcp): official, but Blender 5.1+ and a harder install. This one is the pragmatic choice on 3.x/4.x."
   },
   {
     "slug": "blender-lab-mcp",
@@ -30,9 +30,9 @@
     "category": "3d-vfx",
     "featured": false,
     "tagline": "Blender's own MCP server — natural-language access to the Blender Python API.",
-    "description": "The Blender Foundation's first-party MCP server, built in Blender Lab and shipped as v1.0.0. An add-on inside Blender talks over a TCP socket to a standalone MCP server your client launches, exposing the Python API for scene analysis, data-block cleanup, geometry-node documentation, and debugging. Useful when you want to interrogate and repair a production file rather than generate one.",
-    "capabilities": ["3d-scene-control", "python-scripting", "scene-inspection", "documentation-lookup"],
-    "tools_sample": null,
+    "description": "The Blender Foundation's first-party MCP server, built in Blender Lab and shipped as v1.0.0. An add-on inside Blender talks over a TCP socket to a standalone MCP server your client launches, exposing the Python API alongside blend-file forensics: datablock inventories, missing-file and linked-library reports, viewport screenshots and thumbnail renders, and search over the Python API reference and the user manual. Useful when you want to interrogate and repair a production file rather than generate one.",
+    "capabilities": ["3d-scene-control", "python-scripting", "scene-inspection", "asset-audit", "render", "documentation-lookup"],
+    "tools_sample": ["execute_blender_code", "get_objects_summary", "get_object_detail_summary", "get_blendfile_summary_datablocks", "get_blendfile_summary_missing_files", "get_blendfile_summary_of_linked_libraries", "get_screenshot_of_window_as_image", "render_viewport_to_path", "render_thumbnail_to_path", "get_python_api_docs", "search_api_docs", "search_manual_docs", "jump_to_view3d_object_by_name"],
     "install": {
       "claude_code": null,
       "remote_url": null,
@@ -42,8 +42,8 @@
     "pricing": "free",
     "links": { "repo": "https://projects.blender.org/lab/blender_mcp", "docs": "https://www.blender.org/lab/mcp-server/", "site": "https://www.blender.org/lab/" },
     "added": "2026-08-11",
-    "verified": "2026-08-11",
-    "notes": "Official but experimental — a Blender Lab project, explicitly outside the current Blender roadmap. Blender's own docs carry a blunt security warning: the server 'will execute LLM generated code in Blender without any guards in place to protect your data from removal or being sent to a remote location', and they recommend running it in a virtual machine or on a system with no sensitive data. Three components must be downloaded and run manually (add-on, LLM client, MCP server); there is no one-line install. Blender 5.1+ only. The community ahujasid/blender-mcp is far easier to set up, works on 3.0+, and adds asset-library integrations this one has no equivalent for."
+    "verified": "2026-09-01",
+    "notes": "Official but experimental — a Blender Lab project, explicitly outside the current Blender roadmap. Blender's own docs carry a blunt security warning: the server 'will execute LLM generated code in Blender without any guards in place to protect your data from removal or being sent to a remote location', and they recommend running it in a virtual machine or on a system with no sensitive data. Three components must be downloaded and run manually (add-on, LLM client, MCP server); there is no one-line install. Blender 5.1+ only, per the add-on's own blender_manifest.toml. Still on v1.0.0 (27 Apr 2026) as of 1 Sep 2026 — four releases total, 22 stars on projects.blender.org — but the branch is alive: last commits 6 Aug 2026, and half the 26 tools are duplicated as `*_for_cli` variants for headless use. Checked 1 Sep 2026 via the Forgejo API; both blender.org and the repo's web UI return 403 to automated fetchers, so the tool list comes from readme_tools.rst in the repo and the security quote is carried over from the last read of the docs page. The community ahujasid/blender-mcp is far easier to set up, works on 3.0+, and adds asset-library integrations this one has no equivalent for."
   },
   {
     "slug": "unreal-mcp-epic",
