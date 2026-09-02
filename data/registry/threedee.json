@@ -65,8 +65,8 @@
     "pricing": "free",
     "links": { "repo": null, "docs": "https://dev.epicgames.com/documentation/unreal-engine/unreal-mcp-in-unreal-editor", "site": "https://www.unrealengine.com" },
     "added": "2026-08-11",
-    "verified": "2026-08-11",
-    "notes": "Marked Experimental by Epic: 'use caution when shipping with it', APIs and data formats subject to change, many features incomplete. HTTP and Server-Sent Events only — stdio and WebSocket transports are not supported, so remote-agent setups need their own tunnel. It binds loopback at http://127.0.0.1:8000/mcp (port and path configurable) and rejects non-loopback Origin headers, but Epic states plainly there is 'no authentication layer; the plugin is not safe to expose beyond the local machine' — anything that reaches that port drives your editor. UE 5.8 only; on 5.5-5.7 or for hosted use, see the unreal-engine entry."
+    "verified": "2026-09-02",
+    "notes": "Marked Experimental by Epic: 'use caution when shipping with it', APIs and data formats subject to change, many features incomplete. HTTP and Server-Sent Events only — stdio and WebSocket transports are not supported, so remote-agent setups need their own tunnel. It binds loopback at http://127.0.0.1:8000/mcp (port and path configurable), and Epic states plainly that the server 'only accepts connections from the same machine, has no authentication layer, and is not designed for remote use' — anything that reaches that port drives your editor. ModelContextProtocol.StopServer and .RefreshTools complete the console surface. UE 5.8 only; on 5.5-5.7 or for hosted use, see the unreal-engine entry."
   },
   {
     "slug": "unreal-engine",
@@ -88,8 +88,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/flopperam/unreal-engine-mcp", "docs": null, "site": "https://www.tryaura.dev" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "Ownership changed: the repo's README and description now state Flopperam has been acquired by Aura and point ongoing development at tryaura.dev. 1.07k stars, last push Jun 26 2026 — slowing since the acquisition. We previously listed this as MIT; GitHub's licence API returns 404 for the repo, so the licence is unconfirmed — treat it as unlicensed until Aura says otherwise. The hosted endpoint answers 401 to an unauthenticated tools/list, so it is alive and key-gated. Landscape: Epic now ships a first-party server for UE 5.8 (unreal-mcp-epic); chongdashu/unreal-mcp is still the most-starred at 2.1k but has not been pushed since Apr 2025; ChiR24/Unreal_mcp (828 stars, pushed Aug 11 2026, TypeScript + a C++ Automation Bridge plugin) is the most actively maintained community option."
+    "verified": "2026-09-02",
+    "notes": "Ownership changed: the repo's README and description now state Flopperam has been acquired by Aura and point ongoing development at tryaura.dev. 1.08k stars, last push still Jun 26 2026 — over two months without a commit, so treat the open-source half as parked. The README's licence line says MIT but the repo contains no LICENCE file and GitHub's licence API returns 404, so the grant is unconfirmed. The hosted endpoint still answers 401 unauthenticated, so it is alive and key-gated; Aura's own product page markets an editor/Claude Code agent for Unreal 5.4+ without mentioning MCP, which is the direction the funding is going. Landscape: Epic now ships a first-party server for UE 5.8 (unreal-mcp-epic); chongdashu/unreal-mcp is still the most-starred at 2.1k but has not been pushed since Apr 2025; ChiR24/Unreal_mcp (853 stars, MIT, pushed Aug 29 2026, TypeScript + a C++ Automation Bridge plugin) is the most actively maintained community option."
   },
   {
     "slug": "houdini",
@@ -99,7 +99,7 @@
     "category": "3d-vfx",
     "featured": false,
     "tagline": "Drive SideFX Houdini nodes and procedural FX from your agent.",
-    "description": "Two credible community servers cover Houdini. capoomgit/houdini-mcp is the original: a Python plugin plus bridge script that creates and wires nodes and executes code over a localhost socket. healkeiser/fxhoudinimcp is the larger and more actively developed one — 179 tools across SOPs, LOPs/USD, DOPs, PDG/TOPs, COPs, HDAs, animation, rendering and VEX, with a one-command installer. Either opens Houdini's procedural FX and sim toolset to agent-driven work; neither is from SideFX.",
+    "description": "Two credible community servers cover Houdini. capoomgit/houdini-mcp is the original: a Python plugin plus bridge script that creates and wires nodes and executes code over a localhost socket. healkeiser/fxhoudinimcp is the larger and more actively developed one — 188 tools across SOPs, LOPs/USD, DOPs, PDG/TOPs, COPs, HDAs, animation, rendering and VEX, with a one-command installer. Either opens Houdini's procedural FX and sim toolset to agent-driven work; neither is from SideFX.",
     "capabilities": ["3d-scene-control", "procedural-fx", "node-graph-authoring", "python-scripting", "usd-lops", "simulation"],
     "tools_sample": null,
     "install": {
@@ -111,8 +111,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/healkeiser/fxhoudinimcp", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "healkeiser/fxhoudinimcp: 168 stars, MIT, PyPI 2.10.0, pushed Jul 29 2026 — fewer stars than the original but far broader coverage and the better-maintained of the two; it is the one to try first. capoomgit/houdini-mcp: 279 stars, MIT, last push Jun 11 2026, still early-stage and manual to install. SideFX itself has no shipping MCP: the H22 'APEX Script comfort package' (AI-assisted rigging-code authoring, autocomplete, validation) was shown at the Houdini 22 keynote in June 2026 and SideFX's own page calls it 'a preview for a tool which will be released later on' — trade coverage describes an APEX Script MCP server headed to SideFX Labs, but SideFX has not documented one. Do not plan a pipeline around it yet. For Cinema 4D, the leading equivalent is ttiimmaacc/cinema4d-mcp (110 stars, last push Mar 2026, C4D 2024+, MoGraph/Redshift tools)."
+    "verified": "2026-09-02",
+    "notes": "healkeiser/fxhoudinimcp: 190 stars, MIT, PyPI 2.10.0 (Jul 29 2026), tested through Houdini 22.0.368 — fewer stars than the original but far broader coverage and the better-maintained of the two; it is the one to try first. capoomgit/houdini-mcp: 285 stars, MIT, last push Jun 11 2026, still early-stage and manual to install. SideFX itself has no shipping MCP: the H22 'APEX Script comfort package' (AI-assisted rigging-code authoring, autocomplete, validation) was shown at the Houdini 22 keynote and SideFX's own page calls it 'a preview for a tool which will be released later on' — trade coverage from SIGGRAPH 2026 describes an APEX Script MCP server headed to SideFX Labs, but as of Sep 2026 SideFX has not documented one and it is not in the core product. Do not plan a pipeline around it yet. For Cinema 4D, the leading equivalent is ttiimmaacc/cinema4d-mcp (117 stars, last push Mar 2026, C4D 2024+, MoGraph/Redshift tools)."
   },
   {
     "slug": "silhouette",
