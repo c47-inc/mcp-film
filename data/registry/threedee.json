@@ -134,8 +134,8 @@
     "pricing": "paid",
     "links": { "repo": null, "docs": "https://documentation.borisfx.com/wiki/sfx/index.php?title=MCP", "site": "https://borisfx.com/products/silhouette/" },
     "added": "2026-08-11",
-    "verified": "2026-08-11",
-    "notes": "Shipped with Silhouette 2026 on May 28 2026. Two modes via SFX_MCP_MODE: 'online' (default) drives a running instance over its RPC socket with live UI updates and grouped undo blocks; 'offline' runs Silhouette headless per tool call for batch, CI, and farm work — Configure Client always writes online, so offline needs a hand edit. execute_script is an unguarded escape hatch that runs arbitrary fx Python. Not cheap and not standalone-free: Silhouette is $545/yr or $103/mo, included in the Boris FX Suite, and runs as a standalone app or a plugin inside After Effects, Premiere, Nuke, Resolve/Fusion, and Flame. Closed source — no repo to audit."
+    "verified": "2026-09-03",
+    "notes": "Shipped with Silhouette 2026 on May 28 2026; re-checked 3 Sep 2026 — the MCP wiki page is unchanged and Boris FX still sells 2026 as current, listing the MCP server and a built-in JSON-RPC server as its automation headline. Two modes via SFX_MCP_MODE: 'online' (default) drives a running instance over its RPC socket with live UI updates and grouped undo blocks; 'offline' runs Silhouette headless per tool call for batch, CI, and farm work — Configure Client always writes online, so offline needs a hand edit. Configure Client for Claude Code shells out to `claude mcp remove silhouette --scope user` then `claude mcp add`, so re-running it is safe. execute_script is an unguarded escape hatch that runs arbitrary fx Python. Not cheap and not standalone-free: $545/yr or $103/mo when last quoted in Aug 2026 — the Boris FX store renders prices client-side and could not be re-read here, so treat the figures as indicative. Included in the Boris FX Suite; runs standalone or as a plugin inside After Effects, Premiere, Nuke, Resolve/Fusion, and Flame. Closed source — no repo to audit."
   },
   {
     "slug": "comfyui-artokun",
@@ -146,8 +146,8 @@
     "featured": false,
     "tagline": "Drive ComfyUI as a live image, video, audio, and workflow workbench from your agent.",
     "description": "TypeScript MCP server plus Claude Code plugin for ComfyUI: generate assets, execute and author workflows, manage models and custom nodes, inspect outputs, and edit the live graph. A sidebar Agent Panel turns ComfyUI itself into an agent surface while the MCP server supplies model-family skills, installer packs, and paid-credit guardrails. Runs against local, LAN, VPS, or Comfy Cloud instances.",
-    "capabilities": ["workflow-execution", "image-generation", "video-generation", "audio-generation", "live-graph-editing", "model-management", "agent-panel"],
-    "tools_sample": ["generate_image", "generate_audio", "enqueue_workflow", "view_image", "list_packs", "read_skill", "check_workflow_runtime", "panel_load_workflow"],
+    "capabilities": ["workflow-execution", "image-generation", "video-generation", "audio-generation", "live-graph-editing", "model-management", "lora-training", "agent-panel"],
+    "tools_sample": ["generate_image", "enqueue_workflow", "build_workflow", "visualize_workflow", "view_image", "search_models", "install_nodes", "train_lora", "deploy_pod", "list_packs"],
     "install": {
       "claude_code": "Inside Claude Code: /plugin marketplace add artokun/comfyui-mcp then /plugin install comfy",
       "remote_url": null,
@@ -157,8 +157,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/artokun/comfyui-mcp", "docs": "https://comfyui-mcp.artokun.io/docs", "site": "https://registry.comfy.org/nodes/comfyui-agent-panel" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "npm comfyui-mcp 0.51.6 (published Aug 12 2026), MIT, ~559 stars, pushed Aug 12 2026 — moving fast, so pin a version if you need reproducibility. Current README claims 178 tools, 36 AI skills, and 55 installer packs, and backends beyond Claude (ChatGPT, Gemini, Ollama). Heavier than shawnrushefsky/comfyui-mcp but far more filmmaker-useful for local video/audio workflows. The --http mode binds a token-authed HTTP server; --tunnel exposes it publicly, which is a decision, not a convenience."
+    "verified": "2026-09-03",
+    "notes": "npm comfyui-mcp 0.52.179, tagged and pushed 3 Sep 2026 — the repo has been cutting several releases a day, so pin an exact version if you need reproducibility. MIT, 715 stars (was 559 in Aug). The tool surface was consolidated, not grown: the README now claims 38 tools, 42 AI skills and 56 installer packs, against 178 tools in August, because the nine generation modes (image, audio, video, 3d, controlnet, ip_adapter, regenerate, upscale, remove_background) collapsed into one action-parameterised tool at 0.50.0. Prompts and configs that called generate_audio or generate_video will break. The vendor's own docs disagree on its name — the tool page says generate_image, the llms.txt index says generate — so probe the live tool list before scripting against it. Backends beyond Claude: ChatGPT and Gemini on subscription, Ollama fully offline, DeepSeek/GLM/Kimi via OpenRouter. COMFYUI_API_KEY switches the target to Comfy Cloud instead of a local instance. --http binds a token-authed HTTP server (COMFYUI_MCP_HTTP_TOKEN); --tunnel exposes it publicly over cloudflared, which is a decision, not a convenience. Heavier than shawnrushefsky/comfyui-mcp but far more filmmaker-useful for local video/audio workflows."
   },
   {
     "slug": "tripo",
@@ -180,8 +180,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/VAST-AI-Research/tripo-mcp", "docs": null, "site": "https://www.tripo3d.ai" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "Official and 190 stars, but effectively parked: the README still says alpha, PyPI tripo-mcp is 0.1.2, and the repo has had no push since Apr 14 2025 — sixteen months. Still scoped to Blender-addon integration and requires the separate Tripo AI Blender Addon plus a running Blender. The multi-provider alternative mordor-forge/trident-mcp (Tripo + Meshy + Rodin) is more current but tiny at 6 stars — evaluate before you depend on it. Meshy's server is the better-maintained official option in this niche."
+    "verified": "2026-09-03",
+    "notes": "Official and now 197 stars, but abandoned in practice: re-checked 3 Sep 2026 and nothing has moved since the last review — README still says alpha, PyPI tripo-mcp is still 0.1.2 from Apr 12 2025, and the repo has had no push since Apr 14 2025, sixteen and a half months. Not archived, so it still reads as live; treat the stars as history, not health. Still scoped to Blender-addon integration and requires the separate Tripo AI Blender Addon plus a running Blender. The multi-provider alternative mordor-forge/trident-mcp (Tripo + Meshy + Rodin) was last pushed Jul 9 2026 and is fresher, but tiny at 6 stars — evaluate before you depend on it. Meshy's server is the better-maintained official option in this niche."
   },
   {
     "slug": "meshy",

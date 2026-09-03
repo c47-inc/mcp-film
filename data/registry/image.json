@@ -113,5 +113,28 @@
     "added": "2026-06-11",
     "verified": "2026-08-27",
     "notes": "Usage draws on the same subscription as the Ideogram web app, so MCP jobs and hand work compete for one balance — the docs state flatly that there is no separate billing for MCP requests. Checked 27 Aug 2026: the endpoint is live and serves OAuth protected-resource metadata at the spec path, naming itself as the resource with an Ideogram-hosted authorization server and openid/email/profile scopes; the nine tools and the connect command below still match the docs verbatim. The API also still exposes Ideogram 3.0 endpoints alongside 4.0. This entry previously listed the community wrapper @sunwood-ai-labs/ideagram-mcp-server (MIT, 5 stars, one generate_image tool, untouched since May 2025, and misspelled 'ideagram' throughout) — it is superseded by the official server. Note that developer.ideogram.ai/_mcp/server is a separate documentation-search MCP, not the image server. Ideogram is also reachable via the fal and Replicate hub MCPs if you want fewer connectors."
+  },
+  {
+    "slug": "mediagen",
+    "name": "mediagen",
+    "vendor": "Community (Cripacx)",
+    "official": false,
+    "category": "image-generation",
+    "featured": false,
+    "tagline": "One MCP across Gemini, OpenAI and Kie AI, with EU AI Act disclosure marking built in.",
+    "description": "A single Node package that ships as a CLI, a Claude Code skill and an MCP server, fronting Google Gemini (Nano Banana stills up to 4K, plus video), OpenAI's gpt-image and DALL-E, and roughly thirty Kie AI models including Flux, Imagen and Grok. The MCP surface is deliberately narrow — one generate call, one model list, one config check — so an agent picks a model by name rather than learning three vendor APIs. What sets it apart for anyone shipping into Europe is the marking step: it writes IPTC/XMP DigitalSourceType into outputs and can composite the official EU AI Act label onto a frame, which no other server in this directory does.",
+    "capabilities": ["text-to-image", "text-to-video", "image-editing", "multi-provider", "content-provenance", "cli"],
+    "tools_sample": ["generate_media", "list_models", "check_configuration"],
+    "install": {
+      "claude_code": "claude mcp add mediagen --env GEMINI_API_KEY=your-api-key-here -- npx -y mediagen mcp",
+      "remote_url": null,
+      "stdio_command": "npx -y mediagen mcp"
+    },
+    "auth": { "type": "api_key", "env_var": "GEMINI_API_KEY", "key_url": "Bring your own provider keys — GEMINI_API_KEY is the minimum, OPENAI_API_KEY and KIE_API_KEY are optional; `mediagen init` walks through configuration" },
+    "pricing": "free",
+    "links": { "repo": "https://github.com/Cripacx/mediagen", "docs": null, "site": null },
+    "added": "2026-09-03",
+    "verified": "2026-09-03",
+    "notes": "New and unproven: the repo was created 22 Aug 2026, all of its ~39 commits landed inside a single day, and there has been no push since 23 Aug. 54 stars, MIT, CI green, zero open issues, npm mediagen 0.3.0. Listed for the marking feature, not for its track record — check the commit log before you build a pipeline on it. The disclosure marking is CLI-only (`mediagen mark`) and the docs state it is never automatic, so an agent generating through the MCP tools gets no provenance metadata unless something calls the CLI afterwards. Video is Gemini-only; OpenAI and Kie AI cover stills and edits. The package is free but every generation bills the provider key you supply, and Kie AI is itself an aggregator — if you only want breadth of models, the kie-ai or fal entries here are the more direct route."
   }
 ]
