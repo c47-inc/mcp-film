@@ -112,5 +112,7 @@
   "griptape-nodes": "griptape-ai",
   "maya-mcp": "chadrik",
   "json2video-cli": "JSON2Video",
-  "maxvideoai": "camgraphe"
+  "maxvideoai": "camgraphe",
+  "open-edit": null,
+  "leclap": "heristop"
 }

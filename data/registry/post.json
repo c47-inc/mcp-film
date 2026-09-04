@@ -699,5 +699,59 @@
     "added": "2026-08-19",
     "verified": "2026-08-19",
     "notes": "Official, hosted, and still labelled beta by OpusClip's own changelog — which advertised 25 tools while the docs now list 27 workflow tools plus 2 thumbnail-generation ones, so trust live `tools/list` over any published count. The endpoint at https://mcp.opus.pro/mcp is live and returns OAuth protected-resource metadata pointing at a WorkOS AuthKit authorization server. Entitlement is not universal: the docs say Pro Beta and Max organizations get API access automatically and business customers run under their contract, so a free account may connect and find the write tools locked. Quotas are per workspace and real — 15h / 900 credits a month, a 10-credit floor charged per project regardless of length, and 4 concurrent projects, resetting on the 1st UTC. Fourteen of the tools are writes that spend credits and prompt for approval per call. The public repo is a thin 2-star wrapper (MIT, pushed 14 Aug 2026) under an org with a GitHub IP allow list, so you cannot browse its source anonymously; the docs are the real reference. Scored for short-form social, not for narrative: virality ranking and vertical reframe are the product's opinion, and it will impose it."
+  },
+  {
+    "slug": "open-edit",
+    "name": "Open Edit",
+    "vendor": "Community (AH64-dll)",
+    "official": false,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "A local editor with no GUI and no LLM: an append-only edit graph an agent drives over MCP.",
+    "description": "Open Edit runs as a local stdio MCP server pinned to one project directory, and hands the agent the machinery instead of the creative decisions: content-addressed ingest, word-level transcription via faster-whisper, an append-only intermediate-representation edit graph in SQLite, and melt + ffmpeg rendering. Every cut is one of 28 recorded, reversible IR operations, so a filmmaker can audit or revert what an agent did to the timeline rather than re-deriving it from a rendered file. Renders go proxy-first at 640x360 and only reach 1080p after passing a ten-check QC gate, which is the difference between an agent iterating cheaply and an agent burning an hour per bad idea.",
+    "capabilities": ["local-post", "edit-graph", "transcription", "ffmpeg", "proxy-render", "quality-check", "motion-graphics"],
+    "tools_sample": ["query_project", "edit_project", "run_script", "trigger_render", "get_render_job", "cancel_render_job"],
+    "install": {
+      "claude_code": "claude mcp add open-edit -- open-edit-mcp --project /ABSOLUTE/PATH/TO/PROJECT",
+      "remote_url": null,
+      "stdio_command": "open-edit-mcp --project /ABSOLUTE/PATH/TO/PROJECT"
+    },
+    "auth": { "type": "none", "env_var": null, "key_url": null },
+    "pricing": "free",
+    "links": {
+      "repo": "https://github.com/AH64-dll/OpenEdit",
+      "docs": "https://ah64-dll.github.io/OpenEdit/",
+      "site": null
+    },
+    "added": "2026-09-04",
+    "verified": "2026-09-04",
+    "notes": "Two steps come before the connect command: `pip install \"open-edit[mcp]\"`, then `open_edit init <project-dir>` — the server refuses to start against a directory it has not initialised. The README's plain `pip install open-edit` is wrong for MCP use, because the `mcp` dependency sits in an optional extra that install skips. MIT, 46 stars, PyPI `open-edit` 1.3.1 (12 Aug 2026), repo pushed 21 Aug 2026, Python >=3.11. Six tools, not 28 — the 28 is the count of IR edit operations reachable through `edit_project`. Pinning to one project is a deliberate blast-radius limit, but it also means one registered server per cut. `run_script` executes free-form Python against the IR; it is bwrap-sandboxed on Linux and explicitly `dev`-only on Windows, so do not expose it on a Windows box you care about. Rendering needs melt (MLT) and ffmpeg on the system, and the badges claim macOS while the repo description and installers only commit to Linux and Windows — treat macOS as untested. Transcription is a separate `whisper` extra and the review UI a `serve` extra. The base package pulls in the `anthropic` SDK whether or not you use its optional built-in generation. Self-described experimental prototype with behaviour that changes between releases, a single maintainer, and legacy Remotion templates that may need a Remotion company licence; the actively maintained alternative in this space is Kinocut."
+  },
+  {
+    "slug": "leclap",
+    "name": "LeClap",
+    "vendor": "Community (heristop)",
+    "official": false,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Deterministic video from one JSON template — same input, same frames, rendered locally.",
+    "description": "LeClap exposes its ffmpeg-video-composer engine over MCP: the agent asks for the template JSON Schema, authors a descriptor of sections, filters, music and text overlays, validates it for free, then renders it to an MP4 on the machine. Nothing is sampled and nothing is uploaded, so the same template produces the same frames on every run — the opposite trade to a generative model, and the right one for titles, lower thirds, and any card you will need to re-render at 3am with one word changed. An opt-in bridge renders compositions from your own Remotion project into a clip the deterministic engine then composites.",
+    "capabilities": ["template-video", "video-assembly", "deterministic-render", "ffmpeg", "local-post", "motion-graphics"],
+    "tools_sample": ["get_template_schema", "validate_template", "compose_video", "probe_media", "render_remotion_clip", "ping"],
+    "install": {
+      "claude_code": "claude mcp add leclap -e LECLAP_MCP_MEDIA_DIR=/abs/path/to/media -e LECLAP_MCP_OUTPUT_DIR=/abs/path/to/renders -- npx -y @leclap/mcp",
+      "remote_url": null,
+      "stdio_command": "npx -y @leclap/mcp"
+    },
+    "auth": { "type": "none", "env_var": null, "key_url": null },
+    "pricing": "free",
+    "links": {
+      "repo": "https://github.com/heristop/leclap",
+      "docs": "https://github.com/heristop/leclap/tree/main/packages/leclap-mcp#readme",
+      "site": "https://leclap.dev"
+    },
+    "added": "2026-09-04",
+    "verified": "2026-09-04",
+    "notes": "First-party to the LeClap project — the MCP package lives in its monorepo — but that project is one maintainer's open-source work, not a company, so it is listed as community. MIT, 24 stars on the monorepo, npm @leclap/mcp 0.3.4 (24 Aug 2026), listed in the official MCP registry as dev.leclap/video. Node >=24.11.0 — an unusually aggressive floor that will bounce most CI images and any Node 22 LTS setup. FFmpeg is not bundled for the npx path: the engine looks for a system binary first and falls back to an optional `ffmpeg-static` that `npx -y @leclap/mcp` will not install for you, so put ffmpeg on PATH. Set LECLAP_MCP_MEDIA_DIR deliberately — local inputs must resolve inside it via a symlink-safe containment check, and pointing it at your home directory hands every tool call the run of it. `render_remotion_clip` runs your project's own JavaScript under headless Chromium and is therefore off unless you pass --allow-remotion; it also needs @remotion/renderer and @remotion/bundler installed yourself, and Remotion's own licence applies. Determinism is per platform, not across them — Node and browser encode with libx264, Android with libopenh264, iOS with h264_videotoolbox, and the on-device build silently drops boxblur and rewrites eq to lutyuv. There is no template catalogue; the server authors descriptors from the schema. Renders are 10-minute-capped by default. The MCP package is under a month old — read it as promising, not proven."
   }
 ]

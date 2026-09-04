@@ -203,8 +203,8 @@
     "pricing": "paid",
     "links": { "repo": "https://github.com/meshy-dev/meshy-mcp-server", "docs": null, "site": "https://www.meshy.ai" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "Official (meshy-dev org), npm @meshy-ai/meshy-mcp-server 0.4.0, pushed Aug 10 2026, MIT, TypeScript, stdio and HTTP transports. Only 30 stars — vendor-maintained rather than community-loved, so judge it on the push cadence, which is good. API access requires a Meshy Pro plan or above, and every call spends credits: text-to-3D and image-to-3D vary by mode, ultra_mode adds 5, Creative Lab is 36 (62 for keycap), remesh 5, rig 5, animate 3, convert 1, resize 1, uv-unwrap 5, repair-printability 10, multicolor 10. Budget before you loop an agent over it."
+    "verified": "2026-09-04",
+    "notes": "Official (meshy-dev org), MIT, TypeScript, stdio and HTTP transports; npm @meshy-ai/meshy-mcp-server is now 0.5.1 (27 Aug 2026), repo pushed 22 Aug 2026. Only 40 stars — vendor-maintained rather than community-loved, so judge it on the push cadence, which is good. v0.5.0 added Meshy 7 (`ai_model: \"meshy-7\"`), an `ultra_mode` high-detail pass, Smart Topology, 8K textures and multi-view retexture, and grew Creative Lab to seven products. Two traps in that: `meshy-7` is accepted on image-to-3d, multi-image-to-3d and retexture but **not** on text-to-3d, where `latest` still resolves to Meshy 6; and the old `hd_texture` flag is deprecated in favour of `texture_resolution`. API access requires a Meshy Pro plan or above, and every call spends credits — image-to-3D is 20 for mesh and 30 textured on meshy-6/7 (35 at 8K), while `model_type: \"smart-topology\"` with meshy-t2 drops that to 5/15/20 and returns part-separated geometry, which is the cheapest useful path for previz props. ultra_mode adds 5, Creative Lab is 36 (62 for keycap), remesh 5, rig 5, animate 3, convert 1, resize 1, uv-unwrap 5, repair-printability 10, multicolor 10. Budget before you loop an agent over it."
   },
   {
     "slug": "maya-mcp",
