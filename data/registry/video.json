@@ -31,9 +31,9 @@
     "category": "video-generation",
     "featured": false,
     "tagline": "Official hosted MCP: Gen-4.5, Seedance, Kling and Veo video from any agent.",
-    "description": "Runway's hosted MCP server connects agents like Claude, ChatGPT and Cursor to Runway's full generation stack. As of August 2026 the marketing page lists Gen-4.5, Gen-4 Turbo, Gen-4 Image, Seedance 2.0, Kling 3.0, Veo 3.1, GPT Image 2 and Nano Banana Pro, routed by plan, making it a one-stop video tool for filmmaker agents with automatic task polling and media URL delivery.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "video-upscaling", "video-editing"],
-    "tools_sample": ["runway_generateVideo", "runway_generateImage", "runway_upscaleVideo", "runway_editVideo", "runway_getTask"],
+    "description": "Runway's hosted MCP server connects agents like Claude, ChatGPT and Cursor to Runway's full generation stack. As of September 2026 the marketing page lists Gen-4.5, Gen-4 Turbo, Gen-4 Image, Seedance 2.5, Kling 3.0, Veo 3.1, GPT Image 2 and Nano Banana Pro, routed by plan, making it a one-stop video tool for filmmaker agents with automatic task polling and media URL delivery.",
+    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "video-upscaling", "video-editing", "tts"],
+    "tools_sample": ["runway_listModels", "runway_generateVideo", "runway_generateImage", "runway_upscaleVideo", "runway_editVideo", "runway_generateAudio", "runway_getTask", "runway_cancelTask"],
     "install": {
       "claude_code": "claude mcp add --transport http runway https://mcp.runwayml.com/mcp",
       "remote_url": "https://mcp.runwayml.com/mcp",
@@ -43,8 +43,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/runwayml/runway-api-mcp-server", "docs": "https://help.runwayml.com/hc/en-us/articles/51931843164691-Connecting-to-Runway-MCP", "site": "https://runway.com/mcp" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "Hosted server (OAuth, no API key, bills Runway credits) is the flagship; an open-source repo exists for self-hosting and was last pushed 2026-08-10. Runway has moved its web presence from runwayml.com to runway.com — the old host 308s across, and the mcp.runwayml.com endpoint still answers (401 unauthenticated). The Zendesk help article blocks scripted fetches; open it in a browser. Generated asset URLs from the API expire after 24h — download outputs promptly."
+    "verified": "2026-09-04",
+    "notes": "Hosted server (OAuth, no API key, bills Runway credits) is the flagship; the open-source repo for self-hosting is MIT, 22 stars, pushed 2026-08-17. The tool names listed here are read from that repo's README — the hosted endpoint is a black box, so treat them as indicative and let the client enumerate. Since the last check the repo added `runway_listModels`, `runway_generateAudio` (TTS), `runway_cancelTask` and `runway_getOrg`, plus local OpenAPI-derived payload validation that rejects bad ratio/duration combinations before they cost credits. Recommended model defaults are Nano Banana Pro (`gemini_image3_pro`) for images, Seedance (`seedance2`) for video and Aleph (`aleph2`) for editing; valid ratios and durations are per-model, so call listModels first. The marketing page moved Seedance from 2.0 to 2.5. Runway has moved its web presence from runwayml.com to runway.com — the old host 308s across, and the mcp.runwayml.com endpoint still answers (401 unauthenticated). The Zendesk help article blocks scripted fetches; open it in a browser. Self-hosting is a clone-and-build job, not an npx one, and it wants MCP_TOOL_TIMEOUT raised. Generated asset URLs from the API expire after 24h — download outputs promptly."
   },
   {
     "slug": "minimax",
@@ -53,10 +53,10 @@
     "official": true,
     "category": "video-generation",
     "featured": false,
-    "tagline": "Official MiniMax server: Hailuo video, image gen, music, TTS and voice cloning.",
-    "description": "MiniMax's official MCP server exposes Hailuo video generation, text-to-image, music generation, and best-in-class multilingual TTS with voice cloning and voice design. One vendor and one key covers both your shots and your dialogue — rare breadth for a single official server.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "tts", "voice-cloning", "voice-design", "music"],
-    "tools_sample": ["generate_video", "query_video_generation", "text_to_image", "text_to_audio", "voice_clone", "voice_design", "music_generation", "list_voices", "play_audio"],
+    "tagline": "Official MiniMax server: Hailuo video, image gen, TTS and voice cloning.",
+    "description": "MiniMax's official MCP server exposes Hailuo video generation, text-to-image, and best-in-class multilingual TTS with voice cloning and voice design. One vendor and one key covers both your shots and your dialogue — rare breadth for a single official server. Music generation was part of that breadth until August 2026, when the tool was retired.",
+    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "tts", "voice-cloning", "voice-design"],
+    "tools_sample": ["generate_video", "query_video_generation", "text_to_image", "text_to_audio", "voice_clone", "voice_design", "list_voices", "play_audio"],
     "install": {
       "claude_code": "claude mcp add minimax -e MINIMAX_API_KEY=YOUR_KEY -e MINIMAX_API_HOST=https://api.minimax.io -- uvx minimax-mcp",
       "remote_url": null,
@@ -66,8 +66,8 @@
     "pricing": "paid",
     "links": { "repo": "https://github.com/MiniMax-AI/MiniMax-MCP", "docs": "https://platform.minimax.io/docs/guides/mcp-guide", "site": "https://www.minimax.io" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "MIT, ~1.5k stars, with an official JS sibling (MiniMax-AI/MiniMax-MCP-JS). Maintenance has slowed: last repo push 2026-05-21, PyPI minimax-mcp 0.0.18 from 2026-01-07, and the MCP guide still documents MiniMax-Hailuo-02 plus the older T2V/I2V-01 Director line rather than anything newer. image_to_video is JS-only. MINIMAX_API_RESOURCE_MODE toggles URL vs local-file output; MINIMAX_MCP_BASE_PATH sets the output directory."
+    "verified": "2026-09-04",
+    "notes": "MIT, 1,576 stars, with an official JS sibling (MiniMax-AI/MiniMax-MCP-JS, 128 stars, pushed 2026-08-21). The three-month quiet spell ended on 2026-08-20: the server migrated to MCP Python SDK v2 and **retired the `music_generation` tool** in the same batch, shipped as PyPI minimax-mcp 0.0.19 on 2026-08-21. Score elsewhere — Mureka, Sonilo or Epidemic Sound. `play_audio` survives in the code but has been dropped from the README's tool table, so treat it as undocumented rather than guaranteed. Watch the model drift: the default text-to-video model constant is now `MiniMax-Hailuo-2.3`, while `generate_video`'s own tool description still enumerates only up to `MiniMax-Hailuo-02` and the older T2V/I2V-01 Director line — an agent reading the schema will not know what it is actually being given. Default speech model is `speech-2.8-hd`. image_to_video is JS-only. The README now steers you to MiniMax's `mmx-cli` agent skill ahead of this server, which is the vendor telling you where the newest models land first. MINIMAX_API_RESOURCE_MODE toggles URL vs local-file output; MINIMAX_MCP_BASE_PATH sets the output directory."
   },
   {
     "slug": "higgsfield",
