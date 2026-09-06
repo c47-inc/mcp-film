@@ -158,8 +158,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/PixVerseAI/PixVerse-MCP", "docs": "https://docs.platform.pixverse.ai/how-to-get-api-key-882968m0", "site": "https://platform.pixverse.ai" },
     "added": "2026-06-28",
-    "verified": "2026-08-11",
-    "notes": "Official MIT repo, 51 stars, PyPI pixverse-mcp still 0.2.2 from 2025-10-21 with no repo push since 2025-10-22 — official but effectively frozen for ten months, so assume the model list lags the PixVerse platform. README says Python 3.10+, but the published package metadata requires Python >=3.12; use a current uv/uvx runtime. PixVerse API credits are separate from consumer app credits."
+    "verified": "2026-09-06",
+    "notes": "Official MIT repo, 52 stars, PyPI pixverse-mcp still 0.2.2 from 2025-10-21 with no repo push since 2025-10-22 — official but effectively frozen for eleven months as of this check, so assume the model list lags the PixVerse platform. README says Python 3.10+, but the published package metadata requires Python >=3.12; use a current uv/uvx runtime. PixVerse API credits are separate from consumer app credits."
   },
   {
     "slug": "google-genmedia",
@@ -168,21 +168,21 @@
     "official": true,
     "category": "video-generation",
     "featured": false,
-    "tagline": "Google Cloud's MCP servers for Veo, Imagen, Lyria, Chirp TTS and ffmpeg compositing.",
-    "description": "A suite of Go-based MCP servers from Google Cloud's GenMedia Creative Studio repo: Veo text/image-to-video, Imagen and Gemini Image stills, Lyria music, Chirp 3 TTS, and an AVTool server wrapping ffmpeg for compositing. The closest thing to an official Veo MCP, and a full agentic production toolchain on Vertex AI.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "music", "tts", "av-compositing"],
-    "tools_sample": ["veo_t2v", "veo_i2v", "imagen_t2i", "lyria_generate_music", "chirp_tts", "list_chirp_voices"],
+    "tagline": "Google Cloud's MCP servers for Veo, Gemini Omni, Lyria, Chirp TTS and ffmpeg compositing.",
+    "description": "A suite of Go-based MCP servers from Google Cloud's GenMedia Creative Studio repo: Veo text/image-to-video plus extension and first/last-frame tools, a Gemini Omni video server, Nano Banana and Gemini stills, Lyria music, Chirp 3 TTS, and an AVTool server wrapping ffmpeg for compositing. The closest thing to an official Veo MCP, and a full agentic production toolchain on Vertex AI.",
+    "capabilities": ["text-to-video", "image-to-video", "video-extension", "text-to-image", "music", "tts", "av-compositing"],
+    "tools_sample": ["veo_t2v", "veo_i2v", "veo_extend_video", "veo_first_last_to_video", "omni_video_generation", "lyria_generate_music", "chirp_tts", "list_chirp_voices"],
     "install": {
       "claude_code": null,
       "remote_url": null,
-      "stdio_command": "One binary per model. Install them all with the repo's script — curl -sL https://raw.githubusercontent.com/GoogleCloudPlatform/vertex-ai-creative-studio/main/experiments/mcp-genmedia/mcp-genmedia-go/install-online.sh | bash — or build from source with go install ./mcp-avtool-go ./mcp-chirp3-go ./mcp-gemini-go ./mcp-nanobanana-go ./mcp-imagen-go ./mcp-lyria-go ./mcp-veo-go, then point your client at each binary (mcp-veo-go for Veo) with GOOGLE_CLOUD_PROJECT set"
+      "stdio_command": "One binary per model. Install them all with the repo's script — curl -sL https://raw.githubusercontent.com/GoogleCloudPlatform/vertex-ai-creative-studio/main/experiments/mcp-genmedia/mcp-genmedia-go/install-online.sh | bash — or build from source with go work sync && go install ./mcp-avtool-go ./mcp-chirp3-go ./mcp-gemini-go ./mcp-nanobanana-go ./mcp-imagen-go ./mcp-lyria-go ./mcp-veo-go, adding ./mcp-omni-go which the README's line still omits, then point your client at each binary (mcp-veo-go for Veo) with GOOGLE_CLOUD_PROJECT set"
     },
     "auth": { "type": "api_key", "env_var": "GOOGLE_CLOUD_PROJECT", "key_url": "Google Cloud project with Vertex AI enabled; uses Application Default Credentials (gcloud auth application-default login)" },
     "pricing": "paid",
     "links": { "repo": "https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia", "docs": "https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/blob/main/experiments/mcp-genmedia/mcp-genmedia-go/README.md", "site": "https://ai.google.dev/gemini-api/docs/video" },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "Official Google Cloud code but explicitly experimental (lives in /experiments). Repo is busy — 1.2k stars, pushed 2026-08-11 — and the mcp-genmedia tree is intact. Install is the one rough edge: there is no npx one-liner and no published claude mcp add command, so you either pipe their install-online.sh to bash for pre-built binaries or run go install over the seven server directories, then wire each binary into your client yourself. Supports stdio/HTTP/SSE and GCS or local output. Ships agent skills for storyboarding. With Sora leaving the API on 2026-09-24, this is the most direct official route to Veo 3.1 for an agent."
+    "verified": "2026-09-06",
+    "notes": "Official Google Cloud code but explicitly experimental (lives in /experiments). Busier than ever — 1,202 stars, pushed 2026-09-05, VERSION 3.18.1 cut 2026-08-29. Now eight servers, not seven: mcp-omni-go landed alongside mcp-gemini-go, wrapping gemini-omni-1.1-flash-preview through the Vertex Interactions API. Veo has grown veo_extend_video, veo_first_last_to_video and veo_reference_to_video and defaults to veo-3.1-fast-generate-001; Lyria is on lyria-3-clip-preview. Imagen is the casualty: install.sh now skips mcp-imagen-go outright, with the comment 'Imagen deprecation as of June 30, 2026', so treat imagen_t2i as on its way out and use mcp-nanobanana-go for stills. Install is still the rough edge — no npx one-liner, no published claude mcp add, so you pipe install-online.sh to bash or go install per directory and wire each binary in yourself; the README's go install line has not caught up with mcp-omni-go. Omni is preview-gated and calls the global-only Interactions endpoint, ignoring regional overrides. Supports stdio/HTTP/SSE and GCS or local output; ships agent skills for storyboarding. With Sora leaving the API on 2026-09-24, this is the most direct official route to Veo 3.1 for an agent."
   },
   {
     "slug": "sora",
@@ -208,6 +208,29 @@
     "notes": "Thirty days left. OpenAI's deprecation table still lists sora-2, sora-2-pro and their snapshots with a 2026-09-24 shutdown and still names no recommended replacement. The repo (MIT, 208 stars) has had no commit since 2025-10-08, so nobody is migrating it anywhere; the writingmate/sora-2-mcp alternative is likewise stale. The install steps above are the README's and were confirmed on 2026-08-25 — they are here so an agent can read the retirement date rather than discover it mid-render, not as a recommendation. Migrate now: Veo 3.1 via the Google GenMedia MCP, Kling 3.0 or Seedance 2.0 via the Runway MCP, or Seedance 2.5 and Kling 3 via Higgsfield. Export anything still stored on OpenAI before the cutoff."
   },
   {
+    "slug": "kling-official",
+    "name": "Kling MCP (Official)",
+    "vendor": "Kling AI (Kuaishou)",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Kling's own hosted MCP: text and image to video or stills, over OAuth on your Kling credits.",
+    "description": "Kuaishou now fronts Kling with a first-party remote MCP at kling.ai/mcp, replacing the key-and-secret dance the community servers require with browser OAuth. Eight tools cover text-to-image, image-to-image, text-to-video, image-to-video, file upload, task polling and credit balance, with the available models declared by the server at runtime rather than pinned in a README. For a filmmaker-agent this is the shortest verified path to current Kling models without going through a hub and paying a hub's markup.",
+    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "image-to-image", "asset-upload", "job-polling"],
+    "tools_sample": ["text_to_image", "image_to_image", "text_to_video", "image_to_video", "query_tasks", "file_upload", "account", "tool_list"],
+    "install": {
+      "claude_code": "claude mcp add --transport http kling https://kling.ai/mcp",
+      "remote_url": "https://kling.ai/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser OAuth against https://kling.ai/auth — PKCE plus Dynamic Client Registration, scopes generation.create, generation.read and account.credit.read. No API key to paste." },
+    "pricing": "credits",
+    "links": { "repo": null, "docs": "https://kling.ai/app/mcp/guide", "site": "https://kling.ai" },
+    "added": "2026-09-06",
+    "verified": "2026-09-06",
+    "notes": "Verified 2026-09-06 from primary sources only. https://kling.ai/mcp answers 401, and /.well-known/oauth-protected-resource/mcp names it as the resource behind authorization server https://kling.ai/auth; that server's metadata publishes authorization_code and refresh_token grants, S256 PKCE and a registration_endpoint, so DCR works and no pre-shared credential is needed. Tool names come from Kling's own npm package @klingai/cli-global (0.1.3, published by klingai-fe off a Kuaishou corp git remote), which calls itself a thin MCP client whose commands map 1:1 to backend MCP tools. Kling's setup page is a client-rendered app that returns nothing readable to a fetcher, so the CLI line above is the standard streamable-HTTP form of the documented endpoint, not a copy of a vendor one-liner — expect a browser authorization on first connect. Narrower than the community `kling` server: no effects, no virtual try-on, no KOLORS-specific tools, and no documented model list — call tool_list. Closed source, no public repo, and it spends the same Kling credits as the consumer platform."
+  },
+  {
     "slug": "kling",
     "name": "Kling MCP",
     "vendor": "Community (199 Longevity)",
@@ -227,8 +250,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/199-mcp/mcp-kling", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "MIT, 40 stars. npm mcp-kling is at 5.2.0 (2025-12-22) while the public repo has not been pushed since 2025-06-14 — the published package is well ahead of the visible source, so read the npm tarball, not the README, for the current tool list. The README documents models through Kling v1.x/v2-master; for Kling 3.0 today the Runway, Higgsfield or fal hub MCPs are fresher. Auto-downloads results locally."
+    "verified": "2026-09-06",
+    "notes": "MIT, 41 stars. npm mcp-kling is at 5.2.0 (2025-12-22) while the public repo has not been pushed since 2025-06-14 — the published package is well ahead of the visible source, so read the npm tarball, not the README, for the current tool list. Largely superseded: Kling now runs its own hosted MCP at kling.ai/mcp (listed here as `kling-official`), which is OAuth, vendor-maintained and declares its model list at runtime. Keep this one if you need key/secret JWT auth against your own Kling API account, or the tools the official server does not expose — effects, virtual try-on and KOLORS. The README documents models through Kling v1.x/v2-master; for Kling 3.0 the official server, Runway, Higgsfield or the fal hub are all fresher. Auto-downloads results locally."
   },
   {
     "slug": "luma",
