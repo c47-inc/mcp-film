@@ -19,8 +19,8 @@
     "pricing": "credits",
     "links": { "repo": null, "docs": "https://developers.heygen.com/mcp/overview", "site": "https://www.heygen.com/model-context-protocol" },
     "added": "2026-06-11",
-    "verified": "2026-08-12",
-    "notes": "Available on all HeyGen plans; generation consumes plan credits. There is no longer a local option: HeyGen's own heygen-com/heygen-mcp 404s, and the community fork this entry used to recommend (sbroenne/heygen-mcp) has now 404'd too — its PyPI package heygen-mcp-sbroenne is still installable but frozen at 0.3.1 from 2026-01-31 with its source gone, so treat it as abandoned. The hosted remote is the only maintained route. HeyGen's official Agent Skills (heygen-com/skills) remain active — 391 stars, pushed 2026-07-14."
+    "verified": "2026-09-08",
+    "notes": "Endpoint, OAuth flow and plan terms re-confirmed against HeyGen's own MCP docs on 2026-09-08: unchanged, available on all HeyGen plans, generation consumes plan credits, no API key. There is still no local option: HeyGen's own heygen-com/heygen-mcp 404s, and the community fork this entry used to recommend (sbroenne/heygen-mcp) has 404'd too — its PyPI package heygen-mcp-sbroenne is still installable but frozen at 0.3.1 from 2026-01-31 with its source gone, so treat it as abandoned. The hosted remote is the only maintained route. HeyGen's official Agent Skills (heygen-com/skills) remain active — 429 stars, still pushed 2026-07-14, so the skills repo has gained attention but no commits in nearly two months."
   },
   {
     "slug": "hedra",
