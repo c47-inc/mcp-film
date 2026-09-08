@@ -260,8 +260,8 @@
     "official": false,
     "category": "video-generation",
     "featured": false,
-    "tagline": "Community MCP for Luma's legacy Dream Machine API; Luma's current stack is the Agents API.",
-    "description": "Community Python server for Luma's Dream Machine API v1: text/image-to-video on ray-2 and ray-flash-2, video extension and interpolation, Photon image generation, upscaling, audio addition and credit checks. Luma has since moved its platform to the Agents API — uni-1 and uni-1-max for images, ray-3.2 for video, a new base URL and a new key name — which this server does not speak and for which no MCP exists. Still the only direct-API option in MCP form, but it is pointed at the previous generation.",
+    "tagline": "Community MCP with the widest tool surface on Luma's legacy Dream Machine API.",
+    "description": "Community Python server for Luma's Dream Machine API v1: text/image-to-video on ray-2 and ray-flash-2, video extension and interpolation, Photon image generation, upscaling, audio addition and credit checks. Luma has since moved its platform to the Agents API — uni-1 and uni-1-max for images, ray-3.2 for video, a new base URL and a new key name — which this server does not speak and for which no MCP exists. Its reason to exist next to Luma's own `luma-official` server is breadth: extension, interpolation, upscaling and credit checks that the first-party two-tool server never shipped.",
     "capabilities": ["text-to-video", "image-to-video", "video-extension", "interpolation", "text-to-image", "upscaling"],
     "tools_sample": ["create_generation", "get_generation", "list_generations", "upscale_generation", "add_audio", "generate_image", "get_credits", "get_camera_motions"],
     "install": {
@@ -273,8 +273,31 @@
     "pricing": "paid",
     "links": { "repo": "https://github.com/bobtista/luma-ai-mcp-server", "docs": "https://docs.agents.lumalabs.ai", "site": null },
     "added": "2026-06-11",
-    "verified": "2026-08-11",
-    "notes": "MIT but tiny (7 stars) and last committed 2025-04-01 — functional rather than maintained; runs from a cloned repo via uv. Kept listed because nothing has been switched off: docs.lumalabs.ai still serves the Dream Machine reference and api.lumalabs.ai/dream-machine/v1/ping still returns 200 as of 2026-08-11. Luma publishes no MCP server for the Agents API, so ray-3.2 and uni-1 are reachable only over REST or the Go/Python/JS SDKs, or through fal, Replicate and Runway hub MCPs."
+    "verified": "2026-09-08",
+    "notes": "Correction on 2026-09-08: this entry previously called the repo MIT and claimed it was the only Luma server in MCP form. Neither holds — there is no LICENSE file in the repo and GitHub reports no license, so the code is technically all-rights-reserved, and Luma's own lumalabs/luma-api-mcp exists (listed here as `luma-official`). Tiny (6 stars) and last committed 2025-04-01 — functional rather than maintained; runs from a cloned repo via uv. Kept listed because nothing has been switched off: api.lumalabs.ai/dream-machine/v1/ping still returns 200 as of 2026-09-08. Luma publishes no MCP server for the Agents API, so ray-3.2 and uni-1 are reachable only over REST or the Go/Python/JS SDKs, or through fal, Replicate and Runway hub MCPs."
+  },
+  {
+    "slug": "luma-official",
+    "name": "Luma API MCP",
+    "vendor": "Luma AI",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Luma's own two-tool MCP server for Ray video and Photon stills.",
+    "description": "Luma Labs' first-party MCP server, published from the lumalabs GitHub org, exposing exactly two tools: create_image on photon-1 and photon-flash-1, and create_video on ray-2, ray-flash-2 and ray-1-6. create_video takes frame0 and frame1 references, so an agent can pin both ends of a shot and chain continuity across a sequence; create_image accepts image, style, character and modify references for consistent looks. Narrow by design — no polling, extension or upscaling tools — but it is the only Luma-maintained MCP that exists.",
+    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "keyframe-control", "style-reference", "character-reference"],
+    "tools_sample": ["create_image", "create_video"],
+    "install": {
+      "claude_code": null,
+      "remote_url": null,
+      "stdio_command": "Clone github.com/lumalabs/luma-api-mcp and run `sh setup.sh`, which installs jq, uv and Python 3.10, prompts for LUMA_API_KEY, and registers the server in claude_desktop_config.json as `uv run --python python3.10 --with mcp[cli] --with aiohttp mcp run` against server.py."
+    },
+    "auth": { "type": "api_key", "env_var": "LUMA_API_KEY", "key_url": "https://lumalabs.ai/api/keys" },
+    "pricing": "paid",
+    "links": { "repo": "https://github.com/lumalabs/luma-api-mcp", "docs": "https://github.com/lumalabs/luma-api-mcp#readme", "site": "https://lumalabs.ai/api" },
+    "added": "2026-09-08",
+    "verified": "2026-09-08",
+    "notes": "Official but frozen: MIT, 26 stars, 12 forks, created 2025-04-15 and last pushed 2025-04-18, two open issues, no releases and no package on PyPI. It speaks the Dream Machine API only — Luma's current Agents API (uni-1, uni-1-max, ray-3.2 at agents.lumalabs.ai/v1 under LUMA_AGENTS_API_KEY) is not supported here or in any other MCP server. The documented install path only writes Claude Desktop's config file; there is no vendor-published `claude mcp add` form, hence the null above rather than a command we made up. For a wider Dream Machine tool surface use the community `luma` server; for ray-3.2 today, reach it through the fal, Replicate or Runway hub MCPs."
   },
   {
     "slug": "wireflow",
@@ -284,9 +307,9 @@
     "category": "video-generation",
     "featured": false,
     "tagline": "Exposes whole ad-creative workflows over MCP rather than individual model endpoints.",
-    "description": "Wireflow is a hosted ad-creative platform that fans a single brief out into hundreds of static, carousel, video and UGC variants, with brand kits, compositing, colour grading and publishing to social. Its MCP connector exposes the workflow layer rather than raw models: an agent lists templates and models, clones or authors a workflow from a prompt, runs it, polls the execution and schedules automations. For a filmmaker-agent, that means one call produces a finished, brand-consistent deliverable instead of a shot you still have to assemble.",
-    "capabilities": ["workflow-automation", "text-to-video", "text-to-image", "ugc-video", "batch-generation", "social-publishing"],
-    "tools_sample": ["list_workflows", "get_workflow", "list_templates", "list_models", "clone_template", "create_workflow_from_prompt", "update_workflow_config", "run_workflow", "get_execution", "list_automations", "create_automation", "get_credit_balance"],
+    "description": "Wireflow is a hosted ad-creative platform that fans a single brief out into hundreds of static, carousel, video and UGC variants, with brand kits, compositing, colour grading and publishing to social. Its MCP connector exposes the workflow layer rather than raw models: an agent searches recipes, clones a template or authors a workflow from a prompt, runs it, polls the execution and schedules automations. Since the August check the connector has grown a timeline surface — read the cut, edit it, preview frames — so an agent can inspect and adjust the assembled video rather than only trigger a render. For a filmmaker-agent, that means one call produces a finished, brand-consistent deliverable instead of a shot you still have to assemble.",
+    "capabilities": ["workflow-automation", "text-to-video", "text-to-image", "ugc-video", "batch-generation", "social-publishing", "timeline-editing"],
+    "tools_sample": ["get_guidelines", "list_workflows", "list_templates", "search_recipes", "list_models", "clone_template", "create_workflow_from_prompt", "publish_blueprint", "get_video_timeline", "edit_video_timeline", "preview_video_frames", "run_workflow", "get_execution", "create_automation", "get_credit_balance"],
     "install": {
       "claude_code": "claude mcp add --transport http wireflow https://www.wireflow.ai/api/mcp",
       "remote_url": "https://www.wireflow.ai/api/mcp",
@@ -296,8 +319,8 @@
     "pricing": "freemium",
     "links": { "repo": null, "docs": "https://www.wireflow.ai/docs/mcp", "site": "https://www.wireflow.ai" },
     "added": "2026-08-11",
-    "verified": "2026-08-11",
-    "notes": "Disclosure: a direct competitor to Martini, this directory's sponsor, listed on the same terms as everything else. Endpoint verified alive and auth-gated (401) on 2026-08-11 and the tool list is taken verbatim from Wireflow's own MCP docs. Closed source, no public repo, and the vendor documents only connector-UI setup — the CLI command above is the standard streamable-HTTP form of the documented endpoint. Credits are the real constraint: free tier with starter credits, paid from $24/month for 1,600 credits, roughly 30 credits per image and 17 credits per second of video, so a minute of video is not cheap. Ad-format oriented; it is not a general shot-generation tool."
+    "verified": "2026-09-08",
+    "notes": "Disclosure: a direct competitor to Martini, this directory's sponsor, listed on the same terms as everything else. Endpoint verified alive and auth-gated (401) on 2026-09-08 and the tool list is taken verbatim from Wireflow's own MCP docs, which now claim 43 registered tools while naming 25 — trust live `tools/list` over either figure. Closed source, no public repo, and the vendor documents only connector-UI setup — the CLI command above is the standard streamable-HTTP form of the documented endpoint. Credits are the real constraint: the free tier browses and builds but has no generation credits, Starter is $24/month for 1,600, Professional $45 for 4,300, Team $249 for 21,500, with $10 top-ups buying 500-600 more depending on tier. Budget roughly 30 credits per image and 17 credits per second of video, so a minute of video is not cheap. Useful nuance the docs are explicit about: only run_workflow and automation execution spend credits, so authoring and cloning workflows costs nothing until you ask for a render. Ad-format oriented; it is not a general shot-generation tool."
   },
   {
     "slug": "revid",

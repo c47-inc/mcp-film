@@ -753,5 +753,32 @@
     "added": "2026-09-04",
     "verified": "2026-09-04",
     "notes": "First-party to the LeClap project — the MCP package lives in its monorepo — but that project is one maintainer's open-source work, not a company, so it is listed as community. MIT, 24 stars on the monorepo, npm @leclap/mcp 0.3.4 (24 Aug 2026), listed in the official MCP registry as dev.leclap/video. Node >=24.11.0 — an unusually aggressive floor that will bounce most CI images and any Node 22 LTS setup. FFmpeg is not bundled for the npx path: the engine looks for a system binary first and falls back to an optional `ffmpeg-static` that `npx -y @leclap/mcp` will not install for you, so put ffmpeg on PATH. Set LECLAP_MCP_MEDIA_DIR deliberately — local inputs must resolve inside it via a symlink-safe containment check, and pointing it at your home directory hands every tool call the run of it. `render_remotion_clip` runs your project's own JavaScript under headless Chromium and is therefore off unless you pass --allow-remotion; it also needs @remotion/renderer and @remotion/bundler installed yourself, and Remotion's own licence applies. Determinism is per platform, not across them — Node and browser encode with libx264, Android with libopenh264, iOS with h264_videotoolbox, and the on-device build silently drops boxblur and rewrites eq to lutyuv. There is no template catalogue; the server authors descriptors from the schema. Renders are 10-minute-capped by default. The MCP package is under a month old — read it as promising, not proven."
+  },
+  {
+    "slug": "claude-real-video",
+    "name": "claude-real-video (crv)",
+    "vendor": "Community (HUANGCHIHHUNGLeo)",
+    "official": false,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Lets an agent actually watch footage locally — scene-cut keyframes plus transcript, no upload.",
+    "description": "crv turns a local file or a URL into something an LLM can read: it detects scene changes with ffmpeg rather than sampling on a fixed interval, deduplicates near-identical frames by pixel difference, transcribes the audio with Whisper, and hands back frames plus a manifest. The MCP mode adds a memory layer — every watched video is indexed, so an agent can ask questions across the whole library instead of one clip at a time. For a filmmaker-agent this is the dailies-review bench that TwelveLabs and Valossa do in the cloud, done on your own machine with nothing leaving it.",
+    "capabilities": ["video-understanding", "scene-detection", "keyframe-extraction", "transcription", "footage-search", "local-post"],
+    "tools_sample": ["watch_video", "get_frames", "get_transcript", "search_memory", "list_watched"],
+    "install": {
+      "claude_code": "claude mcp add crv -- crv-mcp",
+      "remote_url": null,
+      "stdio_command": "crv-mcp (after `pip install 'claude-real-video[mcp]'`)"
+    },
+    "auth": { "type": "none", "env_var": null, "key_url": null },
+    "pricing": "freemium",
+    "links": {
+      "repo": "https://github.com/HUANGCHIHHUNGLeo/claude-real-video",
+      "docs": "https://pypi.org/project/claude-real-video/",
+      "site": null
+    },
+    "added": "2026-09-08",
+    "verified": "2026-09-08",
+    "notes": "MIT, 2,125 stars and 186 forks off a repo created 2026-06-30 — one of the fastest-rising media servers of the summer, released as v0.10.3 on 2026-08-31 and registered as io.github.HUANGCHIHHUNGLeo/claude-real-video. Two traps. First, MCP is an extra, not the default: plain `pip install claude-real-video` gives you the `crv` CLI with no server, and the `claude mcp add` line above only works after installing the `[mcp]` extra. Second, the GitHub README documents the CLI only — the MCP section, the five tool names and the `crv-mcp` entry point are documented on PyPI and in pyproject.toml on the `master` branch, while the `main` branch still carries 0.4.0 metadata, so read master or PyPI and ignore main. FFmpeg must be on PATH and is not pip-installable; Python >=3.10; transcription needs the `[whisper]` or `[fast]` extra, which is a large download. Analyses cache under ~/.cache/crv-mcp, so repeat questions are cheap but the directory grows without bound. Frames come back as images, so a long video is expensive in tokens — reach for get_transcript when you only need the words. Free and local, but the author sells a one-time $19 'crv Pro' with motion analysis and better memory search, and the free memory search is word matching rather than semantic. Downloading from a URL is your legal problem, not the tool's."
   }
 ]
