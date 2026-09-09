@@ -42,8 +42,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/pasie15/mcp-server-hedra", "docs": "https://www.hedra.com/docs/pages/developer/getting_started/quickstart", "site": "https://www.hedra.com" },
     "added": "2026-06-11",
-    "verified": "2026-08-12",
-    "notes": "MIT, Node 18+, and effectively frozen: npm mcp-server-hedra is still at the 1.0.0 published on 2026-02-08, the repo has had no push since the same day, and it sits at 2 stars. Still the only Hedra MCP — no official one exists. Two drifts to expect: the key page moved to hedra.com/develop/api-keys (the README's /api-profile link is stale), and where the README lists Veo 3.1, Sora 2, Kling and MiniMax, Hedra's current quickstart advertises Nano Banana Pro, Veo, Grok and Kling — Sora 2 leaves OpenAI's API on 2026-09-24 regardless. The API bills against the same Studio credit balance as the app and needs a paid subscription."
+    "verified": "2026-09-09",
+    "notes": "No longer the only way in: Hedra shipped an official hosted MCP on 2026-08-31 at mcp.hedra.com, listed here as `hedra-official`, and it is the better default — OAuth instead of a pasted key, and the current model roster instead of a frozen one. Reach for this community server only when you want named Character-3 tools driven by a plain API key, which the official endpoint does not document. Re-checked 2026-09-09 and nothing here has moved: npm mcp-server-hedra is still the 1.0.0 published 2026-02-08, the repo has had no push since the same day, MIT, Node 18+, 2 stars. Drifts to expect against its README: the key page is hedra.com/develop/api-keys (the README's /api-profile link is stale), and the third-party model list has aged badly — Hedra's platform now fronts Seedance 2.5, MiniMax Hailuo 2.3, Kling 2.6 Pro and Nano Banana Pro, while Sora 2 leaves OpenAI's API on 2026-09-24. Character-3 itself is alive and still on Hedra's model page. The API bills against the same Studio credit balance as the app and needs a paid subscription."
   },
   {
     "slug": "tavus",
@@ -53,7 +53,7 @@
     "category": "avatars-performance",
     "featured": false,
     "tagline": "Phoenix replicas, persona videos, lipsync, and conversational AI via the Tavus API.",
-    "description": "Comprehensive community MCP server exposing 25 tools across the full Tavus API: Phoenix replica (digital twin) training, persona management, video generation, real-time conversational video (CVI), lipsync, and speech synthesis. Tavus has no first-party MCP server; this is the most complete open implementation.",
+    "description": "Comprehensive community MCP server exposing 25 tools across the full Tavus API: Phoenix replica (digital twin) training, persona management, video generation, real-time conversational video (CVI), lipsync, and speech synthesis. Tavus now ships a first-party MCP too, but it covers only conversational-agent configuration — for replica training, video generation and lipsync this is still the only MCP that reaches them.",
     "capabilities": ["digital-twin", "avatar-video", "conversational-video", "lip-sync", "tts"],
     "tools_sample": ["create_replica", "generate_video", "create_conversation", "create_persona", "create_lipsync", "generate_speech"],
     "install": {
@@ -65,8 +65,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/rakeshdavid/Tavus-MCP", "docs": "https://docs.tavus.io", "site": "https://www.tavus.io" },
     "added": "2026-06-11",
-    "verified": "2026-08-12",
-    "notes": "Install caveat, re-confirmed on 2026-08-12: the README's npm package (tavus-mcp) is still NOT on npm — the registry 404s — so install from source or via Smithery. The 25 documented tools still match the README, but the repo has had no commit since 2025-07-09 and holds 2 stars, so treat it as unmaintained rather than merely quiet; it is listed because Tavus still ships no first-party MCP and this remains the most complete open implementation. Tavus free developer plan: ~25 min conversational video + 5 min generation. Built on an old MCP SDK version."
+    "verified": "2026-09-09",
+    "notes": "The landscape changed on 2026-08-31 and the answer did not. Tavus now has an official MCP — hosted at https://mcp.tavus.io/mcp (`claude mcp add -s user --transport http tavus https://mcp.tavus.io/mcp`, browser OAuth, no key in your config) or locally via `uvx --from 'tavus-cli[daily]' tavus-mcp` from PyPI tavus-cli 0.4.3. It is not a substitute: all 72 of its tools configure PALs — prompts, objectives, guardrails, knowledge, tool wiring, chat-mode testing — and Tavus's own tools reference lists no replica training, no video generation and no lipsync. That is a conversational-agent product, which is why it is not listed here separately and this server still is. What you are living with, re-confirmed 2026-09-09: the README's npm package (tavus-mcp) is still not on npm — the registry 404s — so install from source or via Smithery; the repo has had no commit since 2025-07-09 and holds 2 stars, so treat it as unmaintained rather than quiet; it is built on an old MCP SDK version. Tavus free developer plan: ~25 min conversational video + 5 min generation."
   },
   {
     "slug": "d-id",
@@ -88,8 +88,8 @@
     "pricing": "freemium",
     "links": { "repo": null, "docs": "https://docs.d-id.com/docs/mcp", "site": "https://www.d-id.com" },
     "added": "2026-06-11",
-    "verified": "2026-08-12",
-    "notes": "Docs-platform-hosted (ReadMe-powered) remote MCP; endpoint re-confirmed on 2026-08-12 but the exact tool list is still not published openly. Auth is whatever your client can send: D-ID's own guidance is that you pass API credentials as headers or query parameters through the MCP client, so there is no OAuth flow and no standard env var. Landscape note: Synthesia still has no official MCP (only marginal community wrappers and generic Zapier/viaSocket gateways)."
+    "verified": "2026-09-09",
+    "notes": "Docs-platform-hosted (ReadMe-powered) remote MCP; endpoint and setup text re-confirmed unchanged on 2026-09-09, and the exact tool list is still not published openly — D-ID describes the surface only as API access, docs search, live account data and code generation. Auth is whatever your client can send: D-ID's own guidance is that you pass API credentials as headers or query parameters through the MCP client, so there is no OAuth flow and no standard env var. Manage expectations about what a docs-platform MCP is — it is closer to a documentation copilot with API reach than a purpose-built generation server, and nothing about the tool surface is contractual. Landscape note: Synthesia still has no official MCP (only marginal community wrappers and generic Zapier/viaSocket gateways)."
   },
   {
     "slug": "sync-labs",

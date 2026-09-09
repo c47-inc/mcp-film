@@ -1,5 +1,45 @@
 [
   {
+    "slug": "hedra-official",
+    "name": "Hedra MCP (Official)",
+    "vendor": "Hedra",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "Hedra's own hosted MCP: one OAuth URL onto its whole image, video and audio catalogue.",
+    "description": "Hedra shipped a first-party remote MCP alongside its CLI on 2026-08-31, which quietly turns a talking-avatar vendor into an inference hub an agent can address directly. One endpoint reaches the platform roster — Veo 3.1, Sora 2 Pro, Kling 2.6 Pro, Seedance 2.5, Hailuo 2.3, Luma Ray 3.2 and Hedra's own Character 3 for video; Nano Banana Pro, GPT Image 2, Seedream 4.5 and Flux.2 [max] for stills; ElevenLabs voice, music and SFX for sound. Hedra also advertises visual understanding on the same connection, so a filmmaker-agent can look at the frame it just rendered before deciding the next shot.",
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "text-to-image",
+      "avatar-video",
+      "tts",
+      "music-generation",
+      "sound-effects",
+      "visual-understanding"
+    ],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http hedra https://mcp.hedra.com",
+      "remote_url": "https://mcp.hedra.com",
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Browser OAuth against https://auth.hedra.com — S256 PKCE with an open registration_endpoint, so there is no key to paste. The separate CLI takes HEDRA_API_KEY from https://www.hedra.com/develop/api-keys."
+    },
+    "pricing": "credits",
+    "links": {
+      "repo": null,
+      "docs": "https://www.hedra.com/mcp",
+      "site": "https://www.hedra.com"
+    },
+    "added": "2026-09-09",
+    "verified": "2026-09-09",
+    "notes": "Verified 2026-09-09 from Hedra's own pages. The connect line above is copied verbatim from hedra.com/mcp, and the OAuth chain checks out: mcp.hedra.com/.well-known/oauth-protected-resource names https://auth.hedra.com as the authorization server with bearer-header auth, and that server publishes authorization_code, refresh_token and device_code grants, S256 PKCE and a registration_endpoint, so Dynamic Client Registration works and no pre-shared credential is needed. Two caveats. First, the only scopes advertised are openid, profile, email and offline_access — nothing generation-specific — so the token is an identity token and your reach is whatever your Hedra account can already do, with no way to hand an agent a narrower grant. Second, no tool list is published anywhere: the setup page gives a URL and nothing else, the server is closed source with no repo, and hedra-labs' public repos cover only the CLI and SDKs. Call tools/list and find out. Billing is 'your Hedra subscription or pay as you go' against the same credits as the app, and the roster is Hedra's to churn — Sora 2 is listed today but leaves OpenAI's API on 2026-09-24. For named Character-3 tools driven by a plain API key instead of OAuth, the community `hedra` server still does that and this one does not document it."
+  },
+  {
     "slug": "inference-sh",
     "name": "inference.sh MCP Server",
     "vendor": "inference.sh",
