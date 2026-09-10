@@ -181,8 +181,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/samuelgursky/davinci-resolve-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-08-29",
-    "notes": "~2.3k stars, MIT, v2.103.3 released Aug 29 2026 — the most actively maintained NLE MCP in this directory, and now shipping almost daily. The Studio-only wall has come down: Blackmagic still gates external scripting to Studio, but the project ships an in-app bridge that runs from Resolve's ungated Workspace > Scripts menu, so free-edition users can reach the MCP too. Resolve 18.5+ on macOS, Windows or Linux; Python 3.10-3.12 is the low-risk range (3.13/3.14 work on recent Resolve builds and can fail on older ones). The README claims full coverage of the official scripting API across 36 compound tools (353 granular), 93.6% live-tested against Resolve 19.1.3, 20.3.2 and 21.0.3 — that number is the maintainer's, not ours. macOS gotcha: Resolve only looks for Python in PYTHON3HOME or /usr/local/bin/python3, so Homebrew installs need a launchctl fix. tools_sample is null because the exposed tool list tracks Resolve's scripting API and moves between releases — read tools/list rather than trusting a cached name."
+    "verified": "2026-09-10",
+    "notes": "Blackmagic is now in this lane itself. Resolve 21.1 shipped 8 Sep 2026, and Blackmagic's own download description says DaVinci Resolve Studio 21.1 'adds new individual MultiMaster trims on the color page, integration with AI assistants and 20 new scripting APIs with built-in console support' — the free 21.1 description says nothing of the kind, so first-party agent control is Studio-only. Trade coverage describes it as a native MCP server, but Blackmagic has published no fetchable setup docs, tool list or endpoint, so we are not listing it as a separate server until those exist; if you are on Studio 21.1, check the built-in path before installing anything below. The community server remains the option for the free edition and for older Resolve builds. 2,592 stars, MIT, v2.223.0 released 9 Sep 2026 — the most actively maintained NLE MCP in this directory, and now shipping many releases a day. The Studio-only wall has come down: Blackmagic still gates external scripting to Studio, but the project ships an in-app bridge that runs from Resolve's ungated Workspace > Scripts menu, so free-edition users can reach the MCP too. Resolve 18.5+ on macOS, Windows or Linux; Python 3.10-3.12 is the low-risk range (3.13/3.14 work on recent Resolve builds and can fail on older ones). The README claims full coverage of the official scripting API across 36 compound tools (353 granular), 93.6% live-tested against Resolve 19.1.3, 20.3.2 and 21.0.3 — that number is the maintainer's, not ours. macOS gotcha: Resolve only looks for Python in PYTHON3HOME or /usr/local/bin/python3, so Homebrew installs need a launchctl fix. tools_sample is null because the exposed tool list tracks Resolve's scripting API and moves between releases — read tools/list rather than trusting a cached name."
   },
   {
     "slug": "palmier-pro",
@@ -607,9 +607,9 @@
     "category": "editing-post",
     "featured": false,
     "tagline": "Local MCP and CLI toolkit for agent-driven video composition, editing, analysis, and rendering.",
-    "description": "OrkasVideoStudio gives coding agents typed MCP tools for building editable plan.json timelines, rendering HyperFrames compositions, and handling practical post work with ffmpeg. It can trim, concatenate, mix, caption, transcribe, inspect shots, and run deterministic delivery checks before a final render. The zero-key path works locally; image, speech, and video generation are optional provider-backed extensions.",
-    "capabilities": ["video-composition", "timeline-editing", "rendering", "ffmpeg-editing", "transcription", "captioning", "shot-analysis", "delivery-qa"],
-    "tools_sample": ["draft", "render", "edit_trim", "edit_concat", "edit_burnsubs", "edit_mix", "transcribe", "scenes", "quality", "plan_promise_check"],
+    "description": "OrkasVideoStudio gives coding agents 37 typed MCP tools for building editable plan.json timelines, rendering HyperFrames compositions, and handling practical post work with ffmpeg. It can trim, concatenate, mix, caption, transcribe, OCR, measure loudness, detect silence and shot boundaries, and run deterministic delivery checks before a final render. The zero-key path works locally; image, speech, and video generation are optional provider-backed extensions.",
+    "capabilities": ["video-composition", "timeline-editing", "rendering", "ffmpeg-editing", "transcription", "captioning", "shot-analysis", "loudness-metering", "delivery-qa"],
+    "tools_sample": ["ovs_doctor", "draft", "render", "check", "snapshot", "edit_trim", "edit_concat", "edit_normalize_loudness", "transcribe", "scenes", "quality", "plan_promise_check"],
     "install": {
       "claude_code": "claude mcp add ovs -- node /absolute/path/to/Orkas-VideoStudio/packages/mcp/dist/index.js",
       "remote_url": null,
@@ -619,8 +619,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/Orkas-AI/Orkas-VideoStudio", "docs": "https://github.com/Orkas-AI/Orkas-VideoStudio#readme", "site": null },
     "added": "2026-08-12",
-    "verified": "2026-08-12",
-    "notes": "MIT and source-installable while the npm packages are still being published. The working path requires Node 22+, pnpm, a source build, and ffmpeg/ffprobe for editing and local media QA. The MCP is local stdio only, and generated media is written to caller-supplied filesystem paths. The core composition, editing, analysis, transcription, and render path needs no provider key; speech, image, and video generation require separately configured provider credentials."
+    "verified": "2026-09-10",
+    "notes": "Do not copy the README's install line. It advertises `npm i -g @orkas/video-studio` and `claude mcp add ovs -- npx -y @orkas/video-studio-mcp`, and neither package exists on npm — both 404 as of 10 Sep 2026, a month after the README first called publication imminent. The source build above is still the only path that works: clone, Node 22+, pnpm install && pnpm build, then point the client at packages/mcp/dist/index.js (the package's own bin target). ffmpeg and ffprobe must be on PATH for editing and local media QA. Momentum is real otherwise — 485 stars, pushed daily, last commit 10 Sep 2026, internal version 2026.9.10 — and the MCP surface has grown to 37 tools covering composition scaffolding, ffmpeg edits, loudness, OCR, silence and scene detection, plan validation and skills. The vendor also ships a native skills path (`ovs skills --install --target claude`) if you would rather not run an MCP at all. Still MIT, still local stdio only, and generated media is written to caller-supplied filesystem paths. The compose/edit/transcribe trunk needs no provider key; speech, image, and video generation require your own OpenAI, Gemini, ElevenLabs or similar credentials."
   },
   {
     "slug": "avclabs",
@@ -629,21 +629,21 @@
     "official": true,
     "category": "enhancement",
     "featured": false,
-    "tagline": "Cloud video upscaling, image restoration, and SAM3 segmentation without a local GPU.",
-    "description": "AVCLabs' first-party MCP wraps its cloud enhancement backend: upscale and denoise video to 1080p/2K, enhance or colorize stills, and run Meta's SAM3 to pull pixel-level masks from an image by text prompt. Video runs as an async job (create_task then poll get_task_status) so long clips survive the client timeout. For an agent, this is the desktop Video Enhancer AI workflow reachable as tools — useful for cleaning up archival plates or lifting generated footage that came out soft.",
-    "capabilities": ["video-upscaling", "denoising", "image-enhancement", "colorization", "restoration", "segmentation"],
-    "tools_sample": ["create_task", "get_task_status", "enhance_video_sync", "enhance_image_sync", "colorize_image_sync", "denoise_image_sync", "sam3_predict", "get_sam3_task_status"],
+    "tagline": "Cloud video upscaling and SAM3 segmentation without a local GPU, billed by the second.",
+    "description": "AVCLabs' first-party MCP wraps its cloud enhancement backend: upscale and denoise video to 1080p/2K, and run Meta's SAM3 to pull pixel-level masks from an image by text prompt. Video runs as an async job (create_task then poll get_task_status) so long clips survive the client timeout. For an agent, this is the desktop Video Enhancer AI workflow reachable as tools — useful for cleaning up archival plates or lifting generated footage that came out soft, as long as the clip is short enough to be worth the credits.",
+    "capabilities": ["video-upscaling", "denoising", "segmentation"],
+    "tools_sample": ["create_task", "get_task_status", "enhance_video_sync", "sam3_predict"],
     "install": {
       "claude_code": "claude mcp add avclabs -e API_KEY=YOUR_KEY -- npx -y @avclabs.ai/media-mcp@latest",
       "remote_url": null,
       "stdio_command": "npx -y @avclabs.ai/media-mcp@latest"
     },
     "auth": { "type": "api_key", "env_var": "API_KEY", "key_url": "https://mcp.avc.ai/" },
-    "pricing": "paid",
+    "pricing": "credits",
     "links": { "repo": "https://github.com/avclabs/media-mcp", "docs": "https://www.avclabs.com/avclabs-mcp.html", "site": "https://mcp.avc.ai" },
     "added": "2026-08-12",
-    "verified": "2026-08-12",
-    "notes": "Official but barely trafficked: the repo has 0 stars and was last pushed 15 Jun 2026, and npm @avclabs.ai/media-mcp is on 0.2.1 from 22 May 2026. MIT, Node 18+, thin client over AVCLabs' HTTP backend. Ceiling is 1080p/2K — below what Topaz or the Topaz models on fal will give you, so this is the cheap-and-cloud option, not the finishing one. enhance_video_sync blocks and truncates around 50s; use create_task plus get_task_status for anything real. SAM3 segmentation is image-only, so it is a masking tool, not video roto. The vendor documents a JSON mcpServers block rather than a CLI one-liner — the command above is the same command/args/env in claude mcp add form. Pricing is behind a Buy Now page at mcp.avc.ai/pricing that did not render for verification, so per-job cost is unconfirmed; the generic env var name API_KEY will also collide if you set it globally."
+    "verified": "2026-09-10",
+    "notes": "The README oversells what you can actually install. Unpacking npm @avclabs.ai/media-mcp 0.2.1 — still the latest, published 22 May 2026 — shows exactly four registered tools: create_task, get_task_status, enhance_video_sync and sam3_predict. The four image tools (enhance_image_sync, colorize_image_sync, denoise_image_sync, get_image_task_status) and get_sam3_task_status appear only on the main branch as an unreleased 0.3.0 candidate, so `npx @latest` does not give you stills work at all; SAM3 polling happens inside sam3_predict, tuned by SAM3_POLL_INTERVAL and SAM3_POLL_MAX_ATTEMPTS. Our earlier tool list here repeated the README and was wrong — corrected 10 Sep 2026. The repo is alive again (pushed 6 Sep 2026 after a June lull) but still sits at 0 stars, and nothing new has shipped to npm in three and a half months. Pricing finally rendered: 1 credit per second of video and 1 credit per image mask, against Starter $9.95/mo for 100 credits, Pro $25.95 for 300, Advanced $39.95 for 500, or one-time packs from $19.95/50 — so the entry plan buys about 100 seconds of enhanced footage a month, which makes this a spot-fix tool, not a pass over a reel. MIT, Node 18+, 100MB upload cap, thin client over AVCLabs' HTTP backend; base URLs are overridable via HTTP_API_BASE_URL and SAM3_API_BASE_URL. Ceiling is 1080p/2K — below Topaz or the Topaz models on fal, so this is the cheap-and-cloud option, not the finishing one. enhance_video_sync blocks and truncates around 50s; use create_task plus get_task_status for anything real. SAM3 segmentation is image-only, so it is a masking tool, not video roto. The vendor documents a JSON mcpServers block rather than a CLI one-liner — the command above is the same command/args/env in claude mcp add form. The generic env var name API_KEY will collide if you set it globally."
   },
   {
     "slug": "opusclip",
