@@ -9,11 +9,17 @@ on:
   schedule:
     - cron: "17 6 * * *" # daily 06:17 UTC
   workflow_dispatch:
+    inputs:
+      retry:
+        description: "Set by the failure step when it re-dispatches a failed scheduled run"
+        type: boolean
+        default: false
 
 permissions:
   issues: write
   contents: write
   pull-requests: write
+  actions: write # the failure step re-dispatches this workflow once
   # claude-code-action authenticates by exchanging a GitHub OIDC token. Without this
   # the action fails before it ever reads the prompt — the curator was broken this way
   # from day one, underneath the missing-secret failure that masked it.
@@ -75,7 +81,7 @@ jobs:
           # needs: node for the build gate and logo fetcher, git/gh to ship the PR,
           # and the web tools it verifies primary sources with. Not Bash(*).
           claude_args: |
-            --max-turns 80
+            --max-turns 100
             --allowedTools "Read,Glob,Grep,Edit,Write,WebSearch,WebFetch,Bash(node:*),Bash(git:*),Bash(gh:*)"
           prompt: |
             You are the daily curator for mcp.film, the directory of MCP servers
@@ -124,8 +130,20 @@ jobs:
               describe it in the PR body instead of changing it.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Sep 2026: five of six scheduled runs died in turn 1 with zero model usage,
+      # and the identical config re-run by hand the same day succeeded — transient
+      # API-side failures at the 06:17 cron slot. Re-dispatch once before alerting.
+      # The Sep 8 run also "failed" by overrunning 80 turns after it had already
+      # pushed its PR, hence 100 above.
+      - name: Retry once
+        if: failure() && steps.gate.outputs.skip != 'true' && github.event.inputs.retry != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run curator.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" -f retry=true
+          echo "Run failed; re-dispatched once with retry=true. Alerting only if that run fails too." >> "$GITHUB_STEP_SUMMARY"
       - name: Alert on failure
-        if: failure() && steps.gate.outputs.skip != 'true'
+        if: failure() && steps.gate.outputs.skip != 'true' && github.event.inputs.retry == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
