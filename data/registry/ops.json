@@ -9,7 +9,7 @@
     "tagline": "Official hosted Airtable MCP: query, create, and update production-tracking bases.",
     "description": "Airtable's official remote MCP server lets agents search bases, read schemas, filter/sort records, create and update rows, build interface pages, and draft automations — ideal for shot trackers, casting sheets, asset libraries, and budgets. OAuth via Dynamic Client Registration (or a personal access token), and it enforces each user's existing Airtable permissions.",
     "capabilities": ["base-search", "schema-inspection", "record-crud", "record-search", "comments", "table-creation", "interface-pages", "automations"],
-    "tools_sample": ["search_bases", "list_tables_for_base", "get_table_schema", "list_records_for_table", "search_records", "create_records_for_table", "update_records_for_table", "create_table"],
+    "tools_sample": ["list_workspaces", "search_bases", "create_base", "list_tables_for_base", "get_table_schema", "list_records_for_table", "search_records", "create_records_for_table", "update_records_for_table", "create_table", "list_pages_for_base", "list_records_for_page"],
     "install": {
       "claude_code": "claude mcp add --transport http airtable https://mcp.airtable.com/mcp",
       "remote_url": "https://mcp.airtable.com/mcp",
@@ -17,10 +17,10 @@
     },
     "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth browser flow (primary); PATs also supported at https://airtable.com/create/tokens" },
     "pricing": "freemium",
-    "links": { "repo": null, "docs": "https://support.airtable.com/docs/using-the-airtable-mcp-server", "site": "https://www.airtable.com" },
+    "links": { "repo": null, "docs": "https://airtable.com/developers/agents/mcp/getting-started", "site": "https://www.airtable.com" },
     "added": "2026-06-11",
-    "verified": "2026-08-12",
-    "notes": "Endpoint and tool names unchanged on re-check. Airtable now ships an official Claude Code plugin — claude plugin install airtable@claude-plugins-official — which bundles the server with skills; the plain claude mcp add form above still works. PAT auth is a manual Authorization: Bearer ${AIRTABLE_PAT} header. Limits that bite: creates cap at 10 records per request, base creation needs Creator+, automations can only be written as drafts (activation is UI-only), development bases return 403, and Enterprise admins may have to allowlist the integration. Airtable's own docs warn that tool names and behaviours may change, so treat the list above as a snapshot. Community stdio alternative: domdomegg/airtable-mcp-server (454 stars, npx airtable-mcp-server with a PAT)."
+    "verified": "2026-09-15",
+    "notes": "Endpoint unchanged, but the docs and the tool surface both moved: Airtable now runs a developer-portal guide (linked above, and the authoritative source on DCR and PAT auth) alongside the help-centre article at support.airtable.com/docs/using-the-airtable-mcp-server. The interface-page and workspace tools are now documented by name — list_pages_for_base, list_records_for_page, get_record_for_page, create_base, list_workspaces — and Airtable still publishes no total count, so treat the list above as a snapshot. Correction to the earlier note here: MCP is on every plan at no added cost, so base creation is gated by collaborator rights, not plan tier — base Owners/Creators get schema and records, Editors get records only, and interface-only users see nothing beyond the interface pages shared with them. Limits that bite: creates cap at 10 records per request, new automations land as drafts you must activate in the UI, automations containing Script actions cannot be edited at all over MCP, existing interfaces cannot be modified (create/publish/delete only), development bases return a 403, and usage counts against your normal API rate limits. Enterprise admins may still have to allowlist the client ID under Admin Panel > Settings > Integrations & development > Third party integration allowlist. The official Claude Code plugin — claude plugin install airtable@claude-plugins-official — is still published and bundles the server with skills; the plain claude mcp add form above works without it. PAT auth is a manual Authorization: Bearer ${AIRTABLE_PAT} header. Community stdio alternative, still active: domdomegg/airtable-mcp-server (457 stars, pushed 9 Sep 2026, npx airtable-mcp-server with a PAT)."
   },
   {
     "slug": "notion",

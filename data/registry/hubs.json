@@ -339,5 +339,51 @@
     "added": "2026-08-20",
     "verified": "2026-08-20",
     "notes": "Read the licence before you bill a client: Foundry's pricing page puts the free tier under 'Non-Commercial', single user, testing only. Professional is $40/user/month (or $400/year, capped at three users) and includes $40 of model credits — running open-source models locally or wiring in your own provider keys does not spend them. The engine is closed source, so links.repo is null: PyPI griptape-nodes is proprietary-licensed (0.95.1, published 20 Aug 2026, 199 releases — the cadence is real), and github.com/griptape-ai/griptape-nodes-app 404s to the public. The node libraries are open, Apache-2.0, and moving: griptape-nodes-library-nuke was pushed the same day. Two things to know about the MCP endpoint — it binds to localhost:8125 with no authentication at all (Griptape's own docs warn you not to bind 0.0.0.0), and the tool surface is not published anywhere, so run tools/list once connected; tools_sample stays null rather than guessed. Override the bind with GTN_MCP_SERVER_HOST and GTN_MCP_SERVER_PORT. Foundry acquired Griptape on 18 Feb 2026 and the deeper Nuke agent work shown at NAB is still early access, so this endpoint is what you can actually connect to today."
+  },
+  {
+    "slug": "imagine-art",
+    "name": "Imagine MCP",
+    "vendor": "ImagineArt (Vyro AI)",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "One OAuth endpoint onto ImagineArt's video, image and music models — 96 tools, no keys.",
+    "description": "ImagineArt's official remote MCP exposes its whole generation catalogue through a single OAuth endpoint: text-to-video against Sora, Veo, Kling 3, Seedance, Runway, Hailuo, Wan and Luma; stills from Seedream, Flux, Imagen and Midjourney; plus music, upscaling, background removal and two guided pipelines (Ad Studio, Fashion Studio). For a filmmaker-agent it is a one-connection route to several flagship video models that have no first-party MCP, billed against one credit balance instead of six vendor accounts.",
+    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "image-editing", "upscaling", "background-removal", "music", "credit-balance"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http imagine https://mcp.imagine.art",
+      "remote_url": "https://mcp.imagine.art",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser OAuth against an existing imagine.art account — no API key to generate or rotate; the endpoint's protected-resource metadata points at auth.vyro.ai with scopes openid, email and mcp:tools" },
+    "pricing": "credits",
+    "links": { "repo": null, "docs": "https://www.imagine.art/mcp", "site": "https://www.imagine.art" },
+    "added": "2026-09-15",
+    "verified": "2026-09-15",
+    "notes": "Announced 15 Sep 2026, so this is a day-one listing — the endpoint is live and serves OAuth protected-resource metadata, but nothing here has been stress-tested across a production week. No free tier: ImagineArt's cheapest plan is Basic at $13/mo for 3,000 credits, and MCP calls draw on the same platform credits as the web app, so an agent on an empty balance gets nothing. The vendor claims 96 tools but publishes no tool list, hence tools_sample is null — run tools/list once connected. ImagineArt's own connect page documents the custom-connector UI rather than a CLI command; the claude mcp add form above is the standard HTTP-transport equivalent for the endpoint its metadata advertises (resource https://mcp.imagine.art/), not a command quoted from the vendor. Hard output ceilings to plan around: stills up to 4K, clips of five or ten seconds depending on the model, music around thirty seconds — this is a shot-generation hub, not a long-form tool. The vendor's own setup blog posts have already 410'd, which tells you something about the documentation's half-life. Broader, better-proven aggregators: fal, replicate, kie-ai."
+  },
+  {
+    "slug": "empiriolabs",
+    "name": "EmpirioLabs AI MCP",
+    "vendor": "EmpirioLabs.ai LLC",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "Remote hub over 180+ hosted models: video, image, speech, 3D, plus GPUs by the hour.",
+    "description": "EmpirioLabs' official remote MCP puts its inference platform behind one streamable-HTTP endpoint — generate_video against Kling O3, Wan 2.7, Seedance 2.0 Pro, Hunyuan Video 1.5, Pixverse V5.6 and SVI 2.0 Pro, stills from Qwen Image 2.0, Seedream 5.0 Lite, Hunyuan Image 3 and Nova Canvas, speech from GLM-TTS and Gemini TTS, music from Stable Audio 2.5, plus transcription, 3D generation and a compose_video recipe step. Useful to a filmmaker-agent as a cheap second source for open-weights video models and for the rarer surfaces most hubs skip: 3D assets and per-hour GPU instances in the same connection.",
+    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "image-editing", "text-to-3d", "tts", "music", "transcription", "model-search", "async-jobs", "batch-jobs"],
+    "tools_sample": ["list_models", "get_model", "generate_video", "generate_image", "edit_image", "compose_video", "generate_3d", "text_to_speech", "generate_audio", "transcribe_audio", "analyze_image", "get_job"],
+    "install": {
+      "claude_code": "claude mcp add --transport http empiriolabs https://mcp.empiriolabs.ai/mcp",
+      "remote_url": "https://mcp.empiriolabs.ai/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth 2.1 browser sign-in for Claude and ChatGPT; scripts and editors can instead send an EmpirioLabs API key as an Authorization: Bearer header. Scopes are per-toolset (media, models, jobs, gpu, hosted_agents, …)" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/EmpirioLabs-AI/mcp", "docs": "https://docs.empiriolabs.ai/mcp", "site": "https://empiriolabs.ai" },
+    "added": "2026-09-15",
+    "verified": "2026-09-15",
+    "notes": "Listed one day after launch: the repo was created 14 Sep 2026, has 0 stars and no LICENSE file, and is a README pointing at the hosted endpoint rather than server code. The endpoint itself is real — it serves OAuth protected-resource metadata naming platform.empiriolabs.ai — and the docs are unusually complete for a new service, but treat this as unproven and check pricing yourself before committing a pipeline to it. Only 13 of the 78 tools are media generation; 39 are GPU-cloud and hosted-agent plumbing that a film pipeline will never call, so scope the connection down if your client supports it. Two operational traps: generation tools block for at most 50 seconds and then hand back a job_id you have to poll via get_job, and output URLs are signed and expire, so download anything you intend to keep. Read-only catalog, job and usage tools cost nothing. No free tier — pay-as-you-go prepaid credits (crypto top-ups accepted) or weekly allowance plans from $19.90/mo, and those allowances are trivial for film work: Lite grants 20 seconds of video and 7 images per week, Max 240 seconds. Model naming is self-reported by the platform; verify a slug with list_models rather than trusting a marketing page. For anything load-bearing, fal and replicate have the track record this does not yet."
   }
 ]
