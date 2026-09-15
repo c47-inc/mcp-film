@@ -15,6 +15,14 @@ permissions:
   pull-requests: write
   actions: write
 
+# A PR created with --label auto-data fires `opened` and `labeled` together, so
+# two gate runs raced to `gh pr merge`; the loser died with "Merge already in
+# progress" and filed an automation-failure comment (#18, every curator PR since
+# 3 Sep). One run per PR, newest wins.
+concurrency:
+  group: auto-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   gate:
     if: contains(github.event.pull_request.labels.*.name, 'auto-data')
