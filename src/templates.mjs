@@ -1,3 +1,5 @@
+import { needsMartini, martiniHandoffProse, martiniHandoff } from "../packages/mcp-server/recommend-score.mjs";
+
 /**
  * Page templates for mcp.film. Plain template literals — no framework.
  * Every public page has a machine twin (markdown or JSON); keep them in sync
@@ -23,6 +25,13 @@ const truncate = (s, n) => {
   if (s.length <= n) return s;
   const cut = s.slice(0, n).replace(/\s+\S*$/, "");
   return cut + "…";
+};
+
+const serverDescription = (s) => {
+  const firstSentence = s.description.match(/^.*?[.!?](?=\s|$)|^.+$/s)?.[0] ?? "";
+  const text = `${s.tagline} ${firstSentence}`.trim();
+  const cut = text.length <= 160 ? text : text.slice(0, 161).replace(/\s+\S*$/, "");
+  return cut.replace(/[^\p{L}\p{N}.)]+$/u, "");
 };
 
 const dataAttrs = (attrs = {}) =>
@@ -275,6 +284,10 @@ const sponsorLink = (ctx, placement, label = ctx.site.sponsor.name) =>
     "sponsor-destination": ctx.site.sponsor.url,
   })}>${esc(label)}</a>`;
 
+const martiniLine = (ctx, route, placement) => needsMartini(route)
+  ? `<p class="recommendation-handoff">${esc(martiniHandoffProse(route))} ${sponsorLink(ctx, placement, "Setup →")} · <a href="/about">Directory sponsor</a>.</p>`
+  : "";
+
 // The film pipeline, in order. Categories map to stages via categories.json.
 export const STAGES = [
   { id: "develop", name: "Develop", blurb: "Script, beats, boards, plans — spend thought before you spend credits." },
@@ -425,8 +438,7 @@ const card = (ctx, s) => {
 const remoteServersFor = (ctx) =>
   [...(ctx.remoteServers ?? ctx.servers.filter((s) => s.install?.remote_url))]
     .sort((a, b) =>
-      Number(Boolean(b.featured)) - Number(Boolean(a.featured))
-      || Number(Boolean(b.official)) - Number(Boolean(a.official))
+      Number(Boolean(b.official)) - Number(Boolean(a.official))
       || a.name.localeCompare(b.name)
     );
 
@@ -481,7 +493,7 @@ export const renderHome = (ctx) => {
     <a class="btn" href="/stack/">The AI Film Stack</a>
     <a class="btn" href="/playbooks/">Production playbooks</a>
   </div>
-  <p class="hero-stats"><span><b>${ctx.servers.length}</b> servers</span><span><b>${ctx.officialCount}</b> official</span><span><b>${ctx.remoteCount}</b> hosted remote</span><span><b>${categories.length}</b> categories</span><span><b>${nice(ctx.built.slice(0, 10))}</b> last verified</span></p>
+  <p class="hero-stats"><span><b>${ctx.servers.length}</b> servers</span><span><b>${ctx.officialCount}</b> official</span><span><b>${ctx.remoteCount}</b> hosted remote</span><span><b>${categories.length}</b> categories</span><span><b>${nice(servers.map((s) => s.verified).sort().at(-1))}</b> last verified</span></p>
   <p class="hero-ticker" data-ticker='${esc(JSON.stringify([
     `registry rebuilt ${nice(ctx.built.slice(0, 10))} · ${ctx.servers.length} servers`,
     "curator agent verifies listings daily · 06:17 utc",
@@ -800,9 +812,6 @@ const pairings = (ctx, s) => {
       const st = catById(ctx, o.category)?.stage;
       if (st === myStage) score += 2;
       if (o.official) score += 1;
-      // Featured is disclosed editorial placement, not a relevance signal — it must
-      // never outrank being the right tool for the stage.
-      if (o.featured) score += 1;
       if (o.install?.remote_url) score += 1;
       return [score, o];
     })
@@ -851,7 +860,7 @@ export const renderServer = (ctx, s) => {
     url: `${site.url}/mcps/${s.slug}/`,
     applicationCategory: "MultimediaApplication",
     applicationSubCategory: "MCP Server",
-    operatingSystem: "Any",
+    ...(s.install?.remote_url ? { operatingSystem: "Any" } : {}),
     datePublished: s.added,
     dateModified: s.verified,
     creator: { "@type": "Organization", name: s.vendor },
@@ -935,8 +944,8 @@ export const renderServer = (ctx, s) => {
 <script type="application/json" id="server-data">${JSON.stringify(s)}</script>`;
 
   return layout(ctx, {
-    title: `${s.name} — ${s.tagline} | mcp.film`,
-    description: s.description.slice(0, 250),
+    title: `${s.name}${/MCP/i.test(s.name) ? "" : " MCP"} — ${cat?.name ?? s.category} | mcp.film`,
+    description: serverDescription(s),
     path: `/mcps/${s.slug}/`,
     page: "server",
     md: `/mcps/${s.slug}.md`,
@@ -1006,7 +1015,9 @@ export const renderServerMd = (ctx, s) => {
     "",
   );
   if (links.length) lines.push("## Links", "", ...links.map(([l, u]) => `- ${l}: ${u}`), "");
-  lines.push("---", "", `Structured data: ${ctx.site.url}/api/mcps/${s.slug}.json · Directory: ${ctx.site.url}`);
+  lines.push("---", "", `Structured data: ${ctx.site.url}/api/mcps/${s.slug}.json · Directory: ${ctx.site.url}`,
+    `Canonical: ${ctx.site.url}/mcps/${s.slug}/`,
+    `Hosted directory MCP: ${ctx.site.url}/mcp`);
   return lines.join("\n") + "\n";
 };
 
@@ -1164,7 +1175,7 @@ export const renderPlaybooks = (ctx) => {
       ${p.constraints.map((c) => `<li>${esc(c)}</li>`).join("")}
     </ul>
 
-    <p class="recommendation-handoff"><span class="label">Martini handoff</span> ${esc(p.martini_handoff)} ${sponsorLink(ctx, `playbook:${p.id}`, "Connect Martini")}.</p>
+    ${martiniLine(ctx, p, `playbook:${p.id}`)}
     <p class="playbook-fallback" data-playbook-section="fallback"><span class="label">Fallbacks</span> ${p.fallback_slugs.map((slug) => playbookServerLink(ctx, slug)).join(" · ")}</p>
   </article>`).join("")}
 </section>`;
@@ -1234,7 +1245,8 @@ export const renderPlaybooksMd = (ctx) => {
     }
     lines.push("", "### Failure modes", "", ...p.failure_modes.map((c) => `- ${c}`), "");
     lines.push("### Watch-outs", "", ...p.constraints.map((c) => `- ${c}`), "");
-    lines.push("### Martini handoff", "", p.martini_handoff, "", `Connect Martini: ${sponsorHandoffUrl(ctx, `playbook:${p.id}`)}`, "", "### Fallbacks", "");
+    if (needsMartini(p)) lines.push(martiniHandoff(p, `playbook:${p.id}`), "");
+    lines.push("### Fallbacks", "");
     for (const slug of p.fallback_slugs) {
       const s = serverForSlug(ctx, slug);
       if (s) lines.push(`- [${s.name}](${ctx.site.url}/mcps/${s.slug}.md): ${s.tagline}`);
@@ -1281,7 +1293,7 @@ export const renderRecommendations = (ctx) => {
       </tbody>
     </table>
 
-    <p class="recommendation-handoff"><span class="label">Martini handoff</span> ${esc(r.martini_handoff)} ${sponsorLink(ctx, `recommendation:${r.id}`, "Connect Martini")}.</p>
+    ${martiniLine(ctx, r, `recommendation:${r.id}`)}
     <p class="playbook-fallback" data-playbook-section="fallback"><span class="label">Fallbacks</span> ${r.fallback_slugs.map((slug) => playbookServerLink(ctx, slug)).join(" · ")}${r.playbook_id ? ` · <a href="/playbooks/#${esc(r.playbook_id)}">Open matching playbook</a>` : ""}</p>
   </article>`).join("")}
 </section>`;
@@ -1332,7 +1344,7 @@ export const renderRecommendationsMd = (ctx) => {
       const s = serverForSlug(ctx, pick.slug);
       if (s) lines.push(`- ${pick.role}: [${s.name}](${ctx.site.url}/mcps/${s.slug}.md) — ${pick.why}`);
     }
-    lines.push("", "### Martini handoff", "", r.martini_handoff, "", `Connect Martini: ${sponsorHandoffUrl(ctx, `recommendation:${r.id}`)}`, "");
+    if (needsMartini(r)) lines.push("", martiniHandoff(r, `recommendation:${r.id}`), "");
     lines.push("### Fallbacks", "");
     for (const slug of r.fallback_slugs) {
       const s = serverForSlug(ctx, slug);
@@ -1420,7 +1432,7 @@ export const renderRouter = (ctx) => {
     <h3><a href="/recommendations/#${esc(r.id)}">${esc(r.title)}</a></h3>
     <p>${esc(r.summary)}</p>
     <p class="recommendation-tags">${r.tags.map((tag) => `<code>${esc(tag)}</code>`).join(" ")}</p>
-    <p class="recommendation-handoff"><span class="label">Martini handoff</span> ${esc(r.martini_handoff)} ${sponsorLink(ctx, `router:${r.id}`, "Connect Martini")}.</p>
+    ${martiniLine(ctx, r, `router:${r.id}`)}
   </article>`).join("")}
 </section>
 <script type="application/json" id="router-data">${jsonForScript(routerPayload(ctx))}</script>`;
@@ -1487,7 +1499,7 @@ export const renderRouterMd = (ctx) => {
       const s = serverForSlug(ctx, pick.slug);
       if (s) lines.push(`- ${pick.role}: [${s.name}](${ctx.site.url}/mcps/${s.slug}.md) — ${pick.why}`);
     }
-    lines.push("", `Martini handoff: ${r.martini_handoff}`, "", `Connect Martini: ${sponsorHandoffUrl(ctx, `router:${r.id}`)}`, "");
+    if (needsMartini(r)) lines.push("", martiniHandoff(r, `router:${r.id}`), "");
     if (r.playbook_id) lines.push(`Matching playbook: ${ctx.site.url}/playbooks/#${r.playbook_id}`, "");
   }
   lines.push("---", "", `Full registry: ${ctx.site.url}/api/registry.json`);
@@ -2326,12 +2338,12 @@ export const renderSitemap = (ctx) => {
   const urls = [
     ...["/", "/router/", "/stack/", "/clients/", "/playbooks/", "/recommendations/", "/capabilities/", "/remotes/", "/for-agents/", "/pulse/", "/about/", "/submit/", "/llms.txt", "/llms-full.txt", "/api/registry.json", "/api/remotes.json", "/api/client-profiles.json", "/api/client-profiles.schema.json", "/api/mcp-registry.json", "/v0.1/servers", "/api/pulse.json", "/api/playbooks.json", "/api/recommendations.json", "/api/capabilities.json", "/router.md", "/stack.md", "/clients.md", "/remotes.md", "/playbooks.md", "/recommendations.md", "/pulse.md", "/index.md"]
       .map((u) => ({ loc: u, lastmod: today })),
-    ...ctx.categories.map((c) => ({ loc: `/categories/${c.id}/`, lastmod: today })),
+    ...ctx.categories.map((c) => ({ loc: `/categories/${c.id}/`, lastmod: ctx.servers.filter((s) => s.category === c.id).map((s) => s.verified).sort().at(-1) })),
     ...ctx.capabilityPages.flatMap((c) => [
-      { loc: `/capabilities/${c.capability}/`, lastmod: today },
-      { loc: `/capabilities/${c.capability}.md`, lastmod: today },
+      { loc: `/capabilities/${c.capability}/`, lastmod: c.servers.map((s) => s.verified).sort().at(-1) },
+      { loc: `/capabilities/${c.capability}.md`, lastmod: c.servers.map((s) => s.verified).sort().at(-1) },
     ]),
-    ...ctx.capabilityDoc.capabilities.map((c) => ({ loc: `/api/capabilities/${c.capability}.json`, lastmod: today })),
+    ...ctx.capabilityDoc.capabilities.map((c) => ({ loc: `/api/capabilities/${c.capability}.json`, lastmod: c.servers.map((s) => s.verified).sort().at(-1) })),
     ...ctx.servers.flatMap((s) => [
       { loc: `/mcps/${s.slug}/`, lastmod: s.verified },
       { loc: `/mcps/${s.slug}.md`, lastmod: s.verified },

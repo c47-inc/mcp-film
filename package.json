@@ -8,7 +8,7 @@
     "build": "node build.mjs && node scripts/check-build.mjs",
     "validate": "node build.mjs --validate-only",
     "dev": "node build.mjs && node scripts/serve.mjs",
-    "test": "node build.mjs --validate-only && node build.mjs && node scripts/check-build.mjs"
+    "test": "node build.mjs --validate-only && node build.mjs && node scripts/check-build.mjs && node scripts/test-recommend.mjs"
   },
   "engines": {
     "node": ">=20"

@@ -258,17 +258,27 @@ async function mcpEndpointResponse(request, env, ctx) {
 
 // __MCPFILM_MCP_CORE__ (build.mjs splices packages/mcp-server/core.mjs here)
 
-async function registryApiResponse(request, env) {
+export async function registryApiResponse(request, env) {
   const url = new URL(request.url);
   if (url.pathname === "/v0.1/servers") {
-    const limit = Number.parseInt(url.searchParams.get("limit") || "", 10);
-    const updatedSince = url.searchParams.get("updated_since");
-    // Advertising these parameters and ignoring them is worse than not supporting them:
-    // a client paging through 79 entries 30 at a time silently gets the whole list each time.
-    if (!Number.isFinite(limit) && !updatedSince) {
-      return jsonAssetResponse(env, url, "/api/mcp-registry.json");
+    const limitParam = url.searchParams.get("limit");
+    const limit = limitParam === null ? 30 : Number(limitParam);
+    if (limitParam !== null && !/^\d+$/.test(limitParam) || !Number.isInteger(limit) || limit < 1 || limit > 100) {
+      return jsonResponse({ error: "limit must be between 1 and 100" }, 400);
     }
-
+    const cursor = url.searchParams.get("cursor");
+    let offset = 0;
+    if (cursor !== null) {
+      try {
+        const decoded = atob(cursor);
+        if (!/^(0|[1-9]\d*)$/.test(decoded) || btoa(decoded) !== cursor) throw new Error("Invalid cursor");
+        offset = Number(decoded);
+        if (!Number.isSafeInteger(offset)) throw new Error("Invalid cursor");
+      } catch {
+        return jsonResponse({ error: "cursor must be a valid pagination cursor" }, 400);
+      }
+    }
+    const updatedSince = url.searchParams.get("updated_since");
     const full = await jsonAssetResponse(env, url, "/api/mcp-registry.json");
     if (full.status !== 200) return full;
     const body = await full.json();
@@ -284,11 +294,13 @@ async function registryApiResponse(request, env) {
         return updatedAt ? Date.parse(updatedAt) >= since : false;
       });
     }
-    if (Number.isFinite(limit)) {
-      if (limit < 1 || limit > 100) return jsonResponse({ error: "limit must be between 1 and 100" }, 400);
-      servers = servers.slice(0, limit);
-    }
-    return jsonResponse({ servers, metadata: { count: servers.length, nextCursor: null } });
+    if (offset > servers.length) return jsonResponse({ error: "cursor is outside the result set" }, 400);
+    const page = servers.slice(offset, offset + limit);
+    const nextOffset = offset + page.length;
+    return jsonResponse({ servers: page, metadata: {
+      count: page.length,
+      nextCursor: nextOffset < servers.length ? btoa(String(nextOffset)) : null,
+    } });
   }
 
   const versions = /^\/v0\.1\/servers\/(.+)\/versions$/.exec(url.pathname);

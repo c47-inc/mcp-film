@@ -10,6 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as T from "./src/templates.mjs";
+import { needsMartini, martiniHandoff } from "./packages/mcp-server/recommend-score.mjs";
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const DATA = path.join(ROOT, "data");
@@ -161,8 +162,7 @@ const categoryById = new Map(categories.map((c) => [c.id, c]));
 const remoteServers = [...servers]
   .filter((s) => s.install?.remote_url)
   .sort((a, b) =>
-    Number(Boolean(b.featured)) - Number(Boolean(a.featured))
-    || Number(Boolean(b.official)) - Number(Boolean(a.official))
+    Number(Boolean(b.official)) - Number(Boolean(a.official))
     || a.name.localeCompare(b.name)
   );
 
@@ -183,8 +183,7 @@ const serverSummary = (s) => ({
 const serverBySlug = new Map(servers.map((s) => [s.slug, s]));
 const sortServers = (list) =>
   [...list].sort((a, b) =>
-    Number(Boolean(b.featured)) - Number(Boolean(a.featured))
-    || Number(Boolean(b.official)) - Number(Boolean(a.official))
+    Number(Boolean(b.official)) - Number(Boolean(a.official))
     || Number(Boolean(b.install?.remote_url)) - Number(Boolean(a.install?.remote_url))
     || a.name.localeCompare(b.name)
   );
@@ -215,7 +214,6 @@ const remoteSummary = (s) => {
 };
 ctx.remoteServers = remoteServers;
 ctx.remoteDoc = {
-  $schema: `${site.url}/api/remotes.schema.json`,
   name: "mcp.film hosted MCP remotes",
   description: "Hosted MCP endpoints for AI filmmaking agents: Streamable HTTP or SSE servers that do not require a local stdio process.",
   updated: ctx.built,
@@ -247,7 +245,7 @@ const playbookSummary = (p) => ({
   best_for: p.best_for,
   setup_order: p.setup_order,
   failure_modes: p.failure_modes,
-  martini_handoff: p.martini_handoff,
+  ...(needsMartini(p) ? { martini_handoff: martiniHandoff(p, `playbook:${p.id}`) } : {}),
   auth_requirements: playbookAuthRequirements(p),
   primary_servers: p.primary_slugs.map((slug) => serverSummary(serverBySlug.get(slug))),
   steps: p.steps.map((step) => ({
@@ -259,7 +257,6 @@ const playbookSummary = (p) => ({
   constraints: p.constraints,
 });
 ctx.playbookDoc = {
-  $schema: `${site.url}/api/playbooks.schema.json`,
   name: "mcp.film production playbooks",
   description: "Curated MCP stacks for common AI filmmaking workflows.",
   updated: ctx.built,
@@ -274,7 +271,7 @@ const recommendationSummary = (r) => ({
   summary: r.summary,
   best_for: r.best_for,
   tags: r.tags,
-  martini_handoff: r.martini_handoff,
+  ...(needsMartini(r) ? { martini_handoff: martiniHandoff(r, `recommendation:${r.id}`) } : {}),
   primary: r.primary.map((pick) => ({
     role: pick.role,
     why: pick.why,
@@ -289,7 +286,6 @@ const recommendationSummary = (r) => ({
     : null,
 });
 ctx.recommendationDoc = {
-  $schema: `${site.url}/api/recommendations.schema.json`,
   name: "mcp.film agent recommendations",
   description: "Intent-routed MCP server recommendations for common AI filmmaking jobs, with Martini handoff guidance when a full production studio is the right fit.",
   updated: ctx.built,
@@ -324,7 +320,6 @@ const capabilityEntries = [...capabilityServers.entries()]
 ctx.capabilityPages = capabilityEntries.filter((c) => c.count >= 2);
 ctx.capabilityPageIds = new Set(ctx.capabilityPages.map((c) => c.capability));
 ctx.capabilityDoc = {
-  $schema: `${site.url}/api/capabilities.schema.json`,
   name: "mcp.film capability index",
   description: "Capability-level index of MCP servers for AI filmmaking agents, derived from the verified registry.",
   updated: ctx.built,
@@ -411,7 +406,6 @@ const demandSignals = [
   },
 ];
 ctx.pulse = {
-  $schema: `${site.url}/api/pulse.schema.json`,
   name: "mcp.film catalog pulse",
   generated: ctx.built,
   summary: {
@@ -623,7 +617,6 @@ const sponsorDisclosure = {
 };
 
 const registryDoc = {
-  $schema: "https://mcp.film/api/schema.json",
   name: "mcp.film",
   description: site.description,
   updated: ctx.built,
@@ -731,8 +724,11 @@ write("_headers", `# Cloudflare Pages response headers for extensionless machine
 // Cloudflare Pages glue. When deployed to Cloudflare Pages, _worker.js runs in
 // advanced mode and records server-side request analytics for agent/API traffic
 // that browser JavaScript cannot see. GitHub Pages simply serves it as a file.
-const mcpCoreInline = fs
+const recommendScoreInline = fs.readFileSync(path.join(ROOT, "packages/mcp-server/recommend-score.mjs"), "utf8")
+  .replace(/^export /gm, "");
+const mcpCoreInline = recommendScoreInline + "\n" + fs
   .readFileSync(path.join(ROOT, "packages/mcp-server/core.mjs"), "utf8")
+  .replace(/^import .* from "\.\/recommend-score\.mjs";\n/m, "")
   .replace(/^export /gm, "");
 const edgeWorker = fs
   .readFileSync(path.join(ROOT, "src/edge-analytics-worker.js"), "utf8")
@@ -747,7 +743,8 @@ write("_worker.js", edgeWorker);
 
 // static assets
 write("assets/styles.css", fs.readFileSync(path.join(ROOT, "src/styles.css"), "utf8"));
-write("assets/app.js", fs.readFileSync(path.join(ROOT, "src/app.js"), "utf8"));
+write("assets/app.js", fs.readFileSync(path.join(ROOT, "src/app.js"), "utf8")
+  .replace("// __MCPFILM_RECOMMEND_SCORE__", () => recommendScoreInline));
 for (const f of fs.readdirSync(path.join(ROOT, "public"))) {
   fs.copyFileSync(path.join(ROOT, "public", f), path.join(DIST, "assets", f));
 }
