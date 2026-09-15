@@ -107,6 +107,27 @@ const sponsorPrimary = [...routerHtml.matchAll(/<a\b[^>]*>/g)].some(([a]) =>
 check("router primary action is the top pick", sponsorPrimary ? "sponsor link has btn-primary" : null);
 console.log(`Metadata checks: ${registry.servers.length} server pages; last verified ${latestVerified}`);
 
+// Header search is rendered once on every page and hidden on home, which has #search.
+function checkHeaderSearch(dir) {
+  for (const entry of fs.readdirSync(path.join(ROOT, dir), { withFileTypes: true })) {
+    const file = path.join(dir, entry.name);
+    // The registry API stores JSON as index.html for static-host routing.
+    if (file === "dist/v0.1") continue;
+    if (entry.isDirectory()) checkHeaderSearch(file);
+    else if (entry.name.endsWith(".html")) {
+      const forms = read(file).match(/<form\b[^>]*class="head-search"[^>]*>/g) ?? [];
+      check(`${file} header search`, forms.length === 1 ? null : `expected one form, got ${forms.length}`);
+      check(`${file} search destination`, forms[0]?.includes('action="/#directory"') && forms[0]?.includes('method="get"')
+        ? null : "search must GET /?q=…#directory");
+    }
+  }
+}
+checkHeaderSearch("dist");
+const app = read("dist/assets/app.js");
+for (const marker of ["mcpfilm_search_submit", "no_match: true"]) {
+  check(`client analytics ${marker}`, app.includes(marker) ? null : "missing from dist/assets/app.js");
+}
+
 if (failures.length) {
   console.error("✗ build checks failed:");
   for (const f of failures) console.error(`  - ${f}`);

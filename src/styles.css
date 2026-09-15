@@ -124,8 +124,13 @@ code {
 }
 .site-nav .nav-cta:hover { background: #2e2e33; color: var(--paper); }
 .nav-gh { color: var(--ink-3); }
+.head-search { flex: 0 0 168px; }
+[data-page="home"] .head-search { display: none; }
 @media (max-width: 720px) {
   .site-nav { justify-content: flex-start; }
+  body:not([data-page="home"]) .site-head { flex-wrap: wrap; height: auto; padding-top: 10px; padding-bottom: 10px; gap: 10px; }
+  body:not([data-page="home"]) .site-nav { flex-basis: 0; }
+  .head-search { flex-basis: 100%; }
 }
 
 main { max-width: 1200px; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 2.5rem); }
@@ -253,15 +258,16 @@ h1 {
   }
 }
 .search-wrap { position: relative; }
-#search {
+#search, .head-search input {
   width: 100%; height: 38px; padding: 0 2.4rem 0 0.8rem;
   font: inherit; font-size: 13px; color: var(--ink);
   background: var(--paper); border: 1px solid var(--hairline-2);
   border-radius: var(--r-sm); outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
-#search:focus { border-color: var(--ink-3); box-shadow: 0 0 0 3px rgba(0,0,0,0.04); }
-#search::placeholder { color: var(--ink-3); }
+#search:focus, .head-search input:focus { border-color: var(--ink-3); box-shadow: 0 0 0 3px rgba(0,0,0,0.04); }
+#search::placeholder, .head-search input::placeholder { color: var(--ink-3); }
+.head-search input { height: 32px; padding: 0 0.8rem; }
 .search-wrap kbd {
   position: absolute; right: 9px; top: 50%; transform: translateY(-50%);
   font-family: var(--mono); font-size: 10.5px; color: var(--ink-3);

@@ -2,9 +2,9 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import vm from "node:vm";
-import { makeCallTool } from "../packages/mcp-server/core.mjs";
+import { makeCallTool, TOOLS } from "../packages/mcp-server/core.mjs";
 import { scoreRecommendations, needsMartini, martiniHandoff, MARTINI_WORKFLOW } from "../packages/mcp-server/recommend-score.mjs";
-import { registryApiResponse } from "../dist/_worker.js";
+import { registryApiResponse, mcpRequestExtras } from "../dist/_worker.js";
 
 const read = (file) => fs.readFileSync(new URL(`../${file}`, import.meta.url), "utf8");
 const registry = JSON.parse(read("dist/api/registry.json"));
@@ -16,6 +16,26 @@ const call = makeCallTool({
   loadRecommendations: async () => recommendations,
   loadPlaybooks: async () => JSON.parse(read("dist/api/playbooks.json")),
 }, "test");
+
+// Every tool exposing a free-text input logs trimmed text, bounded to 200 characters.
+for (const tool of TOOLS) {
+  const argument = ["brief", "query"].find((key) => tool.inputSchema.properties?.[key]);
+  if (!argument) continue;
+  const message = { method: "tools/call", params: { name: tool.name, arguments: { [argument]: `  ${"x".repeat(300)}  ` } } };
+  assert.deepEqual(mcpRequestExtras(message), { rpc_method: "tools/call", rpc_tool: tool.name, rpc_query: "x".repeat(200) });
+  message.params.arguments[argument] = "  dialogue  ";
+  assert.equal(mcpRequestExtras(message).rpc_query, "dialogue");
+  message.params.arguments[argument] = 42;
+  assert.equal(mcpRequestExtras(message).rpc_query, null);
+}
+for (const message of [
+  { method: "tools/list" },
+  { method: "tools/list", params: { name: "recommend_film_mcps", arguments: { brief: "dialogue" } } },
+  { method: "tools/call", params: { name: "get_film_mcp", arguments: { query: "dialogue" } } },
+  { method: "tools/call", params: { name: "recommend_film_mcps" } },
+  [{ method: "tools/call", params: { name: "recommend_film_mcps", arguments: { brief: "dialogue" } } }],
+  null,
+]) assert.equal(mcpRequestExtras(message).rpc_query, null);
 
 // Exercise the scorer shipped to browsers with the actual embedded router payload.
 const app = read("dist/assets/app.js");
