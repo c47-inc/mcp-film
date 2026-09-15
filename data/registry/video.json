@@ -413,5 +413,67 @@
     "added": "2026-09-05",
     "verified": "2026-09-05",
     "notes": "Brand new: version 1.2.0 was published to the official MCP registry on 4 Sep 2026 and listed here the next day, so there is no maintenance record yet — re-verify before you build a paid pipeline on it. The vendor names no company, no jurisdiction and no repo, and describes its engines only as 'a curated stack of leading AI models', so you cannot audit which model renders your footage or what the output licence is. tools_sample stays null because the 39 tools are counted but not enumerated anywhere public; call tools/list after connecting. Unauthenticated calls return JSON-RPC error -32001 rather than an HTTP 401, which trips clients that key off status codes. OAuth carries read/write/ai scopes; the optional Bearer mav_* key is the fallback for headless clients. An assistant spends the same credits you do, and there is no free tier past the 7-day trial — plans start at $9/month for 450 credits. Overlaps heavily with invideo: both are templated script-to-video assemblers, and invideo costs nothing to try while this one has a real endpoint and real auth."
+  },
+  {
+    "slug": "magic-hour",
+    "name": "Magic Hour MCP",
+    "vendor": "Magic Hour",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Magic Hour's hosted MCP: 44 tools across video, image and voice generation on one connection.",
+    "description": "Magic Hour's first-party remote server is generated from its OpenAPI spec with FastMCP, so every public endpoint arrives as a tool: text-, image- and video-to-video, lip sync, talking photos, face and character replacement, auto subtitles, image generation, editing, upscaling and background removal, plus voice generation and cloning. Creation tools return a project id and the credits charged immediately, and matching wait_for_*_project tools poll to completion and hand back exact signed download URLs. For a filmmaker-agent it is a broad single-vendor toolbox with the async plumbing already worked out.",
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "video-to-video",
+      "lip-sync",
+      "faceswap",
+      "talking-head",
+      "text-to-image",
+      "image-editing",
+      "upscaling",
+      "background-removal",
+      "tts",
+      "voice-cloning",
+      "captioning",
+      "job-polling"
+    ],
+    "tools_sample": [
+      "text_to_video_create_video",
+      "image_to_video_create_video",
+      "video_to_video_create_video",
+      "lip_sync_create_video",
+      "ai_talking_photo_create_talking_photo",
+      "character_replace_create_video",
+      "auto_subtitle_generator_create_video",
+      "ai_image_generator_create_image",
+      "ai_image_upscaler_create_image",
+      "ai_voice_generator_create_audio",
+      "video_assets_generate_presigned_url",
+      "wait_for_video_project"
+    ],
+    "install": {
+      "claude_code": "claude mcp add --scope user --transport http magic-hour https://mcp.magichour.ai/ --header \"Authorization: Bearer YOUR_MAGIC_HOUR_API_KEY\"",
+      "remote_url": "https://mcp.magichour.ai/",
+      "remote_headers": [
+        "Authorization"
+      ],
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "api_key",
+      "env_var": null,
+      "key_url": "https://magichour.ai/developer?tab=api-keys — Claude Code and Codex send it as a bearer header; Claude desktop connectors run an OAuth flow (client ID magic-hour-mcp) whose authorization page asks you to paste the same key."
+    },
+    "pricing": "credits",
+    "links": {
+      "repo": "https://github.com/magichourhq/magic-hour-mcp",
+      "docs": "https://magichour.ai/mcp",
+      "site": "https://magichour.ai"
+    },
+    "added": "2026-09-15",
+    "verified": "2026-09-15",
+    "notes": "Verified live 2026-09-15: initialize answered protocol 2025-06-18 as magic-hour 0.1.0, and an unauthenticated tools/list returned all 44 tools — discovery is public, calls need the key. The connect line is copied from magichour.ai/mcp. The OAuth is a shim, not delegated auth: mcp.magichour.ai names itself as both protected resource and authorization server, and the flow validates an API key and uses it as the access token, so the agent holds a full-account credential either way. Money: the same credits as the web app, $1 buys 400 in packs or 144k to 840k a year on the $12 to $66 monthly plans, and the pricing page lists API access as a paid-plan feature — we did not confirm that a free account can mint a working key. The server is a thin generated layer over the REST API, so tool names are long operationId-style strings and quality is whatever Magic Hour's underlying models deliver; the vendor's own setup page says only Claude, Claude Code and Codex are verified clients. The repo has no licence file and 6 stars, but the GitHub org dates from 2023 and the submitter's account states Magic Hour employment."
   }
 ]

@@ -173,5 +173,63 @@
     "added": "2026-08-22",
     "verified": "2026-08-22",
     "notes": "New and unproven: published to the official MCP registry on 2026-08-17 as com.thefilmradar/filmlab, with three versions shipped that same day and 1.1.1 current. Endpoint confirmed live on 2026-08-22 — https://mcp-lab.thefilmradar.com/.well-known/oauth-protected-resource returns resource metadata naming itself the authorization server, header bearer only; a browser GET on /mcp 302s to the docs page, which is correct for a POST-only streamable HTTP transport. The 34-tool count and the tool names come from the vendor's own docs, not from a tools/list this directory could read, because there is no anonymous access. Closed source, no repo, one operator, and the docs and UI are German-first — the MCP page is entirely in German, which is friction if your agent or your crew is not. It also does not name the models behind lab_generate and lab_animate ('Soul Cinema' is a house label, not an engine), so you are buying credits without knowing which engine renders them; Martini and Nomi both publish their model rosters. Billing is per run with the price quoted first: reads, browsing, previews and project creation are free, while generation, animation, locations and exports draw on credits bought in the Composer, which the vendor says do not expire."
+  },
+  {
+    "slug": "cinegenta",
+    "name": "Cinegenta Studio",
+    "vendor": "Cinegenta",
+    "official": true,
+    "category": "studio",
+    "featured": false,
+    "tagline": "Hosted studio MCP that takes a screenplay, quotes the production free, then renders under a credit cap.",
+    "description": "Cinegenta's remote MCP works from the script down rather than the shot up: put_script and build_plan break a screenplay into scenes, cast, wardrobe, props, staging and a shot list, quote returns an itemised estimate without spending anything, and only greenlight starts rendering — under a cap the human sets, enforced server-side before every render, with review checkpoints that come back as images in chat. Thirteen tools split into read, write and spend scopes, and a key minted without the spend scope cannot bill at all. For a filmmaker-agent that is the most explicit money model of any studio-tier server listed here.",
+    "capabilities": [
+      "screenplay-parsing",
+      "shot-breakdown",
+      "shot-planning",
+      "storyboarding",
+      "cost-estimation",
+      "cost-gates",
+      "multi-model-generation",
+      "run-control",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "list_projects",
+      "create_project",
+      "put_script",
+      "configure",
+      "build_plan",
+      "quote",
+      "get_status",
+      "upload_reference",
+      "review",
+      "greenlight",
+      "run_control",
+      "regenerate",
+      "cancel_build"
+    ],
+    "install": {
+      "claude_code": "claude mcp add --transport http cinegenta https://cinegenta.com/api/mcp --header \"Authorization: Bearer cg_sk_YOUR_KEY\"",
+      "remote_url": "https://cinegenta.com/api/mcp",
+      "remote_headers": [
+        "Authorization"
+      ],
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "api_key",
+      "env_var": null,
+      "key_url": "https://cinegenta.com/connect — mints a cg_sk_ key with read, write and spend scopes, shown once; the server also accepts it as X-API-Key."
+    },
+    "pricing": "credits",
+    "links": {
+      "repo": null,
+      "docs": "https://cinegenta.com/mcp",
+      "site": "https://cinegenta.com"
+    },
+    "added": "2026-09-15",
+    "verified": "2026-09-15",
+    "notes": "Verified 2026-09-15 from primary sources: the endpoint answers 401 with a proper WWW-Authenticate challenge, the server card at cinegenta.com/.well-known/mcp/server-card.json and the official MCP registry (com.cinegenta/studio v1.1.0, published 13 Sep 2026) agree on the URL and 13 tools, and the tool list above is copied from the vendor's agent reference at cinegenta.com/mcp/reference.md, which it says is regenerated from tools/list. What we could not check without a key and a spend: whether cap enforcement, refunds on failed renders and the idempotent regenerate behave as described — those are the vendor's claims. Know what you are buying into: the domain was registered in May 2026, the product is labelled Beta, there is no public repo and no named team, and credits are $0.10 each in $5 to $500 packs bought only on the website, with a generated minute quoted anywhere from under a dollar to over twenty depending on the models. Transport is stateless POST-only, no SSE. Submitted through this directory's own submit_listing tool from a GitHub account with no visible tie to the company."
   }
 ]
