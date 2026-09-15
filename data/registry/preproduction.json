@@ -108,8 +108,8 @@
       "site": "https://framethrower.ai"
     },
     "added": "2026-08-12",
-    "verified": "2026-08-12",
-    "notes": "Remote and hosted, so nothing to install or keep running. Free tier is $2 of credits on signup with no card; each tool call costs 2 credits at $1 = 1,000 credits, so $1 covers 500 calls. No rate limits. Frames are shown at reduced resolution as references for commentary and study \u2014 rights remain with their owners, and the server never returns image bytes. Submitted by the vendor."
+    "verified": "2026-09-15",
+    "notes": "Endpoint, four tools, OAuth 2.1, credit pricing and the 5,489-film index all unchanged on re-check. Remote and hosted, so nothing to install or keep running. Free tier is $2 of credits on signup with no card; each tool call costs 2 credits at $1 = 1,000 credits, so $1 covers 500 calls, and credits do not expire; top-ups come in $20 packs. No rate limits \u2014 when credits run out the tool returns the balance rather than failing silently. Frames are shown at reduced resolution as references for commentary and study \u2014 rights remain with their owners, and the server never returns image bytes. One-vendor operation: the repo (framethrower-ai/framethrower-mcp) is a README pointing at the hosted endpoint and has not been touched since 12 Aug 2026, so there is no code to audit and no second maintainer if the service lapses. Submitted by the vendor."
   },
   {
     "slug": "filmmap",

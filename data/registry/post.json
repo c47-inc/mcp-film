@@ -596,8 +596,8 @@
     "pricing": "freemium",
     "links": { "repo": null, "docs": "https://docs.reap.video/api-reference/mcp", "site": "https://reap.video/mcp" },
     "added": "2026-08-12",
-    "verified": "2026-08-12",
-    "notes": "The free tier does not reach the MCP: reap's pricing page puts API and MCP access on Creator ($9.99/mo) and above, so the free hour of watermarked 720p clipping is app-only and an agent connecting on a free account has nothing to call. Three of the 29 documented tools — publish_clip, schedule_clips, update_publisher_post — post publicly to connected social accounts, and the docs require the agent to confirm before running them; treat them as irreversible and gate them yourself. Marketing pages still advertise '10 tools', which the API reference contradicts. There is no source repo, and clipping quality depends on reap's moment detection rather than anything you can tune."
+    "verified": "2026-09-15",
+    "notes": "Endpoint, OAuth flow and the 29-tool surface are unchanged on re-check. The free tier still does not reach the MCP: the API reference now states flatly that 'the MCP server requires a paid plan with API access enabled', and the pricing page puts that on Creator ($9.99/mo), Studio ($29/mo) and Enterprise — so an agent connecting on a free account has nothing to call. Three of the 29 tools — publish_clip, schedule_clips, update_publisher_post — post publicly to connected social accounts, and the docs require the agent to confirm before running them; treat them as irreversible and gate them yourself. The marketing page at reap.video/mcp still contradicts the API reference, claiming '10 tools' in one place and '8 MCP Tools' in another, and listing export_video and translate_subtitles, which do not appear among the 29 documented tools; trust the API reference. That page also offers `npx add-mcp https://mcp.reap.video/mcp` as a shortcut, which is a third-party installer rather than reap's own — the claude mcp add form above is the direct route. There is no source repo, and clipping quality depends on reap's moment detection rather than anything you can tune."
   },
   {
     "slug": "orkas-videostudio",
