@@ -43,6 +43,14 @@
   }
 
   // ------------------------------------------------------------- search
+  const headSearch = document.querySelector(".head-search");
+  headSearch?.addEventListener("submit", () => {
+    ph("mcpfilm_search_submit", {
+      query: (headSearch.elements.q.value || "").trim().slice(0, 100),
+      page: document.body.dataset.page,
+      path: location.pathname,
+    });
+  });
   const search = document.getElementById("search");
   const cards = [...document.querySelectorAll(".card[data-search]")];
   const sections = [...document.querySelectorAll("[data-cat-section]")];
@@ -280,6 +288,21 @@
           const empty = node("p", "agent-hint", "No route in the directory matches this brief. Try a capability such as text-to-video in the ");
           empty.append(link("directory", "/#directory"), " or browse ", link("playbooks", "/playbooks/"), ".");
           results.replaceChildren(empty);
+          if (track) {
+            ph("mcpfilm_brief_route", {
+              source,
+              hosted_only: hostedOnly,
+              brief_len: clean.length,
+              brief_terms: terms.slice(0, 8),
+              brief: clean.slice(0, 200),
+              top_recommendation: null,
+              top_score: 0,
+              no_match: true,
+              top_playbook: null,
+              includes_martini: false,
+              result_count: ranked.length,
+            });
+          }
           return;
         }
         const alternates = ranked.slice(1, 3);
@@ -369,6 +392,7 @@
             hosted_only: hostedOnly,
             brief_len: clean.length,
             brief_terms: terms.slice(0, 8),
+            brief: clean.slice(0, 200),
             top_recommendation: top.id,
             top_score: ranked[0]?._score ?? 0,
             top_playbook: playbook?.id || null,

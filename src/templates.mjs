@@ -354,6 +354,9 @@ ${posthogSnippet(site)}
     <a class="nav-gh" href="https://github.com/${site.github_repo}" rel="noopener">GitHub</a>
     <a class="nav-cta" href="/submit/">Submit</a>
   </nav>
+  <form class="head-search" role="search" action="/#directory" method="get">
+    <input type="search" name="q" placeholder="Search servers" aria-label="Search servers" autocomplete="off">
+  </form>
 </header>
 <main>
 ${body}
@@ -593,7 +596,7 @@ export const renderHome = (ctx) => {
         description: site.description,
         potentialAction: {
           "@type": "SearchAction",
-          target: { "@type": "EntryPoint", urlTemplate: site.url + "/?q={search_term_string}" },
+          target: { "@type": "EntryPoint", urlTemplate: site.url + "/?q={search_term_string}#directory" },
           "query-input": "required name=search_term_string",
         },
       },

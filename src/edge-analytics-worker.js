@@ -202,6 +202,19 @@ async function mcpHandleMessage(msg) {
   }
 }
 
+export function mcpRequestExtras(message) {
+  const describe = (m) => (m && typeof m === "object" && m.method ? String(m.method) : "invalid");
+  const tool = !Array.isArray(message) && message?.method === "tools/call" ? message.params?.name : null;
+  const args = message?.params?.arguments;
+  const query = args?.brief ?? args?.query;
+  return {
+    rpc_method: (Array.isArray(message) ? message.map(describe).join(",") : describe(message)).slice(0, 120),
+    rpc_tool: tool === null ? null : String(tool ?? "").slice(0, 60) || null,
+    rpc_query: ["recommend_film_mcps", "search_film_mcps", "list_film_capabilities", "list_film_playbooks", "list_film_recommendations", "plan_film_stack"].includes(tool)
+      && typeof query === "string" ? query.trim().slice(0, 200) : null,
+  };
+}
+
 async function mcpEndpointResponse(request, env, ctx) {
   const url = new URL(request.url);
   if (url.pathname !== "/mcp" && url.pathname !== "/mcp/") return null;
@@ -237,13 +250,7 @@ async function mcpEndpointResponse(request, env, ctx) {
 
   if (!mcpCallTool) mcpCallTool = makeCallTool(mcpLoaders(env, url.origin), MCP_VERSION);
 
-  const describe = (m) => (m && typeof m === "object" && m.method ? String(m.method) : "invalid");
-  const extras = {
-    rpc_method: (Array.isArray(message) ? message.map(describe).join(",") : describe(message)).slice(0, 120),
-    rpc_tool: !Array.isArray(message) && message?.method === "tools/call"
-      ? String(message.params?.name ?? "").slice(0, 60) || null
-      : null,
-  };
+  const extras = mcpRequestExtras(message);
 
   // 2025-06-18 removed JSON-RPC batching, but answering a legacy batch beats erroring on it.
   if (Array.isArray(message)) {
