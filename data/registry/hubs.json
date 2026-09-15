@@ -385,5 +385,64 @@
     "added": "2026-09-15",
     "verified": "2026-09-15",
     "notes": "Listed one day after launch: the repo was created 14 Sep 2026, has 0 stars and no LICENSE file, and is a README pointing at the hosted endpoint rather than server code. The endpoint itself is real — it serves OAuth protected-resource metadata naming platform.empiriolabs.ai — and the docs are unusually complete for a new service, but treat this as unproven and check pricing yourself before committing a pipeline to it. Only 13 of the 78 tools are media generation; 39 are GPU-cloud and hosted-agent plumbing that a film pipeline will never call, so scope the connection down if your client supports it. Two operational traps: generation tools block for at most 50 seconds and then hand back a job_id you have to poll via get_job, and output URLs are signed and expire, so download anything you intend to keep. Read-only catalog, job and usage tools cost nothing. No free tier — pay-as-you-go prepaid credits (crypto top-ups accepted) or weekly allowance plans from $19.90/mo, and those allowances are trivial for film work: Lite grants 20 seconds of video and 7 images per week, Max 240 seconds. Model naming is self-reported by the platform; verify a slug with list_models rather than trusting a marketing page. For anything load-bearing, fal and replicate have the track record this does not yet."
+  },
+  {
+    "slug": "budgetpixel",
+    "name": "BudgetPixel MCP",
+    "vendor": "BudgetPixel",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "Hosted OAuth MCP onto BudgetPixel's image, video, music, SFX and Topaz upscale catalogue.",
+    "description": "BudgetPixel's remote server exposes its subscription platform as thirteen tools: generate_image, generate_video (text, image start and end frames, reference images, or video-to-video), generate_music, generate_sound_effect with an optional video input for synced Foley, and upscale_video through Topaz Labs at 1080p or 4K, plus list_models with live prices, uploads, history and a credit balance. Outputs are URLs that feed straight into the next call, so an agent can plate, score, Foley and finish a shot without moving files between vendors. Sign-in is browser OAuth against the account, not an API key.",
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "video-to-video",
+      "text-to-image",
+      "image-editing",
+      "music-generation",
+      "sound-effects",
+      "video-to-sfx",
+      "upscaling",
+      "video-upscaling",
+      "asset-upload",
+      "job-polling",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "generate_image",
+      "generate_video",
+      "generate_music",
+      "generate_sound_effect",
+      "upscale_image",
+      "upscale_video",
+      "list_models",
+      "upload_media",
+      "check_generation_status",
+      "get_generation_history",
+      "get_credit_balance",
+      "save_to_assets",
+      "create_social_post"
+    ],
+    "install": {
+      "claude_code": "claude mcp add budgetpixel --transport http https://mcp.budgetpixel.com/mcp",
+      "remote_url": "https://mcp.budgetpixel.com/mcp",
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Browser OAuth (Google sign-in) against https://mcp.budgetpixel.com, which names itself as the authorization server. No key to paste; a paid BudgetPixel plan is required for anything beyond browsing models — https://budgetpixel.com/pricing"
+    },
+    "pricing": "paid",
+    "links": {
+      "repo": "https://github.com/budgetpixel-ai/budgetpixel-mcp",
+      "docs": "https://budgetpixel.com/mcp",
+      "site": "https://budgetpixel.com"
+    },
+    "added": "2026-09-15",
+    "verified": "2026-09-15",
+    "notes": "Verified live 2026-09-15: initialize answered protocol 2025-06-18 as budgetpixel 0.1.0 and tools/list returned 13 tools without auth — one more than the README's table (save_to_assets). Listed in the official MCP registry as com.budgetpixel/mcp since 27 Aug 2026, a namespace that requires DNS control of budgetpixel.com, so the vendor claim holds. The connect line is the README's own. Everything else is the platform's gate: browsing models is free, but generation, upscaling, uploads and publishing need a paid plan — Starter is $5 a month for 5,000 credits, images run about 25 credits, video is billed per second and by resolution, and the pricing page lists commercial usage from Premium ($22 a month) upward. The MCP itself is closed-source glue; the repo is a README and a licence with 2 stars, in a GitHub org created the day of submission, though the domain dates from March 2025 and the submitter's account lists the company. The video-synced sound-effect claim is the server's own tool description; we did not spend credits to test it. Filed under model-hub rather than studio: it aggregates other vendors' models behind one bill, it does not plan shots or hold a timeline."
   }
 ]

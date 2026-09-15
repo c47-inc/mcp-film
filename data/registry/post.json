@@ -780,5 +780,59 @@
     "added": "2026-09-08",
     "verified": "2026-09-08",
     "notes": "MIT, 2,125 stars and 186 forks off a repo created 2026-06-30 — one of the fastest-rising media servers of the summer, released as v0.10.3 on 2026-08-31 and registered as io.github.HUANGCHIHHUNGLeo/claude-real-video. Two traps. First, MCP is an extra, not the default: plain `pip install claude-real-video` gives you the `crv` CLI with no server, and the `claude mcp add` line above only works after installing the `[mcp]` extra. Second, the GitHub README documents the CLI only — the MCP section, the five tool names and the `crv-mcp` entry point are documented on PyPI and in pyproject.toml on the `master` branch, while the `main` branch still carries 0.4.0 metadata, so read master or PyPI and ignore main. FFmpeg must be on PATH and is not pip-installable; Python >=3.10; transcription needs the `[whisper]` or `[fast]` extra, which is a large download. Analyses cache under ~/.cache/crv-mcp, so repeat questions are cheap but the directory grows without bound. Frames come back as images, so a long video is expensive in tokens — reach for get_transcript when you only need the words. Free and local, but the author sells a one-time $19 'crv Pro' with motion analysis and better memory search, and the free memory search is word matching rather than semantic. Downloading from a URL is your legal problem, not the tool's."
+  },
+  {
+    "slug": "davinci-resolve-ai-bridge",
+    "name": "DaVinci Resolve AI Bridge MCP",
+    "vendor": "Community (flamexnreal)",
+    "official": false,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Local MCP bridge into DaVinci Resolve that runs on the Free edition, not just Studio.",
+    "description": "A Python bridge that starts from Resolve's own Workspace → Scripts menu and hands an MCP client some forty-five tools: timeline inspection, media import and placement, clip transforms and Fusion zoom animation, grade reads and writes, silence detection with marker-then-apply cuts, review on duplicate timelines, and render queueing. It was built Free-first: it runs inside Resolve as a menu script rather than attaching through Studio-only external scripting, so no Studio key is needed. The larger davinci-resolve server now reaches the Free edition the same way, which makes this the lighter, narrower alternative — fewer tools, one Python runtime, and a review-on-a-duplicate-timeline habit baked into the edit tools.",
+    "capabilities": [
+      "nle-control",
+      "timeline-editing",
+      "color-grading",
+      "media-management",
+      "scene-detection",
+      "frame-extraction",
+      "render",
+      "davinci-resolve"
+    ],
+    "tools_sample": [
+      "resolve_status",
+      "timeline_overview",
+      "timeline_frame",
+      "timeline_audio",
+      "import_media",
+      "append_media",
+      "set_clip_transform",
+      "animate_zoom",
+      "set_clip_grade",
+      "review_silence",
+      "apply_silence_cuts",
+      "preview_timeline",
+      "render_current_timeline"
+    ],
+    "install": {
+      "claude_code": null,
+      "remote_url": null,
+      "stdio_command": "npx davinci-resolve-ai-bridge-mcp"
+    },
+    "auth": {
+      "type": "local-app",
+      "env_var": null,
+      "key_url": "No key. Requires DaVinci Resolve (Free or Studio) open with a project, Python 3.10+, and the bridge started once per session from Workspace → Scripts → Resolve AI Bridge → Start AI Bridge."
+    },
+    "pricing": "free",
+    "links": {
+      "repo": "https://github.com/flamexnreal/davinci-resolve-ai-bridge-mcp",
+      "docs": "https://github.com/flamexnreal/davinci-resolve-ai-bridge-mcp#readme",
+      "site": null
+    },
+    "added": "2026-09-15",
+    "verified": "2026-09-15",
+    "notes": "Verified 2026-09-15 against the repo and npm: MIT, v1.12.0 published 7 Sep 2026, ~23 stars, one maintainer on a personal account created June 2026, repo created July 2026 — young, and the submission came from that maintainer. The npx line is an installer, not the server: it creates ~/.resolve-ai-bridge with a private Python environment, adds the Resolve menu entries and merges MCP config into the clients it detects; the stdio server it registers is a local Python command, with `npx -y davinci-resolve-ai-bridge-mcp --serve` as the alternative. Weigh it against davinci-resolve (2.6k stars, 36 compound tools, also Free-capable since its own in-app bridge shipped) and against Resolve Studio 21.1, whose first-party AI-assistant integration is Studio-only. Read the fine print: the README's live-tested matrix is macOS / Resolve Free 21.0.3.7 / Python 3.14.6 only, Windows and Linux are marked as still needing verification, and Studio-only effects stay Studio-only. FFmpeg is an optional extra download for source-frame capture. Tool names above come from the README's tool table, not a live tools/list."
   }
 ]

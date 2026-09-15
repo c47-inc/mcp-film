@@ -120,5 +120,9 @@
   "luma-official": "lumalabs",
   "claude-real-video": "HUANGCHIHHUNGLeo",
   "imagine-art": "Vyro-ai",
-  "empiriolabs": "EmpirioLabs-AI"
+  "empiriolabs": "EmpirioLabs-AI",
+  "davinci-resolve-ai-bridge": null,
+  "cinegenta": null,
+  "magic-hour": "magichourhq",
+  "budgetpixel": "budgetpixel-ai"
 }
