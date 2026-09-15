@@ -1,6 +1,7 @@
 /* mcp.film client behavior: search/filter, copy buttons, feedback.
    Progressive enhancement only — the site is fully usable without this file. */
 (() => {
+  // __MCPFILM_RECOMMEND_SCORE__
   const ph = (event, props) => {
     if (window.posthog?.capture) window.posthog.capture(event, props);
   };
@@ -187,49 +188,12 @@
       const input = routerNode.querySelector("#router-brief");
       const hostedToggle = routerNode.querySelector("#router-hosted-only");
       const results = routerNode.querySelector("#router-results");
-      const stop = new Set([
-        "about", "after", "also", "and", "are", "can", "for", "from", "have", "into",
-        "make", "need", "needs", "that", "the", "this", "with", "film", "films",
-        "video", "videos", "using", "want", "will", "your",
-      ]);
-
-      const wordsFor = (value) =>
-        String(value || "")
-          .toLowerCase()
-          .split(/[^a-z0-9+.-]+/)
-          .filter((w) => w.length > 2 && !stop.has(w));
-
-      const hayForRecommendation = (r) => [
-        r.id, r.title, r.summary, r.best_for, r.martini_handoff,
-        ...(r.tags || []),
-        ...(r.primary || []).map((p) => `${p.role} ${p.why} ${p.server?.slug} ${p.server?.name} ${p.server?.tagline}`),
-        ...(r.fallback_servers || []).map((s) => `${s.slug} ${s.name} ${s.tagline}`),
-      ].join(" ").toLowerCase();
-
       const hayForPlaybook = (p) => [
         p.id, p.title, p.summary, p.best_for,
         ...(p.constraints || []),
         ...(p.primary_servers || []).map((s) => `${s.slug} ${s.name} ${s.tagline}`),
         ...(p.steps || []).map((step) => `${step.stage} ${step.intent} ${(step.servers || []).map((s) => `${s.slug} ${s.name} ${s.tagline}`).join(" ")}`),
       ].join(" ").toLowerCase();
-
-      const scoreRecommendations = (brief) => {
-        const words = wordsFor(brief);
-        return (routerData.recommendations || [])
-          .map((r, index) => {
-            const hay = hayForRecommendation(r);
-            let score = 0;
-            for (const word of words) {
-              if ((r.tags || []).some((tag) => tag.includes(word))) score += 7;
-              if ((r.title || "").toLowerCase().includes(word)) score += 5;
-              if ((r.best_for || "").toLowerCase().includes(word)) score += 4;
-              if (hay.includes(word)) score += word.length > 4 ? 3 : 2;
-            }
-            if ((r.primary || []).some((p) => p.server?.slug === "martini")) score += 1;
-            return { ...r, _score: score, _rank: index };
-          })
-          .sort((a, b) => b._score - a._score || a._rank - b._rank);
-      };
 
       const scorePlaybooks = (brief) => {
         const words = wordsFor(brief);
@@ -300,29 +264,25 @@
         return table;
       };
 
-      const filteredRoute = (r, hostedOnly) => {
-        if (!r) return r;
-        if (!hostedOnly) return r;
-        return {
-          ...r,
-          primary: (r.primary || []).filter((p) => p.server?.remote),
-          fallback_servers: (r.fallback_servers || []).filter((s) => s.remote),
-        };
-      };
-
       const renderRoute = (brief, source = "typing", track = false) => {
         if (!results) return;
         const clean = String(brief || "").trim();
         const hostedOnly = Boolean(hostedToggle?.checked);
         if (!clean) {
-          results.replaceChildren(node("p", "agent-hint", "Paste a brief or choose an example. The router will return the closest route, first MCP connections, matching playbook, and Martini handoff."));
+          results.replaceChildren(node("p", "agent-hint", "Paste a brief or choose an example. The router will return the closest route, first MCP connections, matching playbook, and relevant setup links."));
           return;
         }
 
         const terms = wordsFor(clean);
-        const ranked = scoreRecommendations(clean);
-        const top = filteredRoute(ranked[0], hostedOnly);
-        const alternates = ranked.slice(1, 3).map((r) => filteredRoute(r, hostedOnly));
+        const ranked = scoreRecommendations(routerData.recommendations || [], clean, hostedOnly);
+        const top = ranked[0];
+        if (!top) {
+          const empty = node("p", "agent-hint", "No route in the directory matches this brief. Try a capability such as text-to-video in the ");
+          empty.append(link("directory", "/#directory"), " or browse ", link("playbooks", "/playbooks/"), ".");
+          results.replaceChildren(empty);
+          return;
+        }
+        const alternates = ranked.slice(1, 3);
         const playbook = (() => {
           const byId = top?.playbook?.id && (routerData.playbooks || []).find((p) => p.id === top.playbook.id);
           return byId || scorePlaybooks(clean)[0] || null;
@@ -349,21 +309,19 @@
         const actions = node("p", "router-actions");
         if (top?.url) actions.append(link("Open route", localHref(top.url), "btn"));
         if (top?.playbook?.url) actions.append(link("Open playbook", localHref(top.playbook.url), "btn"));
-        const sponsorUrl = document.body.dataset.sponsorUrl;
-        if (sponsorUrl) {
-          const placement = `router:${top?.id || "unknown"}`;
-          const martiniLink = link("Connect Martini", `/go/martini?from=${encodeURIComponent(placement)}`, "btn btn-primary");
-          martiniLink.dataset.sponsorClick = "true";
-          martiniLink.dataset.sponsor = document.body.dataset.sponsor || "martini";
-          martiniLink.dataset.sponsorPlacement = placement;
-          martiniLink.dataset.sponsorDestination = sponsorUrl;
-          actions.append(martiniLink);
-        }
+        const first = picks[0]?.server;
+        if (first) actions.prepend(link(`Open ${first.name}`, localHref(first.url), "btn btn-primary"));
         shell.append(actions);
 
-        if (top?.martini_handoff) {
-          const handoff = node("p", "recommendation-handoff");
-          handoff.append(node("span", "label", "Martini handoff"), " ", top.martini_handoff);
+        if (needsMartini(top, clean)) {
+          const placement = `router:${top.id}`;
+          const setup = link("Setup →", `/go/martini?from=${encodeURIComponent(placement)}`);
+          setup.dataset.sponsorClick = "true";
+          setup.dataset.sponsor = document.body.dataset.sponsor || "martini";
+          setup.dataset.sponsorPlacement = placement;
+          setup.dataset.sponsorDestination = document.body.dataset.sponsorUrl;
+          const handoff = node("p", "recommendation-handoff", `${martiniHandoffProse(top)} `);
+          handoff.append(setup, " · ", link("Directory sponsor", "/about"), ".");
           shell.append(handoff);
         }
 

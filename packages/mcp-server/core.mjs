@@ -1,3 +1,5 @@
+import { scoreRecommendations, needsMartini, martiniHandoff } from "./recommend-score.mjs";
+
 /**
  * core.mjs — pure directory logic shared by the stdio server (server.mjs) and
  * the mcp.film edge worker's hosted /mcp endpoint.
@@ -13,6 +15,10 @@ export const REPO = "c47-inc/mcp-film";
 
 const compact = (s) => ({
   slug: s.slug,
+  url: `https://mcp.film/mcps/${s.slug}/`,
+  markdown_url: `https://mcp.film/mcps/${s.slug}.md`,
+  verified: s.verified,
+  caveat: (s.notes?.trim().match(/^.*?[.!?](?=\s|$)|^.+$/s)?.[0] ?? "").slice(0, 200).trim(),
   name: s.name,
   vendor: s.vendor,
   official: s.official,
@@ -62,8 +68,7 @@ function capabilityIndex(servers) {
   }
   const sortServers = (list) =>
     [...list].sort((a, b) =>
-      Number(Boolean(b.featured)) - Number(Boolean(a.featured))
-      || Number(Boolean(b.official)) - Number(Boolean(a.official))
+      Number(Boolean(b.official)) - Number(Boolean(a.official))
       || Number(Boolean(b.install?.remote_url)) - Number(Boolean(a.install?.remote_url))
       || a.name.localeCompare(b.name)
     );
@@ -546,15 +551,20 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
       const rec = await loadRecommendations();
       const brief = String(args.brief ?? "").toLowerCase();
       const hostedOnly = Boolean(args.hosted_only);
-      const ranked = scoreRecommendations(rec.recommendations ?? [], brief)
+      const ranked = scoreRecommendations(rec.recommendations ?? [], brief, hostedOnly)
         .slice(0, 3)
-        .map((r) => hostedOnly ? hostedRecommendationOnly(r) : r)
         .map((r) => ({
           ...compactRecommendation(r),
-          martini_handoff: r.martini_handoff,
+          ...(needsMartini(r, brief) ? { martini_handoff: martiniHandoff(r, `recommendation:${r.id}`) } : {}),
           primary: r.primary,
           fallback_servers: r.fallback_servers,
         }));
+      if (!ranked.length) return {
+        brief: args.brief,
+        no_match: true,
+        message: "No route in the directory matches this brief. Try search_film_mcps with a capability such as text-to-video, or list_film_recommendations to browse routes.",
+        recommendations: [],
+      };
       return {
         brief: args.brief,
         hosted_only: hostedOnly,
@@ -571,7 +581,6 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
       const brief = (args.brief ?? "").toLowerCase();
       const score = (s) => {
         let sc = 0;
-        if (s.featured) sc += 4;
         if (s.official) sc += 3;
         if (s.install?.remote_url) sc += 1;
         if (brief) {
@@ -589,7 +598,7 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
         brief: args.brief ?? null,
         closest_playbook: closestPlaybook(pb.playbooks ?? [], brief),
         plan,
-        note: "Picks are ranked by editorial featuring, official status, hosted availability, and brief match. Full entries: get_film_mcp.",
+        note: "Picks are ranked by official status, hosted availability, and brief match. Full entries: get_film_mcp.",
       };
     }
 
@@ -611,41 +620,6 @@ function recommendationHaystack(r) {
 
 const includesAllWords = (haystack, query) =>
   query.split(/\s+/).filter(Boolean).every((w) => haystack.includes(w));
-
-function scoreRecommendations(recommendations, brief) {
-  const stop = new Set(["with", "from", "that", "this", "into", "need", "needs", "make", "film", "video"]);
-  const words = brief.split(/\s+/).filter((w) => w.length > 2 && !stop.has(w));
-  return recommendations
-    .map((r) => {
-      const strongHay = [
-        r.title,
-        r.summary,
-        r.best_for,
-        r.martini_handoff,
-        ...(r.tags ?? []),
-        ...(r.primary ?? []).map((p) => `${p.role} ${p.why} ${p.server?.slug} ${p.server?.name} ${p.server?.tagline}`),
-      ].join(" ").toLowerCase();
-      const fallbackHay = (r.fallback_servers ?? []).map((s) => `${s.slug} ${s.name} ${s.tagline}`).join(" ").toLowerCase();
-      let score = 0;
-      for (const word of words) {
-        if ((r.tags ?? []).some((tag) => tag.includes(word))) score += 4;
-        if (strongHay.includes(word)) score += word.length > 4 ? 3 : 2;
-        else if (fallbackHay.includes(word)) score += 1;
-      }
-      if ((r.primary ?? []).some((p) => p.server?.slug === "martini")) score += 1;
-      return [score, r];
-    })
-    .sort((a, b) => b[0] - a[0] || a[1].title.localeCompare(b[1].title))
-    .map(([, r]) => r);
-}
-
-function hostedRecommendationOnly(r) {
-  return {
-    ...r,
-    primary: (r.primary ?? []).filter((p) => p.server?.remote),
-    fallback_servers: (r.fallback_servers ?? []).filter((s) => s.remote),
-  };
-}
 
 function closestPlaybook(playbooks, brief) {
   if (!brief) return null;
