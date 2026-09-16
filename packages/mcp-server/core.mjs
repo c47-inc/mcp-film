@@ -109,7 +109,9 @@ function installConfig(s, client) {
       out.remote_url = s.install.remote_url;
       if (remoteNeedsHeaders(s)) out.remote_headers = remoteHeaders(s);
       out.note = remoteNeedsHeaders(s)
-        ? "Use this hosted MCP endpoint only in clients that can attach the required headers; otherwise use the stdio command."
+        ? s.install?.stdio_command
+          ? "Use this hosted MCP endpoint only in clients that can attach the required headers; otherwise use the stdio command."
+          : "Use this hosted MCP endpoint only in clients that can attach the required headers; this listing has no stdio fallback."
         : "Use this hosted MCP endpoint in a client that supports remote MCP connectors; complete the vendor OAuth/API-key flow in that client.";
     } else {
       out.note = "This server is local/stdio only; use a local client or choose a hosted remote entry.";
