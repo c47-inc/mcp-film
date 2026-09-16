@@ -30,9 +30,9 @@
     "category": "production-ops",
     "featured": false,
     "tagline": "Notion's hosted MCP: search, read, and write docs, wikis, and databases via OAuth.",
-    "description": "Notion's official hosted MCP server gives agents OAuth-scoped access to a workspace: semantic search (including connected Slack/Drive/Jira with Notion AI), fetch pages and databases, and create/update content using AI-native, Markdown-first tools. The natural home for script drafts, beat sheets, character bibles, and shot lists an agent can read and update.",
-    "capabilities": ["workspace-search", "page-crud", "database-crud", "database-views", "file-uploads", "comments", "markdown-first"],
-    "tools_sample": ["notion-search", "notion-fetch", "notion-create-pages", "notion-update-page", "notion-create-database", "notion-query-data-sources", "notion-create-file-upload", "notion-create-comment"],
+    "description": "Notion's official hosted MCP server gives agents OAuth-scoped access to a workspace: keyword search over pages and people, a separate AI search that reaches connected sources when the workspace has Notion AI, fetch of pages and databases, and create/update content through AI-native, Markdown-first tools. The natural home for script drafts, beat sheets, character bibles, and shot lists an agent can read and update.",
+    "capabilities": ["workspace-search", "ai-search", "page-crud", "database-crud", "database-views", "file-uploads", "comments", "skills", "markdown-first"],
+    "tools_sample": ["notion-search", "notion-ai-search", "notion-fetch", "notion-create-pages", "notion-update-page", "notion-create-database", "notion-create-view", "notion-query-data-sources", "notion-create-file-upload", "notion-get-users"],
     "install": {
       "claude_code": "claude mcp add --transport http notion https://mcp.notion.com/mcp",
       "remote_url": "https://mcp.notion.com/mcp",
@@ -42,8 +42,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/makenotion/notion-mcp-server", "docs": "https://developers.notion.com/guides/mcp/get-started-with-mcp", "site": "https://www.notion.com" },
     "added": "2026-06-11",
-    "verified": "2026-08-12",
-    "notes": "25 tools on the hosted server now, up from ~18 in June — the additions are file uploads and attachments, database views, notion-query-data-sources, meeting-note search, and page-to-skill conversion. Notion has hardened its language on the open-source local server (4.6k stars, last pushed 25 Jul 2026): it is no longer actively maintained, and the hosted URL is the recommended path unless you specifically need the JSON-based v1 APIs. Search, multi-source queries, and meeting-note search all require a Business plan or higher with Notion AI. Clients that can send custom HTTP headers can use a PAT instead of the OAuth flow."
+    "verified": "2026-09-16",
+    "notes": "Endpoint unchanged; the tool surface has been reshuffled rather than grown. Notion's supported-tools page now documents 24 tools, and the important change is that search has split in two: notion-search is plain keyword search over pages and people and works on a free workspace, while notion-ai-search — the one that reaches connected Slack, Drive and Jira — is a separate tool that requires Notion AI, as does notion-query-meeting-notes. Business or Enterprise is what buys the advanced filters and sorting, not search itself; the earlier note here overstated the plan wall. New since August: page-Skills tools (notion-search-skills, notion-download-skill, notion-convert-page-to-skill), notion-move-pages, notion-duplicate-page, notion-create-folder, notion-get-teams and notion-get-users. Correction that matters for scheduled agents: the hosted server is OAuth-only. Notion's own FAQ says non-interactive authorization is 'not yet' supported, and bearer tokens and PATs are not accepted over HTTP headers, so a headless nightly job cannot connect — use the local server with a NOTION_TOKEN integration token for that, accepting that Notion calls it no longer actively maintained (4.6k stars, MIT, still receiving commits — last pushed 13 Sep 2026)."
   },
   {
     "slug": "google-drive",
@@ -65,8 +65,8 @@
     "pricing": "freemium",
     "links": { "repo": null, "docs": "https://developers.google.com/workspace/drive/api/guides/configure-mcp-server", "site": "https://drive.google.com" },
     "added": "2026-06-11",
-    "verified": "2026-08-12",
-    "notes": "Still in the Google Workspace Developer Preview Program two months on, with no GA announcement — flag as preview. Google now publishes the full eight-tool surface, listed above. You still bring your own Google Cloud OAuth client — consent screen plus client ID/secret — and the documented scopes are drive.readonly and drive.file, not full Drive access. The old Anthropic reference gdrive server is archived; don't use it. Broader community alternative covering Docs/Sheets/Slides/Gmail too: taylorwilsdon/google_workspace_mcp, listed here as google-workspace."
+    "verified": "2026-09-16",
+    "notes": "Still gated behind the Google Workspace Developer Preview Program more than three months after listing, with no GA announcement — flag as preview. Nothing drifted on re-check: same endpoint, same eight tools, same two scopes (drive.readonly and drive.file, not full Drive access). Google has since published a per-tool MCP reference at developers.google.com/workspace/drive/api/reference/mcp, which is the place to check argument shapes. The setup cost is the same as before and worth budgeting for: enable both the Drive API and the Drive MCP API in your own Google Cloud project, configure the consent screen, then create a Web application OAuth client whose redirect URI depends on the client you are connecting from — Google documents different values for Antigravity, Claude and everything else, and a mismatch fails at consent, not at connect. The old Anthropic reference gdrive server is archived; don't use it. Broader community alternative covering Docs/Sheets/Slides/Gmail too: taylorwilsdon/google_workspace_mcp, listed here as google-workspace."
   },
   {
     "slug": "dropbox",
