@@ -475,5 +475,28 @@
     "added": "2026-09-15",
     "verified": "2026-09-15",
     "notes": "Verified live 2026-09-15: initialize answered protocol 2025-06-18 as magic-hour 0.1.0, and an unauthenticated tools/list returned all 44 tools — discovery is public, calls need the key. The connect line is copied from magichour.ai/mcp. The OAuth is a shim, not delegated auth: mcp.magichour.ai names itself as both protected resource and authorization server, and the flow validates an API key and uses it as the access token, so the agent holds a full-account credential either way. Money: the same credits as the web app, $1 buys 400 in packs or 144k to 840k a year on the $12 to $66 monthly plans, and the pricing page lists API access as a paid-plan feature — we did not confirm that a free account can mint a working key. The server is a thin generated layer over the REST API, so tool names are long operationId-style strings and quality is whatever Magic Hour's underlying models deliver; the vendor's own setup page says only Claude, Claude Code and Codex are verified clients. The repo has no licence file and 6 stars, but the GitHub org dates from 2023 and the submitter's account states Magic Hour employment."
+  },
+  {
+    "slug": "byteplus-ark",
+    "name": "Ark Seed Multimodal MCP",
+    "vendor": "BytePlus SA program (byteplus-sa) — vendor-adjacent, not the ModelArk product team",
+    "official": false,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Seedance video, Seedream stills, and Seed Audio behind one typed BytePlus MCP server.",
+    "description": "A FastMCP server that fronts BytePlus ModelArk and Seed Speech: Seedance text- and image-to-video (including Seedance 2.5, which takes up to 30 reference images and 10 reference videos), Seedream image generation and editing, Seed Audio full-scene speech, ASR, video understanding, and the VOD AI MediaKit tools for enhancement, transcode, subtitle burn-in or removal, and voice/music/sfx separation. Every long job runs in the background — native MCP task augmentation where the client supports it, ordinary ark_job_* tools where it does not — and finished media is copied into a local artifact store, which matters because BytePlus output URLs expire after 2 hours for audio and 24 for image and video. The only route to Seedance in this directory, and the only one that also carries the finishing tools around it.",
+    "capabilities": ["text-to-video", "image-to-video", "video-reference", "text-to-image", "image-editing", "tts", "speech-to-text", "video-understanding", "video-enhancement", "subtitles", "audio-separation", "async-jobs"],
+    "tools_sample": ["seedance_create_task", "seedance_get_task", "seedance_create_task_variations", "seedream_generate_image", "seedream_edit_image", "seed_audio_generate", "speech_to_text", "seed_understand", "vod_enhance_video", "vod_separate_audio", "media_upload", "ark_job_submit"],
+    "install": {
+      "claude_code": null,
+      "remote_url": null,
+      "stdio_command": "Clone and run locally — git clone https://github.com/byteplus-sa/ark-mcp, then uv sync, then point the client at: uv --directory /path/to/ark-mcp run python -m ark_mcp (BytePlus keys go in the client's env block). No npm or PyPI package exists."
+    },
+    "auth": { "type": "api_key", "env_var": "BYTEPLUS_MODELARK_API_KEY", "key_url": "https://console.byteplus.com — ModelArk > API Key covers Seedream and Seedance; Seed Speech and VOD AI MediaKit each issue a separate key, and the server only registers the tool groups whose keys you set" },
+    "pricing": "paid",
+    "links": { "repo": "https://github.com/byteplus-sa/ark-mcp", "docs": "https://github.com/byteplus-sa/ark-mcp/blob/main/docs/getting-started.md", "site": "https://docs.byteplus.com/en/docs/ModelArk/1520757" },
+    "added": "2026-09-16",
+    "verified": "2026-09-16",
+    "notes": "Read the vendor line carefully: byteplus-sa is BytePlus's solution-architect program org (created 16 May 2026, blog byteplus.com, four public repos), not the ModelArk product team, so this is listed as unofficial — the keys and the billing are first-party, the server is not. MIT by GitHub's licence detection, although the README's own licence section punts to 'project configuration'. It is young and unnoticed: 1 star, repo created 20 Jul 2026, last pushed 14 Sep 2026, no releases or tags and no published package, so a clone plus uv sync on Python 3.12+ is the only install and you get whatever main happens to be that day. Its own quality claims disagree with themselves — the feature list says 1,155 offline tests at 86% coverage, the status section says 631 at 88% — and we have not run it, so treat the polish as unverified. Three credentials, three auth schemes: ModelArk is Bearer, Seed Speech is X-Api-Key, VOD MediaKit is Bearer, and the default ModelArk host is region-scoped to ap-southeast, so accounts elsewhere must override BYTEPLUS_MODELARK_BASE_URL. The 3D tools (Hyper3D/Hitem3d) stay hidden unless you set BYTEPLUS_MODELARK_3D_ENABLED. The edge that will bite a filmmaker first: Seedance reference video must be a public HTTPS URL with no inline Base64 option, so you need TOS or S3 credentials for media_upload or your own hosting, and the server's SSRF policy rejects anything resolving to a private address. Model IDs are ModelArk endpoint strings you configure yourself (SEEDANCE_DEFAULT_MODEL, SEEDREAM_DEFAULT_MODEL), not friendly names."
   }
 ]
