@@ -844,7 +844,10 @@ export const renderServer = (ctx, s) => {
   if (s.install?.remote_url) {
     connect.push(codeBlock("Remote endpoint (Streamable HTTP)", s.install.remote_url, "txt", { "copy-kind": "connect", "copy-method": "remote_url", "copy-slug": s.slug }));
     if (remoteNeedsHeaders(s)) {
-      connect.push(`<p class="connect-note">Remote headers required: ${remoteHeaders(s).map((h) => `<code class="mono">${esc(h)}</code>`).join(", ")}. Use the local stdio command when your client cannot attach custom MCP headers.</p>`);
+      const fallback = s.install?.stdio_command
+        ? "Use the local stdio command when your client cannot attach custom MCP headers."
+        : "Use a client that can attach custom MCP headers; this listing has no local stdio fallback.";
+      connect.push(`<p class="connect-note">Remote headers required: ${remoteHeaders(s).map((h) => `<code class="mono">${esc(h)}</code>`).join(", ")}. ${fallback}</p>`);
     }
   }
   if (cc) connect.push(codeBlock("Claude Code", cc, "sh", { "copy-kind": "connect", "copy-method": "claude_code", "copy-slug": s.slug }));
@@ -896,7 +899,7 @@ export const renderServer = (ctx, s) => {
       <strong>Auth:</strong> ${esc(s.auth?.type ?? "unknown")}${s.auth?.env_var ? ` · env <code class="mono">${esc(s.auth.env_var)}</code>` : ""}${s.auth?.key_url ? ` — ${keyUrlHtml(s.auth.key_url)}` : ""}
     </div>
 
-    ${s.tools_sample?.length ? `<h2>Tools you'll see</h2><div class="chips">${s.tools_sample.map((t) => `<code class="chip mono">${esc(t)}</code>`).join("")}</div>` : ""}
+    ${s.tools_sample?.length ? `<h2>Sample tools</h2><div class="chips">${s.tools_sample.map((t) => `<code class="chip mono">${esc(t)}</code>`).join("")}</div>` : ""}
 
     ${s.notes ? `<h2>Field notes</h2><p class="notes">${esc(s.notes)}</p>` : ""}
 
@@ -1712,7 +1715,7 @@ export const renderForAgents = (ctx) => {
   <ul class="agents-list">
     <li><strong>official: true</strong> means the platform vendor maintains it. Prefer these.</li>
     <li><strong>install.remote_url</strong> means hosted Streamable HTTP — no local process, usually OAuth.</li>
-    <li><strong>install.remote_headers</strong> names custom headers a hosted remote requires; use stdio when your client cannot attach them.</li>
+    <li><strong>install.remote_headers</strong> names custom headers a hosted remote requires; use stdio when the listing provides it, otherwise use a client that can attach those headers.</li>
     <li><strong>auth.env_var</strong> names the key your runtime needs before connecting.</li>
     <li><strong>notes</strong> carry the caveats that bite agents: quota limits, ToS gray areas, local-app requirements.</li>
     <li><strong>verified</strong> is the date a human-or-agent last confirmed the server works as listed.</li>
