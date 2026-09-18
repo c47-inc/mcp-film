@@ -231,5 +231,54 @@
     "added": "2026-09-15",
     "verified": "2026-09-15",
     "notes": "Verified 2026-09-15 from primary sources: an unauthenticated JSON-RPC POST returns 401 with a proper WWW-Authenticate challenge, while GET returns 405 as expected. The server card at cinegenta.com/.well-known/mcp/server-card.json and the official MCP registry entry (com.cinegenta/studio v1.1.0, published 13 Sep 2026) publish the same endpoint; the registry's 13-tool count is publisher-provided metadata, not an independent tools/list check. The tool list above is copied from the vendor's agent reference at cinegenta.com/mcp/reference.md, which says it is regenerated from tools/list. What we could not check without a scoped key and a spend: whether cap enforcement, failed-render refunds and regenerate's idempotency protection behave as described — those remain vendor claims. Know what you are buying into: the domain was registered in May 2026, the product is labelled Beta, and no public repo or named team was found in the vendor docs or registry at verification time. Credits are $0.10 each in $5 to $500 packs bought only on the website, with a generated minute quoted anywhere from under a dollar to over twenty depending on the models. Transport is stateless POST-only, no SSE. Submission #47 was discovery input, not a verification source."
+  },
+  {
+    "slug": "framesail",
+    "name": "Framesail",
+    "vendor": "Framesail",
+    "official": true,
+    "category": "studio",
+    "featured": false,
+    "tagline": "Hosted MCP that carries a script through storyboard, voiceover and shots to a cut MP4.",
+    "description": "Framesail's own remote MCP exposes its six-stage pipeline to an agent: derive a look from reference images, video or a YouTube link, write or generate the script, lock reference images for every character, place and prop, record voiceover with word-level timing, plan the storyboard scene by scene, then render each shot against those locked references and export with captions, music and SFX. State lives server-side, so a run can pause between chat sessions and resume, and an agent can read or rewrite the script, references and storyboard before the next stage runs. Aimed at long-form output rather than clips, which makes it one of the few studio-class servers an agent can drive end to end.",
+    "capabilities": [
+      "script-generation",
+      "storyboarding",
+      "character-consistency",
+      "reference-locking",
+      "voiceover",
+      "text-to-video",
+      "shot-rendering",
+      "captioning",
+      "video-export",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "generate_script",
+      "generate_storyboard",
+      "export_video"
+    ],
+    "install": {
+      "claude_code": "claude mcp add --transport http framesail https://api.framesail.com/mcp --header \"Authorization: Bearer fsk_YOUR_KEY\"",
+      "remote_url": "https://api.framesail.com/mcp",
+      "remote_headers": [
+        "Authorization"
+      ],
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "api_key",
+      "env_var": null,
+      "key_url": "https://framesail.com/developers — Claude Code and Cursor use an fsk_ bearer token; claude.ai, Claude Desktop and the mobile app connect over OAuth instead and need no key."
+    },
+    "pricing": "paid",
+    "links": {
+      "repo": null,
+      "docs": "https://framesail.com/developers",
+      "site": "https://framesail.com"
+    },
+    "added": "2026-09-18",
+    "verified": "2026-09-18",
+    "notes": "Verified 18 Sep 2026 from the vendor's own pages: the endpoint, transport, both auth paths and the connect command come from framesail.com/developers, and an anonymous GET on api.framesail.com/mcp answers 401, so the server is live and gated. Price is the first thing to check, because there is no free tier and MCP is not on the entry plan: quarterly billing runs Creator $22/month (12,000 credits), Pro $54/month (30,000), Studio $137/month (80,000) and Scale $551/month (330,000), and 'API & MCP access' is listed from Pro upward. Credits roll over but expire two months after they are granted, so a quiet month is a forfeited month. Only three tool names are published — generate_script, generate_storyboard and export_video — so tools_sample lists those three rather than a number; third-party directories quote a tool count the vendor does not, and we did not run tools/list without a paid key. Hosted only: no repo, no local package, nothing to self-host, and no way to audit what the pipeline sends to which upstream model. The vendor also ships a REST API over the same stages and says to pick one surface per run rather than mixing MCP and REST. If you want the same script-to-cut arc with a timeline you can actually edit, compare martini; if you only need the breakdown and prompts and will generate elsewhere, penshot does that part for free."
   }
 ]

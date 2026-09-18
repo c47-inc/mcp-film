@@ -444,5 +444,58 @@
     "added": "2026-09-15",
     "verified": "2026-09-15",
     "notes": "Verified live 2026-09-15: initialize answered protocol 2025-06-18 as budgetpixel 0.1.0 and tools/list returned 13 tools without auth — one more than the README's table (save_to_assets). Listed in the official MCP registry as com.budgetpixel/mcp since 27 Aug 2026, a namespace that requires DNS control of budgetpixel.com, so the vendor claim holds. The connect line is the README's own. Everything else is the platform's gate: browsing models is free, but generation, upscaling, uploads and publishing need a paid plan — Starter is $5 a month for 5,000 credits, images run about 25 credits, video is billed per second and by resolution, and the pricing page lists commercial usage from Premium ($22 a month) upward. The MCP itself is closed-source glue; the repo is a README and a licence with 2 stars, in a GitHub org created the day of submission, though the domain dates from March 2025 and the submitter's account lists the company. The video-synced sound-effect claim is the server's own tool description; we did not spend credits to test it. Filed under model-hub rather than studio: it aggregates other vendors' models behind one bill, it does not plan shots or hold a timeline."
+  },
+  {
+    "slug": "atlas-cloud",
+    "name": "Atlas Cloud MCP",
+    "vendor": "Atlas Cloud",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "One API key over a large image, video, audio and 3D model catalogue, with a dry-run flag.",
+    "description": "Atlas Cloud's own stdio server puts its aggregated model catalogue behind fifteen tools: search the docs, list models and read their parameter schemas, then generate image, video, audio or 3D output, transcribe audio, upload source media, and poll predictions. For a filmmaker-agent it is a single-bill way to reach a wide spread of upstream image and video models without wiring each vendor, and it reports balance, per-model usage and per-model cost so an agent can see what a shot spent.",
+    "capabilities": [
+      "multi-model-generation",
+      "text-to-image",
+      "text-to-video",
+      "image-to-video",
+      "audio-generation",
+      "transcription",
+      "3d-generation",
+      "model-discovery",
+      "cost-tracking"
+    ],
+    "tools_sample": [
+      "atlas_list_models",
+      "atlas_get_model_info",
+      "atlas_generate_image",
+      "atlas_generate_video",
+      "atlas_generate_audio",
+      "atlas_transcribe_audio",
+      "atlas_quick_generate",
+      "atlas_upload_media",
+      "atlas_get_prediction",
+      "atlas_get_balance",
+      "atlas_get_model_costs"
+    ],
+    "install": {
+      "claude_code": "claude mcp add atlascloud -- npx -y atlascloud-mcp",
+      "remote_url": null,
+      "stdio_command": "npx -y atlascloud-mcp"
+    },
+    "auth": {
+      "type": "api_key",
+      "env_var": "ATLASCLOUD_API_KEY",
+      "key_url": "https://www.atlascloud.ai — sign in and create a key; billing is pay-as-you-go per generation, not a subscription."
+    },
+    "pricing": "credits",
+    "links": {
+      "repo": "https://github.com/AtlasCloudAI/mcp-server",
+      "docs": "https://github.com/AtlasCloudAI/mcp-server#readme",
+      "site": "https://www.atlascloud.ai"
+    },
+    "added": "2026-09-18",
+    "verified": "2026-09-18",
+    "notes": "Verified 18 Sep 2026 from the repo, npm and the vendor's pricing page. The best thing here is the flag nobody else ships: every generation tool takes dry_run: true, which returns the request the server would send without submitting it or charging — the cheapest way to let an agent rehearse an expensive video call. Also useful that atlas_get_model_costs exists at all, since the failure mode of every aggregator is an agent burning a balance it cannot see. Now the caveats. The catalogue numbers — 130+ image models, 200+ video models, 443 live models overall — are the README's, checked against nothing; treat atlas_list_models as the real inventory. Maintenance is uneven: the repo was pushed 16 Sep 2026 but npm has sat at 1.7.0 since 27 Aug, so npx installs lag the source, and the project has 8 stars in an org created December 2025. The README declares MIT but GitHub detects no licence file in the repo, which is a difference that matters if you are vendoring it. Uploaded files are explicitly temporary — the README says they may be cleaned up periodically and that abusing the upload tool can get your key suspended — so do not treat atlas_upload_media as asset storage. No free tier on the pricing page; per-unit rates are quoted per model (GPT Image 2.5 from $0.0687 an image) with discounts advertised against list. This lane is crowded: fal, replicate and runware are older, better documented and more widely used. Reach for Atlas Cloud when the specific model you want is in its catalogue and not theirs, or when you want the dry-run rehearsal."
   }
 ]

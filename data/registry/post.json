@@ -516,7 +516,7 @@
     "featured": false,
     "tagline": "Descript's official hosted MCP — import media, run Underlord edits, publish, from your agent.",
     "description": "Descript's first-party remote MCP server hands an agent the transcript-based editor: import media from a URL or local file with automatic transcription, then drive Underlord to strip filler words, apply Studio Sound, generate captions, build scenes and highlight reels, or create a whole project from a prompt. It also finds and organizes projects and compositions and publishes to a shareable Descript link. The natural home for interview, doc and podcast-adjacent cutting, where the edit is really a text edit.",
-    "capabilities": ["transcript-editing", "captioning", "filler-word-removal", "audio-cleanup", "highlight-reels", "project-management", "publishing", "remote-mcp"],
+    "capabilities": ["transcript-editing", "captioning", "filler-word-removal", "audio-cleanup", "highlight-reels", "project-management", "transcript-export", "publishing", "remote-mcp"],
     "tools_sample": null,
     "install": {
       "claude_code": "claude mcp add --transport http descript https://api.descript.com/v2/mcp",
@@ -527,8 +527,8 @@
     "pricing": "paid",
     "links": { "repo": null, "docs": "https://help.descript.com/hc/en-us/articles/46056322186509-Descript-MCP-overview", "site": "https://www.descript.com/api" },
     "added": "2026-08-15",
-    "verified": "2026-08-15",
-    "notes": "Official and hosted, so nothing to install, but the export story is the catch: Descript documents no direct media-file export over MCP — an agent can publish to a Descript web link or hand off a signed URL, and anything else you fetch by exporting from the app yourself. Other documented limits: YouTube URLs cannot be imported, job history is kept 30 days, and one connection sees exactly one drive (switching drives means re-authenticating, and editing a project on another drive errors). API and MCP access is included for paying subscribers at no extra cost but every import and Underlord edit burns your plan's media minutes and AI credits. Descript points Claude users at the connector directory and gives the raw URL above for custom clients; tool names are not published, so this entry lists capabilities rather than inventing them."
+    "verified": "2026-09-18",
+    "notes": "Re-verified 18 Sep 2026: the overview doc is unchanged and api.descript.com/v2/mcp answers 401 to an anonymous request, so the endpoint is live and auth-gated as listed. Official and hosted, so nothing to install, but the export story is still the catch: Descript documents no rendered media download without publishing — an agent can publish to a Descript web link or hand off a signed URL, and anything else you fetch by exporting from the app yourself. TRANSCRIPTS are the exception, and this run pinned down the formats: text, Markdown, HTML, RTF and SRT come back over MCP, DOCX does not. The docs also cover job tracking and cancellation, which matters because imports and Underlord runs are async. Other documented limits: YouTube URLs cannot be imported, job history is kept 30 days, one connection sees exactly one drive (switching drives means re-authenticating, and editing a project on another drive errors), and Claude's directory connector excludes the generative image/video tools. API and MCP access is included for paying subscribers at no extra cost but every import and Underlord edit burns your plan's media minutes and AI credits. Note the two auth stories: MCP is OAuth through your Descript login with no token, while the REST API uses drive-scoped tokens from Settings → API Tokens — descript.com/api blurs them together. Tool names are still not published, so this entry lists capabilities rather than inventing them."
   },
   {
     "slug": "topaz",
@@ -546,12 +546,12 @@
       "remote_url": null,
       "stdio_command": "npx -y @topazlabs/mcp"
     },
-    "auth": { "type": "api_key", "env_var": "TOPAZ_API_KEY", "key_url": "https://developer.topazlabs.com/getting-started/how-do-i-get-my-api-key" },
+    "auth": { "type": "api_key", "env_var": "TOPAZ_API_KEY", "key_url": "https://developer.topazlabs.com/getting-started/api-key-setup" },
     "pricing": "credits",
     "links": { "repo": "https://github.com/TopazLabs/topaz-mcp", "docs": "https://developer.topazlabs.com/", "site": "https://www.topazlabs.com/api" },
     "added": "2026-06-11",
-    "verified": "2026-08-13",
-    "notes": "Official, MIT, TypeScript — and dormant: v0.1.14 on npm and the last repo commit both date to 16 Feb 2026, six months ago, with 5 stars. It still installs and runs, but nobody is extending it. IMAGE ONLY — the README still says video is 'not yet supported' via MCP even though Topaz's developer API covers Video AI, Photo AI, and Gigapixel, and HTTP streaming transport is also listed as unsupported, so remote and web clients are out. One tool, image-enhance, taking a local path or URL: a filesystem-capable client is required (Claude Code, Cursor, Windsurf, VS Code — not Claude's browser chat). For Topaz VIDEO upscaling today, go around it to the Topaz models hosted on fal.ai via the fal MCP (fal-ai/topaz/upscale/video, $0.01–0.08 per second of output depending on resolution)."
+    "verified": "2026-09-18",
+    "notes": "Official, MIT, TypeScript — and dormant: re-checked 18 Sep 2026 and nothing has moved. v0.1.14 on npm and the last repo commit both still date to 16 Feb 2026, seven months ago; the repo has gained one star in five weeks (6 total) and no commits. It installs and runs, but nobody is extending it. IMAGE ONLY — the README still says 'Image only -- video enhancement is not yet supported' via MCP even though Topaz's developer API covers Video AI, Photo AI, and Gigapixel, and it still lists HTTP streaming transport as 'not yet supported but may be added in a future release', so ChatGPT, remote agents and web/mobile clients are out. One tool, image-enhance, taking a local path or URL: a filesystem-capable client is required (Claude Code, Cursor, Windsurf, VS Code — not Claude's browser chat). The key_url here changed this run — Topaz's old how-do-i-get-my-api-key page now 404s and the live page is getting-started/api-key-setup, which warns the key is shown exactly once at creation. For Topaz VIDEO upscaling today, go around it to the Topaz models hosted on fal.ai via the fal MCP (fal-ai/topaz/upscale/video — re-confirmed 18 Sep 2026 at $0.01/second up to 720p, $0.02 to 1080p, $0.08 above 1080p, doubled for 60fps output and halved for Gaia 2)."
   },
   {
     "slug": "magnific",

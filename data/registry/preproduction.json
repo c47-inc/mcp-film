@@ -9,18 +9,18 @@
     "tagline": "Breaks screenplays into shot lists and generates Sora/Veo/Runway-ready video prompts.",
     "description": "An LLM-powered agent that parses scripts in any format, performs shot-by-shot breakdowns, and emits coherent text-to-video prompts with cross-shot character consistency. Runs as an MCP server, Python SDK, REST API, or LangGraph node — the missing link between a screenplay and a generation pipeline.",
     "capabilities": ["screenplay-parsing", "shot-breakdown", "storyboard-scripts", "t2v-prompt-generation", "character-consistency"],
-    "tools_sample": ["breakdown_script", "get_task_status", "get_task_result", "cancel_task", "get_queue_status"],
+    "tools_sample": ["breakdown_script", "get_task_status", "get_task_result", "cancel_task", "list_tasks", "get_queue_status", "get_stats"],
     "install": {
-      "claude_code": "claude mcp add penshot -- python -m penshot.mcp_server (after pip install penshot)",
+      "claude_code": "claude mcp add penshot -- python -m penshot.mcp_server --max-concurrent 5 --queue-size 500 (after pip install penshot)",
       "remote_url": null,
-      "stdio_command": "python -m penshot.mcp_server"
+      "stdio_command": "python -m penshot.mcp_server --max-concurrent 5 --queue-size 500"
     },
-    "auth": { "type": "api_key", "env_var": null, "key_url": "Bring your own LLM API key for the underlying agent (per its docs)" },
+    "auth": { "type": "api_key", "env_var": "PENSHOT_LLM__DEFAULT__API_KEY", "key_url": "Bring your own LLM and embedding endpoints — set PENSHOT_LLM__DEFAULT__{BASE_URL,API_KEY,MODEL_NAME} and the matching PENSHOT_EMBED__DEFAULT__* vars; OpenAI, Qwen, DeepSeek and Ollama are named as working providers" },
     "pricing": "free",
     "links": { "repo": "https://github.com/neopen/story-shot-agent", "docs": "https://pengline.cn/2026/02/b027d930c0b84ba6abd24bbef7d78afc/", "site": "https://shot.helpenx.com" },
     "added": "2026-06-11",
-    "verified": "2026-08-15",
-    "notes": "Growing: 139 stars, PyPI 0.3.6 shipped 23 Jul 2026, MIT. Setup is heavier than the one-line install suggests — it wants an LLM endpoint, an embedding model, and a Redis URL in .env before the MCP server is useful, and the maintainers state it is optimized for Chinese scripts with full English support still on the roadmap. Async is the sane mode: submit with breakdown_script, poll get_task_status, collect get_task_result. Directory finding, still true: no dedicated MCP exists for Final Draft, Celtx, WriterDuet, or Fountain — script writing itself is best done with your agent directly (Fountain is plain text), stored via the Notion or Google Drive MCPs."
+    "verified": "2026-09-18",
+    "notes": "Still growing and genuinely active: 203 stars (up from 139 in five weeks), last commit 17 Sep 2026, PyPI 0.3.7 shipped 2 Sep 2026, MIT. Seven tools, read from the server source rather than the README — breakdown_script, get_task_status, get_task_result, cancel_task, list_tasks, get_queue_status, get_stats — and the install line now carries the --max-concurrent/--queue-size flags the project's own example config uses. THE CATCH THAT BITES: the stdio server advertises every tool with an empty JSON-Schema parameter block, so your client sees no argument names and you have to spell the arguments out in the prompt; the FastAPI surface in mcp_http_server.py has full parameter descriptions but it is a plain REST façade on :8000, not MCP over HTTP, so do not expect a remote_url. Setup is heavier than the one-line install suggests — an LLM endpoint, an embedding model and PENSHOT_REDIS_URL all have to be in .env first, or use the published ghcr.io/neopen/penshot image with docker compose. The maintainers still say it is optimized in depth for Chinese scripts with other languages 'in continuous iteration'. Async is the sane mode: submit with breakdown_script, poll get_task_status, collect get_task_result — and note task success reports as 'success', not 'completed'. Directory finding, still true: no dedicated MCP exists for Final Draft, Celtx, WriterDuet, or Fountain — script writing itself is best done with your agent directly (Fountain is plain text), stored via the Notion or Google Drive MCPs."
   },
   {
     "slug": "studio-state",
