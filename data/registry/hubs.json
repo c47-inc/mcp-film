@@ -497,5 +497,43 @@
     "added": "2026-09-18",
     "verified": "2026-09-18",
     "notes": "Verified 18 Sep 2026 from the repo, npm and the vendor's pricing page. The best thing here is the flag nobody else ships: every generation tool takes dry_run: true, which returns the request the server would send without submitting it or charging — the cheapest way to let an agent rehearse an expensive video call. Also useful that atlas_get_model_costs exists at all, since the failure mode of every aggregator is an agent burning a balance it cannot see. Now the caveats. The catalogue numbers — 130+ image models, 200+ video models, 443 live models overall — are the README's, checked against nothing; treat atlas_list_models as the real inventory. Maintenance is uneven: the repo was pushed 16 Sep 2026 but npm has sat at 1.7.0 since 27 Aug, so npx installs lag the source, and the project has 8 stars in an org created December 2025. The README declares MIT but GitHub detects no licence file in the repo, which is a difference that matters if you are vendoring it. Uploaded files are explicitly temporary — the README says they may be cleaned up periodically and that abusing the upload tool can get your key suspended — so do not treat atlas_upload_media as asset storage. No free tier on the pricing page; per-unit rates are quoted per model (GPT Image 2.5 from $0.0687 an image) with discounts advertised against list. This lane is crowded: fal, replicate and runware are older, better documented and more widely used. Reach for Atlas Cloud when the specific model you want is in its catalogue and not theirs, or when you want the dry-run rehearsal."
+  },
+  {
+    "slug": "artlist",
+    "name": "Artlist MCP",
+    "vendor": "Artlist",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "Official hosted Artlist MCP — generate images, video, music and voice-over on your Artlist credits.",
+    "description": "Artlist's hosted MCP puts the Artlist AI creative suite behind one OAuth connection: image generation, video generation, music generation and voice-over, without opening the Artlist Toolkit in a browser. For a filmmaker-agent the draw is not the model list but the paperwork — Artlist's commercial licence is why editors keep the subscription, and generations run on the same plan that covers the rest of the catalogue. Treat it as the licensing-backed corner of the model shelf rather than a frontier-model aggregator.",
+    "capabilities": [
+      "text-to-image",
+      "text-to-video",
+      "music-generation",
+      "voice-over",
+      "oauth-remote",
+      "licensed-assets"
+    ],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http artlist https://mcp.artlist.io/mcp",
+      "remote_url": "https://mcp.artlist.io/mcp",
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "OAuth 2.1 with dynamic client registration against https://auth.artlist.io/ — run /mcp auth in Claude Code and sign in with an Artlist account that has AI credits"
+    },
+    "pricing": "credits",
+    "links": {
+      "repo": null,
+      "docs": "https://artlist.io/mcp",
+      "site": "https://artlist.io"
+    },
+    "added": "2026-09-20",
+    "verified": "2026-09-20",
+    "notes": "Verified 20 Sep 2026 the only way this vendor allows: Artlist's WAF returns 403 to every automated fetch of artlist.io and help.artlist.io, so the marketing and help-centre pages could not be read directly and the capability list above comes from Artlist's own published copy as indexed, not from a page we fetched. What we did confirm first-hand is the server itself — https://mcp.artlist.io/mcp answers 401 without a token, /.well-known/oauth-protected-resource returns resource_name 'Artlist_MCP_Prod' pointing at https://auth.artlist.io/ with openid and offline_access scopes, and that authorization server advertises a registration endpoint, so dynamic client registration works and there is no API key to paste. tools_sample is null because enumerating tools requires a paid account. Budget before wiring it in: connecting needs an active paid Artlist subscription with AI credits, generations spend those credits, and 'unlimited' plan language does not extend to MCP usage. Reliability caveat worth knowing: the connector broke for users on 14 Sep 2026 — sign-in failing outright after a spell of connecting with no tools available — Artlist confirmed a server-side OAuth fault and the reporter confirmed it fixed on 15 Sep. Not in the official MCP registry, so client connector directories will not surface it; add the URL by hand. If you want frontier video or image models rather than licence-clean ones, fal, replicate or runware are the better shelf."
   }
 ]

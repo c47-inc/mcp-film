@@ -42,8 +42,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/dkf2studios/studio-state-public", "docs": "https://github.com/dkf2studios/studio-state-public/blob/main/INSTALL.md", "site": "https://dkf2studios.gumroad.com/l/flplx" },
     "added": "2026-06-28",
-    "verified": "2026-08-15",
-    "notes": "MIT, still live but static: last commit 16 Jun 2026 and still 0 stars, so treat it as one studio's shim published rather than a maintained project. Prerequisites the README front-loads: Python 3.9+ and `pip install \"mcp[cli]\"`, plus a project root containing _pipeline/STATE.json and episodes/ — run tests/test_acceptance.py against the bundled demo project first (expect 4/4). It is a state shim, not a generator, and the paid Studio Method pack is upsold in the README. The useful bit is safe by design — only `update_shot` writes, and only to a per-scene `shot_status.json` sidecar."
+    "verified": "2026-09-20",
+    "notes": "MIT, still live but frozen: re-checked 20 Sep 2026 and the last push is unchanged at 16 Jun 2026 — three months without a commit — with still 0 stars, so treat it as one studio's shim published rather than a maintained project. The repo is not archived and INSTALL.md is still in place, so nothing has broken; nothing has moved either. Prerequisites the README front-loads: Python 3.9+ and `pip install \"mcp[cli]\"`, plus a project root containing _pipeline/STATE.json and episodes/ — run tests/test_acceptance.py against the bundled demo project first (expect 4/4). It is a state shim, not a generator, and the paid Studio Method pack is upsold in the README. The useful bit is safe by design — only `update_shot` writes, and only to a per-scene `shot_status.json` sidecar."
   },
   {
     "slug": "miro",
@@ -53,9 +53,9 @@
     "category": "story-preproduction",
     "featured": false,
     "tagline": "Official Miro MCP — build and read storyboards, frames, and planning boards via AI.",
-    "description": "Miro's hosted MCP server (public beta) lets agents create and read board content: frames, sticky notes, shapes, text, cards, docs, tables, and diagrams, plus retrieve images and resolve comments. A strong fit for storyboard layouts, shot-planning walls, and mood boards your whole team can see.",
-    "capabilities": ["storyboarding", "board-creation", "diagrams", "mood-boards", "comments", "image-retrieval"],
-    "tools_sample": null,
+    "description": "Miro's hosted MCP server (public beta) lets agents create and read board content, now through an SVG canvas model: the agent writes a board by sending SVG and reads one back the same way, alongside tools to create and search boards, place images, and work prototypes and comments. A strong fit for storyboard layouts, shot-planning walls, and mood boards your whole team can see.",
+    "capabilities": ["storyboarding", "board-creation", "svg-canvas", "mood-boards", "prototypes", "comments", "image-retrieval"],
+    "tools_sample": ["board_create", "board_search_boards", "canvas_create_from_svg", "canvas_read_as_svg", "canvas_update_from_svg", "image_create", "image_get_upload_url", "prototype_create", "prototype_read", "comment_list_comments", "comment_reply", "comment_resolve"],
     "install": {
       "claude_code": "claude mcp add --transport http miro https://mcp.miro.com",
       "remote_url": "https://mcp.miro.com",
@@ -65,8 +65,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/miroapp/miro-ai", "docs": "https://developers.miro.com/docs/miro-mcp", "site": "https://miro.com/ai/mcp/" },
     "added": "2026-06-11",
-    "verified": "2026-08-15",
-    "notes": "Still public beta six months after the 2 Feb 2026 launch — Miro's own marketplace listing says so. Endpoint re-confirmed 15 Aug 2026 as https://mcp.miro.com (no trailing slash in Miro's docs); also installable as a Claude Code plugin (/plugin install miro@miro-ai) from the miroapp/miro-ai repo. Enterprise seats are the catch: an admin must enable MCP for the org before anyone can authorize, while other plans authorize directly. Tool schemas live at developers.miro.com/docs/miro-mcp-tools — the server itself is the source of truth."
+    "verified": "2026-09-20",
+    "notes": "The tool surface was rebuilt since we last checked, so cached configs and prompts will break. Miro's tools page now documents an SVG canvas model — canvas_create_from_svg, canvas_read_as_svg, canvas_update_from_svg and a canvas_get_canvas_composer_skill helper — and states that board_list_items and the whole context_*, layout_*, diagram_* and doc_* families were removed; table_create, table_list_rows and table_sync_rows are marked deprecating soon. Practical effect for storyboards: you no longer place sticky notes and frames item by item, you hand the server SVG. Still public beta more than seven months after the 2 Feb 2026 launch — the Claude Code marketplace listing still says 'MCP is in Public Beta', even though developers.miro.com now leads with 'works for all Miro plans, even free teams'. Enterprise remains the catch: that listing says an Enterprise admin must enable MCP before anyone can authorize. Endpoint re-confirmed 20 Sep 2026 as https://mcp.miro.com (Miro's connect docs write it with a trailing slash; both forms are in Miro's own material). The Claude Code plugin route needs two commands, not one — /plugin marketplace add miroapp/miro-ai then /plugin install miro@miro-ai — and it ships three skills (miro-code-review, miro-code-spec, miro-code-explain-on-board) that are engineering-facing rather than film-facing. miroapp/miro-ai is alive: 154 stars, last push 17 Sep 2026. Tool names above are from developers.miro.com/docs/miro-mcp-tools — the server's own tools/list is the source of truth."
   },
   {
     "slug": "framethrower",
