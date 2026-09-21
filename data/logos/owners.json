@@ -129,5 +129,8 @@
   "framesail": null,
   "atlas-cloud": "AtlasCloudAI",
   "artlist": "ArtlistLtd",
-  "davinci-resolve-studio": null
+  "davinci-resolve-studio": null,
+  "audiopod": "AudiopodAI",
+  "apatero": "Apatero-Org",
+  "clip-studio": null
 }

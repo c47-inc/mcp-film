@@ -136,5 +136,29 @@
     "added": "2026-08-17",
     "verified": "2026-08-17",
     "notes": "Endpoint verified alive on 17 Aug 2026 (401 unauthenticated), Streamable HTTP, OAuth 2.0. Seven tools, and that is the whole surface: stock characters only — nothing in the documented toolset uploads your own plate or clones a voice, so this does not replace Sync or Hedra for footage you shot. Costs roughly 8 credits per second of output, billed against AI Playground credits that come with paid VEED plans or are bought separately, so call confirm_fabric_video first; create_fabric_video is async and returns a job id you poll with get_generation_status. VEED publishes no CLI one-liner — the documented Claude path is the connector directory at claude.ai, and the command shown here is the generic Streamable HTTP form. The linked repo is documentation plus an Agent Skill, not the server: the server is closed-source and hosted, the repo has ~6 stars, and it was last pushed 1 Aug 2026, so judge maintenance by VEED the product rather than by repo activity."
+  },
+  {
+    "slug": "apatero",
+    "name": "Apatero Studio MCP",
+    "vendor": "Apatero",
+    "official": true,
+    "category": "avatars-performance",
+    "featured": false,
+    "tagline": "Studio MCP for talking avatars, locked recurring characters, and batched output.",
+    "description": "Apatero Studio is a hosted generation service whose MCP is organised around persistence rather than one-off clips: Souls are named characters you create once and then generate against, so the same face and wardrobe survive across images, video and talking-avatar takes. Beyond the character tools it covers plain image and video generation, remixes, brand-locked output, short stories, and a batching pipeline that fills a week of posts from one brief. For a filmmaker the relevant slice is narrow but real — a reusable synthetic performer with a consistent look, plus talking-head coverage of it, without running a model locally.",
+    "capabilities": ["talking-head", "avatar-video", "character-consistency", "personas", "text-to-image", "text-to-video", "remix", "batch-generation", "brand-kits", "credit-balance", "remote-mcp"],
+    "tools_sample": ["apatero_generate_image", "apatero_generate_video", "apatero_talking_avatar", "apatero_create_soul", "apatero_generate_with_soul", "apatero_list_souls", "apatero_create_influencer", "apatero_influencer_clip", "apatero_create_story", "apatero_credit_balance", "apatero_list_models"],
+    "install": {
+      "claude_code": "claude mcp add apatero -- npx apatero-mcp",
+      "remote_url": "https://mcp.apatero.ai/mcp",
+      "stdio_command": "npx apatero-mcp (or uvx apatero-studio-mcp); for headless use add --env APATERO_API_KEY=ap_live_your_key",
+      "docs_url": "https://apatero.ai/mcp"
+    },
+    "auth": { "type": "oauth", "env_var": "APATERO_API_KEY", "key_url": "https://apatero.ai/mcp — browser OAuth by default, or an ap_live_ API key for headless clients" },
+    "pricing": "credits",
+    "links": { "repo": null, "docs": "https://apatero.ai/mcp", "site": "https://apatero.ai" },
+    "added": "2026-09-21",
+    "verified": "2026-09-21",
+    "notes": "Endpoint verified alive 21 Sep 2026: an unauthenticated initialize returns 401 asking for 'Authorization: Bearer <ap_live_ key or OAuth access token>' with protected-resource metadata pointing at api.apatero.ai. Tools were not run — there is no anonymous path. Be careful copying install commands for this one from search results or AI summaries: a `claude mcp add --transport http apatero ... --header` form circulates widely and does not appear anywhere on the vendor's own page, which documents only the connector UI for the remote and npx/uvx/brew for local. Both packages exist but each has shipped exactly one version — npm apatero-mcp 0.2.0 and PyPI apatero-studio-mcp 0.2.0, both 10 Jul 2026 — and the repository URL in the PyPI metadata, github.com/Apatero-Org/Monorepo, 404s, so there is no readable source and no public commit history to judge. The vendor page headlines '20 tools' while 24 apatero_ names appear on it, several of them documentation helpers rather than studio tools; treat live tools/list as the count. Positioning is social-first — the Insta Dump and influencer pipeline are aimed at feed content, not narrative coverage — so for shot-matched performance work on footage you actually shot, hedra-official, sync-labs or tavus remain the stronger picks. Generation spends Apatero account credits at app rates with no MCP markup; apatero_credit_balance reports the remainder in chat."
   }
 ]

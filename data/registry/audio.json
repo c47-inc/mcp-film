@@ -369,5 +369,29 @@
     "added": "2026-06-11",
     "verified": "2026-08-20",
     "notes": "Successor to the widely-listed and now-deprecated arcaputo3/mcp-server-whisper. Still moving fast: PyPI sanzaru 0.10.0 (14 Aug 2026), MIT, Python >=3.10, but only ~6 stars for a project of this scope, so it is one maintainer's momentum. Buy the audio, not the bundle: the video tools target sora-2 and sora-2-pro, which OpenAI removes from the API on 2026-09-24, so that third of `sanzaru[all]` has a shutdown date and the README does not mention it. The extras are now video, audio, image, elevenlabs and databricks — pick `sanzaru[audio]` for transcription work and add `sanzaru[elevenlabs]` if you want ElevenLabs TTS instead of OpenAI's. No local moderation: content guardrails are OpenAI's. Every call bills your OpenAI account. For fully offline transcription use jwulff/whisper-mcp or SmartLittleApps/local-stt-mcp (whisper.cpp, Apple Silicon, diarization)."
+  },
+  {
+    "slug": "audiopod",
+    "name": "AudioPod MCP",
+    "vendor": "AudioPod AI",
+    "official": true,
+    "category": "voice-speech",
+    "featured": false,
+    "tagline": "Hosted MCP for TTS, voice cloning, music, stem and speaker separation, and denoise.",
+    "description": "AudioPod is a browser audio workstation built for podcasts and audiobooks, and its official MCP puts ten of those tools behind one hosted endpoint: text-to-speech in 200+ languages, voice cloning from a short reference, voice conversion, music generation, stem separation, per-speaker isolation, diarized transcription with word-level timestamps, denoising, and format conversion. For a cutting room the draw is the unglamorous middle of the post chain — pulling a clean dialogue stem off a location mix, splitting overlapping speakers, generating temp VO or ADR, and getting timestamped transcripts an agent can cut against. Nothing installs locally and no GPU is involved; long jobs return a job id you poll.",
+    "capabilities": ["tts", "voice-cloning", "speech-to-speech", "music-generation", "stems", "audio-separation", "transcription", "diarization", "denoising", "format-conversion", "async-jobs", "remote-mcp"],
+    "tools_sample": ["text_to_speech", "clone_voice", "change_voice", "generate_music", "separate_stems", "separate_speakers", "transcribe_audio", "denoise_audio", "convert_media", "check_job_status"],
+    "install": {
+      "claude_code": "claude mcp add --transport http audiopod https://mcp.audiopod.ai --header \"X-API-Key: ap_YOUR_KEY\" --scope user",
+      "remote_url": "https://mcp.audiopod.ai",
+      "remote_headers": ["X-API-Key"],
+      "stdio_command": null
+    },
+    "auth": { "type": "api_key", "env_var": null, "key_url": "https://audiopod.ai/dashboard/account/api-keys — free key, no card; OAuth2 and JWT bearer are also accepted" },
+    "pricing": "freemium",
+    "links": { "repo": "https://github.com/AudiopodAI/audiopod-mcp", "docs": "https://docs.audiopod.ai/sdks/mcp", "site": "https://audiopod.ai" },
+    "added": "2026-09-21",
+    "verified": "2026-09-21",
+    "notes": "Verified 21 Sep 2026: an unauthenticated initialize returns a 401 that enumerates its own auth methods, and the server card at https://audiopod.ai/.well-known/mcp/server-card.json declares streamable-http on protocol 2025-06-18 with oauth2 and X-API-Key both supported. We did not run the tools — every one of them needs a key. Read the licence correctly: the repo is MIT and is actively pushed (19 Sep 2026), but it contains the README, the registry manifest and the server card, not the server, which is hosted and closed; the README says so itself. Judge maintenance by AudioPod the product, not the 0-star repo. The free tier is quoted two different ways depending where you look — the website says 1,000 credits a month with no card, the server card says new developer accounts start with $1 of free API credit — so confirm which pool your key draws on before planning a batch; paid is $1 for 7,500 credits pay-as-you-go or $20/month for 200,000. The auth 401 also advertises an `api_key` query-parameter form: use the header, because keys in URLs end up in logs and referrers. Scope check before you list it as a film tool: this is a podcast and audiobook workstation, so its music and TTS are broad rather than cinematic — for performance-grade voice direction see elevenlabs or cartesia, and for loudness and delivery QC see auphonic-zapier. convert_media does handle mp4 and mov, which makes it a light transcode step as well."
   }
 ]
