@@ -132,5 +132,7 @@
   "davinci-resolve-studio": null,
   "audiopod": "AudiopodAI",
   "apatero": "Apatero-Org",
-  "clip-studio": null
+  "clip-studio": null,
+  "audiolab": null,
+  "sonicmatch": null
 }
