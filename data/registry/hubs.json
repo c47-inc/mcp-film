@@ -210,9 +210,9 @@
     "category": "model-hub",
     "featured": false,
     "tagline": "Quote a shot across the video model zoo, then approve the one you want to pay for.",
-    "description": "A hosted router over the frontier video models — Seedance, Kling, Veo, LTX, Wan, MiniMax, Pika and more — built around pricing rather than throughput. Its `plan` tool reads the live catalogue and costs a whole shot list without spending anything; `generate` returns an exact quote for one attempt and refuses to run until the agent explicitly approves it. For a filmmaker-agent deciding whether a 12-shot sequence is worth $9 or $90 before committing, that budget-first shape is the point.",
+    "description": "Hosted AI video and image production with model comparison, project budgeting, exact quotes and result recovery in a shared library. The packaged plan and generate skills orchestrate distinct MCP tools rather than being the names of the remote tools themselves. A filmmaker can compare the cost of a shot list before preparing a concrete request; submitting one paid attempt requires explicit approval of its exact quote.",
     "capabilities": ["model-routing", "price-comparison", "text-to-video", "image-to-video", "cost-gates", "job-recovery"],
-    "tools_sample": ["plan", "generate"],
+    "tools_sample": ["list_models", "get_model_details", "calculate_project_budget", "prepare_generation", "confirm_generation", "get_generation_status", "list_recent_generations", "present_generation"],
     "install": {
       "claude_code": "claude mcp add --transport http maxvideoai https://api.maxvideoai.com/mcp",
       "remote_url": "https://api.maxvideoai.com/mcp",
@@ -220,10 +220,10 @@
     },
     "auth": { "type": "oauth", "env_var": null, "key_url": "https://maxvideoai.com" },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/camgraphe/maxvideoai-plugin", "docs": "https://maxvideoai.com/mcp", "site": "https://maxvideoai.com" },
+    "links": {"repo": "https://github.com/camgraphe/maxvideoai-plugin", "docs": "https://maxvideoai.com/docs/mcp", "site": "https://maxvideoai.com"},
     "added": "2026-08-31",
-    "verified": "2026-08-31",
-    "notes": "Brand new — the repo was created 28 Aug 2026 with 0 stars and the MCP registry listing is from the 29th, so nobody has run this in anger yet. The vendor is admirably blunt about it: its own Claude doc says 'fresh exact-host Claude installation and end-to-end generation evidence has not been published'. We verified the endpoint is live (it 406s a plain GET, as a streamable-HTTP server should), the OAuth flow is documented, and the config matches the registry entry, but we could not run a paid generation to confirm the round trip. The README's connect line, `claude mcp add https://api.maxvideoai.com/mcp`, is malformed — it omits the server name and transport; the command above is the corrected form. Auth is browser OAuth with no key or header, and Claude free accounts only get one custom connector, so this may cost you your slot. Two tools only, `plan` and `generate` — coarse and skill-shaped, not a fine-grained API surface, and approving a quote buys exactly one attempt: an interrupted job needs a fresh quote and fresh approval. The plugin repo is a manifest, not the server, and it is Business Source License 1.1, so treat 'open on GitHub' as marketing rather than something you can self-host. Promptibus, also in this directory, covers model pricing intelligence without asking for an account."
+    "verified": "2026-09-19",
+    "notes": "Requires a MaxVideoAI account and browser OAuth. The public Glama connector reports 15 tools and authenticated healthy status as of 19 Sep 2026; this is tool-discovery evidence, not an independent paid-generation test. If a conversation is interrupted after a job was accepted, recover that job with get_generation_status or list_recent_generations before considering another submission. A new paid attempt needs a fresh quote and explicit approval; recovering an accepted job does not. Host-specific reference import and inline playback support vary, so follow the current setup documentation. The public repository contains the client/plugin package, not a self-hostable server, and uses Business Source License 1.1. Promptibus, also in this directory, covers model pricing intelligence without asking for an account."
   },
   {
     "slug": "promptibus",
