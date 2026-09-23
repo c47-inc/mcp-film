@@ -376,20 +376,20 @@
     "category": "video-generation",
     "featured": false,
     "tagline": "Official remote MCP that turns a prompt into a scripted, narrated, subtitled cut.",
-    "description": "invideo's official hosted MCP hands an agent the whole assembly-line version of video: write the script from a prompt, pull clips from a stock library, lay in AI voiceover, and burn subtitles in 50+ languages, returning a full-length edit rather than a single shot. For a filmmaker-agent it is a blocking tool, not a finishing one — useful for animatics, pitch reels, explainer inserts, and social cutdowns where speed beats frame-level control. Unlike almost every other server here it needs no key or account to connect, which makes it the cheapest thing to try and the hardest to reason about at scale.",
+    "description": "invideo's official hosted MCP hands an agent the whole assembly-line version of video: write the script from a prompt, pull clips from a stock library, lay in AI voiceover, and burn subtitles in 50+ languages, returning a full-length edit rather than a single shot. The entire surface is one tool — send a script plus topic, vibe, audience and platform, get a video URL back — so it is a blocking tool, not a finishing one: animatics, pitch reels, explainer inserts, and social cutdowns where speed beats frame-level control. Unlike almost every other server here it needs no key or account to connect, which makes it the cheapest thing to try and the hardest to reason about at scale.",
     "capabilities": ["text-to-video", "script-generation", "stock-footage", "voiceover", "subtitles", "localization"],
-    "tools_sample": null,
+    "tools_sample": ["generate-video-from-script"],
     "install": {
-      "claude_code": "claude mcp add --transport sse invideo https://mcp.invideo.io/sse",
-      "remote_url": "https://mcp.invideo.io/sse",
-      "stdio_command": "npx mcp-remote https://mcp.invideo.io/sse"
+      "claude_code": "claude mcp add --transport http invideo https://mcp.invideo.io/mcp",
+      "remote_url": "https://mcp.invideo.io/mcp",
+      "stdio_command": "npx mcp-remote https://mcp.invideo.io/mcp"
     },
-    "auth": { "type": "none", "env_var": null, "key_url": "None — invideo's help centre says the remote MCP requires no authorisation" },
+    "auth": { "type": "none", "env_var": null, "key_url": "None — an unauthenticated initialize and tools/list both succeed against the endpoint" },
     "pricing": "freemium",
-    "links": { "repo": null, "docs": "https://help.invideo.io/en/articles/11316042-invideo-model-context-protocol-server", "site": "https://invideo.io/ai/mcp/" },
+    "links": { "repo": null, "docs": null, "site": "https://invideo.io/ai/mcp/" },
     "added": "2026-08-17",
-    "verified": "2026-08-17",
-    "notes": "invideo labels this Beta in its own help centre and publishes no tool names, no quota, and no credit model, so plan on reading tools/list rather than hard-coding anything. Two transport wrinkles found on 17 Aug 2026: the documented endpoint is the deprecated SSE form at /sse — a GET holds the stream open rather than returning headers, consistent with a live server but not a completed handshake — while an undocumented https://mcp.invideo.io/mcp answers 405 to a GET, the POST-only signature of Streamable HTTP, which is the path to try if your client refuses SSE. The vendor documents only Claude Desktop, Cursor and Windsurf, all via `npx mcp-remote`; the CLI form above is the generic Claude Code SSE syntax, not a command invideo publishes. No auth means no account linkage: expect anonymous rate limits, watermarking, or invideo-hosted output URLs you do not own the lifecycle of, and do not build a paid pipeline on it until the beta label comes off. Output is a templated stock-and-voiceover assembly — for shot-level generative control stay with the model servers in this category."
+    "verified": "2026-09-23",
+    "notes": "invideo pulled its MCP documentation some time between 17 Aug and 23 Sep 2026: help centre article 11316042 now 404s, the landing page at invideo.io/ai/mcp/ still links to it, and no replacement exists — the help centre's agent collections now cover the invideo Editor and its model line-up instead, with no MCP article among them. So `docs` is null: there is no published quota, credit model or transport guidance left to point at. The server outlived its docs and is in better shape than in August: on 23 Sep 2026 an unauthenticated POST to https://mcp.invideo.io/mcp completed a full handshake — Streamable HTTP, protocol 2024-11-05, serverInfo `invideo-ai` 0.0.2 — and returned tools/list, so the fields above now point there rather than at the deprecated /sse form, which still answers 200 if your client insists on SSE. That tools/list is the headline caveat: exactly one tool, `generate-video-from-script`, taking five required strings (script, topic, vibe, targetAudience, platform) and returning a video URL. No status tool, no shot control, no asset upload, no way to feed it your own footage. No auth also means no account linkage — expect anonymous rate limits, watermarking, or invideo-hosted output URLs whose lifecycle you do not own. Output is a templated stock-and-voiceover assembly; for shot-level generative control stay with the model servers in this category."
   },
   {
     "slug": "makeaivideo",

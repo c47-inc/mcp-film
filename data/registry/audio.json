@@ -88,8 +88,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/allvoicelab/AllVoiceLab-MCP", "docs": "https://github.com/allvoicelab/AllVoiceLab-MCP#readme", "site": "https://www.allvoicelab.com" },
     "added": "2026-06-29",
-    "verified": "2026-08-18",
-    "notes": "The stale one in this category: MIT, PyPI allvoicelab-mcp 0.0.5 released 1 Aug 2025, repo last pushed 5 Aug 2025 — twelve months without a commit, at 59 stars. Official, but treat the pin as frozen. Region matters: global keys use https://api.allvoicelab.com, mainland-China keys use https://api.allvoicelab.cn. Requires Python >=3.11 and paid credits. Renders land in your home directory unless you set ALLVOICELAB_BASE_PATH — point it at the shot folder before a dubbing pass or you will be hunting for files."
+    "verified": "2026-09-23",
+    "notes": "The stale one in this category, and a month staler than last time: re-checked 23 Sep 2026, PyPI allvoicelab-mcp is still pinned at 0.0.5 from 1 Aug 2025 and the repo is still last pushed 5 Aug 2025 — thirteen months without a commit, now 61 stars, still MIT. The seven tools and both API domains are unchanged, so it is official and correct rather than maintained; treat the pin as frozen. Region matters: global keys use https://api.allvoicelab.com, mainland-China keys use https://api.allvoicelab.cn, and mismatching key to domain surfaces as a 'tool unavailable' error rather than an auth failure. Requires Python >=3.11 (PyPI metadata; the README does not say so) and paid credits. Renders land in your home directory unless you set ALLVOICELAB_BASE_PATH — point it at the shot folder before a dubbing pass or you will be hunting for files."
   },
   {
     "slug": "suno-acedata",
@@ -184,6 +184,29 @@
     "added": "2026-08-23",
     "verified": "2026-08-23",
     "notes": "Hosted Streamable HTTP, endpoint answering with a 401 challenge on 23 Aug 2026, and still labelled beta — Epidemic Sound says it expects to be 'squashing bugs and rolling out functionality'. The catch is access: this lives inside the Partner API, and the documented API-key route is gated behind a partnership agreement ('reach out to us to discuss a partnership'), so a solo filmmaker's practical path is the OAuth flow against an existing account in a client that supports Dynamic Client Registration. Keys, once issued, last a year. Rights follow the account, not the API: a free-tier user gets a personal license only, and monetising a cut needs an active paid subscription connected through ES Connect — check the plan before you deliver an ad. No published rate limits. Use it where cleared recordings beat generated score; for generative alternatives see the ElevenLabs, Mureka and Sonilo entries."
+  },
+  {
+    "slug": "sonicmatch",
+    "name": "Sonicmatch",
+    "vendor": "Community (js713-lab)",
+    "official": false,
+    "category": "music",
+    "featured": false,
+    "tagline": "Watches the footage, then returns license-safe music, a hook window, and a ducking spec.",
+    "description": "Sonicmatch is music supervision shaped for an agent: ingest a cut, analyse mood, energy curve, speech coverage and scene cuts, then get back a ranked shortlist of tracks with the license printed on every row, a 12–20 second hook in/out, an ffmpeg ducking recipe, and a beat-snapped cut list. It reads the picture rather than the script, which is the difference between a music search and a music choice. The intended production use is pointing it at an Artlist or Epidemic library you already pay for, via a JSON manifest, so the scoring logic runs over a catalogue you are actually cleared to deliver.",
+    "capabilities": ["video-analysis", "music-search", "music-licensing", "beat-detection", "scene-detection", "ducking", "mix-spec"],
+    "tools_sample": ["status", "ingest_video", "analyze_video_music", "recommend_bgm", "search_music", "get_track", "preview_mix", "export_mix_spec", "suggest_cuts", "generate_bed", "save_brand_kit", "analyze_batch"],
+    "install": {
+      "claude_code": "claude mcp add sonicmatch -- uvx --from git+https://github.com/js713-lab/sonic-match-mcp.git sonicmatch-mcp",
+      "remote_url": null,
+      "stdio_command": "uvx --from git+https://github.com/js713-lab/sonic-match-mcp.git sonicmatch-mcp — or pip install git+https://github.com/js713-lab/sonic-match-mcp.git then run sonicmatch-mcp. Needs Python 3.10+ and ffmpeg/ffprobe on PATH; add --http --port 8765 for Streamable HTTP instead of stdio."
+    },
+    "auth": { "type": "none", "env_var": null, "key_url": "No key required. Optional: GEMINI_API_KEY for video understanding, JAMENDO_CLIENT_ID and FREESOUND_API_KEY for extra catalogues, SONICMATCH_LIBRARY_PATH / EPIDEMIC_LIBRARY_PATH / ARTLIST_LIBRARY_PATH for a library you already licensed" },
+    "pricing": "free",
+    "links": { "repo": "https://github.com/js713-lab/sonic-match-mcp", "docs": "https://github.com/js713-lab/sonic-match-mcp#readme", "site": null },
+    "added": "2026-09-23",
+    "verified": "2026-09-23",
+    "notes": "Young and thin, listed for the shape of the idea rather than the catalogue behind it. Checked 23 Sep 2026: MIT, first public release 10 Sep 2026, one v0.2.0 tag, last commit 16 Sep, a single maintainer, 94 stars against zero forks — and published to the official MCP registry as io.github.js713-lab/sonicmatch-mcp with an .mcpb bundle. Not on PyPI, so every install path is a git checkout; the twelve tools above were read off the source, not just the README. The built-in catalogue is 22 seed tracks whose preview and download URLs are null on purpose, so out of the box recommend_bgm hands you rows you cannot fetch and preview_mix synthesises a demo bed instead of real music — the useful configuration is your own licensed Artlist or Epidemic manifest, or the optional Jamendo and Freesound keys. Platform URL ingest via yt-dlp ships off by default for ToS reasons; leave it off and feed it local files. The licensing discipline is the best thing here — non-commercial tracks are never auto-recommended and generated beds are excluded from recommendations — but a CC label is not a Content ID waiver, and CC-BY still needs attribution in your credits. For a cleared catalogue with the rights already settled, the Epidemic Sound entry is the grown-up option; Sonicmatch is the analysis layer you would put in front of it."
   },
   {
     "slug": "mirelo",
@@ -322,7 +345,31 @@
     "links": { "repo": null, "docs": "https://docs.zapier.com/mcp/overview/how-connections-work", "site": "https://zapier.com/mcp/auphonic" },
     "added": "2026-06-11",
     "verified": "2026-09-22",
-    "notes": "Docs link moved: the old help.zapier.com article 301s to docs.zapier.com, and the page that actually specifies the wire format is now /mcp/overview/how-connections-work. The endpoint is unchanged and still live — one shared Streamable HTTP URL, https://mcp.zapier.com/api/v1/connect (401 unauthenticated on 22 Sep 2026), Streamable HTTP only, with `Authorization: Bearer <token>` as the documented form; the query-string variant ?token= still works and Zapier's own docs now warn it ends up in logs and shell history. The token is minted per MCP server you create at mcp.zapier.com after connecting Auphonic, is shown exactly once, and grants whatever tools that server exposes, so treat it as a password; there is no published CLI one-liner, so add it through your client's header config. New since August: servers default to 'agentic mode', which exposes 16 static meta-tools (discover_zapier_actions, enable_zapier_action, auto_provision_mcp and so on) and lets the agent enable actions mid-conversation — convenient interactively, unpredictable in a pipeline. Switch the server to managed mode at mcp.zapier.com if you want a fixed toolset with pre-filled fields. Still a generic Zapier gateway rather than a dedicated audio MCP: the surface is two Auphonic actions — Create Production and its trigger — so an agent gets 'submit a job with a preset', not per-parameter mastering control, and every call routes your audio through a third integration layer. Tool names stay null because Zapier mints them from the actions you enable rather than publishing a fixed list — read tools/list once connected. Auphonic gives 2 free processing hours per month, and its own docs at auphonic.com/help still make no mention of MCP. For measured loudness compliance without the middleman, REAPER MCP in this directory does analyze_loudness plus apply_limiter locally; ElevenLabs isolate_audio remains the nearest one-shot dialogue denoiser."
+    "notes": "Docs link moved: the old help.zapier.com article 301s to docs.zapier.com, and the page that actually specifies the wire format is now /mcp/overview/how-connections-work. The endpoint is unchanged and still live — one shared Streamable HTTP URL, https://mcp.zapier.com/api/v1/connect (401 unauthenticated on 22 Sep 2026), Streamable HTTP only, with `Authorization: Bearer <token>` as the documented form; the query-string variant ?token= still works and Zapier's own docs now warn it ends up in logs and shell history. The token is minted per MCP server you create at mcp.zapier.com after connecting Auphonic, is shown exactly once, and grants whatever tools that server exposes, so treat it as a password; there is no published CLI one-liner, so add it through your client's header config. New since August: servers default to 'agentic mode', which exposes 16 static meta-tools (discover_zapier_actions, enable_zapier_action, auto_provision_mcp and so on) and lets the agent enable actions mid-conversation — convenient interactively, unpredictable in a pipeline. Switch the server to managed mode at mcp.zapier.com if you want a fixed toolset with pre-filled fields. Still a generic Zapier gateway rather than a dedicated audio MCP: the surface is two Auphonic actions — Create Production and its trigger — so an agent gets 'submit a job with a preset', not per-parameter mastering control, and every call routes your audio through a third integration layer. Tool names stay null because Zapier mints them from the actions you enable rather than publishing a fixed list — read tools/list once connected. Auphonic gives 2 free processing hours per month, and its own docs at auphonic.com/help still make no mention of MCP. For measured loudness compliance without the middleman, REAPER MCP in this directory does analyze_loudness plus apply_limiter locally, and the AudioLab entry meters a finished file against named delivery targets; ElevenLabs isolate_audio remains the nearest one-shot dialogue denoiser."
+  },
+  {
+    "slug": "audiolab",
+    "name": "AudioLab MCP",
+    "vendor": "AudioLaunch",
+    "official": true,
+    "category": "sound-design",
+    "featured": false,
+    "tagline": "Loudness, true-peak and voice metering that grades a mix against real delivery specs.",
+    "description": "AudioLab is the meter most generative sound pipelines are missing: ten analysis tools over a hosted API returning integrated LUFS to EBU R128 / ITU BS.1770-4, true-peak in dBTP, loudness range, crest factor, stereo correlation, spectrum, and voice diagnostics down to speaking rate, SNR, room echo, sibilance and clipping risk. check_target grades a file against a named delivery spec — ebu-broadcast, atsc-broadcast, podcast or the streaming platforms — and returns per-metric deltas plus the ffmpeg loudnorm command that would fix it. Nothing here generates or processes audio; it tells an agent whether the mix passes before the deliverable ships, which is the step between a finished cut and a rejected master.",
+    "capabilities": ["loudness-analysis", "true-peak", "delivery-qc", "voice-analysis", "spectrum-analysis", "speech-segmentation", "batch-analysis"],
+    "tools_sample": ["analyze_loudness", "check_target", "analyze_timeseries", "get_spectrum", "analyze_voice", "get_speech_segments", "index_signal", "analyze_profile", "compare_loudness", "analyze_batch"],
+    "install": {
+      "claude_code": "claude mcp add audiolab -e AUDIOLAB_API_KEY=YOUR_KEY -- npx -y @audiolabtools/mcp-server",
+      "remote_url": "https://audiolab.tools/mcp",
+      "remote_headers": ["Authorization"],
+      "stdio_command": "npx -y @audiolabtools/mcp-server"
+    },
+    "auth": { "type": "api_key", "env_var": "AUDIOLAB_API_KEY", "key_url": "https://audiolab.tools/account" },
+    "pricing": "freemium",
+    "links": { "repo": "https://github.com/Audio-Launch/audiolab-mcp-server", "docs": "https://audiolab.tools/api", "site": "https://audiolab.tools" },
+    "added": "2026-09-23",
+    "verified": "2026-09-23",
+    "notes": "Verified 23 Sep 2026: MIT, npm @audiolabtools/mcp-server at 0.4.1 published the day before, nine releases since 3 Jul 2026, and listed in the official MCP registry. Take the stdio form if your audio is on disk — a local `path` works only in the npx server; the hosted endpoint at https://audiolab.tools/mcp (401 unauthenticated, `Authorization: Bearer` rather than OAuth) accepts public URLs only. Either way it is a hosted analyser: a URL is fetched server-side, a local file is uploaded, measured and deleted, and only numbers come back, so if the audio cannot leave the building do not use it. Free tier is 1,000 calls and 2 GB a month with no card, but the seven named analyze_profile lenses (voice, master, provenance, dataset, environment, broadcast, loop) are plan-gated; free keys get `basic`. Limits that bite a feature: 50 MB per local file, loudness routes stream to roughly three hours, voice and signal routes cap near seven minutes, one file per call, and analyze_batch tops out at 20 sources while metering each as its own call. It measures and never fixes — the fix is an ffmpeg loudnorm string you run yourself, or the Auphonic entry for actual processing. Operated by AudioLaunch (KVK 54871204, EU-hosted), built by Nathan Renting; the GitHub repo is a generated mirror of an internal monorepo, so read the npm cadence rather than the star count."
   },
   {
     "slug": "deepgram",
