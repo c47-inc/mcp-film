@@ -79,7 +79,7 @@
       { "stage": "finish", "intent": "Upscale, enhance, and verify deliverables locally or through focused APIs.", "slugs": ["topaz", "mcp-video"] },
       { "stage": "ship", "intent": "Send review copies, archive outputs, and publish only after approval.", "slugs": ["frameio", "vimeo", "youtube-yutu"] }
     ],
-    "fallback_slugs": ["premiere-pro", "after-effects", "capcut"]
+    "fallback_slugs": ["premiere-pro", "after-effects", "vectcut"]
   },
   {
     "id": "character-series",
