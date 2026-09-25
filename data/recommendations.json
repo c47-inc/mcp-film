@@ -69,7 +69,7 @@
       { "slug": "deepgram", "role": "transcription", "why": "Official transcription, diarization, and audio intelligence for editorial search and captions." },
       { "slug": "topaz", "role": "finishing", "why": "Official image enhancement/upscaling for stills, plates, and frames." }
     ],
-    "fallback_slugs": ["ffmpeg", "premiere-pro", "after-effects", "capcut", "auphonic-zapier"],
+    "fallback_slugs": ["ffmpeg", "premiere-pro", "after-effects", "vectcut", "auphonic-zapier"],
     "playbook_id": "local-edit-bay"
   },
   {

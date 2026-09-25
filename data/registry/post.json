@@ -267,14 +267,14 @@
     "install": {
       "claude_code": "claude mcp add premiere-pro -- premiere-pro-mcp",
       "remote_url": null,
-      "stdio_command": "premiere-pro-mcp (after `npm install -g adobe-premiere-pro-mcp`, then `premiere-pro-mcp --install-cep` and `premiere-pro-mcp --doctor`; restart Premiere and start the bridge from Window > Extensions > MCP Bridge (CEP)). Node 20+, macOS or Windows, same machine as Premiere."
+      "stdio_command": "premiere-pro-mcp (after `npm install -g adobe-premiere-pro-mcp`, then `premiere-pro-mcp --install-cep` and `premiere-pro-mcp --doctor`; restart Premiere and start the bridge from Window > Extensions > MCP Bridge (CEP)). Node 20+, macOS or Windows, same machine as Premiere. Set PREMIERE_MCP_TOOLSET=full to list every tool instead of the search/invoke gateway."
     },
     "auth": { "type": "local-app", "env_var": null, "key_url": "Requires Premiere Pro 2020+ running with the bundled 'MCP Bridge' CEP extension" },
     "pricing": "free",
     "links": { "repo": "https://github.com/hetpatel-11/Adobe_Premiere_Pro_MCP", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-08-18",
-    "notes": "No longer a clone-and-build job: the project now publishes to npm as adobe-premiere-pro-mcp (first release 5 Aug 2026, 1.2.0 on 17 Aug 2026, MIT), so a global install plus `--install-cep` is the documented path and the client just runs the premiere-pro-mcp binary. Nothing connects until you open the CEP panel in Premiere and click Start Bridge; run `verify_premiere_connection` first. Adobe DOES have an official MCP — the hosted 'Adobe for Creativity' connector, GA Apr 28 2026, listed separately here — but it is account-scoped and its video surface is reformat/quick-cut class (video_resize, video_create_quick_cut), with no tool that opens or edits a Premiere project, so community CEP/UXP bridges still own real editorial. This one: 480 stars, pushed Aug 17 2026, README claims 283 tools plus 13 context resources and 10 guided prompts (the repo blurb says 282 — treat both as marketing and read live tools/list). CEP is the supported production bridge; UXP is explicitly experimental. Alternatives: leancoderkavy/premiere-pro-mcp (200 stars, MIT, 280 tools, pushed Aug 17 2026) and ayushozha/AdobePremiereProMCP (85 stars, MIT, pushed Aug 16 2026, claims 1,027 tools) — neither is packaged, both are clone-and-build."
+    "verified": "2026-09-25",
+    "notes": "Packaged on npm as adobe-premiere-pro-mcp (MIT; 1.2.8 on 2 Sep 2026), so a global install plus `--install-cep` is the documented path and the client just runs the premiere-pro-mcp binary. Two things changed since August that bite: (1) tools/list now advertises only five tools by default — search_tools, get_tool_schema, invoke_tool, verify_premiere_connection, list_sequences — and the other 280 operations are reached through search_tools then invoke_tool; set PREMIERE_MCP_TOOLSET=full for a flat list (the README recommends that for Claude Code's native tool search). (2) Anonymous usage telemetry is ON by default — install id, OS, version, tool names and success/failure, not project names or media paths per the README; opt out with PREMIERE_MCP_TELEMETRY=0, DO_NOT_TRACK=1, or the checkbox in the CEP panel. The panel also nags about npm updates (PREMIERE_MCP_UPDATE_CHECK=0 to silence). Nothing connects until you open the CEP panel in Premiere and click Start Bridge; run `verify_premiere_connection` first. CEP is the supported bridge; UXP is explicitly experimental. Adobe DOES have an official MCP — the hosted 'Adobe for Creativity' connector, listed separately here — but its video surface is reformat/quick-cut class with no tool that opens or edits a Premiere project, so community bridges still own real editorial. This one: 607 stars, pushed 25 Sep 2026. Alternatives: leancoderkavy/premiere-pro-mcp (288 stars, MIT, pushed 25 Sep 2026) and ayushozha/AdobePremiereProMCP (106 stars, MIT, pushed 31 Aug 2026) — both clone-and-build."
   },
   {
     "slug": "after-effects",
@@ -296,8 +296,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/Dakkshin/after-effects-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-08-18",
-    "notes": "555 stars, MIT — still the most popular After Effects MCP, but last pushed Apr 1 2026: four and a half months quiet, so do not expect fixes for newer AE builds. The bridge is a polling panel, not a socket: open Window > mcp-bridge-auto.jsx in AE and leave 'Auto-run commands' enabled, or every tool call silently waits. For template-based AE rendering in the cloud without a local install, see plainly-videos in this directory."
+    "verified": "2026-09-25",
+    "notes": "653 stars, MIT — still the most popular After Effects MCP, but last pushed Apr 1 2026 (checked 25 Sep 2026): nearly six months without a commit, so treat it as unmaintained and do not expect fixes for newer AE builds. Install path is unchanged and still clone-and-build; nothing is on npm. The bridge is a polling panel, not a socket: open Window > mcp-bridge-auto.jsx in AE and leave 'Auto-run commands' enabled, or every tool call silently waits. For template-based AE rendering in the cloud without a local install, see plainly-videos in this directory."
   },
   {
     "slug": "ffmpeg",
@@ -444,7 +444,7 @@
     "official": false,
     "category": "editing-post",
     "featured": false,
-    "tagline": "Build CapCut/Jianying draft projects programmatically from an AI agent.",
+    "tagline": "Archived: a CapCut draft-builder whose repo is now read-only — use vectcut instead.",
     "description": "Python server exposing CapCut draft creation over HTTP/MCP: add video, audio, images, text, subtitles, effects, and stickers, then save as a draft folder that opens in CapCut for finishing. Lets agents pre-assemble social edits that humans polish in CapCut.",
     "capabilities": ["nle-control", "draft-generation", "captioning", "effects"],
     "tools_sample": ["create_draft", "add_video", "add_audio", "add_text", "add_subtitle", "add_effect", "save_draft"],
@@ -457,8 +457,31 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/fancyboi999/capcut-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-08-18",
-    "notes": "94 stars, but last pushed Aug 21 2025 — a full year without a commit, against an app that ships breaking draft-format changes. Test that it still produces drafts your CapCut version opens before you build on it. No official ByteDance MCP exists as a replacement. Workflow caveats: it is a local HTTP service on port 9000, not a stdio server, so nothing works until you start it yourself; generated draft folders must be manually copied into CapCut's drafts directory; the pinned Python 3.8.20 is end-of-life; docs are partly Chinese; no license file, which means no license."
+    "verified": "2026-09-25",
+    "notes": "Use `vectcut` instead. Checked 25 Sep 2026: fancyboi999/capcut-mcp is archived (read-only) on GitHub, last pushed Aug 21 2025, 95 stars, no license file. Its README is headed 'CapCutAPI' and exposes the same create_draft/add_video/save_draft surface as sun-guannan's CapCutAPI, since renamed VectCutAPI — which is Apache-2.0, 2,000+ stars, pushed Sep 2026, and ships its own stdio MCP server. Kept listed so old configs resolve to an explanation. If you still run this one: it is a local HTTP service on port 9000, pinned to end-of-life Python 3.8.20, and generated draft folders must be copied into CapCut's drafts directory by hand."
+  },
+  {
+    "slug": "vectcut",
+    "name": "VectCutAPI (CapCut/Jianying MCP)",
+    "vendor": "Community (sun-guannan / VectCut)",
+    "official": false,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Assemble CapCut and Jianying draft projects from an agent over a local stdio MCP server.",
+    "description": "Open-source Python toolkit that writes CapCut International and Jianying draft files: create a draft, lay in video, audio, images, text, SRT subtitles, effects, stickers and video keyframes, then save a draft that opens in the editor for finishing. It ships both an HTTP API and a stdio MCP server, so an agent can pre-cut social verticals and captioned versions that an editor polishes in CapCut.",
+    "capabilities": ["nle-control", "draft-generation", "captioning", "effects", "keyframes"],
+    "tools_sample": ["create_draft", "add_video", "add_audio", "add_text", "add_subtitle", "add_video_keyframe", "save_draft"],
+    "install": {
+      "claude_code": null,
+      "remote_url": null,
+      "stdio_command": "Multi-step, no published package: git clone https://github.com/sun-guannan/VectCutAPI, `pip install -r requirements.txt -r requirements-mcp.txt` on Python 3.10+, install FFmpeg, copy config.json.example to config.json, then point your client at `python3 mcp_server.py` with cwd and PYTHONPATH set to the repo."
+    },
+    "auth": { "type": "none", "env_var": null, "key_url": null },
+    "pricing": "free",
+    "links": { "repo": "https://github.com/sun-guannan/VectCutAPI", "docs": null, "site": "https://www.vectcut.com" },
+    "added": "2026-09-25",
+    "verified": "2026-09-25",
+    "notes": "Apache-2.0, 2,252 stars, pushed 23 Sep 2026 — the actively maintained successor to the CapCutAPI code that the archived capcut-mcp entry copied. The MCP server exposes 11 tools; the README's install is clone-and-pip, nothing is on PyPI. A separate TypeScript wrapper in the repo's mcp-server/ folder talks to the HTTP API on port 9001, but its npm package is marked 'once published', so use the Python stdio server. Drafts target CapCut International or Jianying and still have to land in the app's drafts folder; draft formats change with app updates, so test against your installed version. VectCut also runs a hosted cloud editor at vectcut.com with preview and cloud render — its pricing and any hosted MCP endpoint were not verified here. ByteDance offers no official CapCut MCP. Docs are English and Chinese; the English README's MCP guide links are broken Google redirects, read MCP_Documentation_English.md in the repo directly."
   },
   {
     "slug": "adobe-creativity",
