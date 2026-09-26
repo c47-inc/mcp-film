@@ -20,8 +20,8 @@
     "pricing": "freemium",
     "links": { "repo": null, "docs": "https://developers.vivideo.ai/mcp", "site": "https://vivideo.ai" },
     "added": "2026-08-18",
-    "verified": "2026-08-18",
-    "notes": "Listed in the official MCP registry with both the npm package and the hosted remote, and the endpoint answers 405 to a GET — correct behaviour for a POST-only streamable HTTP server. Everything else is vendor-stated: the package is closed source with no public repo, so you cannot audit what the wrapper sends, and @vivideo/mcp has sat at 1.0.2 since 28 Jul 2026 while the API around it moves. The site advertises ~30 models 'including Sora 2', which OpenAI removes from its API on 2026-09-24 — call list_models before you plan a shoot around any published roster. The free tier's claim of unlimited, watermark-free generation with full commercial rights is marketing copy we could not verify against machine-readable terms; read the plan before delivering client work. Bearer keys are vv_live_-prefixed."
+    "verified": "2026-09-26",
+    "notes": "Listed in the official MCP registry with both the npm package and the hosted remote, and the endpoint still answers 405 to a GET on 26 Sep 2026 — correct behaviour for a POST-only streamable HTTP server. The docs match this entry: the same thirteen tools, the same `claude mcp add --transport http` command with a vv_live_-prefixed Bearer key, and VIVIDEO_API_KEY for the npx route. Everything else is vendor-stated: the package is closed source with no public repo, so you cannot audit what the wrapper sends, and @vivideo/mcp has sat at 1.0.2 since 28 Jul 2026 while the API around it moves. The homepage still leads with 'Powered by Sora 2' and lists Sora 2 Pro two days after OpenAI's announced 24 Sep 2026 API removal — treat the published roster as stale marketing and call list_models before you plan a shoot around any model. The free tier's 'unlimited', watermark-free generation with commercial rights is homepage copy we could not verify against machine-readable terms; read the plan before delivering client work."
   },
   {
     "slug": "runway",

@@ -46,6 +46,29 @@
     "notes": "The August caveat is gone: OAuth discovery now works. /.well-known/oauth-authorization-server returns 200 on 22 Sep 2026 with an authorization-code + PKCE (S256) flow, dynamic client registration and an `mcp` scope, so standards-compliant clients complete the handshake; /.well-known/oauth-protected-resource is still a 404, which is the older half of the spec and matters only to clients that insist on it. The endpoint itself answers 401 unauthenticated. Development restarted hard — PyPI cartesia-mcp 0.22.3 shipped 21 Sep 2026 (was 0.19.0 in August), with voice accent attach/detach tools in 0.21.0, rate limiting and session capping on the hosted transport in 0.20.0–0.22.2, and a python-multipart CVE bump on 9 Sep. The README now recommends hosted over local. Tool count is 18, counted in cartesia_mcp/server.py, not the 20 the README claims; still no audio `infill`, so do not plan an ADR patch workflow around it. Local route: `claude mcp add -e CARTESIA_API_KEY=<your-api-key> cartesia-mcp -- uvx cartesia-mcp`, needing Python 3.13+, which uvx will fetch and which breaks older pinned toolchains. Repo still carries no LICENSE file and still only ~14 stars despite being first-party. get_credit_usage needs a separate CARTESIA_ADMIN_API_KEY; admin and standard keys are not interchangeable. TTS defaults to save=true, returning a file_id and a download_url that expires in 24 hours."
   },
   {
+    "slug": "fish-audio",
+    "name": "Fish Audio MCP",
+    "vendor": "Fish Audio",
+    "official": true,
+    "category": "voice-speech",
+    "featured": false,
+    "tagline": "Hosted Fish Audio server: voice search, expressive TTS, transcription, plus image and video generation.",
+    "description": "Fish Audio's official hosted MCP server connects an agent to your Fish Audio account over OAuth: browse and search the voice library, generate speech steered with inline tags like [whispering] or [excited], transcribe local or uploaded audio, and — since mid-September 2026 — generate and edit images and run text-to-video and image-to-video. For a filmmaker-agent the draw is temp dialogue and scratch VO with emotional direction written into the script line, plus transcripts for the edit, from one connection billed against the plan you already have.",
+    "capabilities": ["tts", "voice-library", "emotion-tags", "stt", "text-to-image", "image-editing", "text-to-video", "image-to-video"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http fish-audio https://api.fish.audio/mcp",
+      "remote_url": "https://api.fish.audio/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser OAuth with your Fish Audio account; you pick the team the connection works in" },
+    "pricing": "freemium",
+    "links": { "repo": null, "docs": "https://docs.fish.audio/overview/mcp", "site": "https://fish.audio" },
+    "added": "2026-09-26",
+    "verified": "2026-09-26",
+    "notes": "Hosted only and closed source — no npm or PyPI package, no public server repo. The endpoint answers 405 to a GET on 26 Sep 2026, consistent with a POST-only streamable HTTP server. The docs describe capabilities but publish no tool list, so tools_sample is null rather than guessed; the docs PR that added image and video (merged 17 Sep 2026) names only t2i, edit, t2v and i2v variants and deliberately leaves lip-sync out of the MCP. Billing draws from your plan's package credits, not developer API credits, and image or video jobs are quoted first and wait for your confirmation. Video needs Plus ($11/mo promo, $15 list) or higher; the free tier gets a daily image allowance and is personal, non-commercial use only, so anything headed for a paying client needs a paid plan. Connections are scoped to one team. Local files sent for transcription are uploaded to a temporary slot deleted after 7 days; generated outputs come back as permanent URLs, so assume anything you generate is reachable by link. Do not confuse it with Fish Audio's separate read-only docs MCP at docs.fish.audio/mcp, or with the community wrappers (da-okazaki/mcp-fish-audio-server, AceDataCloud/FishMCP), which are not maintained by Fish Audio."
+  },
+  {
     "slug": "hume",
     "name": "Hume MCP Server",
     "vendor": "Hume AI",
@@ -274,8 +297,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/ahujasid/ableton-mcp", "docs": "https://github.com/ahujasid/ableton-mcp#readme", "site": "https://www.ableton.com" },
     "added": "2026-08-11",
-    "verified": "2026-08-19",
-    "notes": "By Siddharth Ahuja, the maintainer of Blender MCP already listed in this directory — the same architecture, and a fair maintenance signal rather than an endorsement: MIT, PyPI ableton-mcp 1.3.8 (17 Aug 2026), ~2.9k stars, repo pushed 16 Aug 2026. The hand-copy step this entry used to warn about is gone: the Remote Script now ships inside the package and `uvx --from ableton-mcp ableton-mcp-install-script` writes it into Live's MIDI Remote Scripts directory for you. You still have to select AbletonMCP as a Control Surface under Settings > Link, Tempo & MIDI with Input and Output set to None. Run only one instance of the server across your clients. It ships anonymous telemetry on by default — set ABLETON_MCP_DISABLE_TELEMETRY=true to turn it off. Known limits: long arrangements time out and must be broken into smaller prompts, it works best with Live's stock devices, and reading notes back out of existing clips is unreliable. Save your set first."
+    "verified": "2026-09-26",
+    "notes": "By Siddharth Ahuja, the maintainer of Blender MCP already listed in this directory — the same architecture, and a fair maintenance signal rather than an endorsement: MIT, PyPI ableton-mcp 1.4.5 (22 Sep 2026, after 1.3.9 and 1.4.0 in late August), ~3.1k stars, repo pushed 22 Sep 2026. The Remote Script ships inside the package and `uvx --from ableton-mcp ableton-mcp-install-script` writes it into Live's MIDI Remote Scripts directory for you. You still have to select AbletonMCP as a Control Surface under Settings > Link, Tempo & MIDI with Input and Output set to None. Run only one instance of the server across your clients. Anonymous telemetry is on by default — set ABLETON_MCP_DISABLE_TELEMETRY=true to turn it off; a separate dataset-recording mode is opt-in via ABLETON_MCP_ENABLE_DATASET=true, so leave that unset on client sessions. Known limits: long arrangements time out and must be broken into smaller prompts, it works best with Live's stock devices, and reading notes back out of existing clips is unreliable. Save your set first."
   },
   {
     "slug": "freesound",
@@ -297,8 +320,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/johnkimdw/freesound-mcp-server", "docs": null, "site": "https://freesound.org" },
     "added": "2026-06-11",
-    "verified": "2026-08-19",
-    "notes": "MIT, ~6 stars, last pushed 24 Jun 2025 and untouched for over a year — listed because it is the tidiest option for a library nothing else covers, not because anyone is maintaining it. Search-only: it returns preview URLs, not downloads, so a separate fetch step is still on you. The README's API-key link (freesound.org/api/apply/) 404s; the working one is freesound.org/apiv2/apply/, which bounces you through a Freesound login first. No PyPI release: clone and build. The alternatives are no healthier — MuShan-bit/freesound-mcp adds download by sound ID (1 star, Jan 2026) and timjrobinson/FreesoundMCPServer is Node.js (2 stars, Jul 2025). Freesound licences are per-sound and include CC-BY and non-commercial terms — read each one before it goes in a film."
+    "verified": "2026-09-26",
+    "notes": "MIT, ~7 stars, last pushed 24 Jun 2025 and still untouched on 26 Sep 2026 — listed because it is the tidiest option for a library nothing else covers, not because anyone is maintaining it. Search-only: it returns preview URLs, not downloads, so a separate fetch step is still on you. The README's API-key link (freesound.org/api/apply/) 404s; the working one is freesound.org/apiv2/apply/, which bounces you through a Freesound login first. No PyPI release: clone and build. The alternatives are no healthier — MuShan-bit/freesound-mcp adds download by sound ID (1 star, Jan 2026) and timjrobinson/FreesoundMCPServer is Node.js (2 stars, Jul 2025). Freesound licences are per-sound and include CC-BY and non-commercial terms — read each one before it goes in a film."
   },
   {
     "slug": "audiogen",
