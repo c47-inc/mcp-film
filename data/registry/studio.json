@@ -70,7 +70,7 @@
     "category": "studio",
     "featured": false,
     "tagline": "Open-source desktop workbench your agent directs: storyboard, generate, cut on a timeline.",
-    "description": "Nomi is a local-first Electron workbench that exposes its own production surface over MCP, so Claude Code, Codex, or Cursor can create a project, lay out shots on a canvas, wire reference images between nodes, start a durable generation run, and land the result on an editable first cut. The model layer is bring-your-own: roughly ten hosted providers come pre-wired, and anything OpenAI-compatible or a local ComfyUI graph slots in beside them. That combination is rare — most studio-tier servers in this directory are hosted products that own the models, whereas here the agent directs software on your own machine against whatever engines you are already paying for. Run-control tools make it more than fire-and-forget: the agent can subscribe to a run, decide a gate, and pull artifacts back.",
+    "description": "Nomi is a local-first Electron workbench that exposes its own production surface over MCP, so Claude Code, Codex, Cursor, Pi, or WorkBuddy can create a project, lay out shots on a canvas, draft and price a generation, clear a paid confirmation gate, and land the result on an editable timeline. The model layer is bring-your-own: hosted providers come pre-wired, and anything OpenAI-compatible or a local ComfyUI graph slots in beside them. That combination is rare — most studio-tier servers in this directory are hosted products that own the models, whereas here the agent directs software on your own machine against whatever engines you are already paying for. Durable production runs make it more than fire-and-forget: the agent can start a run, review and revise scripts and storyboards, and decide creative gates, while budget, export, and publishing stay with the human in the app.",
     "capabilities": [
       "storyboarding",
       "shot-planning",
@@ -80,29 +80,31 @@
       "reference-management",
       "timeline-editing",
       "run-control",
+      "spend-gates",
       "local-first",
       "asset-management"
     ],
     "tools_sample": [
-      "nomi_create_project",
-      "nomi_list_projects",
-      "nomi_list_models",
-      "nomi_read_canvas",
-      "nomi_add_nodes",
-      "nomi_connect_nodes",
-      "nomi_set_node_prompt",
-      "nomi_generate",
-      "nomi_start_playbook",
-      "nomi_control_run",
-      "nomi_decide_gate",
-      "nomi_get_run",
-      "nomi_subscribe_run",
-      "nomi_get_artifact"
+      "nomi_project_create",
+      "nomi_session_open",
+      "nomi_read",
+      "nomi_canvas_edit",
+      "nomi_asset_import",
+      "nomi_operation_plan",
+      "nomi_operation_preview",
+      "nomi_operation_gate",
+      "nomi_operation_execute",
+      "nomi_run_start",
+      "nomi_run_gate",
+      "nomi_artifact_review",
+      "nomi_timeline_edit",
+      "nomi_export_job",
+      "nomi_model_setup"
     ],
     "install": {
       "claude_code": null,
       "remote_url": null,
-      "stdio_command": "Multi-step: install the Nomi desktop app (Nomi-mac-arm64.dmg, Nomi-mac-intel.dmg, or Nomi-windows-setup.exe from GitHub Releases), launch it once so it mints the local token, then use the app's one-click MCP integration to register the bundled stdio server with your client. No published `claude mcp add` one-liner."
+      "stdio_command": "Multi-step: install the Nomi desktop app (Nomi-mac-arm64.dmg, Nomi-mac-x64.dmg, or Nomi-windows-setup.exe from GitHub Releases), launch it once so it mints the local token, then use Model Integration > Connect AI Programming Assistant to register the bundled stdio server with your client. Do not hand-write the config: Nomi signs a per-machine, per-client proof into it. No published `claude mcp add` one-liner."
     },
     "auth": {
       "type": "local-app",
@@ -116,8 +118,8 @@
       "site": null
     },
     "added": "2026-08-19",
-    "verified": "2026-08-19",
-    "notes": "Fifteen documented tools, all `nomi_`-prefixed. Active: ~420 stars, v0.20.0 released 17 Aug 2026, repo pushed 18 Aug 2026 — but it is a single personal GitHub account, not an org, and it is only three months old. Licence is the thing to read before you build on it: AGPL-3.0-only for current releases, with historical releases still under Apache-2.0 and a separate commercial licence offered on request, so shipping a derivative product is a conversation, not a default. Desktop-only and macOS arm64/x64 plus Windows x64 — no Linux build. The binaries are unsigned: Gatekeeper and SmartScreen both block the first launch, and updates are a manual re-download. Registration goes through the app's one-click integration; the older scripts/nomi-mcp.mjs path is deprecated, and the helper will start a headless instance so the app does not have to stay open. Parts of the developer docs are Chinese-first. 'No account, no telemetry' is the project's claim, not something this directory measured, and every generation still bills whichever provider key you supplied."
+    "verified": "2026-09-27",
+    "notes": "The tool surface was rebuilt in September, so older configs and saved prompts will not match it. The docs now count 24 tools, collapsed from 42 one-verb tools on 2 Sep 2026. Every read goes through `nomi_read`, canvas writes go through `nomi_canvas_edit` under a project lease, and a single generation is plan → preview → gate → execute. The `nomi_generate`, `nomi_add_nodes` and `nomi_get_run` names this entry used to list are gone. `nomi_canvas_plan` was retired on 5 Sep and `nomi_layout_read`/`nomi_layout_write` on 14 Sep. You can no longer copy the config between machines or clients: Nomi writes signed `NOMI_MCP_CLIENT` / `NOMI_MCP_CLIENT_PROOF` values bound to one machine and one client. A bare `NOMI_MCP_STDIO=1` entry can still list tools, but Nomi treats it as `external` and it cannot start real production runs. The old scripts/nomi-mcp.mjs path now exits with a migration message. By design the agent cannot approve budgets, per-shot paid submits, rough-cut acceptance, export or publishing. Those decisions come back to the app. Very active: ~520 stars, v0.22.1 released 26 Sep 2026, pushed 27 Sep 2026. It is still a single personal GitHub account, not an org. Licence: AGPL-3.0 for current releases, with a separate commercial licence on request, so shipping a derivative product means negotiating a licence first. Desktop-only: macOS arm64/x64 plus Windows x64, no Linux build. Releases now include electron-updater manifests. This pass did not recheck whether the builds are code-signed; earlier ones were not. The MCP guide is Chinese-only. 'Local-first' covers projects, assets and keys, but the guide itself notes that prompts and inputs still go to whichever provider you configured, and every generation bills that provider's key."
   },
   {
     "slug": "filmlab",

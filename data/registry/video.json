@@ -369,6 +369,29 @@
     "notes": "Re-verified 21 Sep 2026: the endpoint is alive and still returns a 401 Bearer challenge pointing at its OAuth protected-resource metadata, which advertises nineteen granular scopes from account:read up to content:delete_permanent. The docs now also document a second, simpler path the August listing did not have — rfmcp_ API keys created in the account MCP tab and sent as an Authorization: Bearer header, which is the better route for CLI and config-file setups that cannot do a browser round trip. Keys are shown once and are never re-readable from the account or the list tools. Confirmation behaviour depends on mode: in Review mode prepare tools return a confirmationId and the agent must call reelsfarm_confirm_action, but in Creator or Autopilot the allowed prepare tools execute immediately — check which mode the account is in before you let an agent loose. Reuse the same idempotencyKey when retrying a mutation. Generation and publishing need an active plan, and publishing also needs connected social accounts. The official MCP registry still pins v2.0.1, published 2026-08-16 with nothing newer since, and the docs no longer state a tool count — the 106-tool figure recorded here in August is no longer verifiable from a public source. The linked GitHub repository is the public TypeScript client SDK/CLI, not the hosted server source; it was last pushed 2026-09-16, so the project is still moving."
   },
   {
+    "slug": "mosaic-motion",
+    "name": "Mosaic Motion MCP",
+    "vendor": "Mosaic",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Hosted motion-design agent: a prompt in, a finished animated MP4 out, refined by follow-ups.",
+    "description": "Mosaic Motion is an agent that turns a brief into a finished motion-design video — typography, layout, animation, voiceover — and its official hosted MCP exposes that as a job queue: create a video from a prompt with up to 100 attachments, poll the session, then refine the result with follow-up prompts instead of re-rolling. It renders 16:9, 9:16, 1:1, 4:5 and 21:9 at lengths from under ten seconds to a few minutes. For a film pipeline this is not shot generation; it is the graphics department — title cards, logo stings, explainer inserts, launch and festival promo pieces — handed to an agent that can iterate on notes.",
+    "capabilities": ["motion-graphics", "text-to-video", "logo-animation", "explainer-video", "voiceover", "iterative-refinement", "asset-upload", "credit-management", "remote-mcp"],
+    "tools_sample": ["create_video", "create_followup", "upload_asset", "get_session_status", "get_credit_balance", "purchase_credits", "set_auto_topup", "whoami"],
+    "install": {
+      "claude_code": "claude mcp add --transport http motion https://mcp.motion.so/mcp",
+      "remote_url": "https://mcp.motion.so/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth 2.1 with dynamic client registration on first connect (sign up at https://motion.so); headless agents can use the device flow at https://motion.so/device, a service account, or a Motion API key sent as Authorization: Bearer" },
+    "pricing": "credits",
+    "links": { "repo": null, "docs": "https://docs.motion.so/guides/mcp", "site": "https://motion.so" },
+    "added": "2026-09-27",
+    "verified": "2026-09-27",
+    "notes": "Read the tool list before you connect it: besides generation, the MCP exposes `purchase_credits`, `subscribe_to_plan`, `setup_payment_method` and `set_auto_topup`, and its OAuth metadata advertises `motion:credits:purchase` and `motion:account:manage` scopes. The docs say a purchase completes immediately if a payment method is on file, so decline those scopes or keep a card off the account unless you want the agent spending on its own. Pricing is $5 per 200 credits, which the docs equate to only one or two videos; longer videos, premium models, voiceover and follow-up edits all cost more, and no free allotment is documented. The docs also contradict themselves: the API overview says purchasing and top-ups are web-app only, while the MCP and credits guides list tools for both. It is a brand and marketing product at heart — launch videos, product demos, logo animations — so expect a house look tuned for SaaS promos, not grade-matched titles for a feature. Output is MP4 at a resolution the docs don't state, with no project-file or layered export documented. Checked 27 Sep 2026: https://mcp.motion.so/mcp serves live OAuth protected-resource metadata naming Claude Code among its expected clients, but this pass did not complete a tools/list call, so the tool names come from the vendor guide. No public source repo. The name collides with Motion (usemotion.com), the unrelated calendar app that also has MCP servers, so check the domain before you install."
+  },
+  {
     "slug": "invideo",
     "name": "invideo MCP Server",
     "vendor": "invideo",
