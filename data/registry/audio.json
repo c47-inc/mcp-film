@@ -268,14 +268,14 @@
     "install": {
       "claude_code": "claude mcp add reaper -- reaper-mcp-server",
       "remote_url": null,
-      "stdio_command": "reaper-mcp-server (after `pip install reaper-mcp-server` — note the package name is NOT `reaper-mcp`)"
+      "stdio_command": "reaper-mcp-server (after installing from source: `git clone https://github.com/bonfire-systems/reaper-mcp && pip install -e ./reaper-mcp`. The PyPI package `reaper-mcp-server` 0.1.1 predates the mcp 2.x port — see notes. Never `pip install reaper-mcp`, which is someone else's project)"
     },
     "auth": { "type": "local-app", "env_var": null, "key_url": "No key; requires a licensed REAPER install running locally with its distant API enabled" },
     "pricing": "free",
     "links": { "repo": "https://github.com/bonfire-systems/reaper-mcp", "docs": "https://github.com/bonfire-systems/reaper-mcp#readme", "site": "https://www.reaper.fm" },
     "added": "2026-08-11",
-    "verified": "2026-08-19",
-    "notes": "Install friction is the story. The PyPI package is `reaper-mcp-server`, not `reaper-mcp` — `reaper-mcp` on PyPI is an unrelated project by a different author (nbdy), so a wrong `pip install` silently gets you someone else's server. Setup is also two-stage: the server talks to REAPER through python-reapy, which requires REAPER's distant API to be switched on by running `scripts/enable_reapy.py` via Actions > Run ReaScript, then restarting REAPER. MIT, Python >=3.10, ~121 stars, self-classified Alpha. PyPI still sits at 0.1.1 (27 Mar 2026) and the repo has not been pushed since 21 Jun 2026 — install from source if you want the newer tools, and treat two quiet months as the maintenance signal it is. REAPER itself is a paid licence after its evaluation period, and pulls in librosa, numpy and soundfile for the analysis tools."
+    "verified": "2026-09-27",
+    "notes": "Install friction is the story, and it got worse. The PyPI release, `reaper-mcp-server` 0.1.1 (27 Mar 2026, still the only version since), imports `mcp.server.fastmcp` and declares an unbounded `mcp>=1.0.0`. The repo's own port commit (merged 23 Aug 2026) says mcp 2.0 removed that module, and PyPI's current mcp is 2.2.0. So a fresh `pip install reaper-mcp-server` resolves an SDK the release was not written for, and it should fail at import. Install from source, where the server now targets mcp 2.x. Pinning `mcp<2` next to the PyPI package is the untested fallback. The same port also serialises tool calls, because parallel calls under mcp 2.x interleaved on reapy's single socket. Don't confuse the names either: `reaper-mcp` on PyPI is an unrelated project by a different author (nbdy). Setup is two-stage: the server talks to REAPER through python-reapy, which needs REAPER's distant API switched on by running `scripts/enable_reapy.py` via Actions > Run ReaScript and then restarting REAPER. MIT, Python >=3.10, ~143 stars, classified Alpha on PyPI. The repo was last pushed 23 Aug 2026 after two quiet months: alive, but not busy. REAPER itself is a paid licence after its evaluation period, and pulls in librosa, numpy and soundfile for the analysis tools."
   },
   {
     "slug": "ableton-mcp",

@@ -676,7 +676,7 @@
     "category": "editing-post",
     "featured": false,
     "tagline": "Turns long footage into ranked short clips, then captions, edits, and schedules them.",
-    "description": "OpusClip's first-party hosted MCP gives an agent the whole repurposing chain: submit a file or URL, get back clips ranked by a virality score, pull the word-timed transcript, then apply a frame-level editing script to fix a trim, a caption, or the retiming. From there it captions, censors profanity, generates thumbnails and per-platform social copy, groups clips into collections, and schedules or posts them to connected accounts. For a film pipeline this is the tail end — the trailer cutdowns, the festival teasers, the vertical social pulls off a finished piece — not the edit itself. Export is the part filmmakers care about: HD, 4K, or an Adobe Premiere XML project you can finish properly.",
+    "description": "OpusClip's first-party hosted MCP gives an agent the whole repurposing chain: submit a file or URL, get back clips ranked by a virality score, pull the word-timed transcript, then fix a clip with named edit operations — section trims, splits, reorders, phrase cuts, filler and pause removal, caption styling, dubbing, undo. It can also report what is on screen across a source range: faces, positions, and whether the person on camera is the one speaking. From there it censors profanity, generates thumbnails and per-platform social copy, groups clips into collections, and schedules or posts them to connected accounts. For a film pipeline this is the tail end — the trailer cutdowns, the festival teasers, the vertical social pulls off a finished piece — not the edit itself. OpusClip's marketing page promises HD, 4K, or an Adobe Premiere XML project, but the MCP export tools document HD download URLs only.",
     "capabilities": [
       "clip-curation",
       "transcript-editing",
@@ -686,7 +686,7 @@
       "social-copy",
       "scheduling",
       "publishing",
-      "premiere-xml-export",
+      "scene-analysis",
       "remote-mcp"
     ],
     "tools_sample": [
@@ -694,8 +694,8 @@
       "opusclip_list_clips",
       "opusclip_describe_clip",
       "opusclip_get_transcript",
-      "opusclip_get_editing_script",
-      "opusclip_apply_editing_script",
+      "opusclip_edit_clip",
+      "opusclip_analyze_video",
       "opusclip_create_censor_job",
       "opusclip_export_clip",
       "opusclip_create_social_copy_job",
@@ -706,7 +706,7 @@
     "install": {
       "claude_code": "claude mcp add --transport http opusclip https://mcp.opus.pro/mcp",
       "remote_url": "https://mcp.opus.pro/mcp",
-      "stdio_command": "npx -y @opusclip/mcp (a launcher for the same hosted server, not a local one — the npm package is still 0.1.0 from 2 Jul 2026, so prefer the HTTP endpoint)"
+      "stdio_command": "npx -y @opusclip/mcp (a launcher for the same hosted server, not a local one — npm 0.3.0, 4 Sep 2026; prefer the HTTP endpoint)"
     },
     "auth": {
       "type": "oauth",
@@ -720,8 +720,8 @@
       "site": "https://www.opus.pro/mcp"
     },
     "added": "2026-08-19",
-    "verified": "2026-08-19",
-    "notes": "Official, hosted, and still labelled beta by OpusClip's own changelog — which advertised 25 tools while the docs now list 27 workflow tools plus 2 thumbnail-generation ones, so trust live `tools/list` over any published count. The endpoint at https://mcp.opus.pro/mcp is live and returns OAuth protected-resource metadata pointing at a WorkOS AuthKit authorization server. Entitlement is not universal: the docs say Pro Beta and Max organizations get API access automatically and business customers run under their contract, so a free account may connect and find the write tools locked. Quotas are per workspace and real — 15h / 900 credits a month, a 10-credit floor charged per project regardless of length, and 4 concurrent projects, resetting on the 1st UTC. Fourteen of the tools are writes that spend credits and prompt for approval per call. The public repo is a thin 2-star wrapper (MIT, pushed 14 Aug 2026) under an org with a GitHub IP allow list, so you cannot browse its source anonymously; the docs are the real reference. Scored for short-form social, not for narrative: virality ranking and vertical reframe are the product's opinion, and it will impose it."
+    "verified": "2026-09-27",
+    "notes": "Official and hosted. The docs still say Pro-tier API access is in beta, and the editing surface has already changed underneath early adopters: editing scripts were retired, and `opusclip_get_editing_script` / `opusclip_apply_editing_script` remain only as no-op signposts that redirect to `opusclip_edit_clip`, now the only editing route. An agent holding a cached tool list from August will be calling dead names. The docs now count 27 workflow tools, including those two signposts, plus 2 thumbnail tools, while the marketing page still says 27. Trust live `tools/list` over any published count. Rechecked 27 Sep 2026: https://mcp.opus.pro/mcp still serves OAuth protected-resource metadata pointing at a WorkOS AuthKit authorization server. The docs also contradict the marketing page on export: the page advertises 4K and Premiere XML, but `opusclip_export_clip` and `opusclip_export_collection` are documented as HD download URLs only. Entitlement is not universal: the docs say Pro Beta and Max organizations get API access automatically and business customers run under their contract, so a free account may connect and find the write tools locked. Quotas are per workspace and real — 15h / 900 credits a month, a 10-credit floor charged per project regardless of length, and 4 concurrent projects, resetting on the 1st UTC. Fourteen of the tools are writes that spend credits and prompt for approval per call. The public repo is a thin 6-star wrapper (MIT, pushed 20 Sep 2026) under an org with a GitHub IP allow list, so you cannot browse its source anonymously; the docs are the real reference. Scored for short-form social, not for narrative: virality ranking and vertical reframe are the product's opinion, and it will impose it."
   },
   {
     "slug": "open-edit",
