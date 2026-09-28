@@ -343,8 +343,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/peerjakobsen/audiogen-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-08-20",
-    "notes": "The weakest entry in this category and listed only for the offline use case, and re-checked unchanged on 20 Aug 2026: PyPI audiogen-mcp 0.2.1 and repo both frozen at 25 Jan 2026, still one star, still MIT. Apple Silicon only, Python 3.9-3.11 (audiocraft does not support 3.12+), needs ffmpeg, ~4GB of disk for weights and ~8GB RAM. The install ordering is manual because xformers will not build on Apple Silicon. For quality, prefer ElevenLabs text_to_sound_effects or CassetteAI SFX via the fal MCP; come here only when the audio must not leave the machine."
+    "verified": "2026-09-28",
+    "notes": "The weakest entry in this category and listed only for the offline use case, and re-checked unchanged on 28 Sep 2026: PyPI audiogen-mcp 0.2.1 and repo both frozen at 25 Jan 2026 — eight months without a commit — still one star, still MIT. Apple Silicon only, Python 3.9-3.11 (audiocraft does not support 3.12+), needs ffmpeg, ~4GB of disk for weights and ~8GB RAM. The install ordering is manual because xformers will not build on Apple Silicon. For quality, prefer ElevenLabs text_to_sound_effects or CassetteAI SFX via the fal MCP; come here only when the audio must not leave the machine."
   },
   {
     "slug": "auphonic-zapier",
@@ -414,8 +414,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/deepgram/mcp", "docs": "https://developers.deepgram.com", "site": "https://deepgram.com" },
     "added": "2026-06-11",
-    "verified": "2026-08-20",
-    "notes": "Official but thin on the ground, and re-checked unchanged on 20 Aug 2026: PyPI deepgram-mcp still 0.1.1 (4 Apr 2026), repo still last pushed 6 May 2026, MIT, one star, seven open issues. Deepgram's own summary calls it a 'standalone MCP proxy… remote-proxy architecture with zero client upgrades', which is the honest framing — the package is a thin shim and the capability lives upstream. The runtime tool fetch is genuinely useful but means you cannot see the tool surface before connecting, and it depends on Deepgram's developer API at https://api.dx.deepgram.com staying up. An SSE HTTP mode exists: `deepgram-mcp --transport sse --port 8000`. AssemblyAI's only official MCP is a documentation server, not transcription, so Deepgram remains the strongest official cloud-STT MCP."
+    "verified": "2026-09-28",
+    "notes": "Official but thin on the ground, and re-checked on 28 Sep 2026 and the code has not moved: PyPI deepgram-mcp still 0.1.1 (4 Apr 2026, its only release), repo still last pushed 6 May 2026, MIT, two stars, eight open issues and climbing. Deepgram's own summary calls it a 'standalone MCP proxy… remote-proxy architecture with zero client upgrades', which is the honest framing — the package is a thin shim and the capability lives upstream. The runtime tool fetch is genuinely useful but means you cannot see the tool surface before connecting, and it depends on Deepgram's developer API at https://api.dx.deepgram.com staying up. An SSE HTTP mode exists: `deepgram-mcp --transport sse --port 8000`. AssemblyAI's only official MCP is a documentation server, not transcription, so Deepgram remains the strongest official cloud-STT MCP."
   },
   {
     "slug": "sanzaru",
