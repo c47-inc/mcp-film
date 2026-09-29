@@ -42,8 +42,8 @@
     "pricing": "freemium",
     "links": { "repo": null, "docs": "https://www.canva.dev/docs/mcp/", "site": "https://www.canva.com/ai-connector/" },
     "added": "2026-06-29",
-    "verified": "2026-08-21",
-    "notes": "Endpoint https://mcp.canva.com/mcp still returns 401 unauthenticated — alive and OAuth-gated. The published tools table now lists 33 tools, including a four-call editing-transaction flow (start / perform-operations / commit / cancel) and folder management, so agents that only know generate-and-export are leaving the edit surface unused. Plan gates unchanged: resize-design, list-brand-kits, search-brand-templates and create-design-from-brand-template need Pro or above; autofill-design and get-brand-template-dataset are Enterprise-only. Everything else is on all plans, rate-limited 20–100 req/min per tool. Canva documents the endpoint rather than a per-client command; CIMD is its recommended auth method and custom OAuth clients may need redirect-URI allowlisting."
+    "verified": "2026-09-29",
+    "notes": "Checked 29 Sep 2026: endpoint https://mcp.canva.com/mcp still returns 401 unauthenticated — alive and OAuth-gated. The published tools table still lists 33 tools, including a four-call editing-transaction flow (start / perform-operations / commit / cancel) and folder management, so agents that only know generate-and-export are leaving the edit surface unused. Plan gates loosened: autofill-design and get-brand-template-dataset, previously Enterprise-only, are now marked Pro and above, alongside resize-design, list-brand-kits, search-brand-templates and create-design-from-brand-template — so data-driven variants (one poster template, many cast or territory versions) no longer need an Enterprise seat. Everything else is on all plans, rate-limited 20–100 req/min per tool (resolve-shortlink is unmetered), and export quality depends on plan: lossless PNG and premium elements are Pro and up. Canva documents the endpoint rather than a per-client command; CIMD is its recommended auth method and custom OAuth clients may need redirect-URI allowlisting."
   },
   {
     "slug": "mux",
