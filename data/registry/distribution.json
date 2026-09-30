@@ -53,9 +53,9 @@
     "category": "distribution",
     "featured": false,
     "tagline": "Official Mux MCP: upload, manage, and analyze video via API or hosted remote server.",
-    "description": "The official MCP server for the full Mux Video + Mux Data platform: upload videos, create and manage assets and live streams, mint playback IDs, manage webhooks, and query video performance analytics. Available both as a hosted remote at mcp.mux.com (OAuth, pick your environment) and as the @mux/mcp npm package — the strongest official offering in video infrastructure. Its two tools are a docs search and a sandboxed TypeScript executor over the Mux SDK, so the whole API surface is reachable without hundreds of tool definitions.",
+    "description": "The official MCP server for the full Mux Video + Mux Data platform: upload videos, create and manage assets and live streams, mint playback IDs, manage webhooks, and query video performance analytics. Available both as a hosted remote at mcp.mux.com (OAuth, pick your environment) and as the @mux/mcp npm package — the strongest official offering in video infrastructure. Its two tools are a docs search (search_docs) and a sandboxed TypeScript executor over the Mux SDK, so the whole API surface is reachable without hundreds of tool definitions.",
     "capabilities": ["video-hosting", "asset-upload", "live-streams", "playback-ids", "analytics", "webhooks"],
-    "tools_sample": ["docs_search", "execute"],
+    "tools_sample": ["search_docs", "execute"],
     "install": {
       "claude_code": "claude mcp add --transport http mux https://mcp.mux.com",
       "remote_url": "https://mcp.mux.com",
@@ -65,8 +65,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/muxinc/mux-ts/tree/main/packages/mcp-server", "docs": "https://www.mux.com/docs/integrations/mcp-server", "site": "https://www.mux.com" },
     "added": "2026-06-11",
-    "verified": "2026-08-21",
-    "notes": "npm @mux/mcp v15.0.0 (published 2026-08-12), Apache-2.0; package metadata now correctly points at muxinc/mux-ts, directory packages/mcp-server, so the stale mux-node-sdk path is gone. v15 is a breaking SDK release: @mux/mux-node was renamed @mux/ts (old name kept as an alias), client.robotsPreview became client.robots, and deprecated Mux Data filters/exports endpoints were removed — code your agent wrote against v14 may need MIGRATION.md. 'Code Mode' design is unchanged: two tools only — docs_search plus execute, which runs TypeScript against the SDK in a sandbox with no web or filesystem access — instead of hundreds of per-endpoint tools."
+    "verified": "2026-09-30",
+    "notes": "npm @mux/mcp v15.3.0 (released 2026-09-23), Apache-2.0, source at muxinc/mux-ts under packages/mcp-server, and the repo is still pushed weekly. The tool is named search_docs, per both the source and Mux's docs; earlier listings here called it docs_search. The other tool is execute, which runs TypeScript against the @mux/ts SDK in an isolated sandbox. That two-tool 'Code Mode' design is unchanged and covers the whole API without hundreds of per-endpoint tools. Since v15.0 the package ships a second binary, mcp-code-runner, which v15.2 made resolve Deno via DENO_PATH or a bundled binary. The desktop bundle ships without Deno, so point DENO_PATH at one if local execute fails. v15.3 dropped the 'Experimental' label from Mux Robots (captions, chapters). The hosted remote falls back to Basic auth (base64 token ID:secret in the Authorization header) for clients without OAuth. v15.0 remains the breaking release: @mux/mux-node became @mux/ts (the old name is an alias), client.robotsPreview became client.robots, and the deprecated Data filters/exports endpoints are gone. Code written against v14 needs MIGRATION.md."
   },
   {
     "slug": "youtube-yutu",
@@ -88,8 +88,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/eat-pray-ai/yutu", "docs": null, "site": "https://yutu.ifor.dev" },
     "added": "2026-06-11",
-    "verified": "2026-08-21",
-    "notes": "618 stars, Apache-2.0, pushed 2026-08-20; v0.10.10 (2026-07-25) is still the stable release on Homebrew, winget, and npm (@eat-pray-ai/yutu), with v0.10.11-dev3 the newest prerelease. Install first — brew install yutu — then authenticate; the MCP server also runs over HTTP (yutu mcp --mode http --auth on :8216). Quota caveat unchanged: videos.insert costs 1,600 units → ~6 uploads/day on the default 10k quota, and unverified API projects can only upload private videos until Google audits them. The bundled multi-agent mode is under active development and only supports Gemini models. Lighter upload-only alternative: anwerj/youtube-uploader-mcp (50 stars)."
+    "verified": "2026-09-30",
+    "notes": "696 stars, Apache-2.0, pushed 2026-09-28. v0.10.10 (2026-07-25) is still the stable release on Homebrew, winget and npm (@eat-pray-ai/yutu). The newest build is the v0.11.0-rc1 prerelease (2026-09-21), and it changes things you will notice. OAuth becomes mandatory for HTTP mode, and the HTTP endpoint is pinned to localhost:8216. MCP output now defaults to JSON. The multi-agent mode is merged into a single 'Miffy' agent that accepts OpenAI-compatible providers as well as Gemini. There are also Docker images on Docker Hub and GHCR. Install first (brew install yutu), then authenticate, then run yutu mcp over stdio. The quota caveat is unchanged: videos.insert costs 1,600 units, which is about 6 uploads a day on the default 10k quota. Unverified API projects can only upload private videos until Google audits them. Lighter upload-only alternative: anwerj/youtube-uploader-mcp (50 stars)."
   },
   {
     "slug": "youtube-data",
@@ -157,7 +157,7 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/bowlofarugula/frameio-mcp", "docs": "https://pypi.org/project/frameio-mcp/", "site": "https://frame.io" },
     "added": "2026-06-11",
-    "verified": "2026-08-22",
-    "notes": "The Claude Code plugin route is dead: github.com/bowlofarugula/frameio-plugins still 404s, so the old '/plugin marketplace add' command cannot work and claude_code is null. PyPI frameio-mcp 0.1.0 (uploaded 2026-06-04, not yanked) remains the only release and still installs clean — a uvx frameio-mcp --help and status run on 2026-08-11 confirmed it — but it needs Python 3.13+ and you must register your own Adobe OAuth SPA credential before it does anything. Its stated source repo has since been rewritten into a remote Cloudflare Workers server (still 0 stars, still last pushed 2026-06-13) that you would have to deploy yourself, and whose /authorize fails closed behind a redirect-URI allowlist, so there is no public endpoint. Adobe announced an official Frame.io MCP server on 2026-07-29 and it has not opened up: as of 2026-08-22 the forum thread is still taking access requests (latest 2026-08-21) that Adobe grants privately by DM, and while beta testers report clean installs there is no published endpoint, package, or docs, so it stays unlisted here until there is something a reader can actually install: https://forum.frame.io/t/introducing-the-frame-io-mcp-server/3466"
+    "verified": "2026-09-30",
+    "notes": "The Claude Code plugin route is dead. github.com/bowlofarugula/frameio-plugins still 404s (rechecked 2026-09-30), so the old '/plugin marketplace add' command cannot work and claude_code is null. PyPI frameio-mcp 0.1.0 (uploaded 2026-06-04, not yanked) is still the only release. A uvx frameio-mcp --help and status run on 2026-08-11 installed clean. It needs Python 3.13+, and you must register your own Adobe OAuth SPA credential before it does anything. Its stated source repo has since been rewritten into a remote Cloudflare Workers server that you would have to deploy yourself. That repo still has 0 stars and has not been pushed since 2026-06-13, and its /authorize fails closed behind a redirect-URI allowlist, so there is no public endpoint. This is effectively unmaintained: treat it as a working snapshot, not a project. Adobe announced an official Frame.io MCP server on 2026-07-29, and two months later it is still private beta. The forum thread now runs to five pages of access requests (latest 2026-09-22). Staff answer them by DM, and there is no published endpoint, package, or docs. It stays unlisted here until a reader can actually install it: https://forum.frame.io/t/introducing-the-frame-io-mcp-server/3466"
   }
 ]
