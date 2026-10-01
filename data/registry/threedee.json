@@ -112,7 +112,7 @@
     "links": { "repo": "https://github.com/healkeiser/fxhoudinimcp", "docs": null, "site": null },
     "added": "2026-06-11",
     "verified": "2026-09-02",
-    "notes": "healkeiser/fxhoudinimcp: 190 stars, MIT, PyPI 2.10.0 (Jul 29 2026), tested through Houdini 22.0.368 — fewer stars than the original but far broader coverage and the better-maintained of the two; it is the one to try first. capoomgit/houdini-mcp: 285 stars, MIT, last push Jun 11 2026, still early-stage and manual to install. SideFX itself has no shipping MCP: the H22 'APEX Script comfort package' (AI-assisted rigging-code authoring, autocomplete, validation) was shown at the Houdini 22 keynote and SideFX's own page calls it 'a preview for a tool which will be released later on' — trade coverage from SIGGRAPH 2026 describes an APEX Script MCP server headed to SideFX Labs, but as of Sep 2026 SideFX has not documented one and it is not in the core product. Do not plan a pipeline around it yet. For Cinema 4D, the leading equivalent is ttiimmaacc/cinema4d-mcp (117 stars, last push Mar 2026, C4D 2024+, MoGraph/Redshift tools)."
+    "notes": "healkeiser/fxhoudinimcp: 190 stars, MIT, PyPI 2.10.0 (Jul 29 2026), tested through Houdini 22.0.368 — fewer stars than the original but far broader coverage and the better-maintained of the two; it is the one to try first. capoomgit/houdini-mcp: 285 stars, MIT, last push Jun 11 2026, still early-stage and manual to install. SideFX itself has no shipping MCP: the H22 'APEX Script comfort package' (AI-assisted rigging-code authoring, autocomplete, validation) was shown at the Houdini 22 keynote and SideFX's own page calls it 'a preview for a tool which will be released later on' — trade coverage from SIGGRAPH 2026 describes an APEX Script MCP server headed to SideFX Labs, but as of Sep 2026 SideFX has not documented one and it is not in the core product. Do not plan a pipeline around it yet. For Cinema 4D, Maxon now ships an official server inside C4D 2026.4 (see cinema4d); on older versions the community ttiimmaacc/cinema4d-mcp (129 stars, last push Mar 2026, C4D 2024+, MoGraph/Redshift tools) is the equivalent."
   },
   {
     "slug": "silhouette",
@@ -228,5 +228,28 @@
     "added": "2026-08-20",
     "verified": "2026-09-29",
     "notes": "Maya is still the last major DCC in this directory without a first-party MCP — Autodesk's public MCP servers target Revit, Fusion and its data APIs, not the M&E line — and the community field is fragmented rather than deep. Checked 29 Sep 2026: this repo is MIT, 42 stars, but has not been pushed since 15 Jul 2026, so it is a quiet project rather than a maintained product. The gap between repo and release persists: PyPI maya-mcp-server is still 0.1.0 from 5 Jan 2026, so `uvx maya-mcp-server` gets you January's code; clone and `uv run --directory` if you want current. The design trade is the whole story — `execute_code` is arbitrary Python inside your Maya session, which is why the tool count is four instead of three hundred, and also why you should not point it at a scene you cannot afford to lose. The command port is unauthenticated on localhost. Alternatives if you want typed tools instead: dcc-mcp/dcc-mcp-maya is now the most active (MIT, 57 stars, pushed 29 Sep 2026, Maya 2020+, ~79 typed tools) but is a different shape — `mayapy -m pip install dcc-mcp-maya` plus a Maya plug-in that fronts a Rust HTTP sidecar, rather than a zero-install command-port client; GimbalGoats/GG_MayaMCP (MIT, 23 stars, last pushed 14 Aug 2026, Maya 2024+); and PatrickPalmer/MayaMCP (MIT, 104 stars but frozen since May 2025 — the one Griptape's docs still point at)."
+  },
+  {
+    "slug": "cinema4d",
+    "name": "Cinema 4D MCP Server",
+    "vendor": "Maxon",
+    "official": true,
+    "category": "3d-vfx",
+    "featured": false,
+    "tagline": "Maxon's built-in MCP server: drive scenes, variations, multipass renders and sims in Cinema 4D.",
+    "description": "Shipped inside Cinema 4D 2026.4 on 30 Sep 2026, this is Maxon's first-party bridge between a desktop assistant and a running C4D session. An agent can reorganise scene hierarchies and naming, spin out object and material variations, set up and composite multipass renders, prepare 3D camera tracks, do basic modelling and UVs, rig and animate, and build particle and liquid sims, with Python as the escape hatch for anything the toolset does not cover. Maxon is explicit that it is not generative — it makes no imagery and has no opinion on whether a shot works — so its value in a film pipeline is the tedious scene housekeeping that eats a motion-graphics or title-sequence artist's day.",
+    "capabilities": ["3d-scene-control", "scene-organization", "variations", "multipass-render", "camera-tracking", "rigging", "animation", "simulation", "python-scripting"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": null,
+      "remote_url": null,
+      "stdio_command": "No package to install: in Cinema 4D 2026.4+, open Preferences → MCP, enable the MCP server, then under Clients pick your assistant, click Update Selected Client, and restart the client. Cinema 4D writes the client entry itself."
+    },
+    "auth": { "type": "local-app", "env_var": null, "key_url": "Requires the full Cinema 4D 2026.4+ application running (Windows or macOS) with the MCP server enabled in Preferences; access is gated by an MCP adapter key that Cinema 4D manages" },
+    "pricing": "paid",
+    "links": { "repo": null, "docs": "https://www.maxon.net/en/cinema-4d/features/mcp-server", "site": "https://www.maxon.net/en/cinema-4d" },
+    "added": "2026-10-01",
+    "verified": "2026-10-01",
+    "notes": "One day old at listing: released with Cinema 4D 2026.4.0 on 30 Sep 2026, per Maxon's FAQ page and coverage in CG Channel and AEC Magazine. The server costs nothing extra, but Cinema 4D is subscription-only ($109/month or $839/year per CG Channel), so this is a paid entry in practice. Off by default; connections are local-only unless you tick Allow Remote Connections, and Maxon warns remote traffic is unencrypted, so whitelist IPs and keep it on a trusted network. Not available in Cinema 4D Lite, Commandline, Team Render, c4dpy or Cineware. Claude Desktop and ChatGPT Desktop are the officially supported clients; other MCP clients and local models via LM Studio may work but are unsupported, and a local model will fight C4D and your renderer for the same GPU. Maxon also notes it slows down on scenes with hundreds of separate objects. Two separate toggles — Allow exec_python Command and Allow Python-Bearing Operations — decide whether the agent can run arbitrary Python or author Python-containing objects; leave both off unless you need them. Fifteen tool groups can be switched individually, but Maxon has not published tool names in a form this directory could read (the help pages render client-side), and no Claude Code command is documented — Cinema 4D writes client configs itself, so Claude Code users should copy the generated entry. For C4D 2024–2026.3 the community ttiimmaacc/cinema4d-mcp remains the fallback."
   }
 ]

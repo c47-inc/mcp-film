@@ -113,13 +113,13 @@
   },
   {
     "slug": "filmmap",
-    "name": "FilmMap",
-    "vendor": "FilmMap (Flightmussy)",
+    "name": "Movie Scene Map (formerly FilmMap)",
+    "vendor": "Movie Scene Map (Flightmussy)",
     "official": true,
     "category": "story-preproduction",
     "featured": false,
-    "tagline": "Where films and series were actually shot: 15,000+ locations in 162 countries, from Wikidata.",
-    "description": "A read-only remote MCP over a Wikidata-derived index of filming locations \u2014 15,254 places across 162 countries, tied to 9,181 films and series plus 1,883 games and the indexed anime and manga. An agent can ask where a production was shot, what was shot at a given place, search by coordinates and radius, or rank the most-filmed locations in a country. For recce and reference it answers the question a location scout starts with: who has already shot here, and what did it look like on screen. No signup, no key, no install \u2014 point a client at the endpoint and query.",
+    "tagline": "Where films and series were actually shot: 31,000+ locations in 177 countries, from Wikidata.",
+    "description": "A read-only remote MCP over a Wikidata-derived atlas of filming locations \u2014 31,115 places across 177 countries, tied to 19,707 films and series plus 2,153 video games and the indexed anime and manga. An agent can ask where a production was shot, what was shot at a given place, search by coordinates and radius, or rank the most-filmed locations in a country. For recce and reference it answers the question a location scout starts with: who has already shot here, and what did it look like on screen. No signup, no key, no install \u2014 point a client at the endpoint and query.",
     "capabilities": [
       "filming-locations",
       "location-scouting",
@@ -139,8 +139,8 @@
       "get_statistics"
     ],
     "install": {
-      "claude_code": "claude mcp add --transport http filmmap https://thefilmmap.com/mcp",
-      "remote_url": "https://thefilmmap.com/mcp",
+      "claude_code": "claude mcp add --transport http moviescenemap https://moviescenemap.com/mcp",
+      "remote_url": "https://moviescenemap.com/mcp",
       "stdio_command": null
     },
     "auth": {
@@ -151,11 +151,11 @@
     "pricing": "free",
     "links": {
       "repo": "https://github.com/Flightmussy/filmmap-mcp",
-      "docs": "https://thefilmmap.com/data/",
-      "site": "https://thefilmmap.com"
+      "docs": "https://moviescenemap.com/data/",
+      "site": "https://moviescenemap.com"
     },
     "added": "2026-08-22",
-    "verified": "2026-08-22",
-    "notes": "Days old: the repo was created 2026-08-18 (MIT, 0 stars, one personal account, no commits since the day it landed) and the registry entry com.thefilmmap/filming-locations v1.1.0 was published 2026-08-21. Endpoint verified live on 2026-08-22 \u2014 a GET on https://thefilmmap.com/mcp returns 405, which is what a POST-only stateless streamable HTTP server should do. The docs publish a JSON client config rather than a per-client command; the claude mcp add line above is that endpoint in Claude Code form. Read the medium distinction before quoting anything: films and series carry real filming locations (Wikidata P915), while games, anime and manga carry narrative settings (P840) and were filmed nowhere, and the server labels each record so an agent does not conflate them. Coverage is honestly incomplete \u2014 834 productions have no precise coordinates and 3,906 cannot be placed at all, listed publicly at thefilmmap.com/gaps/. A place is not a scene: there is no shot-level granularity, so this narrows a recce list, it does not replace one. Licensing is mixed \u2014 the dataset is CC0, but Wikipedia-sourced claims arrive separately labelled under CC BY-SA 4.0 and must be cited as such, and Commons photographs keep their own terms. The counts also disagree with themselves: the repo blurb says 15,272 locations and 12,762 productions where the data page says 15,254 and breaks the productions down differently."
+    "verified": "2026-10-01",
+    "notes": "Renamed: FilmMap became Movie Scene Map on 1 September 2026, and thefilmmap.com now 301s to moviescenemap.com. The repo README (re-checked 2026-10-01; pushed 2026-09-08, MIT, still 0 stars, one personal account) names https://moviescenemap.com/mcp as the endpoint and says the old https://thefilmmap.com/mcp keeps answering for clients configured before the rename \u2014 but the official MCP registry still lists com.thefilmmap/filming-locations v1.1.0 at the old address, so registry-driven clients will be pointed there until it is republished. Stateless streamable HTTP, POST-only; a GET returning 405 is correct. The docs publish a JSON client config rather than a per-client command; the claude mcp add line above is that endpoint in Claude Code form. The atlas roughly doubled with the rename (31,115 locations, 177 countries, per the data page) and counts move with every deploy \u2014 trust get_statistics over any figure quoted here. Read the medium distinction before quoting anything: films and series carry real filming locations (Wikidata P915), while games, anime and manga carry narrative settings (P840) and were filmed nowhere, and the server labels each record so an agent does not conflate them. Some links now come from a production's English Wikipedia Filming section rather than Wikidata; those arrive in separate fields under CC BY-SA 4.0 and must be cited as 'per Wikipedia'. Coverage is uneven \u2014 some productions are placed at country level only, and the unplaceable ones are listed at moviescenemap.com/gaps/. A place is not a scene: there is no shot-level granularity, so this narrows a recce list, it does not replace one. The factual dataset is CC0; Commons photographs and some city permit datasets keep their own attribution terms."
   }
 ]
