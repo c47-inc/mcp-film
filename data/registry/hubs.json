@@ -80,12 +80,12 @@
       "remote_headers": ["Authorization"],
       "stdio_command": null
     },
-    "auth": { "type": "api_key", "env_var": "FAL_KEY", "key_url": "fal.ai dashboard → API Keys (sent as Authorization: Bearer header, never stored server-side)" },
+    "auth": { "type": "api_key", "env_var": "FAL_KEY", "key_url": "fal.ai dashboard → API Keys (sent as Authorization: Bearer header, never stored server-side); ChatGPT and Codex connect by OAuth through the fal plugin instead" },
     "pricing": "credits",
     "links": { "repo": null, "docs": "https://fal.ai/docs/model-apis/mcp", "site": "https://fal.ai" },
     "added": "2026-06-11",
-    "verified": "2026-08-23",
-    "notes": "Hosted and fully stateless; the MCP itself is free, you pay standard fal per-run pricing, and there are no rate limits beyond your normal account concurrency. Still no OAuth — the key rides in an Authorization header, which the docs concede rules out Claude Desktop and claude.ai custom connectors ('OAuth support is coming soon', unchanged since June 2026); Claude Code, Cursor and Windsurf attach headers fine. The tool surface grew to eleven with get_job_result and cancel_job, and the docs moved from docs.fal.ai to fal.ai/docs. Arguably the best single 'everything' server for a generative film pipeline, and the practical MCP route to models with no first-party server (LTX-2, Stable Audio, CassetteAI, Beatoven)."
+    "verified": "2026-10-02",
+    "notes": "Hosted and fully stateless; the MCP itself is free, you pay standard fal per-run pricing, and there are no rate limits beyond your normal account concurrency. OAuth has finally shipped, but only for ChatGPT and Codex via the fal plugin (you pick which fal account it bills under 'Use for MCP' in account settings). The docs no longer mention Claude Desktop or claude.ai custom connectors at all, so for Claude the documented route is still Claude Code with the key in an Authorization header; Cursor and Windsurf work the same way. Eleven tools, unchanged since August. Arguably the best single 'everything' server for a generative film pipeline, and the practical MCP route to models with no first-party server (LTX-2, Stable Audio, CassetteAI, Beatoven)."
   },
   {
     "slug": "krea",

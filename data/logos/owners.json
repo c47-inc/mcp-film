@@ -138,5 +138,6 @@
   "sonicmatch": null,
   "fish-audio": "fishaudio",
   "mosaic-motion": null,
-  "cinema4d": "Maxon-Computer"
+  "cinema4d": "Maxon-Computer",
+  "videogen": "video-gen"
 }
