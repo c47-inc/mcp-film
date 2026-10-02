@@ -544,5 +544,29 @@
     "added": "2026-09-21",
     "verified": "2026-09-21",
     "notes": "First: this is not Celsys Clip Studio Paint. Same words, unrelated company, unrelated product — check the domain before you install anything for an illustrator. Endpoint verified alive 21 Sep 2026 (401 invalid_token with an OAuth challenge scoped `clipstudio` and resource metadata at /.well-known/oauth-protected-resource/api/mcp); we could not run the tools, since there is no unauthenticated path. It is new here for a reason — the official registry entry ai.clipstudio/mcp was published 2026-09-20, so there is no track record to judge yet. Clip Studio publishes no `claude mcp add` one-liner; its documented Claude route is the custom-connector UI, and the command above is the generic Streamable HTTP form. The scope rule is stated bluntly in their own docs — 'if a human cannot do it on clipstudio.ai, the agent cannot do it here' — which means no social posting: the MCP will not publish to YouTube, Instagram or TikTok, so pair it with a distribution server. Agents spend the same monthly story-part allowance as the website with no separate agent quota: Clip Pro is about 6 parts at 720p, Studio Elite about 15, Studio Scale about 35 at 1080p, quoted on the marketing page at $19, $39 and $99 a month, and eligible new accounts get one free story part without a card. Run short of allowance and tools return HTTP 402 with requiredCredits and availableCredits, then create_checkout_url hands back a Stripe link. No public source repo and no published tool count; the tool names above are read off the vendor's own MCP page, which also warns that its Mixpanel event names are analytics, not tools."
+  },
+  {
+    "slug": "videogen",
+    "name": "VideoGen MCP Server",
+    "vendor": "VideoGen",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Script, voiceover or storyboard to finished video, plus clip, image, music and avatar generation.",
+    "description": "VideoGen's official server wraps its whole API: four workflow tools turn a script, voiceover, slideshow or storyboard into an assembled video, and a media toolbox generates images, clips, speech, SFX, music and avatars, upscales stills and video, and strips backgrounds. Projects can be remixed and exported, and reusable entities keep a character or brand consistent across runs. For an agent it is a one-call rough cut for explainers and social pieces, not a narrative-film tool.",
+    "capabilities": ["script-to-video", "storyboard-to-video", "text-to-image", "text-to-video", "tts", "sfx", "music", "avatars", "upscaling", "background-removal", "project-export", "file-upload", "async-jobs"],
+    "tools_sample": ["script_to_video", "voiceover_to_video", "storyboard_to_video", "generate_video_clip", "generate_image", "text_to_speech", "generate_music", "generate_avatar", "upscale_video", "remove_video_background", "remix_project", "export_project", "get_workflow_run", "list_tts_voices"],
+    "install": {
+      "claude_code": "claude mcp add --transport http videogen https://mcp.videogen.io/mcp --header \"Authorization: Bearer YOUR_VIDEOGEN_API_KEY\"",
+      "remote_url": "https://mcp.videogen.io/mcp",
+      "remote_headers": ["Authorization"],
+      "stdio_command": "npx -y @videogen/mcp"
+    },
+    "auth": { "type": "api_key", "env_var": "VIDEOGEN_API_KEY", "key_url": "https://app.videogen.io/api (keys start sk_videogen_live_)" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/video-gen/videogen-mcp", "docs": "https://docs.videogen.io/use-with-ai-agents", "site": "https://videogen.io" },
+    "added": "2026-10-02",
+    "verified": "2026-10-02",
+    "notes": "Vendor-maintained (npm @videogen/mcp is published by videogen.io staff; v2.2.1 on 2026-09-15, MIT, repo pushed 2 Oct 2026) but brand new to the public: zero GitHub stars and submitted to MCP registries on 1 Oct 2026, so treat it as unproven. The hosted endpoint is stateless and reads your key from an Authorization header; the README also describes an OAuth 2.1 challenge for Cursor, Claude Desktop, Windsurf and ChatGPT Apps, with a separate /mcp/chatgpt variant. Long jobs return immediately on the hosted server — the Cloudflare proxy caps request time — so the agent has to poll get_workflow_run or get_tool_execution. Free-plan output carries a VideoGen watermark; Pro removes it, and neither the docs nor the README publish per-call credit costs. The local stdio package needs Node 20+. Output skews toward templated explainer and social video; for an editable timeline compare invideo or martini, and for raw model access fal."
   }
 ]
