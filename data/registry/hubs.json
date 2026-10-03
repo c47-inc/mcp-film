@@ -107,8 +107,8 @@
     "pricing": "credits",
     "links": { "repo": null, "docs": "https://www.krea.ai/docs/developers/mcp", "site": "https://www.krea.ai" },
     "added": "2026-06-29",
-    "verified": "2026-08-23",
-    "notes": "Official hosted Streamable HTTP, endpoint answering with an auth challenge as of Aug 23 2026. OAuth was added Jun 13 2026 and bills the workspace selected during consent; API-token auth still works for clients without OAuth but bills a separate workspace API balance. Provider models do disappear: video/openai/sora-2 and video/bytedance/seedance-1.0-lite were sunset Apr 27 2026 and image/bytedance/seedream-3 on May 13 2026, and a sunset endpoint returns a terminal 410. No further sunsets have been announced since. Have the agent call list_models/get_model_schema first — Krea surfaces deprecation metadata there and publishes no static model list, so the shelf is only knowable at runtime; the docs' own examples are image/krea/krea-2/medium and video/google/veo-3.1. get_upload_url returns presigned upload URLs valid for three hours. Docs moved from docs.krea.ai to www.krea.ai/docs."
+    "verified": "2026-10-03",
+    "notes": "Official hosted Streamable HTTP, endpoint answering with a 401 auth challenge as of Oct 3 2026; install command and seven tools unchanged. OAuth was added Jun 13 2026 and bills the workspace selected during consent; API-token auth still works for clients without OAuth but bills a separate workspace API balance, and cancelled jobs are not billed. Provider models disappear often and a sunset endpoint returns a terminal 410: video/openai/sora-2 and video/bytedance/seedance-1.0-lite went Apr 27 2026, image/bytedance/seedream-3 on May 13, Veo 2 and Veo 3 on Aug 28 (Veo 3.1 and 3.1 Lite remain), the Reve image models on Aug 31, and Kling 1.0, 1.5, 1.6, 2.0 Master and 2.1 on Sep 15. The developer deprecations page still lists only the first three; the later ones are in the changelog, so a pipeline pinned to an old Veo or Kling path is already broken. Deprecated endpoints send Deprecation: true and a Sunset header before they die. Have the agent call list_models/get_model_schema first — Krea surfaces deprecation metadata there and publishes no static model list, so the shelf is only knowable at runtime; the docs' own examples are image/krea/krea-2/medium and video/google/veo-3.1. get_upload_url returns presigned upload URLs valid for three hours. Docs moved from docs.krea.ai to www.krea.ai/docs."
   },
   {
     "slug": "replicate",
@@ -130,8 +130,8 @@
     "pricing": "paid",
     "links": { "repo": "https://github.com/replicate/replicate-mcp-code-mode", "docs": "https://replicate.com/docs/reference/mcp", "site": "https://mcp.replicate.com" },
     "added": "2026-06-11",
-    "verified": "2026-08-23",
-    "notes": "Both remote paths are live and OAuth-gated — /sse and /mcp each answer 401, and /.well-known/oauth-protected-resource points the client at https://mcp.replicate.com/. The docs no longer print either path: they now name the bare host and give copy-paste config only for the stdio npm package, with `claude mcp add \"replicate-code-mode\" --scope user --transport stdio -- npx -y replicate-mcp@alpha --tools=code` as the one Claude Code command on the page (code mode also needs Deno installed). Caveat: `latest` on npm is still 0.9.0 while all real work ships on the alpha track, now at 2.0.0-alpha.74, so the unpinned `npx -y replicate-mcp` most guides show installs a year-old build. The code-mode demo repo (4 stars) has not been pushed since Nov 17 2025; Replicate says it is working with Stainless to fold code mode into the remote server. Prefer the remote server. Also a strong route to upscalers (Real-ESRGAN, Topaz-style models) with no first-party MCP. Tool names are generated from the HTTP API surface (models.search, predictions.create) rather than a fixed published list."
+    "verified": "2026-10-03",
+    "notes": "Rechecked Oct 3 2026: both remote paths are live and OAuth-gated — /sse answers 401, and /.well-known/oauth-protected-resource points the client at https://mcp.replicate.com/. The docs no longer print either path: they name the bare host as the recommended option, and give copy-paste config only for the stdio npm package, with `claude mcp add 'replicate-code-mode' --scope user --transport stdio -- npx -y replicate-mcp@alpha --tools=code` as the one Claude Code command on the page (code mode also needs Deno, and runs locally only — Replicate says remote sandboxing is under development). Caveat: `latest` on npm is still 0.9.0 while all real work ships on the alpha track, still 2.0.0-alpha.74, and the docs' own Claude Desktop, Cursor and VS Code snippets use the unpinned `npx -y replicate-mcp`, so copying them installs a year-old build. The code-mode demo repo (4 stars) has not been pushed since Nov 17 2025. Prefer the remote server. Also a strong route to upscalers (Real-ESRGAN, Topaz-style models) with no first-party MCP. Tool names are generated from the HTTP API surface (models.search, predictions.create) rather than a fixed published list."
   },
   {
     "slug": "runapi",
@@ -535,5 +535,28 @@
     "added": "2026-09-20",
     "verified": "2026-09-20",
     "notes": "Verified 20 Sep 2026 the only way this vendor allows: Artlist's WAF returns 403 to every automated fetch of artlist.io and help.artlist.io, so the marketing and help-centre pages could not be read directly and the capability list above comes from Artlist's own published copy as indexed, not from a page we fetched. What we did confirm first-hand is the server itself — https://mcp.artlist.io/mcp answers 401 without a token, /.well-known/oauth-protected-resource returns resource_name 'Artlist_MCP_Prod' pointing at https://auth.artlist.io/ with openid and offline_access scopes, and that authorization server advertises a registration endpoint, so dynamic client registration works and there is no API key to paste. tools_sample is null because enumerating tools requires a paid account. Budget before wiring it in: connecting needs an active paid Artlist subscription with AI credits, generations spend those credits, and 'unlimited' plan language does not extend to MCP usage. Reliability caveat worth knowing: the connector broke for users on 14 Sep 2026 — sign-in failing outright after a spell of connecting with no tools available — Artlist confirmed a server-side OAuth fault and the reporter confirmed it fixed on 15 Sep. Not in the official MCP registry, so client connector directories will not surface it; add the URL by hand. If you want frontier video or image models rather than licence-clean ones, fal, replicate or runware are the better shelf."
+  },
+  {
+    "slug": "popcraft",
+    "name": "Popcraft MCP",
+    "vendor": "Popcraft",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "Hosted OAuth MCP for 20+ video, image, audio and 3D models, with a credit preview on every call.",
+    "description": "Popcraft's official remote MCP puts Seedance 2.0 and 2.5, Veo 3.1, Kling 3.0 Omni, Hailuo 3, Wan 3.0, Nano Banana, GPT Image 2.5 and Seedream behind one OAuth endpoint, plus TTS, sound effects, music, 3D and Topaz upscaling. For a filmmaker-agent the useful parts are the plumbing: get_cost previews the exact credit price of any generation before it runs, models_explore returns each model's reference limits, durations and aspect ratios, and a signed-upload tool streams large reference plates from disk instead of through the context window. Results chain straight into the next call, so draft-at-480p-then-upgrade-to-1080p is one tool away.",
+    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "image-editing", "tts", "sfx", "music-generation", "3d-generation", "upscaling", "cost-estimation", "file-upload", "oauth-remote"],
+    "tools_sample": ["popcraft_generate_video", "popcraft_generate_image", "popcraft_generate_audio", "popcraft_generate_3d", "popcraft_upscale_video", "popcraft_upgrade_video", "popcraft_models_explore", "popcraft_media_upload", "popcraft_balance"],
+    "install": {
+      "claude_code": "claude mcp add --transport http popcraft https://popcraft.ai/api/mcp",
+      "remote_url": "https://popcraft.ai/api/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth 2.1 with dynamic client registration — no API key; in Claude Code run /mcp → popcraft → Authenticate and sign in at https://popcraft.ai" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/popcraft-ai/popcraft-mcp", "docs": "https://popcraft.ai/mcp", "site": "https://popcraft.ai" },
+    "added": "2026-10-03",
+    "verified": "2026-10-03",
+    "notes": "New and unproven: submitted to MCP directories 29 Sep 2026, and its GitHub repo (MIT, created 25 Sep, 0 stars, 0 forks) is docs and recipes only — the server itself is closed-source. Checked 3 Oct 2026: https://popcraft.ai/api/mcp answers 401, and the Claude Code command above is the one the vendor publishes. The README lists 21 tools by name. New accounts get 100 free credits; some premium models are paid-plan only, and the agent gets a refusal it can route around. Published rates (as of 25 Sep, before plan discounts) run from 14 credits/s for Seedance 2.0 Mini to 58 credits/s for Veo 3.1 at 720p, so always pass get_cost: true first. Everything generated lands in your Popcraft web history. The Seedance 2.0 family runs a real-person check on reference media and rejects recognisable public figures before charging. The served 'skills' (ugc-ad, thumbnail-pro, h3-product-ad) are ad and social recipes, not film ones. It overlaps heavily with fal, krea and replicate, which have the longer track records. The case for Popcraft is one sign-in, no key, and per-call cost previews. Upstream sunsets hit aggregators too, so call models_explore rather than trusting a model list."
   }
 ]
