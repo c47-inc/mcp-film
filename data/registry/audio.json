@@ -251,8 +251,8 @@
     "pricing": "credits",
     "links": { "repo": null, "docs": "https://mirelo.ai/mcp", "site": "https://mirelo.ai" },
     "added": "2026-08-23",
-    "verified": "2026-08-23",
-    "notes": "Announced 30 Jul 2026; hosted endpoint answering with a 401 challenge on 23 Aug 2026. Billed against the same Studio credits as the Mirelo web app, so it needs an account with balance — the preflight tool is worth calling first. Two limits Mirelo states outright: music generation is not in MCP v1, and result download links are temporary, so an agent that generates without saving loses the take. Documented clients are Claude, Claude Code, Cursor, Codex and ChatGPT, though ChatGPT connects it as a developer-mode app rather than through mcpServers JSON. Tool names are not published — call tools/list. Closest comparisons here are ElevenLabs text_to_sound_effects and Sonilo's video_to_sfx; Mirelo is the narrower specialist, and region-level inpainting is the thing neither of those offers."
+    "verified": "2026-10-03",
+    "notes": "Announced 30 Jul 2026; hosted endpoint still answering with a 401 challenge on 3 Oct 2026, install command unchanged. Billed against the same Studio credits as the Mirelo web app, so it needs an account with balance — the preflight tool is worth calling first. Limits Mirelo states outright: music generation and multi-stem generation are not exposed in MCP v1, and result download links are temporary, so an agent that generates without saving loses the take. In Claude (web and Desktop), file uploads fail until you allowlist studio-project-assets.s3.eu-central-1.amazonaws.com under Settings → Capabilities — the usual reason a video-to-SFX call never sees the clip. Documented clients are Claude, Claude Code, Cursor, Codex and ChatGPT; Codex has its own `codex mcp add mirelo --url https://mcp.mirelo.ai/mcp` plus `codex mcp login mirelo`. Tool names are not published — call tools/list. Closest comparisons here are ElevenLabs text_to_sound_effects and Sonilo's video_to_sfx; Mirelo is the narrower specialist, and region-level inpainting is the thing neither of those offers."
   },
   {
     "slug": "reaper-mcp",
