@@ -160,5 +160,29 @@
     "added": "2026-09-21",
     "verified": "2026-09-21",
     "notes": "Endpoint verified alive 21 Sep 2026: an unauthenticated initialize returns 401 asking for 'Authorization: Bearer <ap_live_ key or OAuth access token>' with protected-resource metadata pointing at api.apatero.ai. Tools were not run — there is no anonymous path. Be careful copying install commands for this one from search results or AI summaries: a `claude mcp add --transport http apatero ... --header` form circulates widely and does not appear anywhere on the vendor's own page, which documents only the connector UI for the remote and npx/uvx/brew for local. Both packages exist but each has shipped exactly one version — npm apatero-mcp 0.2.0 and PyPI apatero-studio-mcp 0.2.0, both 10 Jul 2026 — and the repository URL in the PyPI metadata, github.com/Apatero-Org/Monorepo, 404s, so there is no readable source and no public commit history to judge. The vendor page headlines '20 tools' while 24 apatero_ names appear on it, several of them documentation helpers rather than studio tools; treat live tools/list as the count. Positioning is social-first — the Insta Dump and influencer pipeline are aimed at feed content, not narrative coverage — so for shot-matched performance work on footage you actually shot, hedra-official, sync-labs or tavus remain the stronger picks. Generation spends Apatero account credits at app rates with no MCP markup; apatero_credit_balance reports the remainder in chat."
+  },
+  {
+    "slug": "akool",
+    "name": "AKOOL MCP",
+    "vendor": "AKOOL",
+    "official": true,
+    "category": "avatars-performance",
+    "featured": false,
+    "tagline": "Hosted MCP for AKOOL face swap, character swap, image-to-video, TTS and avatar lookup.",
+    "description": "AKOOL's official remote MCP puts its Open API behind one streamable-HTTP endpoint: image generation and upscaling, image-to-video with effects and audio replacement, image and video face swap, character swap, avatar discovery, TTS with a voice list, and face detection. Most jobs are async, so the agent pairs each create call with a *_result poll. For a filmmaker-agent it is a performance-replacement and identity-swap kit — stand-in to principal swaps, pickup fixes, animatics from stills — rather than a general video-model shelf.",
+    "capabilities": ["face-swap", "character-swap", "image-to-video", "text-to-image", "upscaling", "tts", "avatar-library", "face-detection", "async-jobs"],
+    "tools_sample": ["faceswap_video", "faceswap_result", "character_swap_create", "video_image2video_create", "video_image2video_results", "image_create", "image_upscale", "audio_tts", "avatar_list", "facedetect_detect", "account_credit", "account_models"],
+    "install": {
+      "claude_code": "claude mcp add --transport http akool-mcp https://openapi.akool.com/mcp/v1 --header \"x-client-id: YOUR_CLIENT_ID\" --header \"x-client-secret: YOUR_CLIENT_SECRET\"",
+      "remote_url": "https://openapi.akool.com/mcp/v1",
+      "remote_headers": ["x-client-id", "x-client-secret"],
+      "stdio_command": null
+    },
+    "auth": { "type": "api_key", "env_var": null, "key_url": "https://akool.com/workspace/current/api/credentials (Client ID + Client Secret, sent as headers)" },
+    "pricing": "credits",
+    "links": { "repo": null, "docs": "https://docs.akool.com/mcp-server", "site": "https://akool.com" },
+    "added": "2026-10-04",
+    "verified": "2026-10-04",
+    "notes": "Checked against AKOOL's own MCP docs on 4 Oct 2026. The endpoint answers a plain GET with 405, which is what a POST-only streamable-HTTP server should do, but no tools were run because there is no anonymous path. Copy the command above rather than the docs' quick-add line: AKOOL's version omits `--transport http`, and without it Claude Code treats the URL as a stdio command. Auth is a Client ID and Client Secret pair sent as x-client-id / x-client-secret headers — no OAuth, so both secrets sit in your client config; the docs say to use env substitution and never commit them. There is no public repo and no local package; the AKOOL-Official GitHub org holds only API demos. Scope is narrower than the AKOOL web app: the only generative-video tool is image-to-video, and video translation, lip-sync and streaming avatars are not on the documented tool list, so for talking-head or dubbing work heygen or sync-labs reach further. Face swap is the headline capability and the docs say nothing about consent — swapping a real person's likeness needs their release and a platform-policy check before it goes anywhere near a cut. Generation spends AKOOL account credits; account_credit reports the balance."
   }
 ]
