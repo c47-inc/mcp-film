@@ -184,5 +184,28 @@
     "added": "2026-10-04",
     "verified": "2026-10-04",
     "notes": "Checked against AKOOL's own MCP docs on 4 Oct 2026. The endpoint answers a plain GET with 405, which is what a POST-only streamable-HTTP server should do, but no tools were run because there is no anonymous path. Copy the command above rather than the docs' quick-add line: AKOOL's version omits `--transport http`, and without it Claude Code treats the URL as a stdio command. Auth is a Client ID and Client Secret pair sent as x-client-id / x-client-secret headers — no OAuth, so both secrets sit in your client config; the docs say to use env substitution and never commit them. There is no public repo and no local package; the AKOOL-Official GitHub org holds only API demos. Scope is narrower than the AKOOL web app: the only generative-video tool is image-to-video, and video translation, lip-sync and streaming avatars are not on the documented tool list, so for talking-head or dubbing work heygen or sync-labs reach further. Face swap is the headline capability and the docs say nothing about consent — swapping a real person's likeness needs their release and a platform-policy check before it goes anywhere near a cut. Generation spends AKOOL account credits; account_credit reports the balance."
+  },
+  {
+    "slug": "bithuman",
+    "name": "bitHuman MCP",
+    "vendor": "bitHuman",
+    "official": true,
+    "category": "avatars-performance",
+    "featured": false,
+    "tagline": "Official bitHuman CLI server: build avatar agents from a face image and render WAV-driven talking video locally.",
+    "description": "bitHuman's MCP ships inside its own CLI: `bithuman mcp` exposes agent creation from a still (generate_agent), gesture generation, model pulls and a local render that turns a WAV into a lip-synced MP4 on your machine. A separate hosted endpoint lets any chat client make bitHuman's stock characters speak a line, no account needed. For a filmmaker-agent it is a talking-head and digital-performer tool that pairs with whatever TTS or recorded dialogue you already have, since bitHuman deliberately does not synthesize speech.",
+    "capabilities": ["avatar-video", "lip-sync", "avatar-creation", "gesture-generation", "local-render", "webhooks"],
+    "tools_sample": ["generate_agent", "get_agent_status", "list_agents", "agent_speak", "generate_dynamics", "render", "pull", "upload_file", "get_credit_balance", "list_characters", "make_character_video"],
+    "install": {
+      "claude_code": "claude mcp add bithuman -- bithuman mcp",
+      "remote_url": "https://mcp.bithuman.ai/mcp",
+      "stdio_command": "Multi-step: install the CLI with `curl -fsSL https://install.bithuman.ai | sh`, authenticate with `bithuman login` (or set BITHUMAN_API_SECRET in the client config), then run the server as `bithuman mcp`"
+    },
+    "auth": { "type": "api_key", "env_var": "BITHUMAN_API_SECRET", "key_url": "Run `bithuman login`, or use the API secret from your bitHuman account; API and SDK access is listed from the Creator plan up (https://www.bithuman.ai/pricing)" },
+    "pricing": "credits",
+    "links": { "repo": null, "docs": "https://docs.bithuman.ai/build/mcp", "site": "https://www.bithuman.ai" },
+    "added": "2026-10-08",
+    "verified": "2026-10-08",
+    "notes": "Verified 8 Oct 2026 against bitHuman's MCP docs and the official MCP Registry, where ai.bithuman/characters was published that same morning; no tools were run. Two servers share the name and are not the same thing. The hosted remote_url takes no auth and exposes only list_characters, make_character_video (3-200 characters of text) and talk_to_character — the docs say outright it 'speaks only as bitHuman's own characters', so it is a demo, not a pipeline tool. Your own avatars need the CLI server, which is the claude_code command above. There is no text-to-speech tool: list_voices and text_to_speech were retired after CLI 2.8.7 and now return 410, so bring a WAV from elevenlabs, cartesia or a real recording and pass it to render. generate_agent is async and slow — the docs put a second-generation agent at roughly 2-2.5 hours — and always pass model (essence-2 or expression-2) or you get a first-generation agent. Every model except Expression 2 needs a real human face; stylised or non-human subjects return 422 MODEL_SUBJECT_MISMATCH. The cloud talking-video API and knowledge bases have no MCP tool yet, so use the REST API for those. Pricing: Free is $0 with 99 credits a month, Creator $20 for 2,000. bitHuman's pricing page says Free-plan API access ends on 12 October, so plan on Creator. The install line pipes a remote script into sh: read it first. Source is not public — every repo in the bithuman-product GitHub org was archived on 5 Oct 2026 and the registry metadata now points at GitLab — so repo is null. For hosted, OAuth-gated performance work without a local CLI, hedra-official is the simpler connect."
   }
 ]
