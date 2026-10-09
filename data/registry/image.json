@@ -88,8 +88,8 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/tadasant/mcp-server-stability-ai", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-08-27",
-    "notes": "MIT, 84 stars, not archived; unaffiliated with Stability AI, which still ships no official MCP — every Stability server on the market is a community wrapper, and this is the one with the deepest tool coverage. Aging: npm latest is still 0.2.0 from Mar 2025 and the last commit landed Jun 2025 — fourteen months cold, though the REST API it wraps has not moved under it. Supports IMAGE_STORAGE_DIRECTORY for writing outputs to disk. Per-tool cost runs roughly $0.01-$0.25 in Stability credits; confirm current rates at platform.stability.ai."
+    "verified": "2026-10-09",
+    "notes": "MIT, 84 stars, not archived; unaffiliated with Stability AI, which still ships no official MCP — re-checked 9 Oct 2026, the Stability-AI GitHub org has no MCP repo, so every Stability server on the market is a community wrapper, and this is the one with the deepest tool coverage. Beware the name collision: 'Stability MCP Server' listings for nuljui/stbl-mcp are for the Stability blockchain, not image generation. Aging: npm latest is still 0.2.0 from Mar 2025 and the last push landed Jun 24 2025 — over fifteen months cold, though the REST API it wraps has not moved under it. Supports IMAGE_STORAGE_DIRECTORY for writing outputs to disk. Per-tool cost runs roughly $0.01-$0.25 in Stability credits; confirm current rates at platform.stability.ai."
   },
   {
     "slug": "ideogram",
@@ -99,7 +99,7 @@
     "category": "image-generation",
     "featured": false,
     "tagline": "Official Ideogram server: bulk generation, editing, reframe, upscale and model training.",
-    "description": "Ideogram's official hosted MCP puts the Ideogram 4.0 stack behind OAuth: bulk text-to-image, editing, reframing, upscaling, collections, and dataset upload plus custom model training. Ideogram remains the strongest engine for legible rendered text, which makes it the practical choice for title cards, posters, signage and any frame where type has to survive. The training tools matter for series work — teach it a show's typographic or graphic identity once, then generate against it.",
+    "description": "Ideogram's official hosted MCP puts the Ideogram 4.x stack behind OAuth: bulk text-to-image, editing, reframing, upscaling, collections, and dataset upload plus custom model training. Ideogram remains the strongest engine for legible rendered text, which makes it the practical choice for title cards, posters, signage and any frame where type has to survive. The training tools matter for series work — teach it a show's typographic or graphic identity once, then generate against it.",
     "capabilities": ["text-to-image", "batch-generation", "image-editing", "reframing", "upscaling", "custom-model-training", "asset-collections"],
     "tools_sample": ["generate_images_bulk", "edit_image", "reframe_image", "upscale_image", "upload_image", "create_collection", "create_dataset", "upload_dataset_assets", "train_model"],
     "install": {
@@ -111,8 +111,8 @@
     "pricing": "paid",
     "links": { "repo": null, "docs": "https://ideogram.ai/features/mcp/", "site": "https://ideogram.ai" },
     "added": "2026-06-11",
-    "verified": "2026-08-27",
-    "notes": "Usage draws on the same subscription as the Ideogram web app, so MCP jobs and hand work compete for one balance — the docs state flatly that there is no separate billing for MCP requests. Checked 27 Aug 2026: the endpoint is live and serves OAuth protected-resource metadata at the spec path, naming itself as the resource with an Ideogram-hosted authorization server and openid/email/profile scopes; the nine tools and the connect command below still match the docs verbatim. The API also still exposes Ideogram 3.0 endpoints alongside 4.0. This entry previously listed the community wrapper @sunwood-ai-labs/ideagram-mcp-server (MIT, 5 stars, one generate_image tool, untouched since May 2025, and misspelled 'ideagram' throughout) — it is superseded by the official server. Note that developer.ideogram.ai/_mcp/server is a separate documentation-search MCP, not the image server. Ideogram is also reachable via the fal and Replicate hub MCPs if you want fewer connectors."
+    "verified": "2026-10-09",
+    "notes": "Usage draws on the same subscription as the Ideogram web app, so MCP jobs and hand work compete for one balance — the docs state flatly that there is no separate billing for MCP requests. Checked 9 Oct 2026: the endpoint is live and serves OAuth protected-resource metadata at the spec path, naming itself as the resource with an Ideogram-hosted authorization server and openid/email/profile scopes; the nine tools and the connect command below still match the docs verbatim. The MCP page now lists Ideogram 4.5 first, alongside 4.0, 3.0 and custom image models. The docs themselves point server-to-server pipelines at the REST API instead. This entry previously listed the community wrapper @sunwood-ai-labs/ideagram-mcp-server (MIT, 5 stars, one generate_image tool, untouched since May 2025, and misspelled 'ideagram' throughout) — it is superseded by the official server. Note that developer.ideogram.ai/_mcp/server is a separate documentation-search MCP, not the image server. Ideogram is also reachable via the fal and Replicate hub MCPs if you want fewer connectors."
   },
   {
     "slug": "mediagen",
