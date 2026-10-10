@@ -75,9 +75,31 @@
     for (const sec of sections) {
       sec.hidden = ![...sec.querySelectorAll(".card")].some((c) => !c.hidden);
     }
-    if (noResults) noResults.hidden = shown > 0;
+    if (noResults) {
+      noResults.hidden = shown > 0;
+      const active = [
+        activeQuick.has("official") && "Official",
+        activeQuick.has("remote") && "Hosted remote",
+        activeCat && (filters.find((b) => b.dataset.filter === activeCat)?.firstChild?.textContent.trim() || activeCat),
+      ].filter(Boolean);
+      noResultsMsg.textContent = active.length
+        ? `Nothing matches${q ? ` "${q}"` : ""} with the ${active.join(" + ")} filter${active.length > 1 ? "s" : ""} on.`
+        : "Nothing in the catalog matches that.";
+      clearFilters.hidden = !active.length;
+      noResultsSubmit.hidden = active.length > 0;
+    }
     if (q.length >= 2) phSearchDebounced(q, shown, activeCat || null, [...activeQuick].sort());
   };
+  const noResultsMsg = document.getElementById("no-results-msg");
+  const clearFilters = document.getElementById("clear-filters");
+  const noResultsSubmit = document.getElementById("no-results-submit");
+  clearFilters?.addEventListener("click", () => {
+    activeCat = "";
+    activeQuick.clear();
+    filters.forEach((b) => b.classList.toggle("is-on", b.dataset.filter === ""));
+    quickFilters.forEach((b) => { b.classList.remove("is-on"); b.setAttribute("aria-pressed", "false"); });
+    applyFilter();
+  });
 
   let searchTimer;
   let lastNoResultSearch = "";
@@ -272,8 +294,26 @@
         return table;
       };
 
+      // Submit/example/toggle paths emit immediately; the typing path emits
+      // once the brief has settled, and never twice for the same text.
+      let routeTrackTimer;
+      let lastRoutedBrief = "";
+      const trackRoute = (props, track) => {
+        if (track) {
+          lastRoutedBrief = props.brief;
+          ph("mcpfilm_brief_route", props);
+        } else if (props.source === "typing") {
+          routeTrackTimer = setTimeout(() => {
+            if (props.brief === lastRoutedBrief) return;
+            lastRoutedBrief = props.brief;
+            ph("mcpfilm_brief_route", props);
+          }, 800);
+        }
+      };
+
       const renderRoute = (brief, source = "typing", track = false) => {
         if (!results) return;
+        clearTimeout(routeTrackTimer);
         const clean = String(brief || "").trim();
         const hostedOnly = Boolean(hostedToggle?.checked);
         if (!clean) {
@@ -288,21 +328,19 @@
           const empty = node("p", "agent-hint", "No route in the directory matches this brief. Try a capability such as text-to-video in the ");
           empty.append(link("directory", "/#directory"), " or browse ", link("playbooks", "/playbooks/"), ".");
           results.replaceChildren(empty);
-          if (track) {
-            ph("mcpfilm_brief_route", {
-              source,
-              hosted_only: hostedOnly,
-              brief_len: clean.length,
-              brief_terms: terms.slice(0, 8),
-              brief: clean.slice(0, 200),
-              top_recommendation: null,
-              top_score: 0,
-              no_match: true,
-              top_playbook: null,
-              includes_martini: false,
-              result_count: ranked.length,
-            });
-          }
+          trackRoute({
+            source,
+            hosted_only: hostedOnly,
+            brief_len: clean.length,
+            brief_terms: terms.slice(0, 8),
+            brief: clean.slice(0, 200),
+            top_recommendation: null,
+            top_score: 0,
+            no_match: true,
+            top_playbook: null,
+            includes_martini: false,
+            result_count: ranked.length,
+          }, track);
           return;
         }
         const alternates = ranked.slice(1, 3);
@@ -386,20 +424,18 @@
 
         results.replaceChildren(shell);
 
-        if (track && top) {
-          ph("mcpfilm_brief_route", {
-            source,
-            hosted_only: hostedOnly,
-            brief_len: clean.length,
-            brief_terms: terms.slice(0, 8),
-            brief: clean.slice(0, 200),
-            top_recommendation: top.id,
-            top_score: ranked[0]?._score ?? 0,
-            top_playbook: playbook?.id || null,
-            includes_martini: (top.primary || []).some((p) => p.server?.slug === "martini"),
-            result_count: ranked.length,
-          });
-        }
+        trackRoute({
+          source,
+          hosted_only: hostedOnly,
+          brief_len: clean.length,
+          brief_terms: terms.slice(0, 8),
+          brief: clean.slice(0, 200),
+          top_recommendation: top.id,
+          top_score: ranked[0]?._score ?? 0,
+          top_playbook: playbook?.id || null,
+          includes_martini: (top.primary || []).some((p) => p.server?.slug === "martini"),
+          result_count: ranked.length,
+        }, track);
       };
 
       let routerTimer;

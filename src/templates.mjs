@@ -426,7 +426,7 @@ const card = (ctx, s) => {
   const caps = (s.capabilities ?? []).slice(0, 2).join(" · ");
   const extra = [s.install?.remote_url ? "remote" : null, PRICING_LABEL[s.pricing] ?? s.pricing]
     .filter(Boolean).join(" · ");
-  return `<a class="card" href="/mcps/${s.slug}/" data-search="${esc([s.name, s.vendor, s.tagline, s.category, ...(s.capabilities ?? [])].join(" ").toLowerCase())}" data-cat="${s.category}" data-official="${s.official ? "true" : "false"}" data-remote="${s.install?.remote_url ? "true" : "false"}">
+  return `<a class="card" href="/mcps/${s.slug}/" data-search="${esc([s.slug, s.name, s.vendor, s.tagline, s.category, ...(s.capabilities ?? []), ...(s.capabilities ?? []).map((c) => c.replace(/-/g, " "))].join(" ").toLowerCase())}" data-cat="${s.category}" data-official="${s.official ? "true" : "false"}" data-remote="${s.install?.remote_url ? "true" : "false"}">
   <div class="card-head">
     ${avatar(ctx, s)}
     <span class="card-id"><span class="card-name">${esc(s.name)}</span><span class="card-vendor">${esc(vendorShort(s.vendor))}</span></span>
@@ -545,7 +545,7 @@ export const renderHome = (ctx) => {
     </nav>
   </aside>
   <div class="dir-main">
-    <p class="no-results" id="no-results" hidden>Nothing in the catalog matches that. <a href="/submit/">Know a server we're missing?</a></p>
+    <p class="no-results" id="no-results" hidden><span id="no-results-msg">Nothing in the catalog matches that.</span> <button type="button" class="btn" id="clear-filters" hidden>Clear filters</button> <a href="/submit/" id="no-results-submit">Know a server we're missing? Submit it.</a></p>
     ${sections}
   </div>
 </div>
