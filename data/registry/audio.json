@@ -463,5 +463,51 @@
     "added": "2026-09-21",
     "verified": "2026-09-21",
     "notes": "Verified 21 Sep 2026: an unauthenticated initialize returns a 401 that enumerates its own auth methods, and the server card at https://audiopod.ai/.well-known/mcp/server-card.json declares streamable-http on protocol 2025-06-18 with oauth2 and X-API-Key both supported. We did not run the tools — every one of them needs a key. Read the licence correctly: the repo is MIT and is actively pushed (19 Sep 2026), but it contains the README, the registry manifest and the server card, not the server, which is hosted and closed; the README says so itself. Judge maintenance by AudioPod the product, not the 0-star repo. The free tier is quoted two different ways depending where you look — the website says 1,000 credits a month with no card, the server card says new developer accounts start with $1 of free API credit — so confirm which pool your key draws on before planning a batch; paid is $1 for 7,500 credits pay-as-you-go or $20/month for 200,000. The auth 401 also advertises an `api_key` query-parameter form: use the header, because keys in URLs end up in logs and referrers. Scope check before you list it as a film tool: this is a podcast and audiobook workstation, so its music and TTS are broad rather than cinematic — for performance-grade voice direction see elevenlabs or cartesia, and for loudness and delivery QC see auphonic-zapier. convert_media does handle mp4 and mov, which makes it a light transcode step as well."
+  },
+  {
+    "slug": "artyfile",
+    "name": "Artyfile Music Licensing",
+    "vendor": "Artyfile LTD",
+    "official": true,
+    "category": "music",
+    "featured": false,
+    "tagline": "Search a catalogue of real recordings and buy a lifetime worldwide sync licence per track, WAV plus certificate.",
+    "description": "Artyfile is a London sync-licensing shop with a remote MCP in front of its catalogue: search_tracks and get_track return ranked recordings with mood, tempo, preview URL and price, get_license_terms returns the licence as machine-readable JSON, and create_checkout hands the user a Stripe page. Once paid, the agent polls the order and fetches the 44.1 kHz WAV, invoice and licence certificate. It is the opposite of generative music: real players, cleared rights, one price.",
+    "capabilities": ["music-search", "music-licensing", "licensed-audio", "license-info", "preview-urls", "asset-download", "remote-mcp"],
+    "tools_sample": ["search_tracks", "get_track", "get_license_terms", "create_checkout", "get_order_status", "get_download_link"],
+    "install": {
+      "claude_code": "claude mcp add --transport http artyfile https://artyfile.com/api/mcp",
+      "remote_url": "https://artyfile.com/api/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "none", "env_var": null, "key_url": "https://artyfile.com/llms.txt (no account; payment happens on a Stripe page the user opens)" },
+    "pricing": "paid",
+    "links": { "repo": null, "docs": "https://artyfile.com/llms.txt", "site": "https://artyfile.com" },
+    "added": "2026-10-10",
+    "verified": "2026-10-10",
+    "notes": "Checked 10 Oct 2026 by running search_tracks and get_license_terms against the live endpoint without auth; the official MCP Registry lists com.artyfile/music-licensing. Basic licence is EUR 29.90 one-time per track for perpetual worldwide sync; the Limited Edition tier (EUR 69.90 per 1% share) sells fractional master ownership with royalty participation, which is a financial product rather than a licence and is not something an agent should buy on anyone's behalf. Tracks marked master_only carry no sync licence at all, so read licenseScope before quoting. The catalogue is small (the site says 1,000+ masters, heavy on cinematic and classical), prices are in EUR, and the agent cannot complete payment: a human must approve the Stripe checkout."
+  },
+  {
+    "slug": "multivoice",
+    "name": "MultiVoice",
+    "vendor": "MultiVoice (Movify.CY Ltd.)",
+    "official": true,
+    "category": "transcription",
+    "featured": false,
+    "tagline": "Quoted dubbing, subtitles, transcription and multi-voice audiobooks from one remote MCP; a human approves each price.",
+    "description": "MultiVoice is a localization service with an agent front door: the agent prepares an order (dubbing, SRT/VTT subtitles, transcription or a multi-voice audiobook), the server returns an exact quote, the human confirms it in the client, and the agent then executes and downloads the artifacts. Subtitles and transcription cover roughly a hundred source languages with speaker-labelled and plain SRT/VTT outputs, which is the practical win for dailies and festival deliverables.",
+    "capabilities": ["transcription", "captions", "subtitles", "dubbing", "localization", "diarization", "voiceover", "cost-estimation", "cost-gates", "async-jobs", "remote-mcp"],
+    "tools_sample": ["get_create_options", "prepare_create", "execute_create", "get_artifacts", "prepare_download"],
+    "install": {
+      "claude_code": "claude mcp add --transport http multivoice https://db.multivoice.ai/mcp",
+      "remote_url": "https://db.multivoice.ai/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "https://multivoice.ai/for-agents (browser OAuth once; wallet top-up for paid jobs)" },
+    "pricing": "paid",
+    "links": { "repo": null, "docs": "https://multivoice.ai/for-agents", "site": "https://multivoice.ai" },
+    "added": "2026-10-10",
+    "verified": "2026-10-10",
+    "notes": "Checked 10 Oct 2026: the endpoint answers initialize with an OAuth 2.1 challenge and the official MCP Registry lists ai.multivoice/video-dubbing-subtitles-transcription-audiobooks; no tools were run because there is no anonymous path, so the tool names above come from the vendor's agent page rather than a live tools/list. The vendor calls the MCP public beta, not GA. List prices on the agent page: transcription and subtitles EUR 0.015 per minute, AI dubbing EUR 0.40 per minute, audiobooks EUR 100 per book. The catch for film work is dubbing: target languages are only German, English, French, Latvian and Russian, and audiobook narration covers the same five. Human-reviewed subtitles are optional. For broad-language dubbing compare elevenlabs or allvoicelab."
   }
 ]

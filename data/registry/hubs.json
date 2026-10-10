@@ -558,5 +558,29 @@
     "added": "2026-10-03",
     "verified": "2026-10-03",
     "notes": "New and unproven: submitted to MCP directories 29 Sep 2026, and its GitHub repo (MIT, created 25 Sep, 0 stars, 0 forks) is docs and recipes only — the server itself is closed-source. Checked 3 Oct 2026: https://popcraft.ai/api/mcp answers 401, and the Claude Code command above is the one the vendor publishes. The README lists 21 tools by name. New accounts get 100 free credits; some premium models are paid-plan only, and the agent gets a refusal it can route around. Published rates (as of 25 Sep, before plan discounts) run from 14 credits/s for Seedance 2.0 Mini to 58 credits/s for Veo 3.1 at 720p, so always pass get_cost: true first. Everything generated lands in your Popcraft web history. The Seedance 2.0 family runs a real-person check on reference media and rejects recognisable public figures before charging. The served 'skills' (ugc-ad, thumbnail-pro, h3-product-ad) are ad and social recipes, not film ones. It overlaps heavily with fal, krea and replicate, which have the longer track records. The case for Popcraft is one sign-in, no key, and per-call cost previews. Upstream sunsets hit aggregators too, so call models_explore rather than trusting a model list."
+  },
+  {
+    "slug": "genmagic",
+    "name": "GenMagic MCP",
+    "vendor": "GenMagic (single-developer gateway)",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "One hosted endpoint over 450 models: text-to-video from Veo, Kling, Seedance and Hailuo on one pay-as-you-go balance.",
+    "description": "GenMagic is an OpenAI-compatible gateway with a remote MCP in front of it. list_models returns each model's id, price and, for video, the resolutions, clip lengths and whether it renders audio; create_video starts a text-to-video job on any of them and get_video polls it. Speech, music and image generation sit on the same balance. For an agent that wants to compare Veo 3.1, Kling 3.0, Seedance 2.5 and Hailuo 3 without four accounts, it is a cheap place to start.",
+    "capabilities": ["text-to-video", "text-to-image", "image-to-image", "tts", "music", "model-search", "multi-model-generation", "async-jobs", "pricing", "remote-mcp"],
+    "tools_sample": ["list_models", "create_video", "get_video", "generate_image", "generate_speech", "generate_music", "generate_text"],
+    "install": {
+      "claude_code": "claude mcp add --transport http genmagic https://genmagic.co/api/mcp --header \"Authorization: Bearer YOUR_GENMAGIC_API_KEY\"",
+      "remote_url": "https://genmagic.co/api/mcp",
+      "remote_headers": ["Authorization"],
+      "stdio_command": null
+    },
+    "auth": { "type": "api_key", "env_var": "GENMAGIC_API_KEY", "key_url": "https://genmagic.co/get-api-key (keys start gm_live_; verified email unlocks a small starter credit)" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/yumaheymans/genmagic-mcp", "docs": "https://genmagic.co/developers", "site": "https://genmagic.co" },
+    "added": "2026-10-10",
+    "verified": "2026-10-10",
+    "notes": "Checked 10 Oct 2026 by calling the live endpoint without a key: initialize, tools/list and list_models all answer anonymously, 450 models in total and 26 video models including google/veo-3.1, kwaivgi/kling-v3.0-pro, bytedance/seedance-2.5, minimax/hailuo-3-max, alibaba/wan-3.0 and runway/gen-4.5. Video is text-to-video only: no image-to-video, no video editing or upscaling, and no Sora or Luma. Video is priced per second in USD and each result reports its exact charge in _meta; a failed render is not charged. The official MCP Registry entry is io.github.yumaheymans/genmagic, which is to say the gateway is run by one developer, so weigh uptime risk accordingly. For image-to-video or a bigger catalogue compare fal, replicate or kie-ai."
   }
 ]
