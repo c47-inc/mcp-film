@@ -145,7 +145,7 @@
     "category": "distribution",
     "featured": false,
     "tagline": "74 tools over the Frame.io V4 API — comments, shares, version stacks, uploads.",
-    "description": "A local stdio MCP server for the Frame.io v4 API, built on FastMCP over Adobe's official Python SDK: browse workspaces and projects, upload and download footage, leave timecode-accurate review comments, create client share links, manage version stacks, apply custom metadata in bulk, and manage webhooks. Review-and-approval is the connective tissue of film delivery, and until Adobe opens its own server this is the most complete MCP for it.",
+    "description": "A local stdio MCP server for the Frame.io v4 API, built on FastMCP over Adobe's official Python SDK: browse workspaces and projects, upload and download footage, leave timecode-accurate review comments, create client share links, manage version stacks, apply custom metadata in bulk, and manage webhooks. Adobe now runs its own hosted server, listed as `frameio-official`, so this one matters mainly as a self-hosted, self-credentialed alternative.",
     "capabilities": ["review-comments", "share-links", "version-stacks", "asset-upload", "metadata", "search", "webhooks"],
     "tools_sample": ["list_projects", "list_project_contents", "upload_file", "create_comment", "create_share", "create_version_stack", "set_file_metadata", "search"],
     "install": {
@@ -158,6 +158,29 @@
     "links": { "repo": "https://github.com/bowlofarugula/frameio-mcp", "docs": "https://pypi.org/project/frameio-mcp/", "site": "https://frame.io" },
     "added": "2026-06-11",
     "verified": "2026-09-30",
-    "notes": "The Claude Code plugin route is dead. github.com/bowlofarugula/frameio-plugins still 404s (rechecked 2026-09-30), so the old '/plugin marketplace add' command cannot work and claude_code is null. PyPI frameio-mcp 0.1.0 (uploaded 2026-06-04, not yanked) is still the only release. A uvx frameio-mcp --help and status run on 2026-08-11 installed clean. It needs Python 3.13+, and you must register your own Adobe OAuth SPA credential before it does anything. Its stated source repo has since been rewritten into a remote Cloudflare Workers server that you would have to deploy yourself. That repo still has 0 stars and has not been pushed since 2026-06-13, and its /authorize fails closed behind a redirect-URI allowlist, so there is no public endpoint. This is effectively unmaintained: treat it as a working snapshot, not a project. Adobe announced an official Frame.io MCP server on 2026-07-29, and two months later it is still private beta. The forum thread now runs to five pages of access requests (latest 2026-09-22). Staff answer them by DM, and there is no published endpoint, package, or docs. It stays unlisted here until a reader can actually install it: https://forum.frame.io/t/introducing-the-frame-io-mcp-server/3466"
+    "notes": "The Claude Code plugin route is dead. github.com/bowlofarugula/frameio-plugins still 404s (rechecked 2026-09-30), so the old '/plugin marketplace add' command cannot work and claude_code is null. PyPI frameio-mcp 0.1.0 (uploaded 2026-06-04, not yanked) is still the only release. A uvx frameio-mcp --help and status run on 2026-08-11 installed clean. It needs Python 3.13+, and you must register your own Adobe OAuth SPA credential before it does anything. Its stated source repo has since been rewritten into a remote Cloudflare Workers server that you would have to deploy yourself. That repo still has 0 stars and has not been pushed since 2026-06-13, and its /authorize fails closed behind a redirect-URI allowlist, so there is no public endpoint. This is effectively unmaintained: treat it as a working snapshot, not a project. Use `frameio-official` instead unless you are on a Frame.io Legacy account. Adobe's own server went to public beta on 2026-10-07 with a documented hosted endpoint and Adobe ID OAuth, which removes the reason this entry existed. Legacy accounts are the one gap left: the official server does not support them. This server is built on the v4 API, so it has not been shown to work for them either."
+  },
+  {
+    "slug": "frameio-official",
+    "name": "Frame.io MCP",
+    "vendor": "Adobe (Frame.io)",
+    "official": true,
+    "category": "distribution",
+    "featured": false,
+    "tagline": "Adobe's hosted Frame.io MCP: review comments, shares, version stacks, uploads, and metadata.",
+    "description": "Frame.io's official remote MCP server puts the review-and-approval layer of a production in front of an agent: search assets across workspaces, read and write review comments, build version stacks, upload media, edit metadata fields, and manage share links, reviewers, and project members. Adobe says it adds nothing the V4 API cannot already do. What it adds is the ability to chain those calls from a prompt. For a film pipeline, that means turning a round of client notes into a task list, or stacking the new cut on the old one and sending the share link, without anyone opening the browser.",
+    "capabilities": ["review-comments", "share-links", "version-stacks", "asset-upload", "metadata", "search", "remote-mcp"],
+    "tools_sample": ["mandatory_init", "search_assets", "read_comments", "write_comments", "manage_versions", "upload_media", "manage_shares", "change_metadata"],
+    "install": {
+      "claude_code": "claude mcp add --transport http frameio https://mcp.frame.io/v1/mcp",
+      "remote_url": "https://mcp.frame.io/v1/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth through Adobe IMS — sign in with the Adobe ID linked to your Frame.io account" },
+    "pricing": "freemium",
+    "links": { "repo": null, "docs": "https://next.developer.frame.io/platform/v4/docs/mcp/frame-io-mcp", "site": "https://frame.io" },
+    "added": "2026-10-10",
+    "verified": "2026-10-10",
+    "notes": "Public beta as of 7 Oct 2026, per Adobe staff on the forum thread that announced a private beta on 29 Jul. Self-serve now, with no onboarding call, but expect beta churn. Anyone who configured it before 7 Oct should check they are on the /v1/mcp URL. Frame.io Legacy accounts are not supported at all. Adobe Managed Accounts can land in the wrong organization if a stale Adobe session is reused; the docs give a fix. Tools run with your own permissions, so uploads need Contributor access. The write surface is real: `delete_resources` permanently deletes everything except files and folders, which `restore_assets` can bring back. Adobe recommends approving each write or delete call, which is the correct default in front of a client's review project. Adobe's docs give click-through steps for Claude Desktop, ChatGPT, Cursor, VS Code and Copilot CLI, but not a Claude Code command. The command above is the standard remote-HTTP form against the documented URL, and the endpoint's OAuth discovery document answers (checked 10 Oct 2026). There is no source repo, and the docs do not cover MCP-specific pricing; usage counts against your Frame.io plan. Supersedes the community `frameio` entry for every account except Legacy ones."
   }
 ]
