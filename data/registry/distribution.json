@@ -182,5 +182,28 @@
     "added": "2026-10-10",
     "verified": "2026-10-10",
     "notes": "Public beta as of 7 Oct 2026, per Adobe staff on the forum thread that announced a private beta on 29 Jul. Self-serve now, with no onboarding call, but expect beta churn. Anyone who configured it before 7 Oct should check they are on the /v1/mcp URL. Frame.io Legacy accounts are not supported at all. Adobe Managed Accounts can land in the wrong organization if a stale Adobe session is reused; the docs give a fix. Tools run with your own permissions, so uploads need Contributor access. The write surface is real: `delete_resources` permanently deletes everything except files and folders, which `restore_assets` can bring back. Adobe recommends approving each write or delete call, which is the correct default in front of a client's review project. Adobe's docs give click-through steps for Claude Desktop, ChatGPT, Cursor, VS Code and Copilot CLI, but not a Claude Code command. The command above is the standard remote-HTTP form against the documented URL, and the endpoint's OAuth discovery document answers (checked 10 Oct 2026). There is no source repo, and the docs do not cover MCP-specific pricing; usage counts against your Frame.io plan. Supersedes the community `frameio` entry for every account except Legacy ones."
+  },
+  {
+    "slug": "autoposting",
+    "name": "Autoposting",
+    "vendor": "Autoposting.ai",
+    "official": true,
+    "category": "distribution",
+    "featured": false,
+    "tagline": "Social publishing and scheduling for YouTube and other channels, with clip jobs that cut long footage into shorts.",
+    "description": "Autoposting's hosted server covers the last mile after the cut: connect brand accounts, create and schedule posts, publish to YouTube, Instagram, X, LinkedIn and Threads, and run clip jobs that turn a long video into social cutdowns with captions. Tools are filtered by the OAuth scopes the user grants and carry read-only and destructive annotations, so a client can gate the publish calls. It is a social media operations tool, not an editor.",
+    "capabilities": ["social-publishing", "scheduled-publishing", "ai-clipping", "captions", "channel-publishing", "brand-management", "webhooks", "async-jobs", "remote-mcp"],
+    "tools_sample": ["list-posts", "create-post", "publish-post", "list-brands", "import-video", "render-clips", "list-clips", "create-carousel"],
+    "install": {
+      "claude_code": "claude mcp add --transport http autoposting https://app.autoposting.ai/mcp",
+      "remote_url": "https://app.autoposting.ai/mcp",
+      "stdio_command": "npx -y @autoposting.ai/cli mcp"
+    },
+    "auth": { "type": "oauth", "env_var": "AUTOPOSTING_API_KEY", "key_url": "https://autoposting.ai (OAuth 2.1 with dynamic client registration for the hosted server; the stdio CLI uses an API key)" },
+    "pricing": "paid",
+    "links": { "repo": "https://github.com/Autoposting-ai/autoposting-mcp", "docs": "https://docs.autoposting.ai/mcp/overview", "site": "https://autoposting.ai" },
+    "added": "2026-10-10",
+    "verified": "2026-10-10",
+    "notes": "Checked 10 Oct 2026: the hosted endpoint completes initialize (autoposting-mcp 1.0.0) and refuses tools/list without a bearer token, the official MCP Registry lists ai.autoposting/autoposting, and npm @autoposting.ai/cli is at 0.5.5 (MIT, updated 7 Oct 2026). The docs say 68 tools, the README says 69, and the hosted catalogue differs from the local CLI one, so trust tools/list over either. Only a sliver of the surface is about film: YouTube publishing, scheduling and the clip renderer. The rest is social media management (knowledge bases, AI-rewritten posts, carousels). Requires a paid Autoposting account plus connected social accounts; the open-source CLI does not make the service free. For plain YouTube upload without the platform compare youtube-yutu."
   }
 ]

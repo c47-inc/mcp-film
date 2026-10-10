@@ -564,9 +564,55 @@
     },
     "auth": { "type": "api_key", "env_var": "VIDEOGEN_API_KEY", "key_url": "https://app.videogen.io/api (keys start sk_videogen_live_)" },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/video-gen/videogen-mcp", "docs": "https://docs.videogen.io/use-with-ai-agents", "site": "https://videogen.io" },
+    "links": { "repo": "https://github.com/video-gen/videogen-mcp", "docs": "https://docs.videogen.io/use-with-ai-agents", "site": "https://videogen.io/videogen-mcp" },
     "added": "2026-10-02",
-    "verified": "2026-10-02",
+    "verified": "2026-10-10",
     "notes": "Vendor-maintained (npm @videogen/mcp is published by videogen.io staff; v2.2.1 on 2026-09-15, MIT, repo pushed 2 Oct 2026) but brand new to the public: zero GitHub stars and submitted to MCP registries on 1 Oct 2026, so treat it as unproven. The hosted endpoint is stateless and reads your key from an Authorization header; the README also describes an OAuth 2.1 challenge for Cursor, Claude Desktop, Windsurf and ChatGPT Apps, with a separate /mcp/chatgpt variant. Long jobs return immediately on the hosted server — the Cloudflare proxy caps request time — so the agent has to poll get_workflow_run or get_tool_execution. Free-plan output carries a VideoGen watermark; Pro removes it, and neither the docs nor the README publish per-call credit costs. The local stdio package needs Node 20+. Output skews toward templated explainer and social video; for an editable timeline compare invideo or martini, and for raw model access fal."
+  },
+  {
+    "slug": "incarn",
+    "name": "Incarn",
+    "vendor": "Incarn",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Animates an old portrait or family photo into a short, subtle HD clip; one tool, one credit per photo.",
+    "description": "Incarn does one thing: it takes an archival still and returns a few seconds of natural motion (breathing, blinking, a small smile) tuned for black-and-white and sepia faces that general image-to-video models tend to refuse or over-animate. The hosted server wraps that pipeline with upload, animate and status tools. For documentary and memorial work it is a narrower but more predictable option than prompting a general model.",
+    "capabilities": ["image-to-video", "archival-footage", "restoration", "file-upload", "async-jobs", "remote-mcp"],
+    "tools_sample": ["list_examples", "create_upload", "confirm_upload", "animate_photo", "get_animation_status"],
+    "install": {
+      "claude_code": "claude mcp add --transport http incarn https://api.incarn.co/mcp",
+      "remote_url": "https://api.incarn.co/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "https://www.incarn.co/developers (OAuth 2.1 on first call; a funded account is required to animate)" },
+    "pricing": "credits",
+    "links": { "repo": null, "docs": "https://www.incarn.co/en/developers/docs", "site": "https://www.incarn.co" },
+    "added": "2026-10-10",
+    "verified": "2026-10-10",
+    "notes": "Checked 10 Oct 2026: initialize and tools/list answer anonymously (five tools, server version 1.1.0) and list_examples runs without an account; the official MCP Registry lists co.incarn/photo-animation. Tool descriptions come back in French. The animate_photo description says there is no free trial through the API and a developer plan starts at EUR 19 per month for 25 photos (EUR 0.76 each); the consumer site sells one-off packs from EUR 1.99 per photo. Each animation costs one credit, failed runs are refunded, and jobs take one to three minutes. There is no prompt control beyond a subtle motion hint, so this is not a general image-to-video tool: for that compare kling, runway or luma."
+  },
+  {
+    "slug": "kleo",
+    "name": "Kleo",
+    "vendor": "Kleo (single maintainer)",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Brief to narrated short film or storyboard animatic from a chat client, rendered on rented GPUs with Seedance.",
+    "description": "Kleo turns a brief into a narrated film: the assistant writes a treatment and storyboard with Kleo's intake tools, then kleo_create_video renders every shot with Seedance 2.5 image-to-video from frames drawn by Nano Banana Pro, adds Kokoro narration and optional Suno music, and returns MP4, SRT and thumbnail links. A cheaper animatic mode moves the camera over the drawn frames with the same narration, which is a sensible way to check a story before paying for generated footage.",
+    "capabilities": ["text-to-video", "storyboarding", "script-to-video", "previz", "voiceover", "music", "captions", "async-jobs", "remote-mcp"],
+    "tools_sample": ["kleo_adapt_prompt", "kleo_list_templates", "kleo_storyboard_guide", "kleo_create_video", "kleo_wait_for_video", "kleo_get_job", "kleo_get_result"],
+    "install": {
+      "claude_code": "claude mcp add --transport http kleo https://mcp.kleooai.com/mcp",
+      "remote_url": "https://mcp.kleooai.com/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "https://kleooai.com/connect/ (one-button sign-in,  no email or card)" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/tonnooooo/kleo-mcp", "docs": "https://kleooai.com/connect/", "site": "https://kleooai.com" },
+    "added": "2026-10-10",
+    "verified": "2026-10-10",
+    "notes": "Checked 10 Oct 2026: the endpoint answers initialize with an OAuth 2.1 challenge, the official MCP Registry lists com.kleooai/kleo, and the README documents the tools; nothing was rendered. One-person project (repo created 9 Sep 2026, zero stars) that runs on Cloudflare's free plan and rents a Vast.ai GPU per job, so treat availability as best-effort. Pricing is public and specific: 5 free credits on connect (the submission said 7), an animatic costs 5 credits up to 20 seconds, films cost 1 credit per 1.5 seconds with a 10-credit minimum and require a purchased pack (EUR 5 for 10 credits). The Terms specify a small Kleo mark on output. Narration is English or Italian only; the README frames the product around YouTube videos and Shorts."
   }
 ]

@@ -282,5 +282,28 @@
     "added": "2026-09-18",
     "verified": "2026-09-18",
     "notes": "Verified 18 Sep 2026 from the vendor's own pages: the endpoint, transport, both auth paths and the connect command come from framesail.com/developers, and an anonymous GET on api.framesail.com/mcp answers 401, so the server is live and gated. Price is the first thing to check, because there is no free tier and MCP is not on the entry plan: quarterly billing runs Creator $22/month (12,000 credits), Pro $54/month (30,000), Studio $137/month (80,000) and Scale $551/month (330,000), and 'API & MCP access' is listed from Pro upward. Credits roll over but expire two months after they are granted, so a quiet month is a forfeited month. Only three tool names are published — generate_script, generate_storyboard and export_video — so tools_sample lists those three rather than a number; third-party directories quote a tool count the vendor does not, and we did not run tools/list without a paid key. Hosted only: no repo, no local package, nothing to self-host, and no way to audit what the pipeline sends to which upstream model. The vendor also ships a REST API over the same stages and says to pick one surface per run rather than mixing MCP and REST. If you want the same script-to-cut arc with a timeline you can actually edit, compare martini; if you only need the breakdown and prompts and will generate elsewhere, penshot does that part for free."
+  },
+  {
+    "slug": "frameo",
+    "name": "Frameo MCP",
+    "vendor": "Frameo (Dashverse)",
+    "official": true,
+    "category": "studio",
+    "featured": false,
+    "tagline": "Hosted AI production studio: projects, shots, voice, music, lip-sync and the cut behind one OAuth connection.",
+    "description": "Frameo's official remote server exposes its whole studio: an agent creates a project and modules, generates shots with the video and image models Frameo hosts (Seedance, Kling, Veo), adds voiceover, music, sound effects and lip-sync, keeps saved characters consistent across shots, and handles the cut with frame extraction, ffmpeg trims, subtitles and motion-graphics titles. Every result lands on the project's canvas in the Frameo app, and bundled skills give agents step-by-step production workflows. For a film agent it is one of the few places where generation, continuity and assembly share one project state.",
+    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "tts", "music", "sfx", "lip-sync", "character-consistency", "frame-extraction", "ffmpeg", "motion-graphics", "upscaling", "cost-estimation", "skills", "project-management", "async-jobs", "remote-mcp"],
+    "tools_sample": ["create_project", "create_module", "list_models", "estimate_cost", "generate_video", "generate_image", "generate_speech", "generate_music", "generate_lipsync", "save_character", "extract_frames", "run_ffmpeg", "render_motion_graphics", "list_skills", "wait_task"],
+    "install": {
+      "claude_code": "claude mcp add --transport http frameo https://mcp.frameo.ai/mcp",
+      "remote_url": "https://mcp.frameo.ai/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "https://frameo.ai/mcp (sign in with a Frameo account on first call)" },
+    "pricing": "credits",
+    "links": { "repo": null, "docs": "https://mcp.frameo.ai/docs", "site": "https://frameo.ai" },
+    "added": "2026-10-10",
+    "verified": "2026-10-10",
+    "notes": "Checked 10 Oct 2026: the endpoint answers initialize with a proper OAuth 2.1 challenge, the official MCP Registry lists ai.frameo/frameo, and the tool reference at mcp.frameo.ai/docs is generated from the live tool list (58 tools). No tools were run because there is no anonymous path. Every paid generation needs an estimate_cost quote first and the quote is single-use for 15 minutes; analyze_media is the one paid tool without a quote. Pricing is credits from a Frameo workspace plan and per-generation costs are not published outside the app. The company behind it is Dashverse; the marketing leans toward UGC ads and social video, so expect templates tuned for that. Closed source, hosted only."
   }
 ]
