@@ -16,6 +16,9 @@ export const isConnectIntent = (placement) => CONNECT_INTENT_PLACEMENT.test(Stri
 
 const staticAssetPattern = /\.(?:avif|css|gif|ico|jpeg|jpg|js|json\.map|map|png|svg|webp|woff2?)$/i;
 
+// Vulnerability-scanner probes: a 404 on one of these is noise, not a broken link. Exported for scripts/test-edge.mjs.
+export const SCANNER_PROBE = /\.env|\.git|wp-|phpinfo|\.php|\/_profiler|\/\.well-known\/agent|\/\.well-known\/traffic-advice|\/backend\/|\/laravel\//i;
+
 const agentMatchers = [
   ["chatgpt", /\b(chatgpt|gptbot|openai|oai-searchbot)\b/i],
   ["claude", /\b(claude|anthropic)\b/i],
@@ -76,11 +79,66 @@ export default {
       return handoffRedirect;
     }
 
-    const response = await registryApiResponse(request, env) || await env.ASSETS.fetch(assetRequestFor(request));
+    const markdown = await markdownTwinResponse(request, env);
+    if (markdown) {
+      ctx.waitUntil(captureRequest(request, markdown, env, { negotiated: "markdown" }));
+      return markdown;
+    }
+
+    const response = await registryApiResponse(request, env) || await pageResponse(request, env);
     ctx.waitUntil(captureRequest(request, response, env));
     return response;
   },
 };
+
+// ---- Markdown twins. Every HTML page is also built as <path>.md (/ -> /index.md).
+// Exported for scripts/test-edge.mjs.
+export function markdownTwinPath(pathname) {
+  if (pathname === "/") return "/index.md";
+  if (!/^\/[a-z0-9/-]+\/?$/.test(pathname)) return null;
+  return pathname.replace(/\/$/, "") + ".md";
+}
+
+function acceptQuality(accept, type) {
+  for (const part of String(accept || "").split(",")) {
+    const [media, ...params] = part.split(";").map((s) => s.trim().toLowerCase());
+    if (media !== type) continue;
+    const q = params.find((p) => p.startsWith("q="));
+    return q ? Number(q.slice(2)) || 0 : 1;
+  }
+  return 0;
+}
+
+export function prefersMarkdown(accept) {
+  const html = acceptQuality(accept, "text/html");
+  return acceptQuality(accept, "text/markdown") > html || (html === 0 && acceptQuality(accept, "text/plain") > 0);
+}
+
+async function markdownTwinResponse(request, env) {
+  const url = new URL(request.url);
+  const twin = request.method === "GET" ? markdownTwinPath(url.pathname) : null;
+  if (!twin || !prefersMarkdown(request.headers.get("accept"))) return null;
+  const asset = await env.ASSETS.fetch(new Request(new URL(twin, url.origin)));
+  if (!asset.ok) return null;
+  const response = new Response(asset.body, asset);
+  response.headers.set("content-type", "text/markdown; charset=utf-8");
+  response.headers.set("vary", "Accept");
+  response.headers.set("link", `<${url.origin}${url.pathname.replace(/\/?$/, "/")}>; rel="canonical"`);
+  return response;
+}
+
+async function pageResponse(request, env) {
+  const response = await env.ASSETS.fetch(assetRequestFor(request));
+  // HTML pages negotiate to their markdown twin on Accept; the <link rel="alternate"> in
+  // the page head already advertises the twin, so only the cache key needs telling.
+  if (request.method === "GET" && response.ok && /text\/html/i.test(response.headers.get("content-type") || "")
+    && markdownTwinPath(new URL(request.url).pathname)) {
+    const page = new Response(response.body, response);
+    page.headers.append("vary", "Accept");
+    return page;
+  }
+  return response;
+}
 
 function canonicalRedirectResponse(request, env) {
   const url = new URL(request.url);
@@ -202,6 +260,36 @@ async function mcpHandleMessage(msg) {
   }
 }
 
+// GET /mcp. A client opening an SSE stream gets the spec's answer for stream-less
+// servers (405); a person or agent just looking gets a markdown description.
+// Exported for scripts/test-edge.mjs.
+export function mcpGetResponse(method, accept, tools) {
+  const headers = mcpHeaders();
+  headers.set("allow", "POST, OPTIONS");
+  if (!/^(GET|HEAD)$/.test(method) || /text\/event-stream/i.test(accept || "")) {
+    return new Response(JSON.stringify({ error: "Use POST with JSON-RPC 2.0", docs: "https://mcp.film/for-agents.md" }, null, 2), { status: 405, headers });
+  }
+  headers.set("content-type", "text/markdown; charset=utf-8");
+  const body = [
+    "# mcp.film MCP endpoint",
+    "",
+    "This is a Streamable HTTP MCP endpoint (stateless, no auth, no SSE). POST JSON-RPC 2.0 messages here.",
+    "",
+    "```sh",
+    "claude mcp add --transport http mcp-film https://mcp.film/mcp",
+    "```",
+    "",
+    "## Tools",
+    "",
+    ...tools.map((t) => `- \`${t.name}\` — ${t.title}: ${t.description.split(/(?<=\.)\s/)[0]}`),
+    "",
+    "- Agent guide: https://mcp.film/for-agents.md",
+    "- Index: https://mcp.film/llms.txt",
+    "",
+  ].join("\n");
+  return new Response(body, { status: 200, headers });
+}
+
 export function mcpRequestExtras(message) {
   const describe = (m) => (m && typeof m === "object" && m.method ? String(m.method) : "invalid");
   const tool = !Array.isArray(message) && message?.method === "tools/call" ? message.params?.name : null;
@@ -230,13 +318,7 @@ async function mcpEndpointResponse(request, env, ctx) {
 
   if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: mcpHeaders() });
   if (request.method !== "POST") {
-    // No server-initiated stream here; the spec's answer for stream-less servers is 405.
-    const response = new Response(JSON.stringify({
-      error: "POST JSON-RPC 2.0 messages to this endpoint (MCP streamable HTTP, stateless).",
-      connect: "claude mcp add --transport http mcp-film https://mcp.film/mcp",
-      docs: "https://mcp.film/for-agents/",
-    }, null, 2), { status: 405, headers: mcpHeaders() });
-    response.headers.set("allow", "POST, OPTIONS");
+    const response = mcpGetResponse(request.method, request.headers.get("accept"), TOOLS);
     ctx.waitUntil(captureRequest(request, response, env, { rpc_method: null }));
     return response;
   }
@@ -368,6 +450,7 @@ async function captureRequest(request, response, env, extras = null) {
     if (!shouldCapture(request)) return;
 
     const url = new URL(request.url);
+    if (response.status === 404 && SCANNER_PROBE.test(url.pathname)) return;
     const posthog = posthogConfig(env);
     if (!posthog) return;
 

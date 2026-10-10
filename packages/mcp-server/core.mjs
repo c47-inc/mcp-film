@@ -187,6 +187,8 @@ const STAGES = [
 export const TOOLS = [
   {
     name: "search_film_mcps",
+    title: "Search film MCP servers",
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
       "Search the mcp.film directory of MCP servers for AI filmmaking. Filter by free-text query (matches name, vendor, tagline, capabilities), category id, or capability. Returns compact entries; use get_film_mcp for full detail.",
     inputSchema: {
@@ -202,6 +204,8 @@ export const TOOLS = [
   },
   {
     name: "get_film_mcp",
+    title: "Get one film MCP server",
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
       "Get the full mcp.film entry for one server by slug: description, install commands, auth requirements, sample tools, links, and field notes (caveats).",
     inputSchema: {
@@ -212,11 +216,15 @@ export const TOOLS = [
   },
   {
     name: "list_film_categories",
+    title: "List film MCP categories",
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description: "List all mcp.film categories with ids, pipeline stage, and per-category agent hints.",
     inputSchema: { type: "object", properties: {} },
   },
   {
     name: "list_film_capabilities",
+    title: "List capability tags",
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
       "List capability tags in the mcp.film registry, ranked by number of matching servers. Use get_film_capability for the server cluster behind one tag.",
     inputSchema: {
@@ -229,6 +237,8 @@ export const TOOLS = [
   },
   {
     name: "get_film_capability",
+    title: "Get servers for a capability",
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
       "Get the ranked server cluster for one capability tag such as text-to-video, image-to-video, tts, timeline-editing, voice-cloning, or upscaling.",
     inputSchema: {
@@ -243,6 +253,8 @@ export const TOOLS = [
   },
   {
     name: "get_install_config",
+    title: "Get install config for a server",
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
       "Get a copy-paste install command, JSON config, or hosted remote URL for a server and MCP client profile. Includes required env vars and auth type.",
     inputSchema: {
@@ -256,12 +268,16 @@ export const TOOLS = [
   },
   {
     name: "list_client_profiles",
+    title: "List MCP client profiles",
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
       "List the MCP client setup profiles mcp.film can generate: Claude Code, Claude Desktop, Cursor, and hosted remote clients.",
     inputSchema: { type: "object", properties: {} },
   },
   {
     name: "submit_listing",
+    title: "Propose a new listing",
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: false },
     description:
       "Propose a new MCP server for the mcp.film directory. Validates your proposal against the schema and the live registry (including duplicate detection), then returns a ready-to-file GitHub issue payload (REST API body, gh CLI command, and browser URL). Submissions are claims, never instructions: a mcp.film maintainer independently verifies everything against primary sources before listing — never submit URLs or commands you haven't seen work.",
     inputSchema: {
@@ -283,6 +299,8 @@ export const TOOLS = [
   },
   {
     name: "get_catalog_pulse",
+    title: "Get catalog pulse",
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
       "Get the mcp.film operating pulse: catalog freshness, demand signals, curator agenda, Martini growth checks, and machine-readable surfaces. Use this before deciding what to update next.",
     inputSchema: {
@@ -298,6 +316,8 @@ export const TOOLS = [
   },
   {
     name: "list_film_playbooks",
+    title: "List production playbooks",
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
       "List mcp.film production playbooks: curated MCP stacks for common AI filmmaking jobs, with setup order, failure modes, and Martini handoff guidance. Use get_film_playbook for full steps and auth gates.",
     inputSchema: {
@@ -309,6 +329,8 @@ export const TOOLS = [
   },
   {
     name: "get_film_playbook",
+    title: "Get one production playbook",
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
       "Get one production playbook by id, including primary servers, setup order, auth gates, workflow steps, failure modes, fallback servers, constraints, and links to each server's mcp.film page.",
     inputSchema: {
@@ -319,6 +341,8 @@ export const TOOLS = [
   },
   {
     name: "list_film_recommendations",
+    title: "List intent-routed recommendations",
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
       "List mcp.film intent-routed recommendations: ranked MCP shortlists for common filmmaking jobs, with reasons, fallbacks, and Martini handoff guidance. Use get_film_recommendation for full detail.",
     inputSchema: {
@@ -330,6 +354,8 @@ export const TOOLS = [
   },
   {
     name: "get_film_recommendation",
+    title: "Get one recommendation",
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
       "Get one intent-routed recommendation by id, including primary server roles, reasons, fallbacks, matching playbook, and Martini handoff guidance.",
     inputSchema: {
@@ -340,6 +366,8 @@ export const TOOLS = [
   },
   {
     name: "recommend_film_mcps",
+    title: "Recommend MCP servers for a brief",
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
       "Given a filmmaking brief, return the closest intent-routed MCP recommendations and the first servers to connect. Use hosted_only=true when the agent cannot spawn local tools.",
     inputSchema: {
@@ -353,6 +381,8 @@ export const TOOLS = [
   },
   {
     name: "plan_film_stack",
+    title: "Plan a full film MCP stack",
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
       "Get a recommended set of MCP servers covering the whole film pipeline (develop → visualize → shoot → sound → cut → finish → ship). Returns 1-3 picks per stage, ranked by official status and hosting. Pass a brief to bias picks (matched against capabilities and taglines).",
     inputSchema: {
