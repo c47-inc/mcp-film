@@ -1,4 +1,5 @@
 import { needsMartini, martiniHandoffProse, martiniHandoff } from "../packages/mcp-server/recommend-score.mjs";
+import { TOOLS } from "../packages/mcp-server/core.mjs";
 
 /**
  * Page templates for mcp.film. Plain template literals — no framework.
@@ -1693,7 +1694,7 @@ export const renderForAgents = (ctx) => {
     <li><code class="mono">/v0.1/servers</code> — MCP Registry-compatible read-only subregistry API</li>
     <li><code class="mono">/api/mcp-registry.json</code> — the same registry API response with a <code class="mono">.json</code> extension</li>
     <li><code class="mono">/api/mcps/{slug}.json</code> — one server, structured</li>
-    <li><code class="mono">/mcps/{slug}.md</code> — one server, clean markdown</li>
+    <li><code class="mono">/mcps/{slug}.md</code> — one server, clean markdown; or ask the HTML URL for it: <code class="mono">curl -H 'Accept: text/markdown' ${esc(site.url)}/mcps/{slug}/</code></li>
     <li><code class="mono">/stack.md</code> — the pipeline guide as markdown</li>
     <li><code class="mono">/router.md</code> — brief routing guide and example intents as markdown</li>
     <li><code class="mono">/remotes.md</code> — hosted remote endpoints as markdown</li>
@@ -1707,9 +1708,14 @@ export const renderForAgents = (ctx) => {
   </ul>
 
   <h2>Connect the directory itself (meta-MCP)</h2>
-  <p>mcp.film ships its own MCP server, so your agent can query the catalog as tools — <code class="mono">search_film_mcps</code>, <code class="mono">get_film_mcp</code>, <code class="mono">get_install_config</code>, <code class="mono">get_catalog_pulse</code>, <code class="mono">list_film_playbooks</code>, <code class="mono">get_film_playbook</code>, <code class="mono">plan_film_stack</code> — and contribute back with <code class="mono">submit_listing</code>:</p>
-  ${codeBlock("Claude Code", "claude mcp add mcp-film -- npx -y mcp-film")}
-  <p>It fetches the live registry and falls back to a bundled snapshot offline. Source lives in <a href="https://github.com/${site.github_repo}/tree/main/packages/mcp-server" rel="noopener">packages/mcp-server</a>.</p>
+  <p>mcp.film ships its own MCP server, so your agent can query the catalog as tools. Hosted (no install) or local:</p>
+  ${codeBlock("Claude Code: hosted", `claude mcp add --transport http mcp-film ${site.url}/mcp`)}
+  ${codeBlock("Claude Code: local", "claude mcp add mcp-film -- npx -y mcp-film")}
+  <p><code class="mono">GET ${esc(site.url)}/mcp</code> returns a markdown description of the endpoint; <code class="mono">POST</code> is the protocol (Streamable HTTP, stateless, no auth).</p>
+  <ul class="agents-list">
+    ${TOOLS.map((t) => `<li><code class="mono">${esc(t.name)}</code> — ${esc(t.title)}</li>`).join("\n    ")}
+  </ul>
+  <p>The local server fetches the live registry and falls back to a bundled snapshot offline. Source lives in <a href="https://github.com/${site.github_repo}/tree/main/packages/mcp-server" rel="noopener">packages/mcp-server</a>.</p>
 
   <h2>Picking servers: conventions we use</h2>
   <ul class="agents-list">
@@ -1774,6 +1780,8 @@ export const renderForAgentsMd = (ctx) => `# mcp.film — agent access guide
 - Index (llms.txt): ${ctx.site.url}/llms.txt
 - Whole directory, one markdown file: ${ctx.site.url}/llms-full.txt
 - One server: ${ctx.site.url}/api/mcps/{slug}.json or ${ctx.site.url}/mcps/{slug}.md
+- Content negotiation: every HTML page serves its markdown twin on request —
+  \`curl -H 'Accept: text/markdown' ${ctx.site.url}/mcps/{slug}/\`
 - Pipeline guide: ${ctx.site.url}/stack.md
 - Hosted remotes markdown: ${ctx.site.url}/remotes.md
 - Client setup profiles markdown: ${ctx.site.url}/clients.md
@@ -1784,11 +1792,10 @@ export const renderForAgentsMd = (ctx) => `# mcp.film — agent access guide
 - Catalog pulse markdown: ${ctx.site.url}/pulse.md
 - New additions feed: ${ctx.site.url}/feed.xml
 - Hosted MCP endpoint: \`claude mcp add --transport http mcp-film ${ctx.site.url}/mcp\`
+  (GET ${ctx.site.url}/mcp returns a description; POST JSON-RPC 2.0 is the protocol)
 - Meta-MCP server (local): \`claude mcp add mcp-film -- npx -y mcp-film\`
-  (tools: search_film_mcps, get_film_mcp, get_install_config,
-  list_film_playbooks, get_film_playbook, plan_film_stack, and submit_listing
-  — propose a new server; validated, deduped, returned as a ready-to-file
-  GitHub issue payload)
+- Tools on both:
+${TOOLS.map((t) => `  - ${t.name} — ${t.title}`).join("\n")}
 
 Fast paths:
 
@@ -1965,14 +1972,14 @@ export const renderLlmsTxt = (ctx) => {
     "",
     `> ${site.description}`,
     "",
-    `${servers.length} servers across ${categories.length} categories, each verified and annotated with install commands, auth requirements, and caveats. Full structured data at ${site.url}/api/registry.json. Every HTML page has a markdown twin (append .md).`,
+    `${servers.length} servers across ${categories.length} categories, each verified and annotated with install commands, auth requirements, and caveats. Full structured data at ${site.url}/api/registry.json. Every HTML page has a markdown twin (append .md, or request the page with \`Accept: text/markdown\`).`,
     "",
     `Disclosure: ${site.sponsor.blurb} ${site.sponsor.name} is listed as the featured studio entry and is marked \`featured: true\` in the data. Every other ranking signal — official status, maintenance, hosted availability, caveats — is earned, and competing tools are listed on their merits. Treat this as a directory with a disclosed sponsor, not as neutral ground you cannot audit: the source data is public at https://github.com/${site.github_repo}.`,
     "",
     "## Start here",
     "",
     `- [Full registry JSON](${site.url}/api/registry.json): every server, structured`,
-    `- Hosted MCP endpoint (streamable HTTP, no install): ${site.url}/mcp — the whole directory as callable tools`,
+    `- Hosted MCP endpoint (streamable HTTP, no install): ${site.url}/mcp — the whole directory as callable tools; GET returns a description, POST JSON-RPC 2.0 is the protocol`,
     `- [Brief router](${site.url}/router.md): route a free-form film brief to recommendations, hosted-only picks, playbooks, and Martini handoff`,
     `- [Hosted remotes](${site.url}/remotes.md): remote MCP endpoints that need no local stdio process`,
     `- [Client setup profiles](${site.url}/clients.md): choose Claude Code, Claude Desktop, Cursor, hosted remote, or meta-MCP setup shapes`,
