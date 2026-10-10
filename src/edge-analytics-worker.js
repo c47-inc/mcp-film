@@ -128,16 +128,15 @@ async function markdownTwinResponse(request, env) {
 }
 
 async function pageResponse(request, env) {
-  const url = new URL(request.url);
-  let response = await env.ASSETS.fetch(assetRequestFor(request));
-  const twin = request.method === "GET" && response.ok && /text\/html/i.test(response.headers.get("content-type") || "")
-    ? markdownTwinPath(url.pathname) : null;
-  if (!twin) return response;
-  const head = await env.ASSETS.fetch(new Request(new URL(twin, url.origin), { method: "HEAD" }));
-  if (!head.ok) return response;
-  response = new Response(response.body, response);
-  response.headers.append("link", `<${url.origin}${twin}>; rel="alternate"; type="text/markdown"`);
-  response.headers.append("vary", "Accept");
+  const response = await env.ASSETS.fetch(assetRequestFor(request));
+  // HTML pages negotiate to their markdown twin on Accept; the <link rel="alternate"> in
+  // the page head already advertises the twin, so only the cache key needs telling.
+  if (request.method === "GET" && response.ok && /text\/html/i.test(response.headers.get("content-type") || "")
+    && markdownTwinPath(new URL(request.url).pathname)) {
+    const page = new Response(response.body, response);
+    page.headers.append("vary", "Accept");
+    return page;
+  }
   return response;
 }
 
