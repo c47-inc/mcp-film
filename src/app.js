@@ -441,15 +441,18 @@
       let routerTimer;
       input?.addEventListener("input", () => {
         clearTimeout(routerTimer);
+        clearTimeout(routeTrackTimer); // a stale brief must not report after the text changed
         routerTimer = setTimeout(() => renderRoute(input.value, "typing", false), 220);
       });
-      hostedToggle?.addEventListener("change", () => renderRoute(input?.value, "hosted_toggle", Boolean(input?.value.trim())));
+      hostedToggle?.addEventListener("change", () => { clearTimeout(routerTimer); renderRoute(input?.value, "hosted_toggle", Boolean(input?.value.trim())); });
       form?.addEventListener("submit", (e) => {
         e.preventDefault();
+        clearTimeout(routerTimer);
         renderRoute(input?.value, "submit", true);
       });
       routerNode.querySelectorAll("[data-router-example]").forEach((btn) => {
         btn.addEventListener("click", () => {
+          clearTimeout(routerTimer);
           if (input) input.value = btn.dataset.routerExample || "";
           renderRoute(input?.value, "example", true);
         });

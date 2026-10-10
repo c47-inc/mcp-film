@@ -497,7 +497,7 @@
     "tagline": "Quoted dubbing, subtitles, transcription and multi-voice audiobooks from one remote MCP; a human approves each price.",
     "description": "MultiVoice is a localization service with an agent front door: the agent prepares an order (dubbing, SRT/VTT subtitles, transcription or a multi-voice audiobook), the server returns an exact quote, the human confirms it in the client, and the agent then executes and downloads the artifacts. Subtitles and transcription cover roughly a hundred source languages with speaker-labelled and plain SRT/VTT outputs, which is the practical win for dailies and festival deliverables.",
     "capabilities": ["transcription", "captions", "subtitles", "dubbing", "localization", "diarization", "voiceover", "cost-estimation", "cost-gates", "async-jobs", "remote-mcp"],
-    "tools_sample": ["get_create_options", "prepare_create", "execute_create", "get_artifacts", "prepare_download"],
+    "tools_sample": ["orders.get_create_options", "orders.prepare_create", "orders.execute_create", "orders.get_status", "orders.get_artifacts", "orders.prepare_download"],
     "install": {
       "claude_code": "claude mcp add --transport http multivoice https://db.multivoice.ai/mcp",
       "remote_url": "https://db.multivoice.ai/mcp",
@@ -508,6 +508,6 @@
     "links": { "repo": null, "docs": "https://multivoice.ai/for-agents", "site": "https://multivoice.ai" },
     "added": "2026-10-10",
     "verified": "2026-10-10",
-    "notes": "Checked 10 Oct 2026: the endpoint answers initialize with an OAuth 2.1 challenge and the official MCP Registry lists ai.multivoice/video-dubbing-subtitles-transcription-audiobooks; no tools were run because there is no anonymous path, so the tool names above come from the vendor's agent page rather than a live tools/list. The vendor calls the MCP public beta, not GA. List prices on the agent page: transcription and subtitles EUR 0.015 per minute, AI dubbing EUR 0.40 per minute, audiobooks EUR 100 per book. The catch for film work is dubbing: target languages are only German, English, French, Latvian and Russian, and audiobook narration covers the same five. Human-reviewed subtitles are optional. For broad-language dubbing compare elevenlabs or allvoicelab."
+    "notes": "Checked 10 Oct 2026: the endpoint answers initialize with an OAuth 2.1 challenge and the official MCP Registry lists ai.multivoice/video-dubbing-subtitles-transcription-audiobooks; no tools were run because there is no anonymous path, so the tool names above (namespaced orders.*) come from the vendor's agent page rather than a live tools/list. The vendor calls the MCP public beta, not GA. List prices on the agent page: transcription and subtitles EUR 0.015 per minute, AI dubbing EUR 0.40 per minute, audiobooks EUR 100 per book. The catch for film work is dubbing: target languages are only German, English, French, Latvian and Russian, and audiobook narration covers the same five. Human-reviewed subtitles are optional. For broad-language dubbing compare elevenlabs or allvoicelab."
   }
 ]
