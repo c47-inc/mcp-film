@@ -66,7 +66,14 @@ jobs:
           curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
           cp dist/api/server.json server.json
           ./mcp-publisher login http --domain mcp.film --private-key "$MCP_REGISTRY_KEY"
-          ./mcp-publisher publish
+          # Idempotent like the npm step: a package.json edit without a version bump
+          # (or a re-run) must not fail on "cannot publish duplicate version".
+          out=$(./mcp-publisher publish 2>&1) && echo "$out" || {
+            echo "$out"
+            echo "$out" | grep -qi "duplicate version" \
+              && echo "This version is already in the registry — nothing to publish." \
+              || exit 1
+          }
           echo "Published film.mcp/directory to registry.modelcontextprotocol.io" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Alert on failure

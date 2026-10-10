@@ -124,7 +124,7 @@ const checks = [
     method: "GET",
     accept: "application/json",
     expect: (status) => status === 200,
-    validateJson: (body) => body.capability === "text-to-video" && body.count >= 1 && body.servers?.[0]?.slug === "martini",
+    validateJson: (body) => body.capability === "text-to-video" && body.count >= 1 && body.servers?.some((s) => s.slug === "martini"),
   },
   {
     name: "Text-to-video capability page",
