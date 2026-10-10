@@ -29,9 +29,10 @@ const truncate = (s, n) => {
 
 const serverDescription = (s) => {
   const firstSentence = s.description.match(/^.*?[.!?](?=\s|$)|^.+$/s)?.[0] ?? "";
-  const text = `${s.tagline} ${firstSentence}`.trim();
-  const cut = text.length <= 160 ? text : text.slice(0, 161).replace(/\s+\S*$/, "");
-  return cut.replace(/[^\p{L}\p{N}.)]+$/u, "");
+  const full = `${s.tagline} ${firstSentence}`.trim();
+  // Tagline + first sentence when they fit, else the tagline alone (a full sentence), else a word boundary.
+  const text = full.length <= 155 ? full : s.tagline.length <= 155 ? s.tagline : s.tagline.slice(0, 156).replace(/\s+\S*$/, "");
+  return text.replace(/[^\p{L}\p{N}.)]+$/u, "");
 };
 
 const dataAttrs = (attrs = {}) =>
@@ -411,9 +412,9 @@ const remoteBadge = (s) =>
   s.install?.remote_url ? `<span class="tag" title="Hosted remote MCP — no local install">Remote</span>` : "";
 
 // Vendor logo tile (data/logos/<slug>.png) with monogram fallback.
-const avatar = (ctx, s) =>
+const avatar = (ctx, s, size = 34) =>
   ctx.logos?.has(s.slug)
-    ? `<img class="avatar" src="/assets/logos/${s.slug}.png" alt="" loading="lazy" decoding="async">`
+    ? `<img class="avatar" src="/assets/logos/${s.slug}.png" alt="" width="${size}" height="${size}" loading="lazy" decoding="async">`
     : `<span class="avatar" aria-hidden="true">${esc(s.name[0].toUpperCase())}</span>`;
 
 // "Community (samuelgursky)" → "samuelgursky"; "Martini (C47)" → "Martini"
@@ -461,7 +462,7 @@ export const renderHome = (ctx) => {
   const featuredHtml = featured.map((s) => `
   <a class="feature" href="/mcps/${s.slug}/">
     <div class="feature-eyebrow">Featured studio · from the team behind mcp.film</div>
-    <div class="feature-name">${avatar(ctx, s)} ${esc(s.name)} ${badge(s)}</div>
+    <div class="feature-name">${avatar(ctx, s, 38)} ${esc(s.name)} ${badge(s)}</div>
     <p class="feature-tag">${esc(s.tagline)}</p>
     <p class="feature-desc">${esc(truncate(s.description, 170))}</p>
     <span class="feature-cta">Open the listing</span>
@@ -823,6 +824,28 @@ const pairings = (ctx, s) => {
     .map(([, o]) => o);
 };
 
+// Same-category alternatives: shared capabilities, then official, then freshest verification.
+const siblings = (ctx, s) => {
+  const caps = new Set(s.capabilities ?? []);
+  return ctx.servers
+    .filter((o) => o.slug !== s.slug && o.category === s.category)
+    .map((o) => [(o.capabilities ?? []).filter((c) => caps.has(c)).length, o])
+    .sort((a, b) => b[0] - a[0]
+      || Number(Boolean(b[1].official)) - Number(Boolean(a[1].official))
+      || b[1].verified.localeCompare(a[1].verified)
+      || a[1].name.localeCompare(b[1].name))
+    .slice(0, 6)
+    .map(([, o]) => o);
+};
+
+// Playbooks and recommendation routes that list this server.
+const usedIn = (ctx, s) => [
+  ...ctx.playbooks.filter((p) => playbookSlugs(p).includes(s.slug)).map((p) => ["playbooks", p]),
+  ...ctx.recommendations
+    .filter((r) => r.primary.some((p) => p.slug === s.slug) || (r.fallback_slugs ?? []).includes(s.slug))
+    .map((r) => ["recommendations", r]),
+];
+
 const codeBlock = (label, code, lang = "sh", copyAttrs = {}) => `
 <div class="code-block">
   <div class="code-head"><span>${esc(label)}</span><button class="copy-btn" data-copy data-copy-label="${esc(label)}"${dataAttrs(copyAttrs)}>Copy</button></div>
@@ -836,6 +859,8 @@ export const renderServer = (ctx, s) => {
   const desktop = desktopConfig(s);
   const cursor = cursorConfig(s);
   const pairs = pairings(ctx, s);
+  const alts = siblings(ctx, s);
+  const uses = usedIn(ctx, s);
   const docsUrl = s.install?.docs_url ?? s.links?.docs;
   const verify = verificationStatus(ctx, s);
   const links = sourceLinks(ctx, s);
@@ -874,6 +899,11 @@ export const renderServer = (ctx, s) => {
     ...(s.pricing === "free"
       ? { offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } }
       : {}),
+    // freemium is neither clearly free nor paid; leave it unset.
+    ...(s.pricing === "free" ? { isAccessibleForFree: true } : {}),
+    ...(s.pricing === "paid" || s.pricing === "credits" ? { isAccessibleForFree: false } : {}),
+    ...(s.links?.docs ? { softwareHelp: { "@type": "CreativeWork", url: s.links.docs } } : {}),
+    ...(s.install?.docs_url ? { installUrl: s.install.docs_url } : {}),
   };
 
   const body = `
@@ -881,7 +911,7 @@ export const renderServer = (ctx, s) => {
 <section class="page-head">
   <p class="crumbs"><a href="/">mcp.film</a> / <a href="/categories/${s.category}/">${esc(cat?.name ?? s.category)}</a> / <span>${esc(s.name)}</span></p>
   <div class="server-title">
-    ${avatar(ctx, s)}
+    ${avatar(ctx, s, 46)}
     <h1>${esc(s.name)}</h1>
   </div>
   <p class="server-meta-line">${badge(s)}${remoteBadge(s)}<span>by ${esc(s.vendor)}</span><span>${PRICING_LABEL[s.pricing]}</span><span>verified ${nice(s.verified)}</span></p>
@@ -902,6 +932,12 @@ export const renderServer = (ctx, s) => {
     ${s.tools_sample?.length ? `<h2>Sample tools</h2><div class="chips">${s.tools_sample.map((t) => `<code class="chip mono">${esc(t)}</code>`).join("")}</div>` : ""}
 
     ${s.notes ? `<h2>Field notes</h2><p class="notes">${esc(s.notes)}</p>` : ""}
+
+    ${alts.length ? `<h2>Also in ${esc(cat?.name ?? s.category)}</h2>
+    <div class="grid grid-pairs">${alts.map((a) => card(ctx, a)).join("")}</div>` : ""}
+
+    ${uses.length ? `<h2>Used in</h2>
+    <p>${uses.map(([kind, u]) => `<a href="/${kind}/#${esc(u.id)}">${esc(u.title)}</a>`).join(" · ")}</p>` : ""}
 
     <h2>Pairs well with</h2>
     <div class="grid grid-pairs">${pairs.map((p) => card(ctx, p)).join("")}</div>
@@ -1011,6 +1047,10 @@ export const renderServerMd = (ctx, s) => {
   if (s.capabilities?.length) lines.push("## Capabilities", "", s.capabilities.map((c) => capabilityMdLink(ctx, c)).join(" · "), "");
   if (s.tools_sample?.length) lines.push("## Sample tools", "", s.tools_sample.map((t) => `\`${t}\``).join(" · "), "");
   if (s.notes) lines.push("## Field notes", "", s.notes, "");
+  const alts = siblings(ctx, s);
+  if (alts.length) lines.push("## Alternatives", "", ...alts.map((a) => `- [${a.name}](${ctx.site.url}/mcps/${a.slug}.md) — ${a.tagline}`), "");
+  const uses = usedIn(ctx, s);
+  if (uses.length) lines.push("## Used in", "", ...uses.map(([kind, u]) => `- [${u.title}](${ctx.site.url}/${kind}.md#${u.id})`), "");
   lines.push(
     "## Verification",
     "",
@@ -1372,10 +1412,21 @@ const routerExamples = [
   "Local edit bay for client footage with transcription, captions, QC, and no source upload.",
 ];
 
+// Only the fields src/app.js reads; the full documents live at /api/*.json.
+const slimServer = ({ slug, name, tagline, official, remote, url }) => ({ slug, name, tagline, official, remote, url });
 const routerPayload = (ctx) => ({
   examples: routerExamples,
-  recommendations: ctx.recommendationDoc.recommendations,
-  playbooks: ctx.playbookDoc.playbooks,
+  recommendations: ctx.recommendationDoc.recommendations.map((r) => ({
+    id: r.id, title: r.title, url: r.url, summary: r.summary, best_for: r.best_for, tags: r.tags,
+    martini_handoff: r.martini_handoff, playbook: r.playbook,
+    primary: r.primary.map((p) => ({ role: p.role, why: p.why, server: slimServer(p.server) })),
+    fallback_servers: r.fallback_servers.map(slimServer),
+  })),
+  playbooks: ctx.playbookDoc.playbooks.map((p) => ({
+    id: p.id, title: p.title, summary: p.summary, best_for: p.best_for, constraints: p.constraints,
+    primary_servers: p.primary_servers.map(slimServer),
+    steps: p.steps.map((step) => ({ stage: step.stage, intent: step.intent, servers: step.servers.map(slimServer) })),
+  })),
   martini: ctx.servers.find((s) => s.slug === "martini")
     ? serverSummaryForRouter(ctx.servers.find((s) => s.slug === "martini"))
     : null,
@@ -1526,7 +1577,7 @@ export const renderRemotes = (ctx) => {
     return `
   <article class="remote-row">
     <div class="remote-ident">
-      ${avatar(ctx, s)}
+      ${avatar(ctx, s, 36)}
       <div>
         <h2><a href="/mcps/${s.slug}/">${esc(s.name)}</a></h2>
         <p class="remote-meta">${badge(s)}${remoteBadge(s)}<span>${esc(cat?.name ?? s.category)}</span><span>${esc(PRICING_LABEL[s.pricing] ?? s.pricing)}</span><span>verified ${nice(s.verified)}</span></p>
