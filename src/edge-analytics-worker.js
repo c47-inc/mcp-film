@@ -17,7 +17,7 @@ export const isConnectIntent = (placement) => CONNECT_INTENT_PLACEMENT.test(Stri
 const staticAssetPattern = /\.(?:avif|css|gif|ico|jpeg|jpg|js|json\.map|map|png|svg|webp|woff2?)$/i;
 
 // Vulnerability-scanner probes: a 404 on one of these is noise, not a broken link. Exported for scripts/test-edge.mjs.
-export const SCANNER_PROBE = /\.env|\.git|wp-|phpinfo|\.php|\/_profiler|\/\.well-known\/agent|\/\.well-known\/traffic-advice|\/backend\/|\/laravel\//i;
+export const SCANNER_PROBE = /\.env|\.git|\/wp-|phpinfo|\.php|\/_profiler|\/\.well-known\/agent|\/\.well-known\/traffic-advice|\/backend\/|\/laravel\//i;
 
 const agentMatchers = [
   ["chatgpt", /\b(chatgpt|gptbot|openai|oai-searchbot)\b/i],
@@ -116,7 +116,7 @@ export function prefersMarkdown(accept) {
 
 async function markdownTwinResponse(request, env) {
   const url = new URL(request.url);
-  const twin = request.method === "GET" ? markdownTwinPath(url.pathname) : null;
+  const twin = /^(GET|HEAD)$/.test(request.method) ? markdownTwinPath(url.pathname) : null;
   if (!twin || !prefersMarkdown(request.headers.get("accept"))) return null;
   const asset = await env.ASSETS.fetch(new Request(new URL(twin, url.origin)));
   if (!asset.ok) return null;
@@ -266,8 +266,10 @@ async function mcpHandleMessage(msg) {
 export function mcpGetResponse(method, accept, tools) {
   const headers = mcpHeaders();
   headers.set("allow", "POST, OPTIONS");
+  headers.set("vary", "Accept"); // the same URL answers 200 markdown or 405 JSON by Accept
   if (!/^(GET|HEAD)$/.test(method) || /text\/event-stream/i.test(accept || "")) {
-    return new Response(JSON.stringify({ error: "Use POST with JSON-RPC 2.0", docs: "https://mcp.film/for-agents.md" }, null, 2), { status: 405, headers });
+    const json = JSON.stringify({ error: "Use POST with JSON-RPC 2.0", docs: "https://mcp.film/for-agents.md" }, null, 2);
+    return new Response(method === "HEAD" ? null : json, { status: 405, headers });
   }
   headers.set("content-type", "text/markdown; charset=utf-8");
   const body = [
@@ -287,7 +289,7 @@ export function mcpGetResponse(method, accept, tools) {
     "- Index: https://mcp.film/llms.txt",
     "",
   ].join("\n");
-  return new Response(body, { status: 200, headers });
+  return new Response(method === "HEAD" ? null : body, { status: 200, headers });
 }
 
 export function mcpRequestExtras(message) {

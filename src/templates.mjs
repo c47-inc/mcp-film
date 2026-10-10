@@ -30,9 +30,10 @@ const truncate = (s, n) => {
 
 const serverDescription = (s) => {
   const firstSentence = s.description.match(/^.*?[.!?](?=\s|$)|^.+$/s)?.[0] ?? "";
-  const full = `${s.tagline} ${firstSentence}`.trim();
+  const tagline = s.tagline.trim() || firstSentence; // an empty tagline must not yield an empty description
+  const full = `${tagline} ${firstSentence}`.trim();
   // Tagline + first sentence when they fit, else the tagline alone (a full sentence), else a word boundary.
-  const text = full.length <= 155 ? full : s.tagline.length <= 155 ? s.tagline : s.tagline.slice(0, 156).replace(/\s+\S*$/, "");
+  const text = full.length <= 155 ? full : tagline.length <= 155 ? tagline : tagline.slice(0, 156).replace(/\s+\S*$/, "");
   return text.replace(/[^\p{L}\p{N}.)]+$/u, "");
 };
 
@@ -841,7 +842,7 @@ const siblings = (ctx, s) => {
 
 // Playbooks and recommendation routes that list this server.
 const usedIn = (ctx, s) => [
-  ...ctx.playbooks.filter((p) => playbookSlugs(p).includes(s.slug)).map((p) => ["playbooks", p]),
+  ...ctx.playbooks.filter((p) => playbookSlugs(p).includes(s.slug) || (p.fallback_slugs ?? []).includes(s.slug)).map((p) => ["playbooks", p]),
   ...ctx.recommendations
     .filter((r) => r.primary.some((p) => p.slug === s.slug) || (r.fallback_slugs ?? []).includes(s.slug))
     .map((r) => ["recommendations", r]),

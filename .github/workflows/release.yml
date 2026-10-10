@@ -72,6 +72,7 @@ jobs:
             npm view "mcp-film@$version" version >/dev/null 2>&1 && break
             echo "npm does not show mcp-film@$version yet (attempt $i)"; sleep 15
           done
+          npm view "mcp-film@$version" version >/dev/null 2>&1 || { echo "npm never showed mcp-film@$version; not registering it." >&2; exit 1; }
           ./mcp-publisher login http --domain mcp.film --private-key "$MCP_REGISTRY_KEY"
           # Idempotent like the npm step: a package.json edit without a version bump
           # (or a re-run) must not fail on "cannot publish duplicate version".
