@@ -11,16 +11,16 @@
     "capabilities": ["3d-scene-control", "asset-import", "text-to-3d", "python-scripting", "render", "previz"],
     "tools_sample": ["get_scene_info", "get_object_info", "get_viewport_screenshot", "execute_blender_code", "search_polyhaven_assets", "download_polyhaven_asset", "search_sketchfab_models", "search_polypizza_models", "generate_hyper3d_model_via_text", "generate_hunyuan3d_model", "import_generated_asset"],
     "install": {
-      "claude_code": "claude mcp add blender -- uvx blender-mcp",
+      "claude_code": "claude mcp add blender -- uvx mcp-for-blender",
       "remote_url": null,
-      "stdio_command": "uvx blender-mcp"
+      "stdio_command": "uvx mcp-for-blender"
     },
     "auth": { "type": "local-app", "env_var": null, "key_url": "Requires Blender 3.0+ running with the bundled addon installed and its socket server started" },
     "pricing": "free",
-    "links": { "repo": "https://github.com/ahujasid/blender-mcp", "docs": null, "site": null },
+    "links": { "repo": "https://github.com/ahujasid/mcp-for-blender", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-09-01",
-    "notes": "26.6k stars, MIT, pushed Aug 30 2026; PyPI blender-mcp 1.9.0 (Aug 30 2026), Python 3.10+. Installing the addon no longer means hunting for addon.py — `uvx blender-mcp install-addon` does it, though you still start the socket server from Blender's sidebar. execute_blender_code runs arbitrary Python — save your work first. Anonymous tool telemetry is on by default (disable in Blender preferences or with DISABLE_TELEMETRY=true). Asset integrations have grown to Poly Haven (free), Sketchfab, Poly Pizza, Hyper3D Rodin and Hunyuan3D; the last two are text/image-to-3D generators with their own keys and quotas. GUI-launched clients often fail with 'spawn uvx ENOENT' because they don't inherit your shell PATH — use uvx's absolute path, or wrap in `cmd /c` on Windows. The Blender Foundation ships its own server (see blender-lab-mcp): official, but Blender 5.1+ and a harder install. This one is the pragmatic choice on 3.x/4.x."
+    "verified": "2026-10-10",
+    "notes": "30.4k stars, MIT, pushed 6 Oct 2026, Python 3.10+. Renamed in September: the repo is now ahujasid/mcp-for-blender and the PyPI package is mcp-for-blender (2.1.9, 6 Oct 2026); the old blender-mcp package stopped at 2.0.0 (16 Sep 2026). `uvx blender-mcp` still runs the server and existing configs keep working per the README, but new installs should use `uvx mcp-for-blender setup`, which also installs the addon; you still start the socket server from Blender's sidebar. execute_blender_code runs arbitrary Python — save your work first. Anonymous tool telemetry is on by default (disable in Blender preferences or with DISABLE_TELEMETRY=true). Asset integrations have grown to Poly Haven (free), Sketchfab, Poly Pizza, Hyper3D Rodin and Hunyuan3D; the last two are text/image-to-3D generators with their own keys and quotas. GUI-launched clients often fail with 'spawn uvx ENOENT' because they don't inherit your shell PATH — use uvx's absolute path, or wrap in `cmd /c` on Windows. The Blender Foundation ships its own server (see blender-lab-mcp): official, but Blender 5.1+ and a harder install. This one is the pragmatic choice on 3.x/4.x."
   },
   {
     "slug": "blender-lab-mcp",
@@ -42,8 +42,8 @@
     "pricing": "free",
     "links": { "repo": "https://projects.blender.org/lab/blender_mcp", "docs": "https://www.blender.org/lab/mcp-server/", "site": "https://www.blender.org/lab/" },
     "added": "2026-08-11",
-    "verified": "2026-09-01",
-    "notes": "Official but experimental — a Blender Lab project, explicitly outside the current Blender roadmap. Blender's own docs carry a blunt security warning: the server 'will execute LLM generated code in Blender without any guards in place to protect your data from removal or being sent to a remote location', and they recommend running it in a virtual machine or on a system with no sensitive data. Three components must be downloaded and run manually (add-on, LLM client, MCP server); there is no one-line install. Blender 5.1+ only, per the add-on's own blender_manifest.toml. Still on v1.0.0 (27 Apr 2026) as of 1 Sep 2026 — four releases total, 22 stars on projects.blender.org — but the branch is alive: last commits 6 Aug 2026, and half the 26 tools are duplicated as `*_for_cli` variants for headless use. Checked 1 Sep 2026 via the Forgejo API; both blender.org and the repo's web UI return 403 to automated fetchers, so the tool list comes from readme_tools.rst in the repo and the security quote is carried over from the last read of the docs page. The community ahujasid/blender-mcp is far easier to set up, works on 3.0+, and adds asset-library integrations this one has no equivalent for."
+    "verified": "2026-10-10",
+    "notes": "Official but experimental — a Blender Lab project, explicitly outside the current Blender roadmap. Blender's own docs carry a blunt security warning: the server 'will execute LLM generated code in Blender without any guards in place to protect your data from removal or being sent to a remote location', and they recommend running it in a virtual machine or on a system with no sensitive data. Three components must be downloaded and run manually (add-on, LLM client, MCP server); there is no one-line install. Blender 5.1+ only, per the add-on's own blender_manifest.toml. v1.0.3 shipped 11 Sep 2026 (v1.0.2 three days earlier), 27 stars on projects.blender.org, last commit 29 Sep 2026 as of 10 Oct 2026, and half the 26 tools are duplicated as `*_for_cli` variants for headless use. Checked 10 Oct 2026 via the Forgejo API; both blender.org and the repo's web UI return 403 to automated fetchers, so the tool list comes from readme_tools.rst in the repo and the security quote is carried over from the last read of the docs page. The community ahujasid/blender-mcp is far easier to set up, works on 3.0+, and adds asset-library integrations this one has no equivalent for."
   },
   {
     "slug": "unreal-mcp-epic",
@@ -111,8 +111,8 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/healkeiser/fxhoudinimcp", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-09-02",
-    "notes": "healkeiser/fxhoudinimcp: 190 stars, MIT, PyPI 2.10.0 (Jul 29 2026), tested through Houdini 22.0.368 — fewer stars than the original but far broader coverage and the better-maintained of the two; it is the one to try first. capoomgit/houdini-mcp: 285 stars, MIT, last push Jun 11 2026, still early-stage and manual to install. SideFX itself has no shipping MCP: the H22 'APEX Script comfort package' (AI-assisted rigging-code authoring, autocomplete, validation) was shown at the Houdini 22 keynote and SideFX's own page calls it 'a preview for a tool which will be released later on' — trade coverage from SIGGRAPH 2026 describes an APEX Script MCP server headed to SideFX Labs, but as of Sep 2026 SideFX has not documented one and it is not in the core product. Do not plan a pipeline around it yet. For Cinema 4D, Maxon now ships an official server inside C4D 2026.4 (see cinema4d); on older versions the community ttiimmaacc/cinema4d-mcp (129 stars, last push Mar 2026, C4D 2024+, MoGraph/Redshift tools) is the equivalent."
+    "verified": "2026-10-10",
+    "notes": "healkeiser/fxhoudinimcp: 318 stars, MIT, PyPI 2.25.0 (5 Oct 2026, repo pushed the same day), tested through Houdini 22.0.368 — fewer stars than the original but far broader coverage and the better-maintained of the two; it is the one to try first. capoomgit/houdini-mcp: 285 stars, MIT, last push Jun 11 2026, still early-stage and manual to install. SideFX itself has no shipping MCP: the H22 'APEX Script comfort package' (AI-assisted rigging-code authoring, autocomplete, validation) was shown at the Houdini 22 keynote and SideFX's own page calls it 'a preview for a tool which will be released later on' — trade coverage from SIGGRAPH 2026 describes an APEX Script MCP server headed to SideFX Labs, but as of Sep 2026 SideFX has not documented one and it is not in the core product. Do not plan a pipeline around it yet. For Cinema 4D, Maxon now ships an official server inside C4D 2026.4 (see cinema4d); on older versions the community ttiimmaacc/cinema4d-mcp (129 stars, last push Mar 2026, C4D 2024+, MoGraph/Redshift tools) is the equivalent."
   },
   {
     "slug": "silhouette",
