@@ -65,6 +65,13 @@ jobs:
           fi
           curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
           cp dist/api/server.json server.json
+          # The registry validates the npm version exists; a just-published version
+          # can take a minute to appear, so wait for it before registering.
+          version=$(node -p "require('./packages/mcp-server/package.json').version")
+          for i in $(seq 1 20); do
+            npm view "mcp-film@$version" version >/dev/null 2>&1 && break
+            echo "npm does not show mcp-film@$version yet (attempt $i)"; sleep 15
+          done
           ./mcp-publisher login http --domain mcp.film --private-key "$MCP_REGISTRY_KEY"
           # Idempotent like the npm step: a package.json edit without a version bump
           # (or a re-run) must not fail on "cannot publish duplicate version".
