@@ -180,8 +180,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/VAST-AI-Research/tripo-mcp", "docs": null, "site": "https://www.tripo3d.ai" },
     "added": "2026-06-11",
-    "verified": "2026-09-03",
-    "notes": "Official and now 197 stars, but abandoned in practice: re-checked 3 Sep 2026 and nothing has moved since the last review — README still says alpha, PyPI tripo-mcp is still 0.1.2 from Apr 12 2025, and the repo has had no push since Apr 14 2025, sixteen and a half months. Not archived, so it still reads as live; treat the stars as history, not health. Still scoped to Blender-addon integration and requires the separate Tripo AI Blender Addon plus a running Blender. The multi-provider alternative mordor-forge/trident-mcp (Tripo + Meshy + Rodin) was last pushed Jul 9 2026 and is fresher, but tiny at 6 stars — evaluate before you depend on it. Meshy's server is the better-maintained official option in this niche."
+    "verified": "2026-10-16",
+    "notes": "Official and now 214 stars, but abandoned in practice: re-checked 16 Oct 2026 and nothing has moved — README still says alpha, PyPI tripo-mcp is still 0.1.2 from Apr 12 2025, and the repo has had no push since Apr 14 2025, eighteen months, with 8 open issues unanswered. Not archived, so it still reads as live; treat the stars as history, not health. Still scoped to Blender-addon integration and requires the separate Tripo AI Blender Addon plus a running Blender. The multi-provider alternative mordor-forge/trident-mcp (Tripo + Meshy + Rodin) was last pushed Jul 9 2026 and is fresher, but tiny at 5 stars and itself quiet for three months — evaluate before you depend on it. Meshy's server is the better-maintained official option in this niche."
   },
   {
     "slug": "meshy",
