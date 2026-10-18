@@ -77,7 +77,7 @@
     "category": "video-generation",
     "featured": false,
     "tagline": "Hosted connector to 30+ models: Seedance 2.5, Kling 3, Soul 2.0, Nano Banana Pro.",
-    "description": "Higgsfield's official hosted MCP exposes its platform — advertised as 30+ models — through one OAuth endpoint. The models named on its own MCP page as of September 2026 are Seedance 2.5, Seedance 2.0, Kling 3, Soul 2.0, Nano Banana Pro, Google Omni Flash, Seedream 5.0 Lite and GPT Image 2, with Cinema Studio, Flux, MiniMax Hailuo and Veo listed in the wider roster. Agents can generate 4K images, videos up to 15s, train consistent characters and browse creation history on existing Higgsfield plan credits.",
+    "description": "Higgsfield's official hosted MCP exposes its platform — advertised as 30+ models — through one OAuth endpoint. The models named on its own MCP page as of October 2026 are Seedance 2.5, Seedance 2.0, Kling 3, Soul 2.0, Nano Banana Pro, Google Omni Flash, Seedream 5.0 Lite and GPT Image 2.5, with Cinema Studio, Flux, MiniMax Hailuo and Veo listed in the wider roster. Agents can generate 4K images, videos up to 15s, train consistent characters and browse creation history on existing Higgsfield plan credits.",
     "capabilities": ["text-to-video", "image-to-video", "text-to-image", "character-consistency", "history-browsing"],
     "tools_sample": null,
     "install": {
@@ -89,8 +89,8 @@
     "pricing": "credits",
     "links": { "repo": null, "docs": "https://higgsfield.ai/mcp", "site": "https://higgsfield.ai" },
     "added": "2026-06-11",
-    "verified": "2026-09-05",
-    "notes": "Re-checked 5 Sep 2026: endpoint still answers 401 unauthenticated, so it is alive and OAuth-gated, and the published roster is unchanged. Sora is no longer in the roster — OpenAI is retiring it, so do not plan around it here. tools_sample stays null because the endpoint requires auth and Higgsfield publishes no tool list; call tools/list after connecting. Works with Claude and any MCP client; also ships a CLI and agent skills."
+    "verified": "2026-10-18",
+    "notes": "Re-checked 18 Oct 2026: endpoint still answers 401 unauthenticated, so it is alive and OAuth-gated; the MCP page now names GPT Image 2.5 where it said GPT Image 2, otherwise the roster is unchanged. The page also advertises slash-command workflows (/katana, /ugc-flow, /marketing-adapt-video, /illustration-animation) — those are Higgsfield presets, not MCP tool names. Sora is no longer in the roster — OpenAI shut it down on 24 Sep 2026, see `sora`. tools_sample stays null because the endpoint requires auth and Higgsfield publishes no tool list; call tools/list after connecting. The page gives no Claude Code command; the one here is the standard HTTP add for the published endpoint. Works with Claude and any MCP client; also ships a CLI and agent skills."
   },
   {
     "slug": "pika",
@@ -135,8 +135,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/gitroomhq/agent-media", "docs": "https://agent-media.ai/skills", "site": "https://agent-media.ai" },
     "added": "2026-06-29",
-    "verified": "2026-09-05",
-    "notes": "Apache-2.0, 80 stars, npm @agentmedia/mcp-server still on 0.7.9 published 2026-08-01, repo last pushed 2026-08-02 — a month of quiet after a fast spring, so treat it as steady rather than actively developed. Node >=20; the public repo is mirrored from the private gitroomhq/agent-media-app monorepo, which is the repository npm points at. Docs move fast: the root README describes the newer make_ugc skill while the published package documents create_video/show_your_app/product_acting_ugc/list_actors/get_video_status; trust MCP tools/list or /v1/public/skills for the live schema. Social publishing requires the user to complete OAuth for TikTok, Instagram, or X."
+    "verified": "2026-10-18",
+    "notes": "Apache-2.0, 81 stars; re-checked 18 Oct 2026. Development picked back up after an August lull: npm @agentmedia/mcp-server shipped 0.8.0 on 5 Sep and 0.8.1 on 19 Sep 2026, and the public repo was last pushed 5 Oct. As of 0.8.x the package describes itself as a stdio proxy to a hosted connector at api.agent-media.ai/mcp — that endpoint answers 401 unauthenticated, but it is not documented as a direct remote install, so remote_url stays null until the vendor publishes connect details. Node >=20; the public repo is mirrored from the private gitroomhq/agent-media-app monorepo, which is the repository npm points at. Docs move fast: the root README describes the newer make_ugc skill while the published package README still documents create_video/show_your_app/product_acting_ugc/list_actors/get_video_status; trust MCP tools/list for the live schema. Social publishing requires the user to complete OAuth for TikTok, Instagram, or X."
   },
   {
     "slug": "pixverse",
@@ -422,9 +422,9 @@
     "category": "video-generation",
     "featured": false,
     "tagline": "Brief or script in, narrated and captioned MP4 out, over one OAuth endpoint.",
-    "description": "MakeAIVideo's official hosted MCP turns a one-line brief, a supplied script, or a still image into a finished video — script, neural voiceover, generated scenes, caption timing, music bed and MP4 export in a single pass. The endpoint advertises 39 tools covering render, script authoring, scene and voice regeneration, captions, share links, ideas, characters and portraits, voices, music, brand kit and webhooks. For a filmmaker-agent this is the assembly end of the pipeline: explainers, spokesperson cuts and vertical social edits where finishing speed matters more than shot-level control.",
-    "capabilities": ["text-to-video", "script-generation", "voiceover", "captions", "avatar-video", "image-to-video", "background-music", "brand-kits", "webhooks", "remote-mcp"],
-    "tools_sample": null,
+    "description": "MakeAIVideo's official hosted MCP turns a one-line brief, a supplied script, or a still image into a finished video — script, neural voiceover, generated scenes, caption timing, music bed and MP4 export in a single pass. The docs now enumerate 44 tools: format-specific creators (explainer, listicle, story, UGC, demo, article, spokesperson, from-script), planning and cost estimates, scene and voice regeneration, captions and share links, characters, voices and music, social publishing, and webhooks. For a filmmaker-agent this is the assembly end of the pipeline: explainers, spokesperson cuts and vertical social edits where finishing speed matters more than shot-level control.",
+    "capabilities": ["text-to-video", "script-generation", "voiceover", "captions", "avatar-video", "image-to-video", "background-music", "brand-kits", "webhooks", "social-publishing", "remote-mcp"],
+    "tools_sample": ["create_explainer_video", "create_video_from_script", "estimate_video_cost", "regenerate_scene", "get_video_status", "get_download_url", "publish_video", "get_credits"],
     "install": {
       "claude_code": "claude mcp add --scope user --transport http makeaivideo https://mcp.makeaivideo.ai",
       "remote_url": "https://mcp.makeaivideo.ai",
@@ -434,8 +434,8 @@
     "pricing": "credits",
     "links": { "repo": null, "docs": "https://makeaivideo.ai/docs/mcp", "site": "https://makeaivideo.ai" },
     "added": "2026-09-05",
-    "verified": "2026-09-05",
-    "notes": "Brand new: version 1.2.0 was published to the official MCP registry on 4 Sep 2026 and listed here the next day, so there is no maintenance record yet — re-verify before you build a paid pipeline on it. The vendor names no company, no jurisdiction and no repo, and describes its engines only as 'a curated stack of leading AI models', so you cannot audit which model renders your footage or what the output licence is. tools_sample stays null because the 39 tools are counted but not enumerated anywhere public; call tools/list after connecting. Unauthenticated calls return JSON-RPC error -32001 rather than an HTTP 401, which trips clients that key off status codes. OAuth carries read/write/ai scopes; the optional Bearer mav_* key is the fallback for headless clients. An assistant spends the same credits you do, and there is no free tier past the 7-day trial — plans start at $9/month for 450 credits. Overlaps heavily with invideo: both are templated script-to-video assemblers, and invideo costs nothing to try while this one has a real endpoint and real auth."
+    "verified": "2026-10-18",
+    "notes": "Re-checked 18 Oct 2026: the docs (still headed v1.2) now list 44 tools rather than the 39 the endpoint advertised at launch, adding format-specific creators and social posting (list_social_accounts, publish_video). The older app.makeaivideo.ai/api/mcp address still works. Six weeks of history is not a maintenance record — re-verify before you build a paid pipeline on it. The vendor names no company, no jurisdiction and no repo, and describes its engines only as 'a curated stack of leading AI models', so you cannot audit which model renders your footage or what the output licence is. Unauthenticated calls return JSON-RPC error -32001 rather than an HTTP 401, which trips clients that key off status codes. The docs' own Claude Code example passes --header \"Authorization: Bearer $MAV_API_KEY\"; the command here omits it and relies on OAuth (read/write/ai scopes), so add the header for headless clients. An assistant spends the same credits you do: 7-day trial with 350 credits, then plans from $9/month. Overlaps heavily with invideo: both are templated script-to-video assemblers, and invideo costs nothing to try while this one has a real endpoint and real auth."
   },
   {
     "slug": "magic-hour",
@@ -614,5 +614,28 @@
     "added": "2026-10-10",
     "verified": "2026-10-10",
     "notes": "Checked 10 Oct 2026: the endpoint answers initialize with an OAuth 2.1 challenge, the official MCP Registry lists com.kleooai/kleo, and the README documents the tools; nothing was rendered. One-person project (repo created 9 Sep 2026, zero stars) that runs on Cloudflare's free plan and rents a Vast.ai GPU per job, so treat availability as best-effort. Pricing is public and specific: 5 free credits on connect (the submission said 7), an animatic costs 5 credits up to 20 seconds, films cost 1 credit per 1.5 seconds with a 10-credit minimum and require a purchased pack (EUR 5 for 10 credits). The Terms specify a small Kleo mark on output. Narration is English or Italian only; the README frames the product around YouTube videos and Shorts."
+  },
+  {
+    "slug": "varg",
+    "name": "varg",
+    "vendor": "vargai Inc.",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Brief-to-ad video agent over 100+ models, with a cost estimate before every render.",
+    "description": "varg's hosted MCP puts its multi-model gateway — Seedance, Kling, Veo, FLUX, MiniMax, Nano Banana, GPT Image and ElevenLabs among 100+ models — behind one OAuth connector, with about 30 tools across video, image, speech, music, transcription, ffmpeg and a TSX-to-MP4 renderer. For a filmmaker-agent the useful part is the accounting: estimate_cost and check_balance let an agent price a shot list before committing credits, and get_lineage traces how a finished asset was built.",
+    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "text-to-speech", "music-generation", "transcription", "ffmpeg", "programmatic-render", "cost-estimation", "remote-mcp"],
+    "tools_sample": ["generate_video", "generate_speech", "render_video", "estimate_cost", "check_balance", "get_lineage", "transcription"],
+    "install": {
+      "claude_code": "claude mcp add --transport http varg https://mcp.varg.ai/mcp",
+      "remote_url": "https://mcp.varg.ai/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "https://varg.ai/mcp (OAuth 2.1 with PKCE and dynamic client registration; no API key)" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/vargHQ/sdk", "docs": "https://varg.ai/mcp", "site": "https://varg.ai" },
+    "added": "2026-10-18",
+    "verified": "2026-10-18",
+    "notes": "Checked 18 Oct 2026 against varg.ai/mcp and the changelog; nothing was rendered. The endpoint is up (it rejects a bare GET with 400, as streamable HTTP servers do), but Glama's health check on 18 Oct could not complete an authenticated call, so tools beyond the seven the vendor names are unconfirmed — call tools/list. varg's page offers an Add-to-Claude link rather than a CLI command; the claude_code line is the standard HTTP add for the published endpoint. A ChatGPT plugin shipped on 16 Oct 2026. No free tier: plans start at $24/month for 700 credits, a 5-second clip runs roughly 37-200 credits depending on model, and credits are held at render start and only charged on success. Commercial use without a watermark is included on every plan per the homepage. The linked repo is the separate open-source vargai TypeScript SDK (Apache-2.0, 342 stars, pushed 16 Oct 2026), not the MCP server itself. Overlaps with higgsfield and fal as an aggregator; pick varg if you want a priced, agent-planned ad pipeline rather than raw model access."
   }
 ]
