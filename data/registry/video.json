@@ -99,21 +99,21 @@
     "official": true,
     "category": "video-generation",
     "featured": false,
-    "tagline": "Pika's hosted media toolkit plus 20 production skills, now served from pika.art.",
-    "description": "Pika's official hosted MCP connects its creative suite — video, image, music, audio and voiceover generation — to Claude and other MCP clients, routing to Pika Video, Seedance 2.0, Kling, MiniMax, Veo 3, Gemini Image, ChatGPT Images and ElevenLabs among others, plus editing steps like auto captions, burned subtitles, trim, stitch and transitions. An official plugin bundle adds 20 curated skills including /podcast, /explainer, /ugc-ads, /4k-vfx, /persona-builder and /viral-hook for end-to-end short-form production.",
+    "tagline": "Pika's hosted media toolkit: 57 apps and models for video, image, audio and edit, from mcp.pika.art.",
+    "description": "Pika's official hosted MCP connects its creative suite — video, image, music, speech and editing — to Claude and other MCP clients, routing to Pika 2.5, Seedance 2.5, Wan 3.0, Kling 3.0, Veo 3.1, GPT Image 2.5, Nano Banana, Seedream 5 and Grok Imagine among others. Alongside raw models it exposes app-level steps such as Character Studio, Product Ad, Motion Transfer, Extend Video, Upscale and Relight Media, and an official plugin bundle adds 20 curated short-form production skills.",
     "capabilities": ["text-to-video", "image-to-video", "text-to-image", "audio-generation", "voiceover", "video-editing"],
     "tools_sample": null,
     "install": {
-      "claude_code": "claude mcp add --transport http pika https://experiment-mcp.pika.art/api/mcp",
-      "remote_url": "https://experiment-mcp.pika.art/api/mcp",
+      "claude_code": "claude mcp add --transport http pika https://mcp.pika.art/mcp",
+      "remote_url": "https://mcp.pika.art/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Log in to your Pika account when authorizing the connector" },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Complete Pika sign-in and authorization when the connector first connects" },
     "pricing": "credits",
-    "links": { "repo": null, "docs": "https://experiment.pika.art/mcp", "site": "https://experiment.pika.art" },
+    "links": { "repo": null, "docs": "https://pika.art/mcp", "site": "https://pika.art" },
     "added": "2026-06-11",
-    "verified": "2026-09-05",
-    "notes": "Pika moved its MCP docs off pika.me: www.pika.me/mcp still 307s to experiment.pika.art, and the documented endpoint is experiment-mcp.pika.art. The legacy mcp.pika.me/api/mcp endpoint answers 405 to a plain GET rather than 404, so it is still routed and old configs are not dead yet — but expect it to go. Pika-Labs/Pika-Plugins now carries 20 skill directories (40 stars, last pushed 20 Jul 2026), while the repo's own description still claims 3 slash commands and 42 tools at the retired mcp.pika.me host; trust the directory listing, not the blurb. The docs offer that bundle as 'npx skills add Pika-Labs/Pika-Plugins -all -y', which installs skills rather than the MCP connector. The model roster now names Sora, which OpenAI is retiring — do not build on that route. Per-tool documentation is thinner than Runway or fal."
+    "verified": "2026-10-19",
+    "notes": "Pika has moved house again. Checked 19 Oct 2026: experiment.pika.art/mcp now 308s to pika.art/mcp, which documents the endpoint as https://mcp.pika.art/mcp; both it and the previous experiment-mcp.pika.art/api/mcp answer 405 to a plain GET, so older configs still route for now — move them anyway. The page gives no Claude Code one-liner, only a generic 'connect Pika using the MCP server at…' prompt; the command above is the standard streamable-HTTP form of that URL. Its only plugin link is now the ChatGPT one. Pika-Labs/Pika-Plugins still holds 20 skill directories with Claude, Codex and Cursor plugin manifests (40 stars), but it has not been pushed since 20 Jul 2026 and its description still points at the retired mcp.pika.me host — treat it as unmaintained relative to the connector. The model roster no longer lists Sora. Per-tool documentation remains thinner than Runway or fal; call tools/list."
   },
   {
     "slug": "agent-media",
@@ -169,20 +169,20 @@
     "category": "video-generation",
     "featured": false,
     "tagline": "Google Cloud's MCP servers for Veo, Gemini Omni, Lyria, Chirp TTS and ffmpeg compositing.",
-    "description": "A suite of Go-based MCP servers from Google Cloud's GenMedia Creative Studio repo: Veo text/image-to-video plus extension and first/last-frame tools, a Gemini Omni video server, Nano Banana and Gemini stills, Lyria music, Chirp 3 TTS, and an AVTool server wrapping ffmpeg for compositing. The closest thing to an official Veo MCP, and a full agentic production toolchain on Vertex AI.",
-    "capabilities": ["text-to-video", "image-to-video", "video-extension", "text-to-image", "music", "tts", "av-compositing"],
-    "tools_sample": ["veo_t2v", "veo_i2v", "veo_extend_video", "veo_first_last_to_video", "omni_video_generation", "lyria_generate_music", "chirp_tts", "list_chirp_voices"],
+    "description": "A suite of Go-based MCP servers from Google Cloud's GenMedia Creative Studio repo: Veo text/image-to-video plus extension, first/last-frame, reference and ingredients tools, a Gemini Omni video server, Nano Banana and Gemini stills, Gemini transcription, Lyria music, Chirp 3 TTS, and an AVTool server wrapping ffmpeg for compositing. The closest thing to an official Veo MCP, and a full agentic production toolchain on Vertex AI.",
+    "capabilities": ["text-to-video", "image-to-video", "video-extension", "text-to-image", "music", "tts", "transcription", "av-compositing"],
+    "tools_sample": ["veo_t2v", "veo_i2v", "veo_extend_video", "veo_first_last_to_video", "veo_ingredients_to_video", "omni_video_generation", "lyria_generate_music", "gemini_transcribe", "chirp_tts", "list_chirp_voices"],
     "install": {
       "claude_code": null,
       "remote_url": null,
-      "stdio_command": "One binary per model. Install them all with the repo's script — curl -sL https://raw.githubusercontent.com/GoogleCloudPlatform/vertex-ai-creative-studio/main/experiments/mcp-genmedia/mcp-genmedia-go/install-online.sh | bash — or build from source with go work sync && go install ./mcp-avtool-go ./mcp-chirp3-go ./mcp-gemini-go ./mcp-nanobanana-go ./mcp-imagen-go ./mcp-lyria-go ./mcp-veo-go, adding ./mcp-omni-go which the README's line still omits, then point your client at each binary (mcp-veo-go for Veo) with GOOGLE_CLOUD_PROJECT set"
+      "stdio_command": "One binary per model. Install them all with the repo's script — curl -sL https://raw.githubusercontent.com/GoogleCloudPlatform/genmedia-creative-studio/main/experiments/mcp-genmedia/mcp-genmedia-go/install-online.sh | bash — or build from source with go work sync && go install ./mcp-avtool-go ./mcp-chirp3-go ./mcp-gemini-go ./mcp-gemini-transcribe-go ./mcp-nanobanana-go ./mcp-lyria-go ./mcp-veo-go ./mcp-omni-go, then point your client at each binary (mcp-veo-go for Veo) with GOOGLE_CLOUD_PROJECT set"
     },
     "auth": { "type": "api_key", "env_var": "GOOGLE_CLOUD_PROJECT", "key_url": "Google Cloud project with Vertex AI enabled; uses Application Default Credentials (gcloud auth application-default login)" },
     "pricing": "paid",
-    "links": { "repo": "https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia", "docs": "https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/blob/main/experiments/mcp-genmedia/mcp-genmedia-go/README.md", "site": "https://ai.google.dev/gemini-api/docs/video" },
+    "links": { "repo": "https://github.com/GoogleCloudPlatform/genmedia-creative-studio/tree/main/experiments/mcp-genmedia", "docs": "https://github.com/GoogleCloudPlatform/genmedia-creative-studio/blob/main/experiments/mcp-genmedia/mcp-genmedia-go/README.md", "site": "https://ai.google.dev/gemini-api/docs/video" },
     "added": "2026-06-11",
-    "verified": "2026-09-06",
-    "notes": "Official Google Cloud code but explicitly experimental (lives in /experiments). Busier than ever — 1,202 stars, pushed 2026-09-05, VERSION 3.18.1 cut 2026-08-29. Now eight servers, not seven: mcp-omni-go landed alongside mcp-gemini-go, wrapping gemini-omni-1.1-flash-preview through the Vertex Interactions API. Veo has grown veo_extend_video, veo_first_last_to_video and veo_reference_to_video and defaults to veo-3.1-fast-generate-001; Lyria is on lyria-3-clip-preview. Imagen is the casualty: install.sh now skips mcp-imagen-go outright, with the comment 'Imagen deprecation as of June 30, 2026', so treat imagen_t2i as on its way out and use mcp-nanobanana-go for stills. Install is still the rough edge — no npx one-liner, no published claude mcp add, so you pipe install-online.sh to bash or go install per directory and wire each binary in yourself; the README's go install line has not caught up with mcp-omni-go. Omni is preview-gated and calls the global-only Interactions endpoint, ignoring regional overrides. Supports stdio/HTTP/SSE and GCS or local output; ships agent skills for storyboarding. With Sora leaving the API on 2026-09-24, this is the most direct official route to Veo 3.1 for an agent."
+    "verified": "2026-10-19",
+    "notes": "Official Google Cloud code but explicitly experimental (lives in /experiments). The repo has been renamed: GoogleCloudPlatform/vertex-ai-creative-studio now redirects to GoogleCloudPlatform/genmedia-creative-studio, and the README's install-online.sh URL uses the new path — GitHub redirects old clone URLs, but update pinned raw links. Very active as of 19 Oct 2026: 1,223 stars, pushed 2026-10-18, VERSION 3.21.0 released 2026-10-17. Nine servers now: mcp-gemini-transcribe-go (gemini_transcribe on Gemini 3.5 Transcribe, global location only) joined, and the README's go install line finally includes mcp-omni-go. Veo exposes veo_t2v, veo_i2v, veo_extend_video, veo_first_last_to_video, veo_reference_to_video and veo_ingredients_to_video and defaults to veo-3.1-fast-generate-001; residual Veo 2.0 references were stripped on 2026-10-17. gemini_audio_tts gained Gemini 3.8 TTS. Imagen is on the way out: mcp-imagen-go carries a deprecation banner, is excluded from the default install line, and the README says Imagen models were deprecated as of June 30, 2026 — use mcp-nanobanana-go (defaults to gemini-nano-banana-2.1) for stills. Install is still the rough edge — no npx one-liner, no published claude mcp add, so you pipe install-online.sh to bash or go install per directory and wire each binary in yourself. Omni is preview-gated and calls the global-only Interactions endpoint, ignoring regional overrides. Supports stdio/HTTP/SSE and GCS or local output; ships agent skills for storyboarding. With Sora leaving the API on 2026-09-24, this is the most direct official route to Veo 3.1 for an agent."
   },
   {
     "slug": "sora",
@@ -250,8 +250,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/199-mcp/mcp-kling", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-09-06",
-    "notes": "MIT, 41 stars. npm mcp-kling is at 5.2.0 (2025-12-22) while the public repo has not been pushed since 2025-06-14 — the published package is well ahead of the visible source, so read the npm tarball, not the README, for the current tool list. Largely superseded: Kling now runs its own hosted MCP at kling.ai/mcp (listed here as `kling-official`), which is OAuth, vendor-maintained and declares its model list at runtime. Keep this one if you need key/secret JWT auth against your own Kling API account, or the tools the official server does not expose — effects, virtual try-on and KOLORS. The README documents models through Kling v1.x/v2-master; for Kling 3.0 the official server, Runway, Higgsfield or the fal hub are all fresher. Auto-downloads results locally."
+    "verified": "2026-10-19",
+    "notes": "MIT, 44 stars. Correction on 19 Oct 2026: an earlier note here said npm was ahead of the repo. It is not — mcp-kling 5.2.0 was published 2025-06-14, the same day as the last repo push, and the repo's package.json is also 5.2.0; the 2025-12-22 date was npm registry metadata, not a release. So the code has been frozen for sixteen months, but source and package match. Not archived or deprecated on npm. Largely superseded: Kling now runs its own hosted MCP at kling.ai/mcp (listed here as `kling-official`), which is OAuth, vendor-maintained and declares its model list at runtime. Keep this one if you need key/secret JWT auth against your own Kling API account, or the tools the official server does not expose — effects, virtual try-on and KOLORS. The README documents models through Kling v1.x/v2-master; for Kling 3.0 the official server, Runway, Higgsfield or the fal hub are all fresher. Auto-downloads results locally."
   },
   {
     "slug": "luma",

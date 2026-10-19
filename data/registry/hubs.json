@@ -582,5 +582,28 @@
     "added": "2026-10-10",
     "verified": "2026-10-10",
     "notes": "Checked 10 Oct 2026 by calling the live endpoint without a key: initialize, tools/list and list_models all answer anonymously, 450 models in total and 26 video models including google/veo-3.1, kwaivgi/kling-v3.0-pro, bytedance/seedance-2.5, minimax/hailuo-3-max, alibaba/wan-3.0 and runway/gen-4.5. Video is text-to-video only: no image-to-video, no video editing or upscaling, and no Sora or Luma. Video is priced per second in USD and each result reports its exact charge in _meta; a failed render is not charged. The official MCP Registry entry is io.github.yumaheymans/genmagic, which is to say the gateway is run by one developer, so weigh uptime risk accordingly. For image-to-video or a bigger catalogue compare fal, replicate or kie-ai."
+  },
+  {
+    "slug": "wavespeed",
+    "name": "WaveSpeed MCP",
+    "vendor": "WaveSpeed AI",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "WaveSpeed's live image, video, audio and 3D catalogue behind seven tools, hosted or via npx.",
+    "description": "WaveSpeed's own server reads its model catalogue from the live API instead of a pinned list, so an agent searches with list_models, reads a model's real input schema with get_model_schema, quotes the job with get_price, then fires run_model. For a filmmaker-agent that is one bill and one verb across many upstream image and video models, with an explicit price check before an expensive shot and resumable polling for renders that outlast a single tool call.",
+    "capabilities": ["multi-model-generation", "text-to-image", "text-to-video", "image-to-video", "audio-generation", "3d-generation", "model-discovery", "cost-tracking"],
+    "tools_sample": ["list_models", "get_model_schema", "run_model", "get_price", "get_balance", "upload_file", "get_prediction"],
+    "install": {
+      "claude_code": "claude mcp add --transport http wavespeed https://api.wavespeed.ai/mcp",
+      "remote_url": "https://api.wavespeed.ai/mcp",
+      "stdio_command": "npx -y @wavespeed/mcp"
+    },
+    "auth": { "type": "oauth", "env_var": "WAVESPEED_API_KEY", "key_url": "https://wavespeed.ai/accesskey — the hosted server signs in through the browser and mints a key named 'MCP · <app>'; the npx server and header-only clients take WAVESPEED_API_KEY or an Authorization: Bearer header" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/WaveSpeedAI/mcp-server", "docs": "https://wavespeed.ai/docs/mcp", "site": "https://wavespeed.ai" },
+    "added": "2026-10-19",
+    "verified": "2026-10-19",
+    "notes": "Verified 19 Oct 2026 from the repo, npm and wavespeed.ai/docs/mcp. MIT, 34 stars, repo pushed and npm @wavespeed/mcp 1.0.11 published that same day; the package has existed only since 19 Aug 2026, so it is young and moving fast. api.wavespeed.ai/mcp answers 405 to a plain GET, as a streamable-HTTP endpoint should. The good: get_price discloses which inputs its quote ignored (unpriced_inputs) instead of passing off a floor as the price, and run_model rejects input keys the model does not accept before you are charged. The caveats: the vendor says the quote is an estimate and the amount actually charged is what counts; the hosted server cannot read local files, so pass public URLs or use its create_upload flow, while @path uploads work only in the npx version; and on the hosted server run_model waits at most 100 seconds (1,800 locally) before handing back a prediction id to poll with get_prediction. Deleting the 'MCP · <app>' key disconnects a client. A separate community Python package called WavespeedMCP exists; this entry is the vendor's own. The lane is crowded — compare fal, replicate, runware and atlas-cloud on catalogue and price."
   }
 ]
