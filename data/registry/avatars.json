@@ -19,8 +19,8 @@
     "pricing": "credits",
     "links": { "repo": null, "docs": "https://developers.heygen.com/mcp/overview", "site": "https://www.heygen.com/model-context-protocol" },
     "added": "2026-06-11",
-    "verified": "2026-09-08",
-    "notes": "Endpoint, OAuth flow and plan terms re-confirmed against HeyGen's own MCP docs on 2026-09-08: unchanged, available on all HeyGen plans, generation consumes plan credits, no API key. There is still no local option: HeyGen's own heygen-com/heygen-mcp 404s, and the community fork this entry used to recommend (sbroenne/heygen-mcp) has 404'd too — its PyPI package heygen-mcp-sbroenne is still installable but frozen at 0.3.1 from 2026-01-31 with its source gone, so treat it as abandoned. The hosted remote is the only maintained route. HeyGen's official Agent Skills (heygen-com/skills) remain active — 429 stars, still pushed 2026-07-14, so the skills repo has gained attention but no commits in nearly two months."
+    "verified": "2026-10-20",
+    "notes": "Endpoint, OAuth flow and plan terms re-confirmed against HeyGen's own MCP docs on 2026-10-20: unchanged, available on all HeyGen plans, generation consumes plan credits, no API key. There is still no local option: HeyGen's own heygen-com/heygen-mcp still 404s, and the community fork this entry used to recommend (sbroenne/heygen-mcp) has 404'd too — its PyPI package heygen-mcp-sbroenne is still installable but frozen at 0.3.1 from 2026-01-31 with its source gone, so treat it as abandoned. The hosted remote is the only maintained route. HeyGen's official Agent Skills (heygen-com/skills) remain active — 506 stars but last pushed 2026-07-14, so attention keeps growing while commits stopped three months ago."
   },
   {
     "slug": "hedra",
@@ -207,5 +207,28 @@
     "added": "2026-10-08",
     "verified": "2026-10-08",
     "notes": "Verified 8 Oct 2026 against bitHuman's MCP docs and the official MCP Registry, where ai.bithuman/characters was published that same morning; no tools were run. Two servers share the name and are not the same thing. The hosted remote_url takes no auth and exposes only list_characters, make_character_video (3-200 characters of text) and talk_to_character — the docs say outright it 'speaks only as bitHuman's own characters', so it is a demo, not a pipeline tool. Your own avatars need the CLI server, which is the claude_code command above. There is no text-to-speech tool: list_voices and text_to_speech were retired after CLI 2.8.7 and now return 410, so bring a WAV from elevenlabs, cartesia or a real recording and pass it to render. generate_agent is async and slow — the docs put a second-generation agent at roughly 2-2.5 hours — and always pass model (essence-2 or expression-2) or you get a first-generation agent. Every model except Expression 2 needs a real human face; stylised or non-human subjects return 422 MODEL_SUBJECT_MISMATCH. The cloud talking-video API and knowledge bases have no MCP tool yet, so use the REST API for those. Pricing: Free is $0 with 99 credits a month, Creator $20 for 2,000. bitHuman's pricing page says Free-plan API access ends on 12 October, so plan on Creator. The install line pipes a remote script into sh: read it first. Source is not public — every repo in the bithuman-product GitHub org was archived on 5 Oct 2026 and the registry metadata now points at GitLab — so repo is null. For hosted, OAuth-gated performance work without a local CLI, hedra-official is the simpler connect."
+  },
+  {
+    "slug": "craftstory",
+    "name": "CraftStory MCP",
+    "vendor": "CraftStory (itseez3d)",
+    "official": true,
+    "category": "avatars-performance",
+    "featured": false,
+    "tagline": "Official CraftStory server: talking-avatar video from a photo and audio, plus short MiniMax H3 clips with sound.",
+    "description": "CraftStory's own MIT-licensed server drives its API from any MCP client: long-form talking-avatar videos built from a single photo and a voice track (CraftStory 2.0), short MiniMax H3 clips in basic, reference and avatar modes, TTS from a voice library, upscaling, images, music and sound effects. A preview_cost tool quotes credits before anything renders. For a filmmaker-agent it is a presenter and talking-head pipeline that can also produce its own dialogue, cutaways and bed music under one account.",
+    "capabilities": ["avatar-video", "talking-head", "image-to-video", "tts", "upscaling", "text-to-image", "music-generation", "sound-effects", "cost-preview", "async-jobs"],
+    "tools_sample": ["list_models", "list_voices", "list_avatars", "create_audio_clip", "preview_cost", "create_craftstory2_video", "create_minimax_h3_video", "create_minimax_h3_avatar_video", "wait_for_job", "get_job_result", "upscale_video", "create_image", "create_music", "create_sound_effect", "request_file_upload"],
+    "install": {
+      "claude_code": "claude mcp add --scope user craftstory -e CRAFTSTORY_API_KEY=sk-cs-... -- npx -y @craftstory/mcp",
+      "remote_url": "https://mcp.craftstory.com/mcp",
+      "stdio_command": "npx -y @craftstory/mcp"
+    },
+    "auth": { "type": "api_key", "env_var": "CRAFTSTORY_API_KEY", "key_url": "In the CraftStory app under Account -> API Access (needs a plan with API access); the hosted remote uses OAuth sign-in instead" },
+    "pricing": "credits",
+    "links": { "repo": "https://github.com/itseez3d/craftstory-mcp", "docs": "https://craftstory.com/mcp/", "site": "https://craftstory.com" },
+    "added": "2026-10-20",
+    "verified": "2026-10-20",
+    "notes": "Verified 20 Oct 2026 against CraftStory's MCP page, the repo README and npm; no tools were run. The npm package @craftstory/mcp is at 0.6.0 (published 2026-10-14, Node 20+) and maintained from a craftstory.com account; the repo lives in the itseez3d org, is MIT, created 2026-09-12 and pushed 2026-10-14 — new and active, but zero stars, so it has no track record yet. The hosted remote's protected-resource metadata points at an Auth0 tenant, and the README has you paste a fixed public OAuth Client ID (hAlwpyaDeO0CmuEKMibZxiXxtTT09NXL, no secret) into the connector's advanced settings rather than relying on dynamic registration — so in Claude Code the stdio command above is the documented route. The hosted remote cannot read local paths or chat attachments; use public URLs or the request_file_upload one-time page. Locally, any file path you pass is uploaded to CraftStory, so keep tool approvals on. API access needs a paid plan (the README names Producer); generations spend app credits and failed jobs are refunded. Long renders are async and wait_for_job returns after at most 55 s, so expect the agent to poll several times. Signed result URLs expire after 7 days — download masters promptly. For dubbing and translation, heygen reaches further."
   }
 ]

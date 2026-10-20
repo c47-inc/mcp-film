@@ -158,8 +158,8 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/PixVerseAI/PixVerse-MCP", "docs": "https://docs.platform.pixverse.ai/how-to-get-api-key-882968m0", "site": "https://platform.pixverse.ai" },
     "added": "2026-06-28",
-    "verified": "2026-09-06",
-    "notes": "Official MIT repo, 52 stars, PyPI pixverse-mcp still 0.2.2 from 2025-10-21 with no repo push since 2025-10-22 — official but effectively frozen for eleven months as of this check, so assume the model list lags the PixVerse platform. README says Python 3.10+, but the published package metadata requires Python >=3.12; use a current uv/uvx runtime. PixVerse API credits are separate from consumer app credits."
+    "verified": "2026-10-20",
+    "notes": "Re-checked 20 Oct 2026: official MIT repo, still 52 stars and not archived, PyPI pixverse-mcp still 0.2.2 from 2025-10-21 with no repo push since 2025-10-22 — official but effectively frozen for a full year, so assume the model list lags the PixVerse platform. README says Python 3.10+, but the published package metadata requires Python >=3.12; use a current uv/uvx runtime. PixVerse API credits are separate from consumer app credits."
   },
   {
     "slug": "google-genmedia",
@@ -227,8 +227,8 @@
     "pricing": "credits",
     "links": { "repo": null, "docs": "https://kling.ai/app/mcp/guide", "site": "https://kling.ai" },
     "added": "2026-09-06",
-    "verified": "2026-09-06",
-    "notes": "Verified 2026-09-06 from primary sources only. https://kling.ai/mcp answers 401, and /.well-known/oauth-protected-resource/mcp names it as the resource behind authorization server https://kling.ai/auth; that server's metadata publishes authorization_code and refresh_token grants, S256 PKCE and a registration_endpoint, so DCR works and no pre-shared credential is needed. Tool names come from Kling's own npm package @klingai/cli-global (0.1.3, published by klingai-fe off a Kuaishou corp git remote), which calls itself a thin MCP client whose commands map 1:1 to backend MCP tools. Kling's setup page is a client-rendered app that returns nothing readable to a fetcher, so the CLI line above is the standard streamable-HTTP form of the documented endpoint, not a copy of a vendor one-liner — expect a browser authorization on first connect. Narrower than the community `kling` server: no effects, no virtual try-on, no KOLORS-specific tools, and no documented model list — call tool_list. Closed source, no public repo, and it spends the same Kling credits as the consumer platform."
+    "verified": "2026-10-20",
+    "notes": "First verified 2026-09-06 from primary sources only; re-checked 2026-10-20, when the protected-resource metadata still named https://kling.ai/mcp behind https://kling.ai/auth with the same three scopes. https://kling.ai/mcp answers 401, and /.well-known/oauth-protected-resource/mcp names it as the resource behind authorization server https://kling.ai/auth; that server's metadata publishes authorization_code and refresh_token grants, S256 PKCE and a registration_endpoint, so DCR works and no pre-shared credential is needed. Tool names come from Kling's own npm package @klingai/cli-global (0.1.3 at first check, 0.2.3 published 2026-10-16 so it is actively shipped; published by klingai-fe off a Kuaishou corp git remote), which calls itself a thin MCP client whose commands map 1:1 to backend MCP tools. Kling's setup page is a client-rendered app that returns nothing readable to a fetcher, so the CLI line above is the standard streamable-HTTP form of the documented endpoint, not a copy of a vendor one-liner — expect a browser authorization on first connect. Narrower than the community `kling` server: no effects, no virtual try-on, no KOLORS-specific tools, and no documented model list — call tool_list. Closed source, no public repo, and it spends the same Kling credits as the consumer platform."
   },
   {
     "slug": "kling",
