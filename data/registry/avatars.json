@@ -38,12 +38,12 @@
       "remote_url": null,
       "stdio_command": "npx -y mcp-server-hedra"
     },
-    "auth": { "type": "api_key", "env_var": "HEDRA_API_KEY", "key_url": "https://www.hedra.com/develop/api-keys (requires a paid Hedra subscription)" },
+    "auth": { "type": "api_key", "env_var": "HEDRA_API_KEY", "key_url": "https://www.hedra.com/develop/api-keys (legacy API used by this server bills Studio credits and needs a paid subscription)" },
     "pricing": "credits",
     "links": { "repo": "https://github.com/pasie15/mcp-server-hedra", "docs": "https://www.hedra.com/docs/pages/developer/getting_started/quickstart", "site": "https://www.hedra.com" },
     "added": "2026-06-11",
-    "verified": "2026-09-09",
-    "notes": "No longer the only way in: Hedra shipped an official hosted MCP on 2026-08-31 at mcp.hedra.com, listed here as `hedra-official`, and it is the better default — OAuth instead of a pasted key, and the current model roster instead of a frozen one. Reach for this community server only when you want named Character-3 tools driven by a plain API key, which the official endpoint does not document. Re-checked 2026-09-09 and nothing here has moved: npm mcp-server-hedra is still the 1.0.0 published 2026-02-08, the repo has had no push since the same day, MIT, Node 18+, 2 stars. Drifts to expect against its README: the key page is hedra.com/develop/api-keys (the README's /api-profile link is stale), and the third-party model list has aged badly — Hedra's platform now fronts Seedance 2.5, MiniMax Hailuo 2.3, Kling 2.6 Pro and Nano Banana Pro, while Sora 2 leaves OpenAI's API on 2026-09-24. Character-3 itself is alive and still on Hedra's model page. The API bills against the same Studio credit balance as the app and needs a paid subscription."
+    "verified": "2026-10-22",
+    "notes": "Use `hedra-official` (mcp.hedra.com, shipped 2026-08-31) by default — OAuth instead of a pasted key, the current model roster instead of a frozen one, and Hedra's own quickstart now points MCP clients there. This server has fallen a full API generation behind: Hedra has since launched a v3 API (api.hedra.com/v3, `Authorization: Key <key_id>:<secret>`, billed from a separate prepaid USD wallet), while this server's source still calls the legacy api.hedra.com/web-app/public endpoints with an X-API-Key header. Hedra's v2-to-v3 migration guide says the legacy API remains available for existing integrations with no announced shutdown date, but recommends v3 for anything new — so this works today on borrowed time, and a v3 key will not authenticate it. Billing trap: the legacy API draws on Studio credits plus a paid subscription, and Hedra warns that Studio credits do not fund v3, so do not mix the two up when topping up. Re-checked 2026-10-22: npm mcp-server-hedra is still the only release, 1.0.0 from 2026-02-08; the repo has had no push since that day, MIT, Node 18+, 2 stars — treat it as unmaintained. Its README's /api-profile key link is stale (the page is hedra.com/develop/api-keys) and its third-party model list dates from February. Character-3 itself is alive — it is a v3 model now (`hedra-character-3`), described as Hedra's longform avatar model."
   },
   {
     "slug": "tavus",
@@ -88,8 +88,8 @@
     "pricing": "freemium",
     "links": { "repo": null, "docs": "https://docs.d-id.com/docs/mcp", "site": "https://www.d-id.com" },
     "added": "2026-06-11",
-    "verified": "2026-09-09",
-    "notes": "Docs-platform-hosted (ReadMe-powered) remote MCP; endpoint and setup text re-confirmed unchanged on 2026-09-09, and the exact tool list is still not published openly — D-ID describes the surface only as API access, docs search, live account data and code generation. Auth is whatever your client can send: D-ID's own guidance is that you pass API credentials as headers or query parameters through the MCP client, so there is no OAuth flow and no standard env var. Manage expectations about what a docs-platform MCP is — it is closer to a documentation copilot with API reach than a purpose-built generation server, and nothing about the tool surface is contractual. Landscape note: Synthesia still has no official MCP (only marginal community wrappers and generic Zapier/viaSocket gateways)."
+    "verified": "2026-10-22",
+    "notes": "Docs-platform-hosted (ReadMe-powered) remote MCP; endpoint and setup text re-confirmed unchanged on 2026-10-22, and the exact tool list is still not published openly — D-ID describes the surface only as direct API access, docs search, real-time account data and code generation. The setup page gives JSON snippets for Cursor, Windsurf and Claude Desktop only; the `claude mcp add` line above is the standard Claude Code form of the same URL, not a command D-ID documents. Auth is whatever your client can send: D-ID's own guidance is that you pass API credentials as headers or query parameters through the MCP client, so there is no OAuth flow and no standard env var. Manage expectations about what a docs-platform MCP is — it is closer to a documentation copilot with API reach than a purpose-built generation server, and nothing about the tool surface is contractual. Landscape note, last checked 2026-09-09: Synthesia had no official MCP (only marginal community wrappers and generic Zapier/viaSocket gateways)."
   },
   {
     "slug": "sync-labs",
