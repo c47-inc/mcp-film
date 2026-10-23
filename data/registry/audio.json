@@ -347,6 +347,29 @@
     "notes": "The weakest entry in this category and listed only for the offline use case, and re-checked unchanged on 28 Sep 2026: PyPI audiogen-mcp 0.2.1 and repo both frozen at 25 Jan 2026 — eight months without a commit — still one star, still MIT. Apple Silicon only, Python 3.9-3.11 (audiocraft does not support 3.12+), needs ffmpeg, ~4GB of disk for weights and ~8GB RAM. The install ordering is manual because xformers will not build on Apple Silicon. For quality, prefer ElevenLabs text_to_sound_effects or CassetteAI SFX via the fal MCP; come here only when the audio must not leave the machine."
   },
   {
+    "slug": "audio-studio-mcp",
+    "name": "Audio Studio MCP",
+    "vendor": "Community (KanaWorks_AI / kanaworksai-hue)",
+    "official": false,
+    "category": "sound-design",
+    "featured": false,
+    "tagline": "Local Stable Audio 3 for temp score and SFX: generate, inpaint, extend, loop and loudness-normalize offline.",
+    "description": "Community MCP server that runs Stability AI's open Stable Audio 3 weights on your own machine — MLX on Apple Silicon, PyTorch on NVIDIA — to generate instrumental music beds, stems and sound effects from text, 1–4 seeded candidates per call. It goes past generation: edit_audio re-styles a clip, regenerates a time range or extends a track, and process_audio trims, loops, fades and normalizes to a LUFS target before writing WAV, OGG or FLAC with a JSON sidecar recording prompt and seed. For a filmmaker-agent that is a free, reproducible temp-score and foley-draft loop that never uploads the cut.",
+    "capabilities": ["music-generation", "sfx", "audio-inpainting", "audio-extension", "loudness-normalization", "local-inference", "offline"],
+    "tools_sample": ["generate_audio", "edit_audio", "process_audio", "unload_models"],
+    "install": {
+      "claude_code": "claude mcp add --scope user audio-studio -- /path/to/audio-studio-mcp/.venv/bin/audio-studio-mcp",
+      "remote_url": null,
+      "stdio_command": "Multi-step: git clone https://github.com/kanaworksai-hue/audio-studio-mcp, then ./install.sh (macOS Apple Silicon) or install.ps1 (Windows + NVIDIA). The installer sets up uv and a .venv, vendors the Stable Audio 3 runtime, downloads the medium model and prints the exact claude mcp add line with your path."
+    },
+    "auth": { "type": "none", "env_var": null, "key_url": "No key on macOS. On Windows the PyTorch weights are gated: accept the licence at https://huggingface.co/stabilityai/stable-audio-3-medium and run hf auth login." },
+    "pricing": "free",
+    "links": { "repo": "https://github.com/kanaworksai-hue/audio-studio-mcp", "docs": "https://github.com/kanaworksai-hue/audio-studio-mcp#readme", "site": "https://kanaworksai-hue.github.io/audio-studio-mcp/" },
+    "added": "2026-10-23",
+    "verified": "2026-10-23",
+    "notes": "Five days old when listed: the repo was created 18 Oct 2026 and reached v0.2.2 on 22 Oct with 447 stars and 33 forks, so the star count is launch-week attention, not a track record. MIT, one maintainer, no PyPI package — install is a clone plus installer script. Hardware is the real gate: Apple Silicon (16 GB RAM recommended, ~6 GB for the medium model) or Windows with an 8 GB+ NVIDIA GPU (~14 GB with PyTorch); Linux with NVIDIA is untested and has no installer, Intel Macs and AMD GPUs are unsupported, and ffmpeg must be on PATH. Instrumental only — Stable Audio 3 cannot do vocals or lyrics — and the README says timing cues like 'climax at 15 s' are not reliably followed, so cut to picture with inpaint and continue rather than prompting for hits. Outputs fall under the Stability AI Community License, which allows free commercial use only below US$1M annual revenue; above that you need a Stability licence before anything ships. Not affiliated with Stability AI. For sync-to-picture scoring from licensed catalogues use `sonilo`; for hosted SFX, ElevenLabs or the fal MCP. Compared with `audiogen`, this is the better-maintained and broader offline option."
+  },
+  {
     "slug": "auphonic-zapier",
     "name": "Auphonic (via Zapier MCP)",
     "vendor": "Auphonic / Zapier",
