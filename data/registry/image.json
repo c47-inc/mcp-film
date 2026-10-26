@@ -20,6 +20,11 @@
     "links": { "repo": "https://github.com/black-forest-labs/flux-mcp", "docs": "https://docs.bfl.ml/api_integration/mcp_integration", "site": "https://bfl.ai" },
     "added": "2026-06-11",
     "verified": "2026-10-08",
+    "caveats": [
+      "OAuth only: sign in with a BFL account and pick a billing org.",
+      "vto is its own tool, not a model value, and passing it as one fails.",
+      "generate_video returns a pending request_id and clips take minutes, so fetch them with get_result; render with draft: true first."
+    ],
     "notes": "Re-checked 8 Oct 2026 with no drift in the core: endpoint, OAuth-only auth and all seven tools still match the docs, and the repo (MIT, not archived) was last pushed 29 Sep 2026. Image models: flux2_pro_preview (default), flux2_max, flux2_klein_9b_preview, flux2_klein_4b, flux2_flex (typography); vto is its own tool, not a model value, and passing it as one fails. generate_image batches 1-8 images in parallel. Video runs on flux3_video in t2v, i2v and v2v modes, up to 4 clips per call, 5-20 s or auto, hd or fhd, with audio on by default. generate_video returns a pending request_id and clips take minutes — fetch them with get_result, which the docs now mention alongside a bfl://models catalog resource. Render with draft: true first (cheaper, hd only) to check motion and timing, then enhance_video re-renders the same draft at full quality. BFL also publishes optional Claude Code skills (flux-image-best-practices, flux-3-video) via the black-forest-labs/skills plugin marketplace. Listed under image generation because that is still the bulk of the surface. Pricing at bfl.ai/pricing."
   },
   {
@@ -43,6 +48,12 @@
     "links": { "repo": "https://github.com/recraft-ai/mcp-recraft-server", "docs": "https://www.recraft.ai/docs/mcp-reference/remote-server", "site": "https://www.recraft.ai" },
     "added": "2026-06-11",
     "verified": "2026-10-08",
+    "caveats": [
+      "The stdio entry is the mcp-remote bridge, not a local server; the old npm package is deprecated and its repo archived.",
+      "It bills the same Recraft plan credits Recraft Studio spends, and free accounts get only a small allowance.",
+      "In Claude Code on the web, image downloads fail unless img.recraft.ai is an allowed network domain.",
+      "The endpoint is OAuth-gated and the docs describe capabilities rather than tool names, so the tool list cannot be enumerated without an account."
+    ],
     "notes": "Re-checked 8 Oct 2026: endpoint, OAuth flow and the documented Claude Code and mcp-remote commands are unchanged. The stdio entry is not a local server — it is the mcp-remote bridge Recraft's own docs print for clients that cannot speak streamable HTTP, pointed at the same hosted endpoint. The local package @recraft-ai/mcp-recraft-server (last v1.6.5) is deprecated and its repo is archived; the repo link is kept only for history. Billing: the hosted server deducts from your Recraft plan credits, the same balance Recraft Studio spends, at per-operation rates listed under Plans and billing — free accounts get a small allowance. In Claude Code on the web, generated images may fail to download unless img.recraft.ai is added to the environment's allowed network domains. tools_sample is null because Recraft's docs describe capabilities rather than tool names and the endpoint is OAuth-gated, so the list cannot be enumerated without an account."
   },
   {
@@ -67,6 +78,10 @@
     "links": { "repo": null, "docs": null, "site": "https://www.freepik.com" },
     "added": "2026-06-29",
     "verified": "2026-10-08",
+    "caveats": [
+      "Dead: the repo was deleted and it was never packaged, so there is no install path; use magnific instead.",
+      "Freepik rebranded to Magnific, so existing FREEPIK_API_KEY values are a Magnific billing question now, and the Magnific MCP is OAuth."
+    ],
     "notes": "Use `magnific` instead. This server was never packaged on npm or PyPI — the only documented install was cloning freepik-company/freepik-mcp — so deleting the repo removed the sole install path, and every install field is now null. Re-checked 8 Oct 2026: the repo still 404s to both the GitHub API and an anonymous fetch, and it was not renamed inside the org; freepik-company still exists, its only MCP repos are the unrelated prometheus-mcp and jev-mcp (a typed-decision server, nothing to do with images), and it now carries a homebrew-magnific tap. Freepik rebranded to Magnific in April 2026 and the developer platform followed — docs.freepik.com still 301s to docs.magnific.com, whose llms.txt lists Mystic, upscalers, video, audio and stock endpoints against api.magnific.com with no Freepik references left. The `verified` date records confirming the death, not a working server. Existing FREEPIK_API_KEY values may still authenticate against the REST API, but that is a Magnific billing question now; the Magnific MCP is OAuth and takes no key. Earlier notes here (78 stars, pushed Jul 2026, no LICENSE file) are no longer checkable."
   },
   {
@@ -90,6 +105,11 @@
     "links": { "repo": "https://github.com/tadasant/mcp-server-stability-ai", "docs": null, "site": null },
     "added": "2026-06-11",
     "verified": "2026-10-09",
+    "caveats": [
+      "Unaffiliated with Stability AI, which ships no official MCP; beware the Stability MCP Server listings for the unrelated blockchain.",
+      "Aging: npm 0.2.0 dates from Mar 2025 and the last push from Jun 2025, though the REST API it wraps has not moved under it.",
+      "Per-tool cost runs roughly $0.01 to $0.25 in Stability credits."
+    ],
     "notes": "MIT, 84 stars, not archived; unaffiliated with Stability AI, which still ships no official MCP — re-checked 9 Oct 2026, the Stability-AI GitHub org has no MCP repo, so every Stability server on the market is a community wrapper, and this is the one with the deepest tool coverage. Beware the name collision: 'Stability MCP Server' listings for nuljui/stbl-mcp are for the Stability blockchain, not image generation. Aging: npm latest is still 0.2.0 from Mar 2025 and the last push landed Jun 24 2025 — over fifteen months cold, though the REST API it wraps has not moved under it. Supports IMAGE_STORAGE_DIRECTORY for writing outputs to disk. Per-tool cost runs roughly $0.01-$0.25 in Stability credits; confirm current rates at platform.stability.ai."
   },
   {
@@ -113,6 +133,11 @@
     "links": { "repo": null, "docs": "https://ideogram.ai/features/mcp/", "site": "https://ideogram.ai" },
     "added": "2026-06-11",
     "verified": "2026-10-09",
+    "caveats": [
+      "MCP jobs and hand work compete for one subscription balance; there is no separate billing for MCP requests.",
+      "The docs point server-to-server pipelines at the REST API instead.",
+      "developer.ideogram.ai/_mcp/server is a separate documentation-search MCP, not the image server."
+    ],
     "notes": "Usage draws on the same subscription as the Ideogram web app, so MCP jobs and hand work compete for one balance — the docs state flatly that there is no separate billing for MCP requests. Checked 9 Oct 2026: the endpoint is live and serves OAuth protected-resource metadata at the spec path, naming itself as the resource with an Ideogram-hosted authorization server and openid/email/profile scopes; the nine tools and the connect command below still match the docs verbatim. The MCP page now lists Ideogram 4.5 first, alongside 4.0, 3.0 and custom image models. The docs themselves point server-to-server pipelines at the REST API instead. This entry previously listed the community wrapper @sunwood-ai-labs/ideagram-mcp-server (MIT, 5 stars, one generate_image tool, untouched since May 2025, and misspelled 'ideagram' throughout) — it is superseded by the official server. Note that developer.ideogram.ai/_mcp/server is a separate documentation-search MCP, not the image server. Ideogram is also reachable via the fal and Replicate hub MCPs if you want fewer connectors."
   },
   {
@@ -136,6 +161,11 @@
     "links": { "repo": "https://github.com/Cripacx/mediagen", "docs": null, "site": null },
     "added": "2026-09-03",
     "verified": "2026-10-16",
+    "caveats": [
+      "Unproven and quiet: all commits landed in a single day in Aug 2026 and main has not moved since.",
+      "Disclosure marking is CLI-only and never automatic, so MCP generations get no provenance metadata unless something calls mediagen mark.",
+      "Video is Gemini-only, every generation bills the provider key you supply, and Kie AI is itself an aggregator."
+    ],
     "notes": "Unproven and quiet: the repo was created 22 Aug 2026, its commits on main all landed inside a single day, and main has not moved since 23 Aug. Re-checked 16 Oct 2026: npm mediagen is still 0.3.0 (23 Aug), 52 stars, MIT. The only sign of life is an unmerged branch and PR by the maintainer, opened 7 Oct, that adds Kie AI video models — until it ships, what is below holds. Listed for the marking feature, not for its track record — check the commit log before you build a pipeline on it. The disclosure marking is CLI-only (`mediagen mark`) and the docs state it is never automatic, so an agent generating through the MCP tools gets no provenance metadata unless something calls the CLI afterwards. Video is Gemini-only; OpenAI and Kie AI cover stills and edits. The package is free but every generation bills the provider key you supply, and Kie AI is itself an aggregator — if you only want breadth of models, the kie-ai or fal entries here are the more direct route."
   }
 ]
