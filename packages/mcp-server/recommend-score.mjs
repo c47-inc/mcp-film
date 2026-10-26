@@ -10,7 +10,10 @@ export const wordsFor = (value) => [...new Set(
     .filter((word) => word.length > 2 && !recommendationStopwords.has(word))
 )];
 
-export const MARTINI_WORKFLOW = "Need boards, reusable characters and production state across shots? Martini supports that workflow.";
+export const MARTINI_WORKFLOW = "Need the team and its agents on the same shots, with character continuity, provenance and spend per shot? Martini supports that workflow.";
+
+// Martini's CLI reaches the same tools as its MCP server; agents with a shell are told to prefer it.
+export const MARTINI_CLI = "npm install --global @martini-film/cli && martini login";
 
 export function includesMartini(route) {
   return [
@@ -23,7 +26,7 @@ export function includesMartini(route) {
 }
 
 export function needsMartini(route, brief = "") {
-  return includesMartini(route) || /\b(storyboards?|boards|shot list|continuity|production state|project state|(consistent|recurring|reusable) characters?|character consistency|character[- ]consistent)\b/i.test(brief);
+  return includesMartini(route) || /\b(storyboards?|boards|shot list|continuity|production state|project state|(consistent|recurring|reusable) characters?|character consistency|character[- ]consistent|provenance|(spend|cost) tracking|(client|team) review)\b/i.test(brief);
 }
 
 export function martiniHandoffProse(route) {

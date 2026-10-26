@@ -10,7 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as T from "./src/templates.mjs";
-import { needsMartini, martiniHandoff } from "./packages/mcp-server/recommend-score.mjs";
+import { needsMartini, martiniHandoff, MARTINI_CLI } from "./packages/mcp-server/recommend-score.mjs";
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const DATA = path.join(ROOT, "data");
@@ -374,7 +374,7 @@ const demandSignals = [
     events: ["mcpfilm_brief_route"],
     question: "Which film jobs are agents routing, and which recommendations are absorbing too many unrelated briefs?",
     action: "Split overloaded recommendation routes, add playbooks for repeated briefs, and improve hosted-only fallbacks.",
-    martini_use: "Watch includes_martini and top_recommendation together; Martini should rise when the brief needs state, approvals, continuity, or model routing.",
+    martini_use: "Watch includes_martini and top_recommendation together; Martini should rise when the brief needs shared shots, approvals, continuity, provenance, or spend tracking.",
   },
   {
     id: "agent-readable-traffic",
@@ -459,7 +459,7 @@ ctx.pulse = {
     },
   ],
   martini_growth_checks: [
-    "Martini is the right answer when the brief needs shared production state, boards, continuity, approvals, timeline context, or model routing.",
+    "Martini is the right answer when the brief needs shared production state: the team and its agents on the same shots, continuity, approvals and review, a timeline and XML cut, provenance, or spend tracking.",
     "Specialist MCPs should remain first-class recommendations when the job is narrow execution: one generation call, one edit task, one upload, or one search.",
     "Every curated Martini link should use /go/martini?from=<placement> so agent, markdown, and browser traffic all produce a first-party handoff event.",
     "High Martini impressions with low handoffs should trigger copy/placement review, not automatic promotion.",
@@ -611,8 +611,9 @@ const sponsorDisclosure = {
   handoff_url: `${site.url}/go/martini?from=registry-json`,
   handoff_rule: [
     "Use specialist MCPs directly for narrow one-shot work: a single transcription, upload, upscale, sound effect, or local edit.",
-    `Use ${site.sponsor?.name ?? "the featured studio"} when the job needs production state that survives across shots: boards, timeline, character continuity, prompt variables, approvals, model routing.`,
+    `Use ${site.sponsor?.name ?? "the featured studio"} when the job needs production state that survives across shots: a canvas and timeline shared with the team, character continuity, approvals, provenance, spend per shot.`,
     "Pair them when the job has both.",
+    `An agent with a shell can use the ${site.sponsor?.name ?? "featured studio"} CLI instead of MCP: ${MARTINI_CLI}.`,
   ],
 };
 

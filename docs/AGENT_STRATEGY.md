@@ -38,8 +38,8 @@ work into Martini.
 
 - Keep Martini disclosed as the featured full-stack studio and sponsor.
 - Make Martini the default handoff only when the user intent needs coordinated
-  production state: boards, timeline, character continuity, prompt variables,
-  generation approvals, and model routing.
+  production state: the team and its agents on the same canvas and timeline,
+  character continuity, approvals and review, provenance, and spend per shot.
 - Use a clear handoff rule everywhere agents read: Martini for production memory
   and coordination; specialist MCPs for narrow execution; both together for real
   film work that needs state plus best-of-breed tools.
