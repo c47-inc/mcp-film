@@ -20,6 +20,11 @@
     "links": { "repo": null, "docs": "https://developers.heygen.com/mcp/overview", "site": "https://www.heygen.com/model-context-protocol" },
     "added": "2026-06-11",
     "verified": "2026-10-20",
+    "caveats": [
+      "Hosted only: HeyGen's own local repo 404s and the community fork is gone, so the remote is the only maintained route.",
+      "Generation consumes plan credits; there is no API key, only a one-time browser OAuth.",
+      "Tool names are not published, so the surface described comes from the docs."
+    ],
     "notes": "Endpoint, OAuth flow and plan terms re-confirmed against HeyGen's own MCP docs on 2026-10-20: unchanged, available on all HeyGen plans, generation consumes plan credits, no API key. There is still no local option: HeyGen's own heygen-com/heygen-mcp still 404s, and the community fork this entry used to recommend (sbroenne/heygen-mcp) has 404'd too — its PyPI package heygen-mcp-sbroenne is still installable but frozen at 0.3.1 from 2026-01-31 with its source gone, so treat it as abandoned. The hosted remote is the only maintained route. HeyGen's official Agent Skills (heygen-com/skills) remain active — 506 stars but last pushed 2026-07-14, so attention keeps growing while commits stopped three months ago."
   },
   {
@@ -43,6 +48,12 @@
     "links": { "repo": "https://github.com/pasie15/mcp-server-hedra", "docs": "https://www.hedra.com/docs/pages/developer/getting_started/quickstart", "site": "https://www.hedra.com" },
     "added": "2026-06-11",
     "verified": "2026-10-22",
+    "caveats": [
+      "Use hedra-official by default; this server is a full API generation behind, calling the legacy endpoints with an X-API-Key header.",
+      "A v3 key will not authenticate it, and the legacy API has no announced shutdown date, so it works on borrowed time.",
+      "Billing trap: the legacy API draws on Studio credits plus a paid subscription, and Studio credits do not fund v3.",
+      "Unmaintained: npm 1.0.0 from Feb 2026 is the only release and the repo has not been pushed since."
+    ],
     "notes": "Use `hedra-official` (mcp.hedra.com, shipped 2026-08-31) by default — OAuth instead of a pasted key, the current model roster instead of a frozen one, and Hedra's own quickstart now points MCP clients there. This server has fallen a full API generation behind: Hedra has since launched a v3 API (api.hedra.com/v3, `Authorization: Key <key_id>:<secret>`, billed from a separate prepaid USD wallet), while this server's source still calls the legacy api.hedra.com/web-app/public endpoints with an X-API-Key header. Hedra's v2-to-v3 migration guide says the legacy API remains available for existing integrations with no announced shutdown date, but recommends v3 for anything new — so this works today on borrowed time, and a v3 key will not authenticate it. Billing trap: the legacy API draws on Studio credits plus a paid subscription, and Hedra warns that Studio credits do not fund v3, so do not mix the two up when topping up. Re-checked 2026-10-22: npm mcp-server-hedra is still the only release, 1.0.0 from 2026-02-08; the repo has had no push since that day, MIT, Node 18+, 2 stars — treat it as unmaintained. Its README's /api-profile key link is stale (the page is hedra.com/develop/api-keys) and its third-party model list dates from February. Character-3 itself is alive — it is a v3 model now (`hedra-character-3`), described as Hedra's longform avatar model."
   },
   {
@@ -66,6 +77,11 @@
     "links": { "repo": "https://github.com/rakeshdavid/Tavus-MCP", "docs": "https://docs.tavus.io", "site": "https://www.tavus.io" },
     "added": "2026-06-11",
     "verified": "2026-10-23",
+    "caveats": [
+      "The README's npm package is not on npm, so install from source or Smithery; no commit since Jul 2025 and an old MCP SDK.",
+      "Tavus's own hosted MCP configures conversational agents only; it cannot train replicas, render video or run lipsync, which is why this stays listed.",
+      "The free developer plan is about 25 minutes of conversational video plus 5 minutes of generation."
+    ],
     "notes": "The official server keeps growing and still does not reach what this one does. Tavus's first-party MCP is hosted at https://mcp.tavus.io/mcp (`claude mcp add -s user --transport http tavus https://mcp.tavus.io/mcp`, browser OAuth, no key in your config) or local via `uvx --from 'tavus-cli[daily]' tavus-mcp`; PyPI tavus-cli is at 0.11.0 as of 21 Oct 2026, up from 0.4.3 in August. Its tools reference now lists 81 tools, and they are still about configuring PALs — prompts, objectives, guardrails, knowledge, pronunciation dictionaries, deployments, live preview conversations. Faces can be listed (tavus_face_list) but not trained, and nothing renders a video file or runs lipsync. That is a conversational-agent product, which is why it is not listed here separately and this server still is. What you are living with, re-confirmed 23 Oct 2026: the README's npm package (tavus-mcp) is still not on npm — the registry 404s — so install from source or via Smithery; the repo has had no commit since 2025-07-09 and holds 2 stars, so treat it as unmaintained rather than quiet; it is built on an old MCP SDK version. Tavus free developer plan: ~25 min conversational video + 5 min generation."
   },
   {
@@ -89,6 +105,11 @@
     "links": { "repo": null, "docs": "https://docs.d-id.com/docs/mcp", "site": "https://www.d-id.com" },
     "added": "2026-06-11",
     "verified": "2026-10-22",
+    "caveats": [
+      "A docs-platform (ReadMe-powered) MCP, closer to a documentation copilot with API reach than a purpose-built generation server.",
+      "No OAuth flow and no standard env var: you pass API credentials as headers or query parameters through your client.",
+      "The tool list is not published, and nothing about the surface is contractual."
+    ],
     "notes": "Docs-platform-hosted (ReadMe-powered) remote MCP; endpoint and setup text re-confirmed unchanged on 2026-10-22, and the exact tool list is still not published openly — D-ID describes the surface only as direct API access, docs search, real-time account data and code generation. The setup page gives JSON snippets for Cursor, Windsurf and Claude Desktop only; the `claude mcp add` line above is the standard Claude Code form of the same URL, not a command D-ID documents. Auth is whatever your client can send: D-ID's own guidance is that you pass API credentials as headers or query parameters through the MCP client, so there is no OAuth flow and no standard env var. Manage expectations about what a docs-platform MCP is — it is closer to a documentation copilot with API reach than a purpose-built generation server, and nothing about the tool surface is contractual. Landscape note, last checked 2026-09-09: Synthesia had no official MCP (only marginal community wrappers and generic Zapier/viaSocket gateways)."
   },
   {
@@ -112,6 +133,12 @@
     "links": { "repo": "https://github.com/synchronicity-labs/mcp-server", "docs": "https://sync.so/docs/plugins-and-extensions/mcp-server", "site": "https://sync.so" },
     "added": "2026-08-13",
     "verified": "2026-09-16",
+    "caveats": [
+      "Per-second charges on every tier (about $0.04 to 0.05) with clip-length caps from 1 to 30 minutes, so call generate_estimate-cost before long renders.",
+      "Tools are generated from the live OpenAPI spec at startup, so read tools/list rather than the README or the API reference.",
+      "Relighting someone's mouth to say new words needs the performer's consent, and many jurisdictions and union agreements now require it explicitly.",
+      "npm sits at 0.1.4 from Mar 2026; stdio needs SYNC_API_KEY or runs a device-auth flow."
+    ],
     "notes": "Official and MIT, and every install field above re-checked unchanged: the hosted endpoint takes OAuth in Claude web (no key needed), while stdio needs SYNC_API_KEY — or omit it and the server runs a device-auth flow, caching a token at ~/.config/sync/mcp-credentials.json. Node 18+. Pricing is the same on re-check — $5/month Hobbyist through $249/month Scale, per-second generation charges of roughly $0.04–0.05 on every tier, and caps on clip length (1 min at the bottom, 30 min at the top), concurrent jobs and voice clones — so call generate_estimate-cost before long renders; the pricing page pitches a free trial but lists no free plan. Models named there are still Lipsync-2-Pro, Sync-3 and React-1; ask models_get rather than assuming. Watch the surface mismatch: the repo README documents voices, tts and projects tools, but Sync's public API reference only covers generations, assets, models, estimate, batch and healthcheck — tools are generated from the live OpenAPI spec at startup, so read tools/list instead of trusting either list. The repo woke up (last pushed 7 Sep 2026, adding session and upload limits to the HTTP transport) but is still a 1-star project, and npm @sync.so/mcp-server sits at 0.1.4 from 16 Mar 2026 — tolerable only because the tool surface comes from the spec, not the package. Ethics and rights: relighting someone's mouth to say new words needs the performer's consent, and many jurisdictions and union agreements now require it explicitly."
   },
   {
@@ -135,6 +162,11 @@
     "links": { "repo": "https://github.com/veedstudio/veed-fabric-mcp", "docs": "https://veedstudio.github.io/veed-fabric-mcp/", "site": "https://www.veed.io/tools/veed-mcp" },
     "added": "2026-08-17",
     "verified": "2026-09-23",
+    "caveats": [
+      "Stock characters only: nothing uploads your own plate or clones a voice, so it does not replace Sync or Hedra for footage you shot.",
+      "Credits are AI Playground credits from paid VEED plans at about 8 per second of output, so call confirm_fabric_video first.",
+      "No CLI one-liner: the documented Claude path is Settings > Connectors, and the server is closed source with a docs-plus-skill repo."
+    ],
     "notes": "Re-checked 23 Sep 2026 and nothing drifted: endpoint alive (401 unauthenticated), Streamable HTTP and OAuth 2.0 per VEED's own authentication page, same seven tools, same ~8 credits per second of output. Those seven are the whole surface: stock characters only — 24+ of them — and nothing documented uploads your own plate or clones a voice, so this does not replace Sync or Hedra for footage you shot. Credits are AI Playground credits that come with paid VEED plans or are bought separately, so call confirm_fabric_video first; create_fabric_video is async and returns a job id you poll with get_generation_status. VEED still publishes no CLI one-liner — its documented Claude path is Settings › Connectors at claude.ai, which is why claude_code is null; other clients get the remote URL, and the docs now also walk through ChatGPT, Goose, Zapier and Make. The linked repo is documentation plus an Agent Skill, not the server: the server is closed-source and hosted, the repo is still 6 stars and still last pushed 1 Aug 2026, so judge maintenance by VEED the product rather than by repo activity."
   },
   {
@@ -159,6 +191,12 @@
     "links": { "repo": null, "docs": "https://apatero.ai/mcp", "site": "https://apatero.ai" },
     "added": "2026-09-21",
     "verified": "2026-09-21",
+    "caveats": [
+      "Do not copy the --header claude mcp add form that circulates in search results; it appears nowhere on the vendor's page.",
+      "Both packages have shipped exactly one version (Jul 2026) and the PyPI repository URL 404s, so there is no readable source.",
+      "Social-first (Insta Dump, influencer pipeline); for shot-matched performance on footage you shot, hedra-official, sync-labs or tavus are stronger.",
+      "The vendor says 20 tools while 24 names appear on the page, so treat live tools/list as the count."
+    ],
     "notes": "Endpoint verified alive 21 Sep 2026: an unauthenticated initialize returns 401 asking for 'Authorization: Bearer <ap_live_ key or OAuth access token>' with protected-resource metadata pointing at api.apatero.ai. Tools were not run — there is no anonymous path. Be careful copying install commands for this one from search results or AI summaries: a `claude mcp add --transport http apatero ... --header` form circulates widely and does not appear anywhere on the vendor's own page, which documents only the connector UI for the remote and npx/uvx/brew for local. Both packages exist but each has shipped exactly one version — npm apatero-mcp 0.2.0 and PyPI apatero-studio-mcp 0.2.0, both 10 Jul 2026 — and the repository URL in the PyPI metadata, github.com/Apatero-Org/Monorepo, 404s, so there is no readable source and no public commit history to judge. The vendor page headlines '20 tools' while 24 apatero_ names appear on it, several of them documentation helpers rather than studio tools; treat live tools/list as the count. Positioning is social-first — the Insta Dump and influencer pipeline are aimed at feed content, not narrative coverage — so for shot-matched performance work on footage you actually shot, hedra-official, sync-labs or tavus remain the stronger picks. Generation spends Apatero account credits at app rates with no MCP markup; apatero_credit_balance reports the remainder in chat."
   },
   {
@@ -183,6 +221,12 @@
     "links": { "repo": null, "docs": "https://docs.akool.com/mcp-server", "site": "https://akool.com" },
     "added": "2026-10-04",
     "verified": "2026-10-04",
+    "caveats": [
+      "Copy the command here, not the docs' quick-add line: AKOOL's omits --transport http, and Claude Code then treats the URL as a stdio command.",
+      "Auth is a Client ID and Secret pair sent as headers, so both secrets sit in your client config; use env substitution and never commit them.",
+      "Image-to-video is the only generative-video tool; video translation, lip-sync and streaming avatars are not on the documented list.",
+      "Face swap needs the person's release and a platform-policy check, and the docs say nothing about consent."
+    ],
     "notes": "Checked against AKOOL's own MCP docs on 4 Oct 2026. The endpoint answers a plain GET with 405, which is what a POST-only streamable-HTTP server should do, but no tools were run because there is no anonymous path. Copy the command above rather than the docs' quick-add line: AKOOL's version omits `--transport http`, and without it Claude Code treats the URL as a stdio command. Auth is a Client ID and Client Secret pair sent as x-client-id / x-client-secret headers — no OAuth, so both secrets sit in your client config; the docs say to use env substitution and never commit them. There is no public repo and no local package; the AKOOL-Official GitHub org holds only API demos. Scope is narrower than the AKOOL web app: the only generative-video tool is image-to-video, and video translation, lip-sync and streaming avatars are not on the documented tool list, so for talking-head or dubbing work heygen or sync-labs reach further. Face swap is the headline capability and the docs say nothing about consent — swapping a real person's likeness needs their release and a platform-policy check before it goes anywhere near a cut. Generation spends AKOOL account credits; account_credit reports the balance."
   },
   {
@@ -206,6 +250,12 @@
     "links": { "repo": null, "docs": "https://docs.bithuman.ai/build/mcp", "site": "https://www.bithuman.ai" },
     "added": "2026-10-08",
     "verified": "2026-10-08",
+    "caveats": [
+      "Two servers share the name: the hosted remote speaks only as bitHuman's stock characters and is a demo; your own avatars need the CLI server.",
+      "There is no TTS tool (retired, returns 410), so bring a WAV from elevenlabs, cartesia or a real recording.",
+      "generate_agent takes roughly 2 to 2.5 hours; always pass model (essence-2 or expression-2), and non-human faces return 422.",
+      "Free-plan API access ended 12 Oct 2026, so plan on Creator ($20); the install pipes a remote script into sh, so read it first."
+    ],
     "notes": "Verified 8 Oct 2026 against bitHuman's MCP docs and the official MCP Registry, where ai.bithuman/characters was published that same morning; no tools were run. Two servers share the name and are not the same thing. The hosted remote_url takes no auth and exposes only list_characters, make_character_video (3-200 characters of text) and talk_to_character — the docs say outright it 'speaks only as bitHuman's own characters', so it is a demo, not a pipeline tool. Your own avatars need the CLI server, which is the claude_code command above. There is no text-to-speech tool: list_voices and text_to_speech were retired after CLI 2.8.7 and now return 410, so bring a WAV from elevenlabs, cartesia or a real recording and pass it to render. generate_agent is async and slow — the docs put a second-generation agent at roughly 2-2.5 hours — and always pass model (essence-2 or expression-2) or you get a first-generation agent. Every model except Expression 2 needs a real human face; stylised or non-human subjects return 422 MODEL_SUBJECT_MISMATCH. The cloud talking-video API and knowledge bases have no MCP tool yet, so use the REST API for those. Pricing: Free is $0 with 99 credits a month, Creator $20 for 2,000. bitHuman's pricing page says Free-plan API access ends on 12 October, so plan on Creator. The install line pipes a remote script into sh: read it first. Source is not public — every repo in the bithuman-product GitHub org was archived on 5 Oct 2026 and the registry metadata now points at GitLab — so repo is null. For hosted, OAuth-gated performance work without a local CLI, hedra-official is the simpler connect."
   },
   {
@@ -229,6 +279,12 @@
     "links": { "repo": "https://github.com/itseez3d/craftstory-mcp", "docs": "https://craftstory.com/mcp/", "site": "https://craftstory.com" },
     "added": "2026-10-20",
     "verified": "2026-10-20",
+    "caveats": [
+      "API access needs a paid plan (the README names Producer), and the server is new with no track record yet.",
+      "The hosted remote cannot read local paths, and locally any file path you pass is uploaded to CraftStory, so keep tool approvals on.",
+      "wait_for_job returns after at most 55 s, so expect several polls, and signed result URLs expire after 7 days.",
+      "The OAuth connector needs a fixed public Client ID pasted in; in Claude Code the stdio command is the documented route."
+    ],
     "notes": "Verified 20 Oct 2026 against CraftStory's MCP page, the repo README and npm; no tools were run. The npm package @craftstory/mcp is at 0.6.0 (published 2026-10-14, Node 20+) and maintained from a craftstory.com account; the repo lives in the itseez3d org, is MIT, created 2026-09-12 and pushed 2026-10-14 — new and active, but zero stars, so it has no track record yet. The hosted remote's protected-resource metadata points at an Auth0 tenant, and the README has you paste a fixed public OAuth Client ID (hAlwpyaDeO0CmuEKMibZxiXxtTT09NXL, no secret) into the connector's advanced settings rather than relying on dynamic registration — so in Claude Code the stdio command above is the documented route. The hosted remote cannot read local paths or chat attachments; use public URLs or the request_file_upload one-time page. Locally, any file path you pass is uploaded to CraftStory, so keep tool approvals on. API access needs a paid plan (the README names Producer); generations spend app credits and failed jobs are refunded. Long renders are async and wait_for_job returns after at most 55 s, so expect the agent to poll several times. Signed result URLs expire after 7 days — download masters promptly. For dubbing and translation, heygen reaches further."
   },
   {
@@ -289,6 +345,12 @@
     },
     "added": "2026-10-26",
     "verified": "2026-10-26",
+    "caveats": [
+      "36 versions since July, so expect a fast-moving contract.",
+      "The local stdio server exits immediately without CLIPWRIGHT_API_KEY, and the hosted one cannot read local files.",
+      "Per-second pricing with no plan: 30 credits per finished UGC second and 350 to 420 per faceless video; the 420 trial credits buy one.",
+      "Vertical short-form ad material, not cinema; for dubbing heygen reaches further and craftstory covers long-form presenters."
+    ],
     "notes": "Checked 26 Oct 2026 against the repo, npm, the official MCP Registry and clipwright.io; no paid tools were run. Official despite the personal-account repo: seocombat is the founder of Dimantika sp. z o.o., which the clipwright.io footer names as the operator, and the registry entry sits under the domain-verified io.clipwright namespace. The repo mirrors a private monorepo (MIT, created 25 Sep 2026) and @clipwright/mcp-server has shipped 36 versions since July (0.34.0 on 24 Oct 2026), so expect a fast-moving contract. The hosted remote answers 401 with OAuth protected-resource metadata (authorization code, device code, dynamic registration); a cw_ key also works as a Bearer header for CI. The local stdio server exits immediately without CLIPWRIGHT_API_KEY, and the hosted one cannot read local files, so pass a public URL or upload first. Pricing is per second with no plan: UGC clips cost 30 credits per finished second, faceless videos 350 credits up to 66 s and 420 at 90 s, and packs run $10 for 1,000 to $50 for 6,000 before tax; new accounts get 420 trial credits, enough for one faceless video. Output is vertical short-form ad material, not cinema: for dubbing and translation heygen reaches further, and craftstory covers long-form presenters."
   }
 ]

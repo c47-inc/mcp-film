@@ -78,21 +78,68 @@ for (const server of registry.servers) {
   const html = read(`dist/mcps/${server.slug}/index.html`);
   const title = decode(html.match(/<title>(.*?)<\/title>/)?.[1] ?? "");
   check(`${server.slug} title`, title && title.length <= 80 ? null : `title has ${title.length} characters`);
+  // The description is the tagline followed by " · " facts (Official/Community, hosted/local,
+  // auth, verified date). It must open with the tagline, or a word-boundary prefix of it.
   for (const key of ['name="description"', 'property="og:description"', 'name="twitter:description"']) {
     const match = html.match(new RegExp(`<meta ${key} content="([^"]*)"`));
-    if (key === 'name="twitter:description"' && !match) continue;
     const description = decode(match?.[1] ?? "");
-    const original = `${server.tagline} ${server.description}`;
-    const boundary = original[description.length];
-    check(`${server.slug} ${key}`, description.length <= 160 && /[\p{L}\p{N}.)]$/u.test(description)
-      && original.startsWith(description) && (!boundary || !/[\p{L}\p{N}]/u.test(boundary))
-      ? null : "description is missing, over 160 characters, or ends mid-word");
+    const tagline = server.tagline.trim();
+    const head = description.split(" · ")[0];
+    const boundary = tagline[head.length];
+    check(`${server.slug} ${key}`, description.length <= 155 && /[\p{L}\p{N}.)]$/u.test(description)
+      && tagline.startsWith(head) && (!boundary || !/[\p{L}\p{N}]/u.test(boundary))
+      ? null : `description is missing, over 155 characters, ends mid-word, or does not open with the tagline (${JSON.stringify(description)})`);
   }
-  const pairs = html.match(/<h2>Pairs well with<\/h2>([\s\S]*?)<\/section>/)?.[1];
+  const pairs = html.match(/<h2 id="pairs">Pairs well with<\/h2>([\s\S]*?)<\/section>/)?.[1];
   check(`${server.slug} pairings block`, pairs ? null : "missing Pairs well with block");
   if (pairs?.includes('href="/mcps/martini/"')) martiniPairings++;
+  // Connect is per client: a reader lands on "Connect X to Cursor", not a wall of snippets.
+  check(`${server.slug} connect headings`, /<h3 id="connect-claude-code">/.test(html) ? null : "missing per-client connect heading");
+  // A dead listing never claims to be freshly checked and never pairs with anything live.
+  if (server.status) {
+    check(`${server.slug} status notice`, html.includes('class="status-notice') ? null : "missing status notice");
+    check(`${server.slug} not freshly checked`, html.includes("verify-fresh") ? "dead listing shows Freshly checked" : null);
+  }
+  check(`${server.slug} no installer snippet`, /davinci-resolve-mcp setup<\/code>/.test(html) && !/connect-local/.test(html) ? "installer wizard rendered as a connect command" : null);
 }
 check("featured placement is not a pairing signal", martiniPairings < 40 ? null : `${martiniPairings} pages pair the featured listing`);
+
+// 8. Dead, archived and deprecated servers stay out of every list an agent acts on, and their
+//    status survives every projection build.mjs makes.
+const inactive = registry.servers.filter((s) => s.status);
+const playbooksDoc = JSON.parse(read("dist/api/playbooks.json"));
+const recommendationsDoc = JSON.parse(read("dist/api/recommendations.json"));
+const remotesDoc = JSON.parse(read("dist/api/remotes.json"));
+const clientProfiles = JSON.parse(read("dist/api/client-profiles.json"));
+const mcpRegistry = JSON.parse(read("dist/api/mcp-registry.json"));
+for (const s of inactive) {
+  const listed = [
+    ...playbooksDoc.playbooks.flatMap((p) => [...p.primary_servers, ...p.fallback_servers, ...p.steps.flatMap((st) => st.servers)]),
+    ...recommendationsDoc.recommendations.flatMap((r) => [...r.primary.map((p) => p.server), ...r.fallback_servers]),
+    ...remotesDoc.remotes,
+    ...clientProfiles.starter_examples,
+  ].filter((x) => x.slug === s.slug);
+  check(`${s.slug} excluded from action lists`, listed.length ? `${s.status} listing appears in ${listed.length} agent list(s)` : null);
+  const sub = mcpRegistry.servers.find((r) => r.server._meta["film.mcp/directory"].slug === s.slug);
+  check(`${s.slug} subregistry status`, sub && sub._meta["film.mcp/subregistry"].status !== "active" && sub._meta["film.mcp/subregistry"].directoryStatus === s.status
+    ? null : "subregistry output still says active");
+  check(`${s.slug} markdown twin marks status`, read(`dist/mcps/${s.slug}.md`).includes(`**Status:** ${s.status}`) ? null : "status missing from .md");
+}
+const summaryStatuses = playbooksDoc.playbooks.flatMap((p) => p.primary_servers).every((x) => typeof x.status === "string");
+check("server summaries carry status", summaryStatuses ? null : "playbook server summaries lack status");
+check("remotes carry status", remotesDoc.remotes.every((r) => typeof r.status === "string") ? null : "remote summaries lack status");
+check("mcp-registry never exports the installer wizard", /davinci-resolve-mcp"/.test(read("dist/api/mcp-registry.json")) && read("dist/api/mcp-registry.json").includes('"identifier": "davinci-resolve-mcp"') ? "davinci-resolve-mcp exported as a runnable package" : null);
+
+// 9. Sitemap lists HTML pages only; the 404 is unindexed and claims no canonical.
+const sitemap = read("dist/sitemap.xml");
+check("sitemap is HTML only", /<loc>[^<]*\.(md|json|txt)<\/loc>/.test(sitemap) ? "sitemap lists a machine twin" : null);
+check("sitemap lists playbook pages", sitemap.includes("/playbooks/commercial-sprint/</loc>") ? null : "missing /playbooks/{id}/");
+const notFound = read("dist/404.html");
+check("404 is noindex", /<meta name="robots" content="noindex,follow/.test(notFound) ? null : "404 lacks noindex");
+check("404 has no canonical", notFound.includes('rel="canonical"') ? "404 claims a canonical" : null);
+for (const p of playbooksDoc.playbooks) check(`playbook page ${p.id}`, fs.existsSync(path.join(ROOT, `dist/playbooks/${p.id}/index.html`)) && fs.existsSync(path.join(ROOT, `dist/playbooks/${p.id}.md`)) ? null : "missing page or twin");
+for (const r of recommendationsDoc.recommendations) check(`recommendation page ${r.id}`, fs.existsSync(path.join(ROOT, `dist/recommendations/${r.id}/index.html`)) ? null : "missing page");
+for (const c of registry.categories) check(`category twin ${c.id}`, fs.existsSync(path.join(ROOT, `dist/categories/${c.id}.md`)) ? null : "missing .md twin");
 
 const latestVerified = registry.servers.map((s) => s.verified).sort().at(-1);
 const verifiedLabel = new Date(`${latestVerified}T00:00:00Z`).toLocaleDateString("en-US", {

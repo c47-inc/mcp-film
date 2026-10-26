@@ -13,7 +13,8 @@
     "name": "Martini",
     "url": "https://www.martini.film",
     "blurb": "mcp.film is maintained by the team behind Martini, the film set for AI videos, where people and agents make video together.",
-    "connect_url": "https://www.martini.film/agents"
+    "connect_url": "https://www.martini.film/agents",
+    "runbook_url": "https://mcp.film/martini/connect/"
   },
   "indexnow_key": "c5a7c1c2002f38ba129f0f3d6fc99c73"
 }

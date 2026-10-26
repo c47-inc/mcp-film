@@ -24,10 +24,10 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-      - name: Build site
-        run: node build.mjs
-      - name: Build contract checks
-        run: node scripts/check-build.mjs
+      # The gate is the whole suite: validation, template fixtures, build, build contracts,
+      # recommendation and edge checks. dist/ is left on disk for the deploys below.
+      - name: Build and test
+        run: npm test
       - name: Check Cloudflare secrets
         id: cloudflare
         env:
@@ -71,6 +71,32 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy dist --project-name=mcp-film --branch=main
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+      # IndexNow is told about the canonical host only, so it runs after the Cloudflare
+      # deploy and never after the GitHub Pages fallback. The URL list is every HTML page in
+      # dist/sitemap.xml (capped at IndexNow's 10,000 per request); the key is the one
+      # site.json names and build.mjs publishes as /<key>.txt. A non-2xx answer fails the job.
+      - name: Ping IndexNow
+        if: steps.cloudflare.outputs.skip != 'true'
+        run: |
+          node --input-type=module - <<'EOF'
+          import fs from "node:fs";
+          const site = JSON.parse(fs.readFileSync("data/site.json", "utf8"));
+          const key = site.indexnow_key;
+          if (!key) { console.error("site.json has no indexnow_key"); process.exit(1); }
+          const xml = fs.readFileSync("dist/sitemap.xml", "utf8");
+          const urlList = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)]
+            .map((m) => m[1])
+            .filter((u) => u.endsWith("/"))
+            .slice(0, 10000);
+          const res = await fetch("https://api.indexnow.org/indexnow", {
+            method: "POST",
+            headers: { "Content-Type": "application/json; charset=utf-8" },
+            body: JSON.stringify({ host: site.domain, key, keyLocation: `${site.url}/${key}.txt`, urlList }),
+          });
+          const body = await res.text();
+          console.log(`IndexNow responded ${res.status} for ${urlList.length} URLs${body ? `: ${body.slice(0, 300)}` : ""}`);
+          if (!res.ok) process.exit(1);
+          EOF
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
@@ -84,23 +110,6 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v5
-      - name: Ping IndexNow
-        if: success()
-        continue-on-error: true
-        run: |
-          curl -fsS -X POST "https://api.indexnow.org/indexnow" \
-            -H "Content-Type: application/json; charset=utf-8" \
-            -d '{
-              "host": "mcp.film",
-              "key": "c5a7c1c2002f38ba129f0f3d6fc99c73",
-              "keyLocation": "https://mcp.film/c5a7c1c2002f38ba129f0f3d6fc99c73.txt",
-              "urlList": [
-                "https://mcp.film/",
-                "https://mcp.film/stack/",
-                "https://mcp.film/for-agents/",
-                "https://mcp.film/sitemap.xml"
-              ]
-            }' || true
       - name: Alert on failure
         if: failure()
         env:
