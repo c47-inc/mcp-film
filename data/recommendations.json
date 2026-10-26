@@ -164,7 +164,7 @@
   {
     "id": "transcribe-and-caption",
     "title": "Transcribe dailies and caption the cut",
-    "summary": "Transcription with speaker diarization, then subtitles and captions as SRT or VTT files or burned in, from hosted speech-to-text and local caption tools.",
+    "summary": "Transcription with speaker diarization, then add subtitles and captions as SRT or VTT files or burn them in, from hosted speech-to-text and local caption tools.",
     "best_for": "Interview and documentary transcripts, dialogue logging, subtitles for festival deliverables, closed captions, SRT and VTT export, and burned-in captions for social cuts.",
     "tags": ["transcription", "transcribe", "captions", "captioning", "subtitles", "srt", "vtt", "diarization", "speech-to-text", "stt", "accessibility"],
     "martini_handoff": "Martini is not needed for transcription or captions; use it only if the captioned cut is one the team is already generating and reviewing on a shared Martini timeline.",
@@ -276,7 +276,7 @@
   {
     "id": "podcast-to-video",
     "title": "Turn a podcast or long talking recording into clips",
-    "summary": "Repurpose long talking footage: pick the best moments into ranked clips, remove filler words, add captions, reframe to vertical shorts, and publish or schedule them.",
+    "summary": "Repurpose long talking footage: pick the best moments into ranked clips, remove filler words, caption them, reframe to vertical shorts, and publish or schedule them.",
     "best_for": "Podcast episodes, interviews, webinars, panels and lectures that need highlight clips, shorts, captions and a publishing schedule without a manual edit.",
     "tags": ["podcast", "clips", "shorts", "highlights", "repurpose", "repurposing", "interview", "talking-head", "captions", "vertical", "clipping"],
     "martini_handoff": "Martini is not needed for podcast repurposing; it is built for generated shots, and a clip pass over recorded talking footage has none.",
