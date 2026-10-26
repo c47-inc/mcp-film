@@ -239,6 +239,24 @@
     });
   }
 
+  // ------------------------------------------------ field notes fold (phones)
+  // The static page keeps the h2 + paragraph (what agents read). On screen the pair
+  // becomes a <details> that is closed on phones and open, inert, on wider screens.
+  const notesBody = document.querySelector(".server-main > .notes");
+  const notesHead = notesBody?.previousElementSibling;
+  if (notesBody && notesHead?.tagName === "H2") {
+    const fold = document.createElement("details");
+    fold.className = "notes-fold";
+    const summary = document.createElement("summary");
+    notesHead.replaceWith(fold);
+    summary.append(notesHead);
+    fold.append(summary, notesBody);
+    const wide = matchMedia("(min-width: 720px)");
+    const sync = () => { fold.open = wide.matches; };
+    sync();
+    wide.addEventListener?.("change", sync);
+  }
+
   // ------------------------------------------------------------ feedback
   const fb = document.querySelector(".feedback");
   if (fb) {

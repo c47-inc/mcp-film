@@ -543,6 +543,21 @@ img.avatar { object-fit: cover; background: var(--paper); }
 .server-main h2:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
 .server-main > p, .notes { color: var(--ink-2); max-width: 44rem; font-size: 13.5px; line-height: 1.7; }
 .notes { background: var(--paper-dim); border: 1px solid var(--hairline); border-radius: var(--r); padding: 0.9rem 1.1rem; }
+/* app.js folds "Field notes" into a <details> on phones; the h2 lives inside the summary
+   so the outline is unchanged. Wider screens keep it open and the summary inert. */
+.notes-fold > summary { list-style: none; cursor: pointer; }
+.notes-fold > summary::-webkit-details-marker { display: none; }
+.notes-fold > summary::marker { content: ""; }
+.notes-fold > summary h2 { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.notes-fold > summary h2::after {
+  content: "Show"; font-family: var(--mono); font-size: 10.5px; font-weight: 500;
+  letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-2);
+}
+.notes-fold[open] > summary h2::after { content: "Hide"; }
+@media (min-width: 720px) {
+  .notes-fold > summary { pointer-events: none; }
+  .notes-fold > summary h2::after { content: none; }
+}
 
 .code-block { margin: 0.8rem 0; border: 1px solid var(--hairline); border-radius: var(--r); overflow: hidden; }
 .code-head {
@@ -582,6 +597,21 @@ img.avatar { object-fit: cover; background: var(--paper); }
 }
 
 .server-side { display: flex; flex-direction: column; gap: 10px; }
+/* One column: the aside dissolves into the grid so its Verification and Links boxes
+   can sit right under the tagline, ahead of the ~2,000px of notes and connect blocks,
+   while Capabilities, For agents, and feedback stay at the end. */
+@media (max-width: 919px) {
+  .server-body { gap: 10px; }
+  .server-side { display: contents; }
+  .server-side .verify-box { order: -2; }
+  .server-side .side-box:nth-child(3) { order: -1; }
+  .server-main { order: 0; margin-top: 1.4rem; }
+  .server-side .side-box:nth-child(2) { margin-top: 1.4rem; }
+}
+@media (max-width: 919px) and (min-width: 540px) {
+  .server-body { grid-template-columns: 1fr 1fr; }
+  .server-main, .server-side .side-box:nth-child(n + 2):not(:nth-child(3)) { grid-column: 1 / -1; }
+}
 .side-box {
   border: 1px solid var(--hairline);
   border-radius: var(--r); padding: 13px 15px;
