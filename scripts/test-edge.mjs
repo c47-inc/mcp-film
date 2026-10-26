@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { TOOLS } from "../packages/mcp-server/core.mjs";
-import { markdownTwinPath, prefersMarkdown, mcpGetResponse, SCANNER_PROBE, registryApiResponse } from "../dist/_worker.js";
+import worker, { markdownTwinPath, prefersMarkdown, mcpGetResponse, SCANNER_PROBE, registryApiResponse, canonicalPageFor } from "../dist/_worker.js";
 
 const read = (file) => fs.readFileSync(new URL(`../${file}`, import.meta.url), "utf8");
 
@@ -54,6 +54,50 @@ for (const p of ["/.env", "/wp-admin/", "/phpinfo.php", "/_profiler/phpinfo", "/
 for (const p of ["/mcps/missing-server/", "/capabilities/", "/for-agents.md", "/.well-known/mcp/server.json"]) {
   assert.ok(!SCANNER_PROBE.test(p), p);
 }
+
+// Direct markdown/text twins carry a canonical Link to their HTML page; nothing is noindexed.
+for (const [twin, page] of [
+  ["/mcps/davinci-resolve.md", "/mcps/davinci-resolve/"],
+  ["/categories/editing-post.md", "/categories/editing-post/"],
+  ["/capabilities/text-to-video.md", "/capabilities/text-to-video/"],
+  ["/playbooks.md", "/playbooks/"], ["/router.md", "/router/"], ["/stack.md", "/stack/"], ["/clients.md", "/clients/"],
+  ["/for-agents.md", "/for-agents/"], ["/recommendations.md", "/recommendations/"], ["/remotes.md", "/remotes/"], ["/pulse.md", "/pulse/"],
+  ["/index.md", "/"], ["/llms.txt", "/"], ["/llms-full.txt", "/"],
+]) assert.equal(canonicalPageFor(twin), page, twin);
+for (const p of ["/", "/mcps/davinci-resolve/", "/api/registry.json", "/assets/app.js", "/feed.xml", "/README.md.bak"]) assert.equal(canonicalPageFor(p), null, p);
+const distFile = (pathname) => {
+  const file = pathname === "/" ? "/index.html" : pathname.endsWith("/") ? `${pathname}index.html` : pathname;
+  try {
+    const body = fs.readFileSync(new URL(`../dist${file}`, import.meta.url));
+    const type = file.endsWith(".md") ? "text/markdown; charset=utf-8" : file.endsWith(".txt") ? "text/plain; charset=utf-8" : file.endsWith(".html") ? "text/html; charset=utf-8" : "application/octet-stream";
+    return new Response(body, { status: 200, headers: { "content-type": type } });
+  } catch {
+    return new Response("not found", { status: 404 });
+  }
+};
+const siteEnv = { ASSETS: { fetch: async (req) => distFile(new URL(req.url).pathname) }, POSTHOG_KEY: "", CANONICAL_HOST: "mcp.film" };
+const ctx = { waitUntil: () => {} };
+const realFetch = globalThis.fetch;
+globalThis.fetch = async (input) => { throw new Error(`network call in test: ${typeof input === "string" ? input : input.url}`); };
+try {
+  for (const [twin, page] of [["/mcps/martini.md", "/mcps/martini/"], ["/llms.txt", "/"], ["/index.md", "/"], ["/playbooks.md", "/playbooks/"], ["/capabilities/text-to-video.md", "/capabilities/text-to-video/"]]) {
+    const res = await worker.fetch(new Request(`https://mcp.film${twin}`, { headers: { accept: "*/*" } }), siteEnv, ctx);
+    assert.equal(res.status, 200, twin);
+    assert.equal(res.headers.get("link"), `<https://mcp.film${page}>; rel="canonical"`, twin);
+    assert.ok(!/noindex/i.test(res.headers.get("x-robots-tag") || ""), twin);
+  }
+  const html = await worker.fetch(new Request("https://mcp.film/mcps/martini/", { headers: { accept: "text/html" } }), siteEnv, ctx);
+  assert.equal(html.status, 200);
+  assert.equal(html.headers.get("link"), null, "the HTML page itself carries no Link canonical");
+  const negotiated = await worker.fetch(new Request("https://mcp.film/mcps/martini/", { headers: { accept: "text/markdown" } }), siteEnv, ctx);
+  assert.equal(negotiated.headers.get("link"), "<https://mcp.film/mcps/martini/>; rel=\"canonical\"", "Accept-negotiated twins keep their canonical");
+  const missing = await worker.fetch(new Request("https://mcp.film/mcps/nope.md"), siteEnv, ctx);
+  assert.equal(missing.status, 404);
+  assert.equal(missing.headers.get("link"), null);
+} finally {
+  globalThis.fetch = realFetch;
+}
+console.log("E2: canonical Link on direct markdown twins");
 
 // /v0.1/servers?search= filters by name/description substring, case-insensitively, before paging.
 const builtRegistry = JSON.parse(read("dist/api/mcp-registry.json"));

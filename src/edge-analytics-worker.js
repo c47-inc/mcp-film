@@ -127,15 +127,32 @@ async function markdownTwinResponse(request, env) {
   return response;
 }
 
+// A markdown or text twin fetched directly (/mcps/x.md, /llms.txt) is the same document as
+// its HTML page. Without a canonical, search engines index a few hundred duplicates. The
+// Link header says which page is the original; the twin stays readable for LLM fetchers
+// (no noindex). Exported for scripts/test-edge.mjs.
+export function canonicalPageFor(pathname) {
+  if (pathname === "/index.md" || pathname === "/llms.txt" || pathname === "/llms-full.txt") return "/";
+  const m = /^(\/[a-z0-9/-]+)\.md$/.exec(pathname);
+  return m ? `${m[1]}/` : null;
+}
+
 async function pageResponse(request, env) {
   const response = await env.ASSETS.fetch(assetRequestFor(request));
+  const url = new URL(request.url);
   // HTML pages negotiate to their markdown twin on Accept; the <link rel="alternate"> in
   // the page head already advertises the twin, so only the cache key needs telling.
   if (request.method === "GET" && response.ok && /text\/html/i.test(response.headers.get("content-type") || "")
-    && markdownTwinPath(new URL(request.url).pathname)) {
+    && markdownTwinPath(url.pathname)) {
     const page = new Response(response.body, response);
     page.headers.append("vary", "Accept");
     return page;
+  }
+  const canonical = /^(GET|HEAD)$/.test(request.method) && response.ok ? canonicalPageFor(url.pathname) : null;
+  if (canonical) {
+    const twin = new Response(response.body, response);
+    twin.headers.set("link", `<${url.origin}${canonical}>; rel="canonical"`);
+    return twin;
   }
   return response;
 }
