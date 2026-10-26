@@ -3,6 +3,7 @@
 // status filtering, install validation and the Martini runbook. Run after `node build.mjs`.
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import http from "node:http";
 import { spawn } from "node:child_process";
 import { makeCallTool, TOOLS, PROTOCOL_VERSIONS, negotiateProtocolVersion, initializeResult, SERVER_INSTRUCTIONS } from "../packages/mcp-server/core.mjs";
 import { mcpHandleMessage } from "../dist/_worker.js";
@@ -37,21 +38,27 @@ assert.equal(edgeInit.result.protocolVersion, "2025-11-25");
 assert.equal(edgeInit.result.instructions, SERVER_INSTRUCTIONS);
 assert.equal((await mcpHandleMessage({ jsonrpc: "2.0", id: 2, method: "initialize", params: { protocolVersion: "2025-03-26" } }, call)).result.protocolVersion, "2025-03-26");
 
-// Stdio server: spawn it offline and drive one initialize + tools/list.
-async function stdio(messages) {
+// Stdio server: spawn it (offline unless told otherwise) and drive a few messages.
+// `messages` may contain a number: a pause in milliseconds before the next message.
+async function stdio(messages, env = { MCP_FILM_OFFLINE: "1" }) {
   const child = spawn(process.execPath, [new URL("../packages/mcp-server/server.mjs", import.meta.url).pathname], {
-    env: { ...process.env, MCP_FILM_OFFLINE: "1" },
+    env: { ...process.env, ...env },
     stdio: ["pipe", "pipe", "inherit"],
   });
   let out = "";
-  const wanted = messages.filter((m) => m.id !== undefined).length;
+  const wanted = messages.filter((m) => typeof m === "object" && m.id !== undefined).length;
   await new Promise((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error("stdio server timed out")), 15000);
     child.stdout.on("data", (d) => {
       out += d;
       if (out.split("\n").filter(Boolean).length >= wanted) { clearTimeout(timer); resolve(); }
     });
-    for (const m of messages) child.stdin.write(JSON.stringify(m) + "\n");
+    (async () => {
+      for (const m of messages) {
+        if (typeof m === "number") await new Promise((r) => setTimeout(r, m));
+        else child.stdin.write(JSON.stringify(m) + "\n");
+      }
+    })();
   });
   child.kill();
   return out.split("\n").filter(Boolean).map((l) => JSON.parse(l));
@@ -305,5 +312,36 @@ assert.ok(!/auth gates/.test(toolByName.get_film_playbook.description + toolByNa
 assert.ok(/capabilities, taglines and descriptions/.test(toolByName.plan_film_stack.description));
 assert.ok(/opt-in/.test(toolByName.get_catalog_pulse.description));
 console.log(`M6: ${JSON.stringify({ valid_clients: validClients, bike: bike.message })}`);
+
+// ---- 7. server.mjs data cache: snapshot fallback is labelled; live data expires and is refreshed in the background.
+const pulseCall = (id) => ({ jsonrpc: "2.0", id, method: "tools/call", params: { name: "get_catalog_pulse", arguments: { section: "summary" } } });
+const [offlinePulse] = await stdio([pulseCall(1)]);
+assert.equal(offlinePulse.result.structuredContent.value.data_source, "bundled snapshot");
+assert.match(offlinePulse.result.structuredContent.value.observed_at, /^\d{4}-\d{2}-\d{2}T/);
+
+const served = { count: 0 };
+const fixture = http.createServer((req, res) => {
+  served.count += 1;
+  const file = req.url.replace(/\?.*$/, "");
+  try {
+    res.setHeader("content-type", "application/json");
+    res.end(read(`dist${file}`));
+  } catch {
+    res.statusCode = 404;
+    res.end("{}");
+  }
+});
+await new Promise((r) => fixture.listen(0, "127.0.0.1", r));
+const base = `http://127.0.0.1:${fixture.address().port}`;
+const [live1, live2, live3] = await stdio(
+  [pulseCall(1), pulseCall(2), 400, pulseCall(3), 400, pulseCall(4)],
+  { MCP_FILM_API_BASE: base, MCP_FILM_CACHE_TTL_MS: "150" },
+);
+fixture.close();
+assert.equal(live1.result.structuredContent.value.data_source, "live");
+assert.equal(live2.result.structuredContent.value.observed_at, live1.result.structuredContent.value.observed_at, "inside the TTL the cached copy is served");
+assert.ok(served.count >= 2, `fixture served ${served.count} requests: a stale copy triggers a background refresh`);
+assert.ok(live3.result.structuredContent.value.observed_at >= live1.result.structuredContent.value.observed_at);
+console.log(`M7: ${JSON.stringify({ offline: offlinePulse.result.structuredContent.value.data_source, fixture_requests: served.count })}`);
 
 console.log("✓ mcp server checks passed");
