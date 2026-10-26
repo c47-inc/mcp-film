@@ -157,5 +157,52 @@
     "added": "2026-08-22",
     "verified": "2026-10-01",
     "notes": "Renamed: FilmMap became Movie Scene Map on 1 September 2026, and thefilmmap.com now 301s to moviescenemap.com. The repo README (re-checked 2026-10-01; pushed 2026-09-08, MIT, still 0 stars, one personal account) names https://moviescenemap.com/mcp as the endpoint and says the old https://thefilmmap.com/mcp keeps answering for clients configured before the rename \u2014 but the official MCP registry still lists com.thefilmmap/filming-locations v1.1.0 at the old address, so registry-driven clients will be pointed there until it is republished. Stateless streamable HTTP, POST-only; a GET returning 405 is correct. The docs publish a JSON client config rather than a per-client command; the claude mcp add line above is that endpoint in Claude Code form. The atlas roughly doubled with the rename (31,115 locations, 177 countries, per the data page) and counts move with every deploy \u2014 trust get_statistics over any figure quoted here. Read the medium distinction before quoting anything: films and series carry real filming locations (Wikidata P915), while games, anime and manga carry narrative settings (P840) and were filmed nowhere, and the server labels each record so an agent does not conflate them. Some links now come from a production's English Wikipedia Filming section rather than Wikidata; those arrive in separate fields under CC BY-SA 4.0 and must be cited as 'per Wikipedia'. Coverage is uneven \u2014 some productions are placed at country level only, and the unplaceable ones are listed at moviescenemap.com/gaps/. A place is not a scene: there is no shot-level granularity, so this narrows a recce list, it does not replace one. The factual dataset is CC0; Commons photographs and some city permit datasets keep their own attribution terms."
+  },
+  {
+    "slug": "objekts-production-desk",
+    "name": "objekts Production Desk",
+    "vendor": "objekts",
+    "official": true,
+    "category": "story-preproduction",
+    "featured": false,
+    "tagline": "Preflights an AI or VFX production brief for locks, continuity, asset fitness and the first proof of concept.",
+    "description": "A hosted MCP from objekts, a visual-production studio, that takes a structured brief — objective, deliverables, reference assets with hard and soft locks, per-element routes across live action, CGI and AI generation — and returns a compact readiness verdict: at most three decisions, one proof of concept, three blocking inputs. Useful as a gate before an agent starts spending generation credits on a commercial or VFX-heavy job. It does not generate images or video.",
+    "capabilities": [
+      "production-preflight",
+      "continuity-locks",
+      "asset-fitness",
+      "poc-planning",
+      "budget-estimates",
+      "human-review-handoff",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "diagnose_production",
+      "estimate_production",
+      "create_upload_session",
+      "submit_production_brief",
+      "get_production_brief_status",
+      "update_production_brief",
+      "delete_production_brief"
+    ],
+    "install": {
+      "claude_code": null,
+      "remote_url": "https://mcp.objekts.ai/mcp",
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "none",
+      "env_var": null,
+      "key_url": "No account or key; submitting a brief for human review asks for an email or Telegram contact"
+    },
+    "pricing": "free",
+    "links": {
+      "repo": "https://github.com/peach420fuzz/objekts-production-desk",
+      "docs": "https://mcp.objekts.ai/install",
+      "site": "https://objekts.ai/"
+    },
+    "added": "2026-10-26",
+    "verified": "2026-10-26",
+    "notes": "Checked live 26 Oct 2026: initialize answers on protocol 2025-11-25 and 2025-06-18 as objekts-production-desk 0.1.0, stateless and without auth, and tools/list returns the seven tools above. A diagnose_production call with a minimal brief returned a BRIEFABLE verdict. Protocol 2026-07-28 is rejected with HTTP 400, so clients that only speak the new stateless protocol cannot connect until objekts ships its announced upgrade. The vendor documents only Claude's Connectors UI, so no Claude Code command is listed; the generic remote URL works. It is a free front door to a commercial studio: estimate_production returns directional ranges in roubles, and four tools upload files or submit, update or delete a brief for human review by objekts — keep those behind explicit confirmation. Diagnosis needs heavy structured input (a 12-flag readiness object, assets with lock domains) and gives back a terse verdict, so thin briefs get thin answers. The registry entry ai.objekts.mcp/production-desk confirms the publisher's domain, but the GitHub repo sits on a personal account, carries no licence, and holds manifests and marketing docs rather than server source. Version numbers disagree: the live server reports 0.1.0, the registry's latest is 0.1.3, and the repo's server.json says 0.1.4."
   }
 ]

@@ -230,5 +230,65 @@
     "added": "2026-10-20",
     "verified": "2026-10-20",
     "notes": "Verified 20 Oct 2026 against CraftStory's MCP page, the repo README and npm; no tools were run. The npm package @craftstory/mcp is at 0.6.0 (published 2026-10-14, Node 20+) and maintained from a craftstory.com account; the repo lives in the itseez3d org, is MIT, created 2026-09-12 and pushed 2026-10-14 — new and active, but zero stars, so it has no track record yet. The hosted remote's protected-resource metadata points at an Auth0 tenant, and the README has you paste a fixed public OAuth Client ID (hAlwpyaDeO0CmuEKMibZxiXxtTT09NXL, no secret) into the connector's advanced settings rather than relying on dynamic registration — so in Claude Code the stdio command above is the documented route. The hosted remote cannot read local paths or chat attachments; use public URLs or the request_file_upload one-time page. Locally, any file path you pass is uploaded to CraftStory, so keep tool approvals on. API access needs a paid plan (the README names Producer); generations spend app credits and failed jobs are refunded. Long renders are async and wait_for_job returns after at most 55 s, so expect the agent to poll several times. Signed result URLs expire after 7 days — download masters promptly. For dubbing and translation, heygen reaches further."
+  },
+  {
+    "slug": "clipwright",
+    "name": "Clipwright MCP",
+    "vendor": "Clipwright (Dimantika sp. z o.o.)",
+    "official": true,
+    "category": "avatars-performance",
+    "featured": false,
+    "tagline": "Vertical AI-actor talking-head clips and faceless narrated shorts, with a free quote before each render.",
+    "description": "Clipwright's own server turns a script into a 1080x1920 MP4 of a stock or custom AI actor speaking it, or a script or brief into a faceless short of up to 90 seconds: narration over an opening animated clip and image scenes. Every paid tool has a free quote twin, renders are async (a run id, then get_run), and faceless cuts can be revised shot by shot without paying again for the shots you keep. For a filmmaker-agent it is a presenter pipeline for UGC-style ads and promos, with single image and clip generation on the same credit balance.",
+    "capabilities": [
+      "avatar-video",
+      "talking-head",
+      "ugc-ads",
+      "faceless-video",
+      "vertical-video",
+      "text-to-video",
+      "text-to-image",
+      "custom-actors",
+      "shot-revision",
+      "cost-preview",
+      "async-jobs",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "quote_ugc",
+      "make_ugc",
+      "quote_faceless",
+      "make_faceless",
+      "get_run",
+      "get_run_shots",
+      "quote_revision",
+      "revise_run",
+      "list_actors",
+      "create_actor",
+      "list_voices",
+      "generate_image",
+      "generate_video",
+      "upload_image",
+      "get_account"
+    ],
+    "install": {
+      "claude_code": "claude mcp add --transport http clipwright https://mcp.clipwright.io/mcp",
+      "remote_url": "https://mcp.clipwright.io/mcp",
+      "stdio_command": "npx -y -p @clipwright/mcp-server clipwright-mcp"
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": "CLIPWRIGHT_API_KEY",
+      "key_url": "The hosted remote signs in with OAuth (browser or device code); the local stdio server and headless clients use a cw_ key from https://app.clipwright.io/api-keys"
+    },
+    "pricing": "credits",
+    "links": {
+      "repo": "https://github.com/seocombat/clipwright-mcp",
+      "docs": "https://clipwright.io/docs",
+      "site": "https://clipwright.io"
+    },
+    "added": "2026-10-26",
+    "verified": "2026-10-26",
+    "notes": "Checked 26 Oct 2026 against the repo, npm, the official MCP Registry and clipwright.io; no paid tools were run. Official despite the personal-account repo: seocombat is the founder of Dimantika sp. z o.o., which the clipwright.io footer names as the operator, and the registry entry sits under the domain-verified io.clipwright namespace. The repo mirrors a private monorepo (MIT, created 25 Sep 2026) and @clipwright/mcp-server has shipped 36 versions since July (0.34.0 on 24 Oct 2026), so expect a fast-moving contract. The hosted remote answers 401 with OAuth protected-resource metadata (authorization code, device code, dynamic registration); a cw_ key also works as a Bearer header for CI. The local stdio server exits immediately without CLIPWRIGHT_API_KEY, and the hosted one cannot read local files, so pass a public URL or upload first. Pricing is per second with no plan: UGC clips cost 30 credits per finished second, faceless videos 350 credits up to 66 s and 420 at 90 s, and packs run $10 for 1,000 to $50 for 6,000 before tax; new accounts get 420 trial credits, enough for one faceless video. Output is vertical short-form ad material, not cinema: for dubbing and translation heygen reaches further, and craftstory covers long-form presenters."
   }
 ]

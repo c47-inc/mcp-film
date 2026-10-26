@@ -628,5 +628,61 @@
     "added": "2026-10-19",
     "verified": "2026-10-19",
     "notes": "Verified 19 Oct 2026 from the repo, npm and wavespeed.ai/docs/mcp. MIT, 34 stars, repo pushed and npm @wavespeed/mcp 1.0.11 published that same day; the package has existed only since 19 Aug 2026, so it is young and moving fast. api.wavespeed.ai/mcp answers 405 to a plain GET, as a streamable-HTTP endpoint should. The good: get_price discloses which inputs its quote ignored (unpriced_inputs) instead of passing off a floor as the price, and run_model rejects input keys the model does not accept before you are charged. The caveats: the vendor says the quote is an estimate and the amount actually charged is what counts; the hosted server cannot read local files, so pass public URLs or use its create_upload flow, while @path uploads work only in the npx version; and on the hosted server run_model waits at most 100 seconds (1,800 locally) before handing back a prediction id to poll with get_prediction. Deleting the 'MCP · <app>' key disconnects a client. A separate community Python package called WavespeedMCP exists; this entry is the vendor's own. The lane is crowded — compare fal, replicate, runware and atlas-cloud on catalogue and price."
+  },
+  {
+    "slug": "popnow",
+    "name": "PopNow MCP",
+    "vendor": "PopNow",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "PopNow's hosted MCP: one OAuth URL onto its credit-priced video, image, music and speech roster.",
+    "description": "PopNow runs a first-party remote MCP that exposes its consumer studio's model catalogue to an agent: text-to-video and image-to-video on Kling, Seedance, Wan, Vidu and MiniMax, stills on Nano Banana, GPT Image, Flux and Seedream, Suno-backed music and multi-voice speech. Long renders return a job id that get_job collects, and list_models returns per-model credit prices, so a filmmaker-agent can price a shot list before it spends anything. Effects, background removal and upscaling come on the same connection.",
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "text-to-image",
+      "image-editing",
+      "music-generation",
+      "tts",
+      "upscaling",
+      "background-removal",
+      "video-effects",
+      "async-jobs",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "create_video",
+      "create_image",
+      "edit_image",
+      "create_music",
+      "create_speech",
+      "apply_effect",
+      "upscale",
+      "remove_background",
+      "get_job",
+      "list_models",
+      "check_balance",
+      "list_my_creations"
+    ],
+    "install": {
+      "claude_code": "claude mcp add --transport http popnow https://api.popnow.ai/mcp",
+      "remote_url": "https://api.popnow.ai/mcp",
+      "stdio_command": "npx -y @popnow/mcp (stdio bridge to the same remote; requires POPNOW_API_KEY)"
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": "POPNOW_API_KEY",
+      "key_url": "Browser OAuth against https://api.popnow.ai for the hosted remote; the stdio bridge and scripts use an sk-popnow- key from https://popnow.ai/api/console/keys"
+    },
+    "pricing": "credits",
+    "links": {
+      "repo": "https://github.com/popnow-ai/popnow-mcp",
+      "docs": "https://popnow.ai/mcp",
+      "site": "https://popnow.ai"
+    },
+    "added": "2026-10-26",
+    "verified": "2026-10-26",
+    "notes": "Checked 26 Oct 2026. An initialize POST to https://api.popnow.ai/mcp (protocol 2025-06-18 and 2025-11-25) returns 401 with a WWW-Authenticate pointing at protected-resource metadata that names api.popnow.ai as the authorization server, with S256 PKCE, refresh tokens and dynamic client registration. There is no anonymous tools/list, so the tool names above come from the vendor README, not a live call. The repo (MIT, created 18 Oct 2026) holds setup docs, server.json and the @popnow/mcp stdio bridge only; the backend is closed. The official MCP Registry lists io.github.popnow-ai/popnow-mcp 0.1.0 as active. Billing is credit packs with no subscription, $9 for 9,000 credits up to $99 for 120,000 (1 credit = $0.001); PopNow prices a default 5-second MiniMax H3 clip at 185 credits. Jobs under 300 credits start without a confirmation step, so an agent can spend unprompted below that line: keep client approvals on and watch check_balance. OAuth spends website credits while an API key spends a separate USD API balance, and the two do not transfer. Music runs on Suno v6, and Suno has no official public API, so treat those tracks with the same ToS caution as any Suno reseller. The org and repo are about a week old; expect churn."
   }
 ]
