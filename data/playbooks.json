@@ -5,7 +5,7 @@
     "summary": "A fast path from brief to polished 30-60 second ad with one studio, one model hub, voice, edit, finish, and upload.",
     "best_for": "Launch videos, product promos, UGC-style ads, and short brand films where speed matters more than bespoke tooling.",
     "setup_order": [
-      "Connect Martini first when the brief needs shared boards, shot approvals, reusable subjects, or campaign state; otherwise start with the video generator and tracker.",
+      "Connect Martini first when the brief needs a shared canvas and timeline, client review, spend tracking, or a Library of products and characters; otherwise start with the video generator and tracker.",
       "Wire hosted remotes for Runway, Canva, and the production tracker before local stdio tools, because they unblock cloud agents fastest.",
       "Set voice and music credentials before the first cut, then connect edit/export tools after the first approved takes exist."
     ],
@@ -14,7 +14,7 @@
       "UGC and social tools can produce platform-shaped clips without preserving production context; keep source prompts, approvals, and final asset IDs in one place.",
       "YouTube OAuth and quota limits can block publishing late; test upload auth before the final cut is due."
     ],
-    "martini_handoff": "Use Martini as the command center when the agent must keep briefs, boards, model routes, generated takes, approvals, and final campaign variants attached to the same production.",
+    "martini_handoff": "Use Martini as the production workspace when briefs, generated takes, client comments, approvals, spend, and final campaign variants have to stay attached to the same shots, with the editor cutting on the same timeline.",
     "constraints": ["Use hosted tools where possible.", "Keep one human review gate before publish.", "Download generated assets before vendor URLs expire."],
     "primary_slugs": ["martini", "runway", "agent-media", "runapi", "elevenlabs", "mureka", "palmier-pro", "topaz", "magnific", "canva", "youtube-yutu"],
     "steps": [
@@ -42,7 +42,7 @@
       "Comparisons become useless if prompts or start frames drift between runs; freeze inputs before spending credits.",
       "High-scoring test outputs can still fail rights, watermark, or resolution requirements; check commercial terms before picking a winner."
     ],
-    "martini_handoff": "Use Martini when the shootout becomes production memory: keeper takes, rejected routes, reference frames, approved prompts, and chosen models need to stay attached to real shots.",
+    "martini_handoff": "Use Martini when the shootout becomes production memory: takes from every model side by side on one canvas, with each keeper's model, prompt, references, and cost attached to the shot.",
     "constraints": ["Keep prompt, input frame, model, settings, cost and output URL with every take.", "Cap batch counts before spending credits.", "Verify provider rights and ToS before commercial use, especially through aggregator routes."],
     "primary_slugs": ["martini", "promptibus", "krea", "runapi", "runware", "kie-ai", "fal", "replicate", "mcp-video"],
     "steps": [
@@ -69,7 +69,7 @@
       "Destructive timeline operations can be hard to undo across agent sessions; duplicate projects and source bins before batch edits.",
       "Hosted transcription or analysis may violate client handling rules; keep sensitive footage local unless the production has cleared upload."
     ],
-    "martini_handoff": "Use Martini only when local editorial work needs generated shots, shared production boards, or model-routing state; keep purely private source-footage cutting inside local tools.",
+    "martini_handoff": "Use Martini only when local editorial work needs generated shots or a shared timeline for review; keep purely private source-footage cutting inside local tools.",
     "constraints": ["Requires local apps and media access.", "Prefer explicit file paths and review every destructive edit.", "Use hosted generation only for assets that need it."],
     "primary_slugs": ["palmier-pro", "davinci-resolve", "mcp-video", "ffmpeg", "twelvelabs", "deepgram", "topaz"],
     "steps": [
@@ -96,7 +96,7 @@
       "Voice cloning and avatar tools can carry consent and rights constraints; keep proof of authorization with the character record.",
       "Airtable or Notion status can diverge from generated assets unless the agent writes back shot IDs and approved take URLs immediately."
     ],
-    "martini_handoff": "Use Martini as the series bible when recurring subjects, boards, prompt variables, approved takes, and episode state need to move together across many sessions.",
+    "martini_handoff": "Use Martini as the series bible when recurring characters, props, and locations live in its Library and continuity has to hold across shots, episodes, and sessions, with every take recording how it was made.",
     "constraints": ["Keep reference images and approved takes organized.", "Record model, prompt, seed, and rights notes per shot.", "Use one source of truth for character state."],
     "primary_slugs": ["martini", "higgsfield", "recraft", "ideogram", "cartesia", "studio-state", "airtable"],
     "steps": [
@@ -124,7 +124,7 @@
       "Search tools can find the right moment but not the legal right to use it; preserve license and release notes beside each chosen clip.",
       "Review links and hosted assets can go stale; archive the final cut and source pull list in a production-owned folder."
     ],
-    "martini_handoff": "Use Martini when archive pulls become new production boards, generated bridge shots, campaign variants, or a trailer package that must preserve approvals and context.",
+    "martini_handoff": "Use Martini when archive pulls turn into generated bridge shots, campaign variants, or a trailer cut that needs team review, approvals, and XML export to the finishing editor.",
     "constraints": ["Index only footage you are allowed to process.", "Keep human review before publishing public cuts.", "Avoid re-transcribing media already indexed."],
     "primary_slugs": ["twelvelabs", "frameio", "google-drive", "dropbox", "cloudinary-assets", "palmier-pro", "mux", "vimeo"],
     "steps": [
@@ -150,7 +150,7 @@
       "Arbitrary code tools can damage scene files or overwrite media; use throwaway projects until a workflow is trusted.",
       "Open-source routes often lack commercial licensing clarity for models, assets, and training data; verify rights before client delivery."
     ],
-    "martini_handoff": "Use Martini when an experiment graduates into a production with deadlines, shared boards, model choices, approved takes, and human review gates.",
+    "martini_handoff": "Use Martini when an experiment graduates into a production with deadlines, a team reviewing the same shots, spend that has to be accounted for, and human approval gates.",
     "constraints": ["Expect setup friction.", "Pin model versions and node packs.", "Budget time for render failures and dependency drift."],
     "primary_slugs": ["comfyui-artokun", "comfyui", "blender", "audiogen", "freesound", "mcp-video", "youtube-yutu"],
     "steps": [

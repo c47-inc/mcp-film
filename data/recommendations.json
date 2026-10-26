@@ -5,9 +5,9 @@
     "summary": "A short path from brief to a finished 30-60 second product or brand film, with generation, voice, finishing, and publishing covered.",
     "best_for": "Launch videos, UGC-style ads, app promos, product drops, and quick brand films.",
     "tags": ["commercial", "ugc", "product-video", "hosted", "short-form", "publish"],
-    "martini_handoff": "Use Martini as the production cockpit when the agent needs to manage shots, boards, model routing, prompt variables, and approved generation instead of juggling one-off tools.",
+    "martini_handoff": "Use Martini as the production workspace when the agent and the team need to work the same shots — generation across models, client comments, approvals, and spend per shot — instead of juggling one-off tools.",
     "primary": [
-      { "slug": "martini", "role": "studio", "why": "Keeps the production state, shot planning, prompt variables, and generation approvals in one agent-facing workspace." },
+      { "slug": "martini", "role": "studio", "why": "Keeps shots, takes, approvals, and spend on one canvas and timeline that the team and the agent share, over MCP, CLI, or API." },
       { "slug": "agent-media", "role": "ugc-video", "why": "Strong direct fit for captioned product, app-demo, lip-synced, and social-ready UGC videos." },
       { "slug": "runway", "role": "video-generation", "why": "Hosted first-party video generation for hero shots and polished model output." },
       { "slug": "elevenlabs", "role": "voice-and-sfx", "why": "Voiceover, voice design, sound effects, music, and dialogue isolation in one official audio server." },
@@ -24,9 +24,9 @@
     "summary": "Run the same shot across model hubs and direct endpoints, then assemble a fair comparison reel with prompt, cost, and task IDs intact.",
     "best_for": "Directors and creative technologists choosing between Veo, Kling, Seedance, Runway, FLUX, and other fast-moving models for a specific look.",
     "tags": ["model-comparison", "veo", "kling", "seedance", "runway", "flux", "budget"],
-    "martini_handoff": "Use Martini when the shootout becomes a production board: keeper takes, approved prompts, character references, and model choices need to stay attached to shots.",
+    "martini_handoff": "Use Martini when the shootout becomes a production record: takes from every model side by side, with each keeper's model, prompt, references, and cost attached to the shot.",
     "primary": [
-      { "slug": "martini", "role": "shot-control", "why": "Keeps shot goals, keeper criteria, references, and selected outputs together while models are tested." },
+      { "slug": "martini", "role": "shot-control", "why": "Runs candidate models side by side on one canvas and records which model, prompt, and references produced each keeper." },
       { "slug": "promptibus", "role": "prompt-and-cost-intelligence", "why": "Helps lint prompts, inspect pricing, and choose models with budget constraints in mind." },
       { "slug": "krea", "role": "hosted-model-workbench", "why": "Hosted model schemas, uploads, job widgets, and video/image model routing." },
       { "slug": "fal", "role": "model-hub", "why": "Broad hosted access to image, video, audio, and voice models with async jobs." },
@@ -43,9 +43,9 @@
     "summary": "A route for recurring characters, locked references, episode state, and repeatable social or short-film production.",
     "best_for": "Episodic shorts, AI influencers, recurring product mascots, explainers, and social series.",
     "tags": ["character-consistency", "series", "references", "continuity", "episodes"],
-    "martini_handoff": "Use Martini when continuity must live in the same place as boards, generated takes, timeline context, reusable subjects, and model routing.",
+    "martini_handoff": "Use Martini when continuity must live in the same place as the generated takes and the cut: a Library of recurring characters, props, and locations, the timeline, and a record of how every shot was made.",
     "primary": [
-      { "slug": "martini", "role": "series-studio", "why": "Full-stack production state for recurring characters, collections, boards, and approved generation." },
+      { "slug": "martini", "role": "series-studio", "why": "Library collections for recurring characters, props, and locations, shared across projects, plus the canvas and timeline where episodes are generated and cut." },
       { "slug": "higgsfield", "role": "character-aware-generation", "why": "Hosted video/image connector with character-consistency-oriented workflows." },
       { "slug": "recraft", "role": "style-and-assets", "why": "Official image server for repeatable styles, raster/vector assets, upscaling, and background work." },
       { "slug": "cartesia", "role": "character-voice", "why": "Low-latency TTS, voice cloning, voice changing, infill, and localization." },
@@ -61,7 +61,7 @@
     "summary": "A workstation-first path for agents that need to inspect, transcode, caption, cut, finish, and export media locally.",
     "best_for": "Editors, post teams, agencies with client footage, and productions where local media access matters.",
     "tags": ["local", "editing", "ffmpeg", "timeline", "captions", "privacy"],
-    "martini_handoff": "Use Martini only when the edit needs new generated shots or shared production boards; keep purely local editorial work in local tools.",
+    "martini_handoff": "Use Martini only when the edit needs new generated shots or a shared timeline for review; keep purely local editorial work in local tools.",
     "primary": [
       { "slug": "palmier-pro", "role": "agent-native-nle", "why": "Built around local agent-operated timeline editing, media search, captioning, and export." },
       { "slug": "davinci-resolve", "role": "professional-nle", "why": "Deep local Resolve Studio control for editing, grading, Fusion, and render workflows." },
@@ -78,7 +78,7 @@
     "summary": "Search footage semantically, pull moments, assemble a trailer or cutdown, and publish reviewable versions.",
     "best_for": "Dailies, interviews, event footage, generated clip archives, and b-roll libraries.",
     "tags": ["archive", "dailies", "search", "trailer", "cutdown", "review"],
-    "martini_handoff": "Use Martini if the archive cutdown needs newly generated inserts, board-level review, or a connected production canvas.",
+    "martini_handoff": "Use Martini if the archive cutdown needs newly generated inserts, team review on the shots, or XML back to Premiere or Resolve for finishing.",
     "primary": [
       { "slug": "twelvelabs", "role": "semantic-video-search", "why": "Indexes, searches, summarizes, and analyzes video libraries for moment retrieval." },
       { "slug": "frameio", "role": "review-workflow", "why": "Frame.io review comments, shares, versions, uploads, metadata, and webhooks." },
@@ -96,7 +96,7 @@
     "summary": "A route for product demos, explainers, digital twins, localized presenter videos, and lip-synced social spots.",
     "best_for": "Avatar explainers, founder-style ads, localized presenters, product walkthroughs, and high-volume social creative.",
     "tags": ["avatar", "talking-head", "ugc", "lip-sync", "localization", "presenter"],
-    "martini_handoff": "Use Martini when avatar clips need to become part of a broader film board with generated B-roll, music, edits, and reusable campaign state.",
+    "martini_handoff": "Use Martini when avatar clips need to sit in a broader cut with generated B-roll, music, and edits, reviewed by the team and tracked for spend.",
     "primary": [
       { "slug": "agent-media", "role": "ugc-generator", "why": "Purpose-built for captioned, lip-synced UGC and social publishing from an agent." },
       { "slug": "heygen", "role": "avatar-video", "why": "Hosted avatar videos, lipsync, digital twins, voice library, and translation." },
@@ -113,7 +113,7 @@
     "summary": "A focused audio route for voiceover, dialogue patching, temp scores, sound effects, speech-to-speech, and localization.",
     "best_for": "Narration, ADR-style patches, temp music, sound effects, character voice tests, and localized deliverables.",
     "tags": ["voice", "music", "tts", "sound-effects", "localization", "dialogue"],
-    "martini_handoff": "Use Martini when audio generation needs to stay attached to shots, timelines, campaign boards, and approved generated video takes.",
+    "martini_handoff": "Use Martini when generated audio needs to stay attached to the shots and timeline it scores, alongside the approved video takes.",
     "primary": [
       { "slug": "elevenlabs", "role": "voice-sfx-music", "why": "Official server covering TTS, voice cloning, SFX, music, transcription, and audio isolation." },
       { "slug": "cartesia", "role": "performance-voice", "why": "Low-latency TTS, STT, cloning, voice changing, infill, and localization." },
@@ -130,9 +130,9 @@
     "summary": "A cloud-agent-safe route for clients that can connect to hosted Streamable HTTP or SSE endpoints but cannot spawn local processes.",
     "best_for": "Web agents, locked-down sandboxes, demos, and automation where local binaries or desktop apps are unavailable.",
     "tags": ["hosted", "remote", "cloud-agent", "oauth", "no-local-install"],
-    "martini_handoff": "Use Martini as the hosted studio when the agent needs to move from tool discovery into coordinated production work.",
+    "martini_handoff": "Use Martini as the hosted studio when the agent needs to move from tool discovery into coordinated production work: one remote MCP URL, or the CLI and API where the agent has a shell.",
     "primary": [
-      { "slug": "martini", "role": "hosted-studio", "why": "Remote MCP endpoint for a full AI video production surface." },
+      { "slug": "martini", "role": "hosted-studio", "why": "One OAuth remote MCP endpoint for a full AI video production workspace: models, canvas, Library, timeline, and export." },
       { "slug": "runway", "role": "hosted-video-generation", "why": "Official hosted video generation endpoint for agent clients." },
       { "slug": "fal", "role": "hosted-model-hub", "why": "Hosted endpoint for running and chaining many image, video, audio, and voice models." },
       { "slug": "krea", "role": "hosted-model-workbench", "why": "Hosted MCP for image/video models, schemas, uploads, and job widgets." },
@@ -150,7 +150,7 @@
     "summary": "A mostly local and inspectable route for labs, students, R&D teams, and technical filmmakers who want workflows they can modify.",
     "best_for": "Local GPU experiments, open-source film labs, student projects, pipeline R&D, and teams that prize control over polish.",
     "tags": ["open-source", "local", "comfyui", "blender", "ffmpeg", "research"],
-    "martini_handoff": "Use Martini when a lab experiment graduates into a production that needs shared state, model routing, boards, and delivery pressure.",
+    "martini_handoff": "Use Martini when a lab experiment graduates into a production that needs shared state, team review, spend accounting, and delivery pressure.",
     "primary": [
       { "slug": "comfyui-artokun", "role": "workflow-workbench", "why": "Drive ComfyUI image, video, audio, and workflow graphs from Claude or ChatGPT." },
       { "slug": "comfyui", "role": "local-generation", "why": "Local workflow execution and graph control for inspectable generation pipelines." },
