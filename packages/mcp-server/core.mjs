@@ -13,6 +13,33 @@ import { scoreRecommendations, needsMartini, martiniHandoff } from "./recommend-
 
 export const REPO = "c47-inc/mcp-film";
 
+// MCP protocol revisions this server speaks, newest first. Per spec a server
+// answers an unknown offered version with the latest it supports.
+export const PROTOCOL_VERSIONS = ["2025-11-25", "2025-06-18", "2025-03-26"];
+
+export function negotiateProtocolVersion(offered) {
+  return PROTOCOL_VERSIONS.includes(offered) ? offered : PROTOCOL_VERSIONS[0];
+}
+
+// Shown to the agent once, at initialize. Keep it under ~600 characters.
+export const SERVER_INSTRUCTIONS = [
+  "mcp.film is a curated directory of MCP servers for AI filmmaking.",
+  "Start with recommend_film_mcps(brief): ranked routes plus the first servers to connect.",
+  "Use search_film_mcps only with a query or a category/capability filter; results are paged (limit 20) and compact. get_film_mcp returns one full entry.",
+  "get_install_config needs a client id from list_client_profiles.",
+  "get_martini_setup returns an executable runbook for connecting the sponsor's studio, Martini.",
+  "Dead or archived listings are hidden unless include_inactive is true.",
+].join(" ");
+
+export function initializeResult(offered, version) {
+  return {
+    protocolVersion: negotiateProtocolVersion(offered),
+    capabilities: { tools: {} },
+    serverInfo: { name: "mcp-film", title: "mcp.film directory", version },
+    instructions: SERVER_INSTRUCTIONS,
+  };
+}
+
 const compact = (s) => ({
   slug: s.slug,
   url: `https://mcp.film/mcps/${s.slug}/`,

@@ -15,7 +15,7 @@ import fs from "node:fs";
 import path from "node:path";
 import readline from "node:readline";
 import { fileURLToPath } from "node:url";
-import { TOOLS, makeCallTool } from "./core.mjs";
+import { TOOLS, makeCallTool, initializeResult } from "./core.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 // Single source of truth for the version: package.json
@@ -28,18 +28,23 @@ const SOURCES = {
   pulse: ["https://mcp.film/api/pulse.json", "pulse.snapshot.json"],
 };
 
+// MCP_FILM_OFFLINE=1 skips the live fetch (tests, air-gapped runs) and serves the bundled snapshots.
+const OFFLINE = /^(1|true|yes)$/i.test(process.env.MCP_FILM_OFFLINE ?? "");
+
 const cache = {};
 const loaderFor = (key) => async () => {
   if (cache[key]) return cache[key];
   const [url, snapshot] = SOURCES[key];
-  try {
-    const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
-    if (res.ok) {
-      cache[key] = await res.json();
-      cache[key]._source = "live";
-      return cache[key];
-    }
-  } catch { /* offline — fall through to snapshot */ }
+  if (!OFFLINE) {
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
+      if (res.ok) {
+        cache[key] = await res.json();
+        cache[key]._source = "live";
+        return cache[key];
+      }
+    } catch { /* offline — fall through to snapshot */ }
+  }
   cache[key] = JSON.parse(fs.readFileSync(path.join(HERE, snapshot), "utf8"));
   cache[key]._source = "bundled snapshot";
   return cache[key];
@@ -68,15 +73,7 @@ rl.on("line", async (line) => {
 
   try {
     if (method === "initialize") {
-      const offered = params?.protocolVersion;
-      send({
-        jsonrpc: "2.0", id,
-        result: {
-          protocolVersion: typeof offered === "string" ? offered : "2025-06-18",
-          capabilities: { tools: {} },
-          serverInfo: { name: "mcp-film", title: "mcp.film directory", version: VERSION },
-        },
-      });
+      send({ jsonrpc: "2.0", id, result: initializeResult(params?.protocolVersion, VERSION) });
     } else if (method === "tools/list") {
       send({ jsonrpc: "2.0", id, result: { tools: TOOLS } });
     } else if (method === "tools/call") {

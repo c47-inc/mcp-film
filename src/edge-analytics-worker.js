@@ -222,7 +222,8 @@ function mcpHeaders() {
   return out;
 }
 
-async function mcpHandleMessage(msg) {
+// Exported for scripts/test-mcp.mjs; the endpoint binds callTool to this deployment's data.
+export async function mcpHandleMessage(msg, callTool = mcpCallTool) {
   if (!msg || typeof msg !== "object" || msg.jsonrpc !== "2.0" || typeof msg.method !== "string") {
     return { jsonrpc: "2.0", id: (msg && msg.id) ?? null, error: { code: -32600, message: "Invalid Request" } };
   }
@@ -230,19 +231,11 @@ async function mcpHandleMessage(msg) {
   const isNotification = id === undefined;
   try {
     if (method === "initialize") {
-      const offered = params?.protocolVersion;
-      return {
-        jsonrpc: "2.0", id,
-        result: {
-          protocolVersion: typeof offered === "string" ? offered : "2025-06-18",
-          capabilities: { tools: {} },
-          serverInfo: { name: "mcp-film", title: "mcp.film directory", version: MCP_VERSION },
-        },
-      };
+      return { jsonrpc: "2.0", id, result: initializeResult(params?.protocolVersion, MCP_VERSION) };
     }
     if (method === "tools/list") return { jsonrpc: "2.0", id, result: { tools: TOOLS } };
     if (method === "tools/call") {
-      const result = await mcpCallTool(params?.name, params?.arguments);
+      const result = await callTool(params?.name, params?.arguments);
       return {
         jsonrpc: "2.0", id,
         result: {
@@ -339,11 +332,11 @@ async function mcpEndpointResponse(request, env, ctx) {
   // 2025-06-18 removed JSON-RPC batching, but answering a legacy batch beats erroring on it.
   if (Array.isArray(message)) {
     if (!message.length) return reply({ jsonrpc: "2.0", id: null, error: { code: -32600, message: "Invalid Request" } }, 400, extras);
-    const replies = (await Promise.all(message.map(mcpHandleMessage))).filter((r) => r !== null);
+    const replies = (await Promise.all(message.map((m) => mcpHandleMessage(m, mcpCallTool)))).filter((r) => r !== null);
     return replies.length ? reply(replies, 200, extras) : reply(null, 202, extras);
   }
 
-  const single = await mcpHandleMessage(message);
+  const single = await mcpHandleMessage(message, mcpCallTool);
   return single === null ? reply(null, 202, extras) : reply(single, 200, extras);
 }
 
