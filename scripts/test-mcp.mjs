@@ -77,7 +77,7 @@ for (const [tool, args] of [
 ]) sizes[`${tool}${Object.keys(args).length ? ":" + Object.values(args)[0] : ""}`] = size(await call(tool, args));
 assert.ok(sizes.search_film_mcps < 20000, `no-arg search_film_mcps is ${sizes.search_film_mcps} chars`);
 assert.ok(sizes.list_film_capabilities < 12000, `list_film_capabilities is ${sizes.list_film_capabilities} chars`);
-assert.ok(sizes["recommend_film_mcps:avatar UGC ad with voiceover"] < 8000, "recommend_film_mcps");
+assert.ok(sizes["recommend_film_mcps:avatar UGC ad with voiceover"] < 12000, "recommend_film_mcps");
 
 const firstPage = await call("search_film_mcps", {});
 assert.equal(firstPage.count, 20);
@@ -106,6 +106,29 @@ assert.ok(capOne.total > caps.total);
 const t2v = await call("get_film_capability", { capability: "text-to-video", limit: 3 });
 assert.equal(t2v.servers.length, 3);
 assert.ok(t2v.total >= 3 && t2v.next_offset === 3);
+
+// Every list response says how much it holds and whether it was cut.
+for (const [tool, args, key] of [
+  ["search_film_mcps", {}, "servers"],
+  ["list_film_capabilities", {}, "capabilities"],
+  ["get_film_capability", { capability: "text-to-video" }, "servers"],
+  ["list_film_playbooks", {}, "playbooks"],
+  ["list_film_recommendations", {}, "recommendations"],
+]) {
+  const r = await call(tool, args);
+  for (const k of ["count", "total", "limit", "offset", "next_offset", "truncated"]) assert.ok(k in r, `${tool}.${k}`);
+  assert.equal(r.count, r[key].length, tool);
+  assert.equal(r.truncated, r.next_offset !== null, tool);
+  assert.equal(r.truncated, r.total > r.offset + r.count, tool);
+}
+// verbosity=full restores the complete pick objects; the default is compact, under one key and its alias.
+const fullRec = await call("recommend_film_mcps", { brief: "avatar UGC ad with voiceover", verbosity: "full" });
+assert.ok(fullRec.recommendations[0].primary[0].server.url.startsWith("https://mcp.film/mcps/"));
+assert.ok(fullRec.recommendations[0].fallback_servers.every((f) => "tagline" in f));
+assert.ok(size(fullRec) > sizes["recommend_film_mcps:avatar UGC ad with voiceover"]);
+const compactRec = await call("recommend_film_mcps", { brief: "avatar UGC ad with voiceover" });
+assert.deepEqual(compactRec.recommendations[0].primary, compactRec.recommendations[0].primary_servers);
+assert.ok(compactRec.recommendations[0].fallback_servers.every((f) => !("tagline" in f) && "slug" in f && "remote" in f));
 
 const rpc = await mcpHandleMessage({ jsonrpc: "2.0", id: 3, method: "tools/call", params: { name: "search_film_mcps", arguments: { limit: 2 } } }, call);
 assert.equal(rpc.result.content[0].text, JSON.stringify(rpc.result.structuredContent));

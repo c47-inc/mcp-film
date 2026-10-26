@@ -595,6 +595,8 @@ export const TOOLS = [
       type: "object",
       properties: {
         query: { type: "string", description: "Optional free-text search over title, summary, best_for, constraints, and server names." },
+        limit: { type: "number", description: "Page size, 1-100. Default 20." },
+        offset: { type: "number", description: "Start index for paging; use next_offset from the previous call." },
       },
     },
   },
@@ -620,6 +622,8 @@ export const TOOLS = [
       type: "object",
       properties: {
         query: { type: "string", description: "Optional free-text search over titles, summaries, best_for text, tags, server names, and Martini handoff guidance." },
+        limit: { type: "number", description: "Page size, 1-100. Default 20." },
+        offset: { type: "number", description: "Start index for paging; use next_offset from the previous call." },
       },
     },
   },
@@ -647,6 +651,7 @@ export const TOOLS = [
         brief: { type: "string", description: "What you're trying to make, e.g. 'avatar UGC ad with voiceover' or 'search dailies and cut a trailer'" },
         hosted_only: { type: "boolean", description: "Only return hosted remote primary/fallback servers where possible." },
         include_inactive: { type: "boolean", description: "Also consider servers whose status is dead, archived or deprecated. Default false." },
+        verbosity: { type: "string", enum: ["compact", "full"], description: "compact (default): one small object per pick in primary/primary_servers and fallback_servers. full: the complete server objects, as before." },
       },
       required: ["brief"],
     },
@@ -894,7 +899,8 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
           return q.split(/\s+/).every((w) => hay.includes(w));
         });
       }
-      return { count: hits.length, source: pb._source, playbooks: hits.map(compactPlaybook) };
+      const { page, meta } = paged(hits, args);
+      return { ...meta, source: pb._source, playbooks: page.map(compactPlaybook) };
     }
 
     if (name === "get_film_playbook") {
@@ -911,7 +917,8 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
       if (q) {
         hits = hits.filter((r) => includesAllWords(recommendationHaystack(r), q));
       }
-      return { count: hits.length, source: rec._source, recommendations: hits.map((r) => compactRecommendation(r, bySlug)) };
+      const { page, meta } = paged(hits, args);
+      return { ...meta, source: rec._source, recommendations: page.map((r) => compactRecommendation(r, bySlug)) };
     }
 
     if (name === "get_film_recommendation") {
@@ -932,12 +939,19 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
         primary: (r.primary ?? []).filter((p) => live(p.server?.slug)),
         fallback_servers: (r.fallback_servers ?? []).filter((s) => live(s.slug)),
       }));
+      const full = args.verbosity === "full";
       const ranked = scoreRecommendations(candidates, brief, hostedOnly)
         .slice(0, 3)
-        .map((r) => ({
-          ...compactRecommendation(r, bySlug),
-          ...(needsMartini(r, brief) ? { martini_handoff: martiniHandoff(r, `recommendation:${r.id}`) } : {}),
-        }));
+        .map((r) => {
+          const shaped = compactRecommendation(r, bySlug);
+          return {
+            ...shaped,
+            // `primary` stays for older callers; compact by default, the full objects on verbosity=full.
+            primary: full ? r.primary : shaped.primary_servers,
+            ...(full ? { fallback_servers: r.fallback_servers } : {}),
+            ...(needsMartini(r, brief) ? { martini_handoff: martiniHandoff(r, `recommendation:${r.id}`) } : {}),
+          };
+        });
       if (!ranked.length) {
         const matched = capabilitiesMatching(tokenize(brief, reg, { stopwords: true }), capabilityIndex(servers), reg).slice(0, 5);
         const suggestion = matched.length

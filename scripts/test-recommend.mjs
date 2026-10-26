@@ -84,9 +84,9 @@ for (const [index, [brief, hosted_only]] of fixtures.entries()) {
       assert.ok(r.fallback_servers.every((s) => s.remote));
     }
   }
-  // Picks are one compact object each; the full `primary` objects are no longer duplicated.
+  // Picks are one compact object each; `primary` stays as a key for older callers but carries the same compact shape.
   for (const r of result.recommendations) {
-    assert.equal(Object.hasOwn(r, "primary"), false);
+    assert.deepEqual(r.primary, r.primary_servers);
     for (const p of r.primary_servers) {
       assert.deepEqual(Object.keys(p).filter((k) => !["status", "caveats"].includes(k)), ["slug", "name", "role", "why", "remote", "official", "verified"]);
     }
