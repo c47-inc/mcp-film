@@ -10,7 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as T from "./src/templates.mjs";
-import { needsMartini, martiniHandoff, MARTINI_CLI } from "./packages/mcp-server/recommend-score.mjs";
+import { martiniHandoff, MARTINI_CLI } from "./packages/mcp-server/recommend-score.mjs";
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const DATA = path.join(ROOT, "data");
@@ -30,8 +30,14 @@ const servers = fs
   .flatMap((f) => readJson(path.join(DATA, "registry", f)))
   .sort((a, b) => a.name.localeCompare(b.name));
 
+// Optional: canonical capability → aliases. Entries keep their own tags for display; the
+// capability index, pages and search haystack are built on the canonical form.
+const aliasesPath = path.join(DATA, "capability-aliases.json");
+const capabilityAliasDoc = fs.existsSync(aliasesPath) ? readJson(aliasesPath) : {};
+
 // ------------------------------------------------------------------ validate
 const errors = [];
+const warnings = [];
 const catIds = new Set(categories.map((c) => c.id));
 const slugs = new Set();
 const REQUIRED = [
@@ -40,8 +46,35 @@ const REQUIRED = [
   "links", "added", "verified",
 ];
 const PRICING = new Set(["free", "freemium", "paid", "credits"]);
+const STATUS = new Set(["dead", "archived", "deprecated"]);
 const STAGES = new Set(["develop", "visualize", "shoot", "sound", "cut", "finish", "ship"]);
 const isUrl = (u) => typeof u === "string" && /^https:\/\/\S+$/.test(u);
+const isText = (v) => typeof v === "string" && v.trim() !== "";
+
+const capabilityAliases = new Map(); // alias → canonical
+{
+  const where = "data/capability-aliases.json";
+  if (!capabilityAliasDoc || typeof capabilityAliasDoc !== "object" || Array.isArray(capabilityAliasDoc)) {
+    errors.push(`${where}: must be an object of canonical → [aliases]`);
+  } else {
+    const canonical = new Set(Object.keys(capabilityAliasDoc).filter((k) => !k.startsWith("_")));
+    for (const [key, list] of Object.entries(capabilityAliasDoc)) {
+      if (key.startsWith("_")) continue; // _comment and friends
+      if (!/^[a-z0-9][a-z0-9-]*$/.test(key)) errors.push(`${where}: canonical key "${key}" must be kebab-case`);
+      if (!Array.isArray(list) || list.some((a) => !isText(a))) {
+        errors.push(`${where}: "${key}" must map to an array of alias strings`);
+        continue;
+      }
+      for (const alias of list) {
+        if (canonical.has(alias)) errors.push(`${where}: alias "${alias}" under "${key}" is itself a canonical key`);
+        if (capabilityAliases.has(alias) && capabilityAliases.get(alias) !== key) errors.push(`${where}: alias "${alias}" maps to both "${capabilityAliases.get(alias)}" and "${key}"`);
+        capabilityAliases.set(alias, key);
+      }
+    }
+  }
+}
+const canonicalCapability = (tag) => capabilityAliases.get(tag) ?? tag;
+const canonicalCapabilities = (s) => [...new Set((s.capabilities ?? []).map(canonicalCapability))];
 
 for (const s of servers) {
   const where = `registry entry "${s.slug ?? s.name ?? "?"}"`;
@@ -70,6 +103,38 @@ for (const s of servers) {
   for (const [k, v] of Object.entries(s.links ?? {})) {
     if (v !== null && !isUrl(v)) errors.push(`${where}: links.${k} must be https or null`);
   }
+  // Lifecycle and caveat fields are optional; when present they must be well-formed.
+  if (s.status !== undefined && !STATUS.has(s.status)) errors.push(`${where}: status must be one of ${[...STATUS].join("/")} (omit it for active listings)`);
+  if (s.caveats !== undefined) {
+    if (!Array.isArray(s.caveats) || !s.caveats.length || s.caveats.some((c) => !isText(c))) errors.push(`${where}: caveats must be a non-empty array of non-empty strings`);
+    else for (const c of s.caveats) if (c.length > 160) errors.push(`${where}: caveat over 160 chars: "${c.slice(0, 40)}…"`);
+  }
+  if (s.install?.cli !== undefined && s.install.cli !== null && !isText(s.install.cli)) errors.push(`${where}: install.cli must be a non-empty string`);
+  if (s.install?.cli_docs !== undefined && s.install.cli_docs !== null && !isUrl(s.install.cli_docs)) errors.push(`${where}: install.cli_docs must be https`);
+  if (s.install?.generate !== undefined && typeof s.install.generate !== "boolean") errors.push(`${where}: install.generate must be boolean`);
+  if (s.pricing_note !== undefined && s.pricing_note !== null && !isText(s.pricing_note)) errors.push(`${where}: pricing_note must be a non-empty string or null`);
+}
+
+for (const c of categories) {
+  const where = `category "${c.id ?? c.name ?? "?"}"`;
+  if (c.intro !== undefined && !isText(c.intro)) errors.push(`${where}: intro must be a non-empty string`);
+  if (c.start_here !== undefined) {
+    const pick = servers.find((s) => s.slug === c.start_here);
+    if (!pick) errors.push(`${where}: start_here "${c.start_here}" is not a registry slug`);
+    else if (pick.category !== c.id) errors.push(`${where}: start_here "${c.start_here}" is in category "${pick.category}"`);
+    if (!isText(c.start_here_why)) errors.push(`${where}: start_here needs a start_here_why`);
+  } else if (c.start_here_why !== undefined) {
+    errors.push(`${where}: start_here_why without start_here`);
+  }
+}
+
+// A capability used by a single server is a tag nobody will ever filter on. Aliases are
+// the fix (data/capability-aliases.json); this is the list to work from.
+{
+  const counts = new Map();
+  for (const s of servers) for (const c of canonicalCapabilities(s)) counts.set(c, (counts.get(c) ?? 0) + 1);
+  const singletons = [...counts].filter(([, n]) => n === 1).map(([c]) => c).sort();
+  if (singletons.length) warnings.push(`${singletons.length} capability tag${singletons.length > 1 ? "s are" : " is"} used by exactly one server: ${singletons.join(", ")}`);
 }
 
 const allPlaybookSlugs = (p) => [
@@ -80,7 +145,7 @@ const allPlaybookSlugs = (p) => [
 const playbookIds = new Set();
 for (const p of playbooks) {
   const where = `playbook "${p.id ?? p.title ?? "?"}"`;
-  for (const k of ["id", "title", "summary", "best_for", "setup_order", "failure_modes", "martini_handoff", "constraints", "primary_slugs", "steps", "fallback_slugs"]) {
+  for (const k of ["id", "title", "summary", "best_for", "setup_order", "failure_modes", "constraints", "primary_slugs", "steps", "fallback_slugs"]) {
     if (p[k] === undefined) errors.push(`${where}: missing field "${k}"`);
   }
   if (p.id) {
@@ -90,9 +155,10 @@ for (const p of playbooks) {
   }
   if (!Array.isArray(p.setup_order) || p.setup_order.length < 1) errors.push(`${where}: setup_order must be a non-empty array`);
   if (!Array.isArray(p.failure_modes) || p.failure_modes.length < 1) errors.push(`${where}: failure_modes must be a non-empty array`);
-  if (!p.martini_handoff) errors.push(`${where}: martini_handoff is required`);
+  // martini_handoff is optional: a string renders the handoff line, null/absent renders nothing.
+  if (p.martini_handoff !== undefined && p.martini_handoff !== null && !isText(p.martini_handoff)) errors.push(`${where}: martini_handoff must be a non-empty string or null`);
   if (!Array.isArray(p.constraints) || p.constraints.length < 1) errors.push(`${where}: constraints must be a non-empty array`);
-  if (!Array.isArray(p.primary_slugs) || p.primary_slugs.length < 3) errors.push(`${where}: primary_slugs must include at least 3 servers`);
+  if (!Array.isArray(p.primary_slugs) || p.primary_slugs.length < 1) errors.push(`${where}: primary_slugs must include at least 1 server`);
   if (!Array.isArray(p.steps) || p.steps.length < 1) errors.push(`${where}: steps must be a non-empty array`);
   for (const [i, step] of (p.steps ?? []).entries()) {
     if (!STAGES.has(step.stage)) errors.push(`${where}: steps[${i}].stage must be a known pipeline stage`);
@@ -107,7 +173,7 @@ for (const p of playbooks) {
 const recommendationIds = new Set();
 for (const r of recommendations) {
   const where = `recommendation "${r.id ?? r.title ?? "?"}"`;
-  for (const k of ["id", "title", "summary", "best_for", "tags", "martini_handoff", "primary", "fallback_slugs"]) {
+  for (const k of ["id", "title", "summary", "best_for", "tags", "primary", "fallback_slugs"]) {
     if (r[k] === undefined) errors.push(`${where}: missing field "${k}"`);
   }
   if (r.id) {
@@ -115,8 +181,9 @@ for (const r of recommendations) {
     if (recommendationIds.has(r.id)) errors.push(`${where}: duplicate id`);
     recommendationIds.add(r.id);
   }
+  if (r.martini_handoff !== undefined && r.martini_handoff !== null && !isText(r.martini_handoff)) errors.push(`${where}: martini_handoff must be a non-empty string or null`);
   if (!Array.isArray(r.tags) || r.tags.length < 1) errors.push(`${where}: tags must be a non-empty array`);
-  if (!Array.isArray(r.primary) || r.primary.length < 3) errors.push(`${where}: primary must include at least 3 servers`);
+  if (!Array.isArray(r.primary) || r.primary.length < 1) errors.push(`${where}: primary must include at least 1 server`);
   for (const [i, pick] of (r.primary ?? []).entries()) {
     if (!pick.slug) errors.push(`${where}: primary[${i}].slug is required`);
     if (!pick.role) errors.push(`${where}: primary[${i}].role is required`);
@@ -136,7 +203,10 @@ if (errors.length) {
   process.exit(1);
 }
 console.log(`✓ data valid: ${servers.length} servers, ${categories.length} categories`);
-if (process.argv.includes("--validate-only")) process.exit(0);
+if (process.argv.includes("--validate-only")) {
+  for (const w of warnings) console.warn(`  ! ${w}`);
+  process.exit(0);
+}
 
 // ------------------------------------------------------------------ context
 const logosDir = path.join(DATA, "logos");
@@ -155,12 +225,16 @@ const ctx = {
   logos,
   built: new Date().toISOString(),
   officialCount: servers.filter((s) => s.official).length,
-  remoteCount: servers.filter((s) => s.install?.remote_url).length,
+  remoteCount: servers.filter((s) => s.install?.remote_url && !T.isInactive(s)).length,
+  capabilityAliases,
+  canonicalCapability,
 };
 
 const categoryById = new Map(categories.map((c) => [c.id, c]));
+const isActive = (s) => !T.isInactive(s);
+const statusOf = (s) => s.status ?? "active";
 const remoteServers = [...servers]
-  .filter((s) => s.install?.remote_url)
+  .filter((s) => s.install?.remote_url && isActive(s))
   .sort((a, b) =>
     Number(Boolean(b.official)) - Number(Boolean(a.official))
     || a.name.localeCompare(b.name)
@@ -175,18 +249,20 @@ const serverSummary = (s) => ({
   markdown: `${site.url}/mcps/${s.slug}.md`,
   category: s.category,
   official: s.official,
+  status: statusOf(s),
   remote: Boolean(s.install?.remote_url),
   added: s.added,
   verified: s.verified,
   tagline: s.tagline,
 });
 const serverBySlug = new Map(servers.map((s) => [s.slug, s]));
-const sortServers = (list) =>
-  [...list].sort((a, b) =>
-    Number(Boolean(b.official)) - Number(Boolean(a.official))
-    || Number(Boolean(b.install?.remote_url)) - Number(Boolean(a.install?.remote_url))
-    || a.name.localeCompare(b.name)
-  );
+// Dead, archived and deprecated servers stay in the registry (their pages explain what
+// happened) but drop out of the lists an agent would act on.
+const activeBySlug = (slug) => {
+  const s = serverBySlug.get(slug);
+  return s && isActive(s) ? s : null;
+};
+const sortServers = (list) => [...list].sort(T.browseSort);
 const remoteSummary = (s) => {
   const cat = categoryById.get(s.category);
   return {
@@ -194,6 +270,7 @@ const remoteSummary = (s) => {
     name: s.name,
     vendor: s.vendor,
     official: s.official,
+    status: statusOf(s),
     featured: Boolean(s.featured),
     category: s.category,
     category_name: cat?.name ?? s.category,
@@ -227,7 +304,7 @@ const activePlaybookSlugs = (p) => [...new Set([
   ...(p.steps ?? []).flatMap((step) => step.slugs ?? []),
 ])];
 const playbookAuthRequirements = (p) => activePlaybookSlugs(p)
-  .map((slug) => serverBySlug.get(slug))
+  .map(activeBySlug)
   .filter((s) => s?.auth?.type && s.auth.type !== "none")
   .map((s) => ({
     slug: s.slug,
@@ -237,23 +314,25 @@ const playbookAuthRequirements = (p) => activePlaybookSlugs(p)
     key_url: s.auth.key_url ?? null,
     remote: Boolean(s.install?.remote_url),
   }));
+const activeSummaries = (list) => list.map(activeBySlug).filter(Boolean).map(serverSummary);
 const playbookSummary = (p) => ({
   id: p.id,
   title: p.title,
-  url: `${site.url}/playbooks/#${p.id}`,
+  url: `${site.url}/playbooks/${p.id}/`,
+  markdown: `${site.url}/playbooks/${p.id}.md`,
   summary: p.summary,
   best_for: p.best_for,
   setup_order: p.setup_order,
   failure_modes: p.failure_modes,
-  ...(needsMartini(p) ? { martini_handoff: martiniHandoff(p, `playbook:${p.id}`) } : {}),
+  ...(T.hasMartiniHandoff(p) ? { martini_handoff: martiniHandoff(p, `playbook:${p.id}`) } : {}),
   auth_requirements: playbookAuthRequirements(p),
-  primary_servers: p.primary_slugs.map((slug) => serverSummary(serverBySlug.get(slug))),
+  primary_servers: activeSummaries(p.primary_slugs),
   steps: p.steps.map((step) => ({
     stage: step.stage,
     intent: step.intent,
-    servers: step.slugs.map((slug) => serverSummary(serverBySlug.get(slug))),
+    servers: activeSummaries(step.slugs),
   })),
-  fallback_servers: p.fallback_slugs.map((slug) => serverSummary(serverBySlug.get(slug))),
+  fallback_servers: activeSummaries(p.fallback_slugs),
   constraints: p.constraints,
 });
 ctx.playbookDoc = {
@@ -266,22 +345,24 @@ ctx.playbookDoc = {
 const recommendationSummary = (r) => ({
   id: r.id,
   title: r.title,
-  url: `${site.url}/recommendations/#${r.id}`,
-  markdown: `${site.url}/recommendations.md#${r.id}`,
+  url: `${site.url}/recommendations/${r.id}/`,
+  markdown: `${site.url}/recommendations/${r.id}.md`,
   summary: r.summary,
   best_for: r.best_for,
   tags: r.tags,
-  ...(needsMartini(r) ? { martini_handoff: martiniHandoff(r, `recommendation:${r.id}`) } : {}),
-  primary: r.primary.map((pick) => ({
-    role: pick.role,
-    why: pick.why,
-    server: serverSummary(serverBySlug.get(pick.slug)),
-  })),
-  fallback_servers: (r.fallback_slugs ?? []).map((slug) => serverSummary(serverBySlug.get(slug))),
+  ...(T.hasMartiniHandoff(r) ? { martini_handoff: martiniHandoff(r, `recommendation:${r.id}`) } : {}),
+  primary: r.primary
+    .filter((pick) => activeBySlug(pick.slug))
+    .map((pick) => ({
+      role: pick.role,
+      why: pick.why,
+      server: serverSummary(serverBySlug.get(pick.slug)),
+    })),
+  fallback_servers: activeSummaries(r.fallback_slugs ?? []),
   playbook: r.playbook_id
     ? {
         id: r.playbook_id,
-        url: `${site.url}/playbooks/#${r.playbook_id}`,
+        url: `${site.url}/playbooks/${r.playbook_id}/`,
       }
     : null,
 });
@@ -292,24 +373,30 @@ ctx.recommendationDoc = {
   count: recommendations.length,
   recommendations: recommendations.map(recommendationSummary),
 };
+// Capability clusters are keyed by canonical tag, so a server tagged text-to-speech sits on
+// /capabilities/tts/ next to the ones tagged tts.
 const capabilityServers = new Map();
 for (const s of servers) {
-  for (const capability of s.capabilities ?? []) {
+  for (const capability of canonicalCapabilities(s)) {
     if (!capabilityServers.has(capability)) capabilityServers.set(capability, []);
     capabilityServers.get(capability).push(s);
   }
 }
+const aliasesOf = (capability) => [...capabilityAliases].filter(([, c]) => c === capability).map(([a]) => a).sort();
 const capabilitySummary = (capability, list) => {
   const sorted = sortServers(list);
   const published = sorted.length >= 2;
+  const aliases = aliasesOf(capability);
   return {
     capability,
+    ...(aliases.length ? { aliases } : {}),
     url: published ? `${site.url}/capabilities/${capability}/` : null,
     markdown: published ? `${site.url}/capabilities/${capability}.md` : null,
     json: `${site.url}/api/capabilities/${capability}.json`,
     count: sorted.length,
     official: sorted.filter((s) => s.official).length,
     remote: sorted.filter((s) => s.install?.remote_url).length,
+    active: sorted.filter(isActive).length,
     categories: [...new Set(sorted.map((s) => s.category))],
     servers: sorted.map(serverSummary),
   };
@@ -342,7 +429,7 @@ const categoryCounts = categories.map((c) => {
 });
 const capabilityCounts = new Map();
 for (const s of servers) {
-  for (const c of s.capabilities ?? []) capabilityCounts.set(c, (capabilityCounts.get(c) ?? 0) + 1);
+  for (const c of canonicalCapabilities(s)) capabilityCounts.set(c, (capabilityCounts.get(c) ?? 0) + 1);
 }
 const staleOfficial = [...servers]
   .filter((s) => s.official)
@@ -570,6 +657,15 @@ write("404.html", T.render404(ctx));
 
 for (const cat of categories) {
   write(`categories/${cat.id}/index.html`, T.renderCategory(ctx, cat));
+  write(`categories/${cat.id}.md`, T.renderCategoryMd(ctx, cat));
+}
+for (const p of playbooks) {
+  write(`playbooks/${p.id}/index.html`, T.renderPlaybook(ctx, p));
+  write(`playbooks/${p.id}.md`, T.renderPlaybookMd(ctx, p));
+}
+for (const r of recommendations) {
+  write(`recommendations/${r.id}/index.html`, T.renderRecommendation(ctx, r));
+  write(`recommendations/${r.id}.md`, T.renderRecommendationMd(ctx, r));
 }
 for (const capability of ctx.capabilityPages) {
   write(`capabilities/${capability.capability}/index.html`, T.renderCapability(ctx, capability));
@@ -775,7 +871,7 @@ fs.writeFileSync(
   JSON.stringify(ctx.pulse),
 );
 
-const pages = servers.length + categories.length + ctx.capabilityPages.length + 11;
+const pages = servers.length + categories.length + ctx.capabilityPages.length + playbooks.length + recommendations.length + 11;
 console.log(`✓ built ${pages} pages + API + agent surfaces → dist/`);
 
 function mcpRegistryResponse(s) {
@@ -822,6 +918,8 @@ function mcpRegistryResponse(s) {
       auth: s.auth,
       links: s.links,
       notes: s.notes,
+      ...(s.caveats ? { caveats: s.caveats } : {}),
+      status: statusOf(s),
       added: s.added,
       verified: s.verified,
       verificationAgeDays: daysSince(s.verified),
@@ -835,7 +933,10 @@ function mcpRegistryResponse(s) {
       // there, so asserting it would be a claim we cannot back. Ours lives under our key.
       "film.mcp/subregistry": {
         source: "mcp.film",
-        status: "active",
+        // The registry schema's vocabulary is active/deprecated/deleted; our dead maps to
+        // deleted and archived (read-only, unmaintained) to deprecated.
+        status: { dead: "deleted", archived: "deprecated", deprecated: "deprecated" }[s.status] ?? "active",
+        directoryStatus: statusOf(s),
         publishedAt: `${s.added}T00:00:00Z`,
         updatedAt: `${s.verified}T00:00:00Z`,
         isLatest: true,
@@ -856,7 +957,9 @@ function repositoryFor(url) {
 
 function packageFor(s) {
   const cmd = s.install?.stdio_command;
-  if (!cmd || typeof cmd !== "string") return [];
+  // Same policy as the install snippets: prose, installer wizards (`npx x setup`) and
+  // listings with install.generate:false export no runnable package.
+  if (!T.cmdLike(cmd, s.install)) return [];
   const npxPackage = /(?:^|\s)--package=([^\s]+)|^npx\s+(?:-y\s+)?([@a-zA-Z0-9._/-]+)/.exec(cmd);
   if (npxPackage) {
     return [{
