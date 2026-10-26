@@ -12,8 +12,13 @@ export const stackStageData = (ctx) =>
 
 export const renderStack = (ctx) => {
   const stages = stackStageData(ctx);
-  const starter = ["martini", "fal", "elevenlabs", "davinci-resolve", "youtube-yutu"]
-    .map((slug) => ctx.servers.find((s) => s.slug === slug))
+  // The studio slot goes to the featured studio listing (the editorial flag that is
+  // disclosed on /about), not to a hard-coded slug. The other four earn their slot on
+  // official status or on being the maintained pick in their category.
+  const studio = ctx.servers.find((s) => s.featured && s.category === "studio")
+    ?? ctx.servers.find((s) => s.category === "studio" && s.official);
+  const starter = [studio, ...["fal", "elevenlabs", "davinci-resolve", "youtube-yutu"]
+    .map((slug) => ctx.servers.find((s) => s.slug === slug))]
     .filter(Boolean);
 
   const body = `
@@ -25,7 +30,7 @@ export const renderStack = (ctx) => {
 
 <section class="starter">
   <h2>The five-connection starter kit</h2>
-  <p>If you connect nothing else, connect these. One studio, one model hub, one voice, one edit bay, one distribution pipe — a complete film pipeline in five MCP servers.</p>
+  <p>If you connect nothing else, connect these. One studio, one model hub, one voice, one edit bay, one distribution pipe — a complete film pipeline in five MCP servers. The studio slot is the featured listing, which is a sponsor relationship disclosed on <a href="/about/">/about</a>; the other four are here on their own merits.</p>
   <div class="grid">${starter.map((s) => card(ctx, s)).join("")}</div>
   <p class="connect-note">Need a stack for a specific job? Use the <a href="/playbooks/">production playbooks</a>.</p>
 </section>

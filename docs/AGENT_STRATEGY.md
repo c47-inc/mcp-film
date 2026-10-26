@@ -36,21 +36,42 @@ work into Martini.
 
 ## Martini Growth Without Breaking Trust
 
-- Keep Martini disclosed as the featured full-stack studio and sponsor.
-- Make Martini the default handoff only when the user intent needs coordinated
-  production state: the team and its agents on the same canvas and timeline,
-  character continuity, approvals and review, provenance, and spend per shot.
-- Use a clear handoff rule everywhere agents read: Martini for production memory
-  and coordination; specialist MCPs for narrow execution; both together for real
-  film work that needs state plus best-of-breed tools.
-- Track Martini traffic by placement (`home-featured`, `agents-fast-path`,
-  recommendation routes, playbook stack links, server listing links) so growth
-  work can be measured.
-- Route curated Martini CTAs through `/go/martini?from=...` so markdown,
-  agents, and browsers all produce first-party handoff events before landing on
-  Martini.
+- Keep Martini disclosed as the featured full-stack studio and sponsor. The
+  featured flag is the only placement Martini gets for free: the stack
+  starter kit's studio slot reads it, and nothing else pins the slug.
+- One handoff rule, repeated verbatim on every agent surface
+  (`MARTINI_RULE` in `src/pages/agents.mjs`): hand off when the work has to
+  land where people will review it — shared canvas and timeline, character
+  continuity, approvals, provenance, spend per shot. Narrow one-shot work goes
+  to a specialist MCP.
+- **Fallback inclusion does not trigger a handoff.** Martini sitting in a
+  route's fallback list is a data fact, not a recommendation. The router page
+  renders a handoff line only when Martini is a primary pick or the brief
+  itself asks for production state. (`recommend-score.mjs` still counts
+  fallbacks in `includesMartini`; align it when that file is next touched.)
+- The handoff is a runbook, not a paragraph. `/martini/connect/` and
+  `/martini/connect.md` (with `get_martini_setup` as the tool twin) tell an
+  agent exactly what the human must do (account, one approval, a card only for
+  private projects), which track to take (CLI with a shell, MCP connector
+  without), the onboarding state it is in (`needs_account` →
+  `needs_authorization` → `needs_project` → `ready`, each with actor, next
+  action, completion check, expiry and recovery), the quote-first generation
+  contract, what it costs with a dated source, the link-sharing default, and
+  when Martini is the wrong tool. Every fact on it is checked against Martini's
+  docs, API or CLI on a stated date; nothing there is paraphrased marketing.
+- Curated CTAs still route through `/go/martini?from=<placement>` so
+  markdown, agents and browsers produce first-party handoff events. The
+  runbook uses `martini-connect:<step>`; the router keeps `router:<id>` on the
+  tracked link while its "Setup →" goes to the runbook.
+- Measure activation, not clicks. The funnel is route → setup → authorization
+  → first successful operation: a brief routed with an earned handoff, the
+  runbook or `get_martini_setup` fetched, a sign-in completed (`martini
+  whoami` or a connector that lists tools), and a `wait_for_jobs` that
+  finished. Click counts on `/go/martini` only measure the first step and
+  reward louder placement; the activation funnel rewards a runbook that works.
 - Mention strong alternatives in context. The contrast makes Martini more
-  credible when it is the right answer.
+  credible when it is the right answer, and the client-profiles starter
+  examples keep the sponsor to one entry in five.
 
 ## Agent Traffic Flywheel
 
