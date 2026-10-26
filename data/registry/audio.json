@@ -532,5 +532,50 @@
     "added": "2026-10-10",
     "verified": "2026-10-10",
     "notes": "Checked 10 Oct 2026: the endpoint answers initialize with an OAuth 2.1 challenge and the official MCP Registry lists ai.multivoice/video-dubbing-subtitles-transcription-audiobooks; no tools were run because there is no anonymous path, so the tool names above (namespaced orders.*) come from the vendor's agent page rather than a live tools/list. The vendor calls the MCP public beta, not GA. List prices on the agent page: transcription and subtitles EUR 0.015 per minute, AI dubbing EUR 0.40 per minute, audiobooks EUR 100 per book. The catch for film work is dubbing: target languages are only German, English, French, Latvian and Russian, and audiobook narration covers the same five. Human-reviewed subtitles are optional. For broad-language dubbing compare elevenlabs or allvoicelab."
+  },
+  {
+    "slug": "words-into-music",
+    "name": "Words into Music",
+    "vendor": "Words into Music (Savuko)",
+    "official": true,
+    "category": "music",
+    "featured": false,
+    "tagline": "Hosted OAuth server that turns a prompt or your own lyrics into a 60–180 second song, vocal or instrumental.",
+    "description": "Words into Music's remote MCP lets an agent check the credit balance, prepare and save a song brief for free, then spend one credit to start a 60–180 second recording with vocals or as an instrumental, in eleven languages. The agent polls the job and gets back a private library link, not the audio file. For a filmmaker it is a quick way to sketch a temp song or a lyric idea for a trailer or a scene. It is not a scoring tool: no stems, no edits to an existing take, no timing to picture.",
+    "capabilities": [
+      "music",
+      "song-generation",
+      "lyrics-to-song",
+      "instrumental",
+      "multilingual",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "get_account_usage",
+      "prepare_song",
+      "start_song",
+      "get_song_job",
+      "list_songs",
+      "get_song"
+    ],
+    "install": {
+      "claude_code": "claude mcp add --transport http words-into-music https://mcp.wordsintomusic.com/mcp",
+      "remote_url": "https://mcp.wordsintomusic.com/mcp",
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "https://wordsintomusic.com/blog/mcp-setup-guide/"
+    },
+    "pricing": "credits",
+    "links": {
+      "repo": null,
+      "docs": "https://wordsintomusic.com/mcp/",
+      "site": "https://wordsintomusic.com"
+    },
+    "added": "2026-10-26",
+    "verified": "2026-10-26",
+    "notes": "Checked 26 Oct 2026: initialize (2025-06-18 and 2025-11-25) returns a 401 OAuth challenge with scopes account:read, songs:create and songs:read, the protected-resource metadata and dynamic client registration are in place, and the official MCP Registry lists io.github.constantinginga/words-into-music 0.1.0. Not tested past sign-in, so the tool list comes from the vendor docs, which also describe a create_checkout_link tool that opens Stripe. Paid only: subscriptions from $9.99 a month for 30 songs or one-time packs from $9.99 for 20, one credit per song, one active job per account, about two minutes per take. Output is a private link that needs the owner's login, and the MP3 comes from the web app. No stems, voice cloning, line edits or melody upload, so it suits temp tracks and lyric sketches more than score. The terms (15 Oct 2026) allow commercial use, but rights are assigned only as far as Savuko holds them and subject to provider restrictions, with no promise of exclusivity, copyright, non-infringement or content-ID clearance — clear it before release. Generation runs on Replicate; the model is not disclosed."
   }
 ]
