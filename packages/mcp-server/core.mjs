@@ -1,4 +1,4 @@
-import { scoreRecommendations, needsMartini, martiniHandoff } from "./recommend-score.mjs";
+import { scoreRecommendations, needsMartini, martiniHandoff, martiniHandoffStructured, MARTINI_CLI, MARTINI_NOT_WHEN, MARTINI_FIRST_CALLS, MARTINI_SIGNUP_URL, MARTINI_MCP_URL, MARTINI_SPONSOR_DISCLOSURE } from "./recommend-score.mjs";
 
 /**
  * core.mjs — pure directory logic shared by the stdio server (server.mjs) and
@@ -13,12 +13,95 @@ import { scoreRecommendations, needsMartini, martiniHandoff } from "./recommend-
 
 export const REPO = "c47-inc/mcp-film";
 
-const compact = (s) => ({
+// MCP protocol revisions this server speaks, newest first. Per spec a server
+// answers an unknown offered version with the latest it supports.
+export const PROTOCOL_VERSIONS = ["2025-11-25", "2025-06-18", "2025-03-26"];
+
+export function negotiateProtocolVersion(offered) {
+  return PROTOCOL_VERSIONS.includes(offered) ? offered : PROTOCOL_VERSIONS[0];
+}
+
+// Shown to the agent once, at initialize. Keep it under ~600 characters.
+export const SERVER_INSTRUCTIONS = [
+  "mcp.film is a curated directory of MCP servers for AI filmmaking.",
+  "Start with recommend_film_mcps(brief): ranked routes plus the first servers to connect.",
+  "Use search_film_mcps only with a query or a category/capability filter; results are paged (limit 20) and compact. get_film_mcp returns one full entry.",
+  "get_install_config needs a client id from list_client_profiles.",
+  "get_martini_setup returns an executable runbook for connecting the sponsor's studio, Martini.",
+  "Dead or archived listings are hidden unless include_inactive is true.",
+].join(" ");
+
+export function initializeResult(offered, version) {
+  return {
+    protocolVersion: negotiateProtocolVersion(offered),
+    capabilities: { tools: {} },
+    serverInfo: { name: "mcp-film", title: "mcp.film directory", version },
+    instructions: SERVER_INSTRUCTIONS,
+  };
+}
+
+// Every tool result goes out twice per the MCP spec: as compact JSON text for
+// clients that only read content[], and as structuredContent for those that
+// parse it. Pretty-printing cost ~30% of every response and bought nothing.
+export function toolResult(result) {
+  return {
+    content: [{ type: "text", text: JSON.stringify(result) }],
+    structuredContent: result,
+    isError: Boolean(result?.error),
+  };
+}
+
+// Paging for list tools: never return the whole catalogue by accident.
+const DEFAULT_LIMIT = 20;
+const MAX_LIMIT = 100;
+
+function pageArgs(args, fallback = DEFAULT_LIMIT) {
+  const limit = Math.min(MAX_LIMIT, Math.max(1, Math.floor(Number(args.limit) || fallback)));
+  const offset = Math.max(0, Math.floor(Number(args.offset) || 0));
+  return { limit, offset };
+}
+
+function paged(list, args, fallback = DEFAULT_LIMIT) {
+  const { limit, offset } = pageArgs(args, fallback);
+  const page = list.slice(offset, offset + limit);
+  const next = offset + page.length;
+  const truncated = next < list.length;
+  return { page, meta: { count: page.length, total: list.length, limit, offset, next_offset: truncated ? next : null, truncated } };
+}
+
+// Optional registry fields (a listing can be retired without being deleted).
+const INACTIVE = new Set(["dead", "archived", "deprecated"]);
+const isActive = (s) => !INACTIVE.has(s?.status);
+const withStatus = (out, s) => (s?.status ? { ...out, status: s.status } : out);
+
+// Notes mix the caveat that bites with the curator's verification log
+// ("re-checked 21 Sep 2026", "653 stars"). The compact caveat is the explicit
+// caveats[0] when the entry has one, else the first sentence of notes that does
+// not read like a log line; failing that, the first sentence. Never cut mid-word.
+const LOG_LINE = /\b(re-?checked|re-?verified|re-?confirmed|checked|verified|confirmed|unchanged)\b|\b\d[\d,]*\s*stars?\b|★|\b\d{1,2}\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+\d{4}\b|\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+\d{1,2},?\s+\d{4}\b|\b\d{4}-\d{2}-\d{2}\b/i;
+
+function clipWords(text, max = 200) {
+  const t = String(text ?? "").trim();
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max - 1);
+  const at = cut.lastIndexOf(" ");
+  return `${(at > max / 2 ? cut.slice(0, at) : cut).replace(/[\s,;:(-]+$/, "")}…`;
+}
+
+export function caveatFor(s) {
+  if (Array.isArray(s?.caveats) && typeof s.caveats[0] === "string" && s.caveats[0].trim()) return clipWords(s.caveats[0]);
+  const notes = String(s?.notes ?? "").trim();
+  if (!notes) return "";
+  const sentences = notes.split(/(?<=[.!?])\s+(?=[A-Z0-9"'(])/).map((x) => x.trim()).filter(Boolean);
+  const caveat = sentences.find((x) => !LOG_LINE.test(x)) ?? sentences[0] ?? "";
+  return clipWords(caveat);
+}
+
+const compact = (s) => withStatus({
   slug: s.slug,
   url: `https://mcp.film/mcps/${s.slug}/`,
-  markdown_url: `https://mcp.film/mcps/${s.slug}.md`,
   verified: s.verified,
-  caveat: (s.notes?.trim().match(/^.*?[.!?](?=\s|$)|^.+$/s)?.[0] ?? "").slice(0, 200).trim(),
+  caveat: caveatFor(s),
   name: s.name,
   vendor: s.vendor,
   official: s.official,
@@ -27,7 +110,29 @@ const compact = (s) => ({
   pricing: s.pricing,
   remote: Boolean(s.install?.remote_url),
   capabilities: s.capabilities,
-});
+}, s);
+
+// One line per pick: the registry entry (looked up by slug) supplies the
+// fields the recommendation doc does not carry.
+const compactPick = (p, bySlug) => {
+  const s = bySlug?.get(p.server?.slug) ?? {};
+  const out = withStatus({
+    slug: p.server?.slug,
+    name: p.server?.name,
+    role: p.role,
+    why: p.why,
+    remote: p.server?.remote,
+    official: p.server?.official,
+    verified: s.verified ?? p.server?.verified,
+  }, s);
+  if (Array.isArray(s.caveats) && s.caveats.length) out.caveats = s.caveats.slice(0, 1);
+  return out;
+};
+
+const compactFallback = (f, bySlug) => {
+  const s = bySlug?.get(f.slug) ?? {};
+  return withStatus({ slug: f.slug, name: f.name, remote: f.remote, official: f.official, verified: s.verified ?? f.verified }, s);
+};
 
 const compactPlaybook = (p) => ({
   id: p.id,
@@ -41,29 +146,34 @@ const compactPlaybook = (p) => ({
   primary_servers: (p.primary_servers ?? []).map((s) => s.slug),
 });
 
-const compactRecommendation = (r) => ({
+// Two sizes: the browse list (list_film_recommendations) names the picks and
+// their roles; the ranked reply (recommend_film_mcps) carries why, verified,
+// status, caveats and the fallbacks for the two or three routes that matter.
+const compactRecommendation = (r, bySlug, { lean = false } = {}) => ({
   id: r.id,
   title: r.title,
   summary: r.summary,
   best_for: r.best_for,
   tags: r.tags,
   url: r.url,
-  primary_servers: (r.primary ?? []).map((p) => ({
-    slug: p.server?.slug,
-    name: p.server?.name,
-    role: p.role,
-    remote: p.server?.remote,
-    official: p.server?.official,
-  })),
+  primary_servers: (r.primary ?? []).map((p) => lean
+    ? withStatus({ slug: p.server?.slug, name: p.server?.name, role: p.role, remote: p.server?.remote, official: p.server?.official }, bySlug?.get(p.server?.slug))
+    : compactPick(p, bySlug)),
+  ...(lean ? {} : { fallback_servers: (r.fallback_servers ?? []).map((f) => compactFallback(f, bySlug)) }),
   playbook: r.playbook,
 });
 
-function capabilityIndex(servers) {
+function capabilityIndex(servers, reg) {
   const groups = new Map();
+  const aliases = new Map();
   for (const s of servers) {
-    for (const capability of s.capabilities ?? []) {
+    for (const capability of canonicalTags(s, reg)) {
       if (!groups.has(capability)) groups.set(capability, []);
       groups.get(capability).push(s);
+    }
+    for (const tag of s.capabilities ?? []) {
+      const canonical = canonicalTags({ capabilities: [tag] }, reg)[0];
+      if (canonical !== tag) (aliases.get(canonical) ?? aliases.set(canonical, new Set()).get(canonical)).add(tag);
     }
   }
   const sortServers = (list) =>
@@ -78,9 +188,8 @@ function capabilityIndex(servers) {
       const published = sorted.length >= 2;
       return {
         capability,
+        ...(aliases.has(capability) ? { aliases: [...aliases.get(capability)].sort() } : {}),
         url: published ? `https://mcp.film/capabilities/${capability}/` : null,
-        markdown: published ? `https://mcp.film/capabilities/${capability}.md` : null,
-        json: `https://mcp.film/api/capabilities/${capability}.json`,
         count: sorted.length,
         official: sorted.filter((s) => s.official).length,
         remote: sorted.filter((s) => s.install?.remote_url).length,
@@ -88,6 +197,178 @@ function capabilityIndex(servers) {
       };
     })
     .sort((a, b) => b.count - a.count || a.capability.localeCompare(b.capability));
+}
+
+// ---- Search tokens. Queries and haystacks go through the same normaliser, so
+// "lip sync", "lip-sync" and "lipsync" become one token and "lip" can no longer
+// match the middle of "clip". The registry may ship its own alias map
+// (capability_aliases, from data/capability-aliases.json); this built-in one
+// is the floor when it does not.
+// Canonical tags follow data/capability-aliases.json so the index agrees with the site.
+const BUILTIN_ALIASES = {
+  "lip-sync": ["lipsync", "lip sync", "lip syncing", "lip-syncing", "lipsyncing"],
+  "tts": ["text-to-speech", "text to speech", "speech synthesis", "voiceover", "voice-over"],
+  "captioning": ["captions", "caption", "subtitles", "subtitle", "subtitling", "closed captions", "srt"],
+  "upscaling": ["upscale", "upscaler", "upscaled", "4k", "video-upscaling", "image-upscaling", "super-resolution", "super resolution"],
+  "transcription": ["speech-to-text", "stt", "transcribe", "transcript", "transcripts"],
+  "sfx": ["sound-effects", "sound effect", "sound-design", "foley"],
+  "text-to-video": ["t2v", "video-generation"],
+  "image-to-video": ["i2v"],
+  "text-to-image": ["t2i", "image-generation"],
+  "voice-cloning": ["voice clone", "clone voice", "clone a voice"],
+  "avatar-video": ["avatars", "avatar-generation", "talking-head", "talking-avatar"],
+};
+
+// A server's tags with aliases folded onto their canonical form, in listing order.
+function canonicalTags(s, reg) {
+  const table = aliasTable(reg?.capability_aliases);
+  const canonical = new Map();
+  for (const [key, aliases] of Object.entries(table)) for (const a of aliases) canonical.set(a, key);
+  return [...new Set((s.capabilities ?? []).map((tag) => canonical.get(tag) ?? tag))];
+}
+
+const SEARCH_STOPWORDS = new Set(["a", "an", "the", "and", "or", "of", "for", "to", "in", "on", "with", "mcp", "mcps", "server", "servers", "tool", "tools", "ai"]);
+
+const squash = (s) => String(s ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+
+// Accepts {canonical: [aliases]} or [{capability, aliases}] and merges onto the built-ins.
+function aliasTable(runtime) {
+  const table = Object.fromEntries(Object.entries(BUILTIN_ALIASES).map(([k, v]) => [k, [...v]]));
+  const entries = Array.isArray(runtime)
+    ? runtime.map((e) => [e?.capability ?? e?.canonical, e?.aliases])
+    : Object.entries(runtime && typeof runtime === "object" ? runtime : {});
+  for (const [canonical, aliases] of entries) {
+    if (typeof canonical !== "string" || !Array.isArray(aliases)) continue;
+    table[canonical] = [...new Set([...(table[canonical] ?? []), ...aliases.filter((a) => typeof a === "string")])];
+  }
+  return table;
+}
+
+const aliasCache = new WeakMap();
+const DEFAULT_ALIAS_KEY = {};
+
+// Compiled once per registry document: [regex, canonical token] pairs, longest phrase first.
+function aliasRules(reg) {
+  const key = reg && typeof reg === "object" ? reg : DEFAULT_ALIAS_KEY;
+  if (aliasCache.has(key)) return aliasCache.get(key);
+  const table = aliasTable(reg?.capability_aliases);
+  const rules = [];
+  for (const [canonical, aliases] of Object.entries(table)) {
+    const token = squash(canonical);
+    for (const phrase of [canonical, ...aliases]) {
+      const words = String(phrase).toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+      if (!words.length) continue;
+      rules.push([new RegExp(`\\b${words.join("[\\s_-]*")}\\b`, "g"), ` ${token} `, words.join("").length]);
+    }
+  }
+  rules.sort((a, b) => b[2] - a[2]);
+  aliasCache.set(key, rules);
+  return rules;
+}
+
+// A light stem so "captions" meets "captioning" and "voices" meets "voice".
+const stem = (w) => (w.length > 5 && /(ing|ed|er|es|s)$/.test(w) ? w.replace(/(ing|ed|er|es|s)$/, "") : w);
+
+// A query collapses an alias phrase to its canonical token only; a haystack
+// keeps the original words too, so "voice cloning" (phrase) finds a subset of
+// what "cloning voice" (any order) finds, never something different.
+function tokenize(text, reg, { stopwords = false, expand = false } = {}) {
+  let t = String(text ?? "").toLowerCase();
+  for (const [re, replacement] of aliasRules(reg)) t = t.replace(re, expand ? `${replacement}$& ` : replacement);
+  const out = [];
+  for (const w of t.match(/[a-z0-9]+/g) ?? []) {
+    if (stopwords && SEARCH_STOPWORDS.has(w)) continue;
+    out.push(stem(w));
+  }
+  return out;
+}
+
+// Query token q hits haystack token h when equal, or when q (4+ chars) prefixes h.
+const tokenHit = (q, hay) => hay.set.has(q) || (q.length >= 4 && hay.list.some((h) => h.startsWith(q)));
+const matchesAll = (qTokens, hay) => qTokens.every((q) => tokenHit(q, hay));
+const tokenIndex = (texts, reg) => {
+  const list = [...new Set(tokenize(texts.filter(Boolean).join(" "), reg, { expand: true }))];
+  return { list, set: new Set(list) };
+};
+
+function serverHaystack(s, reg, categoryName) {
+  return tokenIndex([
+    s.name, s.vendor, s.tagline, s.description,
+    ...(s.capabilities ?? []), ...(s.tools_sample ?? []),
+    s.category, categoryName, s.pricing, s.auth?.type,
+  ], reg);
+}
+
+function levenshtein(a, b) {
+  if (a === b) return 0;
+  if (!a.length) return b.length;
+  if (!b.length) return a.length;
+  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i];
+    for (let j = 1; j <= b.length; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+    prev = cur;
+  }
+  return prev[b.length];
+}
+
+// 0..1: exact squashed match, containment, else edit distance.
+function similarity(a, b) {
+  const x = squash(a), y = squash(b);
+  if (!x || !y) return 0;
+  if (x === y) return 1;
+  if (x.includes(y) || y.includes(x)) return 0.1 + 0.9 * Math.min(x.length, y.length) / Math.max(x.length, y.length);
+  return 1 - levenshtein(x, y) / Math.max(x.length, y.length);
+}
+
+// Nearest capability tags, category ids and server names for a query that found nothing.
+function didYouMean(query, reg, { capabilities = null, limit = 3, threshold = 0.7 } = {}) {
+  const q = String(query ?? "").trim();
+  if (!q) return null;
+  const qTokens = tokenize(q, reg, { stopwords: true });
+  const score = (candidate) => {
+    let best = similarity(q, candidate);
+    for (const qt of qTokens) for (const ct of tokenize(candidate, reg, { expand: true })) best = Math.max(best, 0.9 * similarity(qt, ct));
+    return best;
+  };
+  const rank = (items, label) => items
+    .map((item) => ({ item, score: Math.max(...label(item).map(score)) }))
+    .filter((x) => x.score >= threshold)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map((x) => x.item);
+  const tags = capabilities ?? [...new Set((reg.servers ?? []).flatMap((s) => s.capabilities ?? []))];
+  const out = {};
+  const caps = rank(tags, (t) => [t]);
+  if (caps.length) out.capabilities = caps;
+  const cats = rank(reg.categories ?? [], (c) => [c.id, c.name]).map((c) => c.id);
+  if (cats.length) out.categories = cats;
+  const servers = rank(reg.servers ?? [], (s) => [s.name, s.slug]).map((s) => s.slug);
+  if (servers.length) out.servers = servers;
+  return Object.keys(out).length ? out : null;
+}
+
+// Exact tag, else the tag whose normalised tokens equal the input's (so
+// "lipsync", "lip sync" and "text to speech" land on lip-sync and tts).
+function resolveCapability(input, index, reg) {
+  const wanted = String(input ?? "").trim();
+  if (!wanted) return null;
+  const exact = index.find((c) => c.capability === wanted);
+  if (exact) return exact;
+  const key = tokenize(wanted, reg).join(" ");
+  if (!key) return null;
+  return index.find((c) => tokenize(c.capability, reg).join(" ") === key) ?? null;
+}
+
+// Capability tags whose tokens overlap the given query tokens, most-populated first.
+function capabilitiesMatching(qTokens, index, reg) {
+  if (!qTokens.length) return [];
+  return index.filter((c) => {
+    const hay = tokenIndex([c.capability], reg);
+    return qTokens.some((q) => tokenHit(q, hay));
+  }).map((c) => c.capability);
 }
 
 const cmdLike = (cmd) =>
@@ -173,6 +454,70 @@ function clientProfiles() {
   };
 }
 
+// ---- Hard constraints on a brief. Explicit `constraints` win; phrases in the
+// brief fill the gaps. Best effort from install/auth/pricing metadata: a local
+// stdio wrapper around a cloud API still uploads, so no_upload also needs an
+// auth type that proves nothing leaves the machine (none or local-app).
+const CONSTRAINT_PHRASES = {
+  local_only: /\b(locally|on[- ]device|on my (own )?(machine|laptop|workstation)|offline|air[- ]gapped|local[- ]only)\b/i,
+  no_upload: /\b(without uploading|no uploads?|never leaves|nothing leaves|confidential|under nda|private footage|on[- ]prem(ise)?s?)\b/i,
+  hosted_only: /\b(no local install|can(not|'t) install|hosted[- ]only|remote[- ]only|sandboxed|no shell|web agent|browser[- ]only)\b/i,
+  free_only: /\b(no budget|zero budget|for free|free (tools?|only|tier)|without paying|no credit card|free of charge)\b/i,
+};
+
+const CONSTRAINT_REASONS = {
+  local_only: "needs a local install path (stdio command or local app); hosted-only servers were excluded",
+  no_upload: "needs a local install with no cloud credential (auth none or local-app); anything that sends media to a vendor was excluded",
+  hosted_only: "needs a hosted remote MCP endpoint; local-only servers were excluded",
+  free_only: "needs free or freemium pricing; paid and credit-metered servers were excluded",
+  os: "the listing says it only runs on another operating system",
+};
+
+// scoreRecommendations floors at one token hit. One or two incidental words
+// (score <= 3) is a browse, not a match; real briefs score 7 and up.
+const matchStrength = (score) => (score >= 6 ? "strong" : score >= 4 ? "fair" : "weak");
+
+export function detectConstraints(brief) {
+  const out = {};
+  for (const [key, re] of Object.entries(CONSTRAINT_PHRASES)) if (re.test(String(brief ?? ""))) out[key] = true;
+  return out;
+}
+
+function resolveConstraints(args, brief) {
+  const given = args.constraints && typeof args.constraints === "object" ? args.constraints : {};
+  const detected = detectConstraints(brief);
+  const c = { ...detected, ...given };
+  if (args.hosted_only) c.hosted_only = true;
+  if (c.has_shell === false) c.hosted_only = true;
+  if (typeof c.os === "string") c.os = c.os.trim().toLowerCase();
+  else delete c.os;
+  return c;
+}
+
+const localInstall = (s) => Boolean(s.install?.stdio_command) || s.auth?.type === "local-app";
+const OS_ONLY = /\b(macos|mac|osx|windows|linux)[- ]only\b/i;
+
+function violatedConstraints(s, c) {
+  const out = [];
+  if (c.hosted_only && !s.install?.remote_url) out.push("hosted_only");
+  if (c.local_only && !localInstall(s)) out.push("local_only");
+  if (c.no_upload && !(localInstall(s) && ["none", "local-app"].includes(s.auth?.type))) out.push("no_upload");
+  if (c.free_only && !["free", "freemium"].includes(s.pricing)) out.push("free_only");
+  if (c.os) {
+    const said = OS_ONLY.exec(`${s.notes ?? ""} ${s.install?.stdio_command ?? ""}`);
+    if (said) {
+      const only = said[1].toLowerCase().replace(/^osx$/, "macos").replace(/^mac$/, "macos");
+      const want = c.os.replace(/^(darwin|osx|mac)$/, "macos").replace(/^win(32|dows)?$/, "windows");
+      if (only !== want) out.push("os");
+    }
+  }
+  return out;
+}
+
+// Pulse sections for curators and ops: served on request, never folded into "all".
+const PULSE_OPS_SECTIONS = ["demand_signals", "martini_growth_checks"];
+const PULSE_SECTIONS = ["all", "summary", "curator_agenda", "verification_queue", "machine_surfaces", ...PULSE_OPS_SECTIONS];
+
 // The pipeline stages and which categories serve them (mirrors mcp.film/stack).
 const STAGES = [
   { stage: "develop", categories: ["story-preproduction"] },
@@ -190,7 +535,7 @@ export const TOOLS = [
     title: "Search film MCP servers",
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
-      "Search the mcp.film directory of MCP servers for AI filmmaking. Filter by free-text query (matches name, vendor, tagline, capabilities), category id, or capability. Returns compact entries; use get_film_mcp for full detail.",
+      "Search the mcp.film directory of MCP servers for AI filmmaking. Filter by free-text query (matches name, vendor, tagline, description, capabilities, tools, category, pricing, auth), category id, or capability. Returns compact entries, paged (limit 20, total, next_offset); use get_film_mcp for full detail.",
     inputSchema: {
       type: "object",
       properties: {
@@ -199,6 +544,9 @@ export const TOOLS = [
         capability: { type: "string", description: "Exact capability tag, e.g. 'image-to-video'" },
         official_only: { type: "boolean", description: "Only vendor-maintained servers" },
         remote_only: { type: "boolean", description: "Only hosted remote MCPs (no local install)" },
+        include_inactive: { type: "boolean", description: "Also return listings whose status is dead, archived or deprecated. Default false." },
+        limit: { type: "number", description: "Page size, 1-100. Default 20." },
+        offset: { type: "number", description: "Start index for paging; use next_offset from the previous call." },
       },
     },
   },
@@ -226,12 +574,14 @@ export const TOOLS = [
     title: "List capability tags",
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
-      "List capability tags in the mcp.film registry, ranked by number of matching servers. Use get_film_capability for the server cluster behind one tag.",
+      "List capability tags in the mcp.film registry, ranked by number of matching servers (tag, page url, counts). Paged. Use get_film_capability for the server cluster behind one tag.",
     inputSchema: {
       type: "object",
       properties: {
         query: { type: "string", description: "Optional substring filter, e.g. 'video', 'voice', or 'timeline'." },
-        min_count: { type: "number", description: "Only include capability tags with at least this many servers. Default 1." },
+        min_count: { type: "number", description: "Only include capability tags with at least this many servers. Default 2 (tags with a published page)." },
+        limit: { type: "number", description: "Page size, 1-100. Default 50." },
+        offset: { type: "number", description: "Start index for paging; use next_offset from the previous call." },
       },
     },
   },
@@ -247,6 +597,8 @@ export const TOOLS = [
         capability: { type: "string", description: "Exact capability tag." },
         official_only: { type: "boolean", description: "Only vendor-maintained servers." },
         remote_only: { type: "boolean", description: "Only hosted remote MCPs." },
+        limit: { type: "number", description: "Page size, 1-100. Default 20." },
+        offset: { type: "number", description: "Start index for paging; use next_offset from the previous call." },
       },
       required: ["capability"],
     },
@@ -302,14 +654,14 @@ export const TOOLS = [
     title: "Get catalog pulse",
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
-      "Get the mcp.film operating pulse: catalog freshness, demand signals, curator agenda, Martini growth checks, and machine-readable surfaces. Use this before deciding what to update next.",
+      "Get the mcp.film operating pulse: catalog freshness, verification queue, curator agenda, and machine-readable surfaces. Use this before deciding what to update next. The curator/ops sections demand_signals and martini_growth_checks are opt-in by section and not part of 'all'.",
     inputSchema: {
       type: "object",
       properties: {
         section: {
           type: "string",
-          enum: ["all", "summary", "demand_signals", "curator_agenda", "martini_growth_checks", "verification_queue", "machine_surfaces"],
-          description: "Optional top-level pulse section. Default all.",
+          enum: ["all", "summary", "curator_agenda", "verification_queue", "machine_surfaces", "demand_signals", "martini_growth_checks"],
+          description: "Optional top-level pulse section. Default all (which omits the curator/ops sections demand_signals and martini_growth_checks; request those by name).",
         },
       },
     },
@@ -319,11 +671,13 @@ export const TOOLS = [
     title: "List production playbooks",
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
-      "List mcp.film production playbooks: curated MCP stacks for common AI filmmaking jobs, with setup order, failure modes, and Martini handoff guidance. Use get_film_playbook for full steps and auth gates.",
+      "List mcp.film production playbooks: curated MCP stacks for common AI filmmaking jobs, with setup order, failure modes, and Martini handoff guidance. Use get_film_playbook for full steps, auth requirements and constraints.",
     inputSchema: {
       type: "object",
       properties: {
         query: { type: "string", description: "Optional free-text search over title, summary, best_for, constraints, and server names." },
+        limit: { type: "number", description: "Page size, 1-100. Default 20." },
+        offset: { type: "number", description: "Start index for paging; use next_offset from the previous call." },
       },
     },
   },
@@ -332,7 +686,7 @@ export const TOOLS = [
     title: "Get one production playbook",
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
-      "Get one production playbook by id, including primary servers, setup order, auth gates, workflow steps, failure modes, fallback servers, constraints, and links to each server's mcp.film page.",
+      "Get one production playbook by id, including primary servers, setup order, auth requirements, workflow steps, failure modes, fallback servers, constraints, and links to each server's mcp.film page.",
     inputSchema: {
       type: "object",
       properties: { id: { type: "string", description: "Playbook id, e.g. 'commercial-sprint' or 'local-edit-bay'" } },
@@ -349,6 +703,8 @@ export const TOOLS = [
       type: "object",
       properties: {
         query: { type: "string", description: "Optional free-text search over titles, summaries, best_for text, tags, server names, and Martini handoff guidance." },
+        limit: { type: "number", description: "Page size, 1-100. Default 20." },
+        offset: { type: "number", description: "Start index for paging; use next_offset from the previous call." },
       },
     },
   },
@@ -369,12 +725,26 @@ export const TOOLS = [
     title: "Recommend MCP servers for a brief",
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
-      "Given a filmmaking brief, return the closest intent-routed MCP recommendations and the first servers to connect. Use hosted_only=true when the agent cannot spawn local tools.",
+      "Given a filmmaking brief, return the closest intent-routed MCP recommendations: one compact pick per primary server (slug, role, why, remote, official, verified) plus compact fallbacks. Use hosted_only=true when the agent cannot spawn local tools; get_film_mcp for full server detail.",
     inputSchema: {
       type: "object",
       properties: {
         brief: { type: "string", description: "What you're trying to make, e.g. 'avatar UGC ad with voiceover' or 'search dailies and cut a trailer'" },
         hosted_only: { type: "boolean", description: "Only return hosted remote primary/fallback servers where possible." },
+        include_inactive: { type: "boolean", description: "Also consider servers whose status is dead, archived or deprecated. Default false." },
+        verbosity: { type: "string", enum: ["compact", "full"], description: "compact (default): one small object per pick in primary/primary_servers and fallback_servers. full: the complete server objects, as before." },
+        constraints: {
+          type: "object",
+          description: "Hard constraints applied before relevance. Also inferred from the brief ('locally', 'without uploading', 'confidential', 'offline', 'no budget', 'free', 'no local install'). Picks that violate one are excluded; if nothing survives, unsatisfied_constraints explains why.",
+          properties: {
+            local_only: { type: "boolean", description: "Only servers with a local install path (stdio or local app)." },
+            no_upload: { type: "boolean", description: "Only local servers with no cloud credential, so media never leaves the machine." },
+            hosted_only: { type: "boolean", description: "Only hosted remote MCP endpoints." },
+            has_shell: { type: "boolean", description: "false means the agent cannot run local processes; implies hosted_only." },
+            free_only: { type: "boolean", description: "Only free or freemium pricing." },
+            os: { type: "string", description: "macos | windows | linux; excludes listings that say they only run elsewhere." },
+          },
+        },
       },
       required: ["brief"],
     },
@@ -384,35 +754,270 @@ export const TOOLS = [
     title: "Plan a full film MCP stack",
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
-      "Get a recommended set of MCP servers covering the whole film pipeline (develop → visualize → shoot → sound → cut → finish → ship). Returns 1-3 picks per stage, ranked by official status and hosting. Pass a brief to bias picks (matched against capabilities and taglines).",
+      "Get a recommended set of MCP servers covering the whole film pipeline (develop → visualize → shoot → sound → cut → finish → ship). Returns 1-3 picks per stage, ranked by official status and hosting. Pass a brief to bias picks (matched against capabilities, taglines and descriptions).",
     inputSchema: {
       type: "object",
       properties: {
         brief: { type: "string", description: "Optional: what you're making, e.g. 'a 60s commercial with a consistent character and licensed music'" },
+        include_inactive: { type: "boolean", description: "Also consider servers whose status is dead, archived or deprecated. Default false." },
+      },
+    },
+  },
+  {
+    name: "get_martini_setup",
+    title: "Get the Martini connection runbook",
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+    description:
+      "Ordered, executable runbook for connecting a user to Martini (the sponsor's full-stack AI film studio) with the fewest human steps: a resumable state model (needs_account → needs_authorization → needs_billing → needs_project → ready), the human steps, agent steps tailored to the client and whether the agent has a shell or a browser, the quote-first generation contract, structured cost facts, when not to use Martini, and links. Facts verified 2026-10-26.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        client: { type: "string", enum: ["claude_code", "claude_desktop", "cursor", "codex", "chatgpt", "gemini_cli", "other"], description: "The MCP client the user is in. Default other." },
+        has_shell: { type: "boolean", description: "Can the agent run commands (npm, martini CLI)? Default false." },
+        can_open_browser: { type: "boolean", description: "Can the agent itself complete a browser OAuth sign-in (attach a connector)? Default false: the human does it." },
       },
     },
   },
 ];
 
+// ---- Martini runbook. Every fact below was verified on 2026-10-26 against
+// https://www.martini.film/llms.txt and the live tool manifest; nothing here
+// is inferred. Keep the date and the facts together when either changes.
+const MARTINI_FACTS_CHECKED = "2026-10-26";
+const MARTINI_DOCS = {
+  mcp: "https://www.martini.film/docs/mcp",
+  cli: "https://www.martini.film/docs/cli",
+  api: "https://www.martini.film/docs/api",
+  llms: "https://www.martini.film/llms.txt",
+  bar: "https://www.martini.film/bar",
+  signup: MARTINI_SIGNUP_URL,
+  agent_referral: "https://www.martini.film/?ref=ai-agent",
+  cli_auth: "https://martini.film/cli/auth",
+  tools_manifest: "https://api.martini.film/v1/tools",
+  models: "https://api.martini.film/v1/models",
+  mcp_endpoint: MARTINI_MCP_URL,
+};
+
+const MARTINI_CONNECT = {
+  claude_code: { how: "cli", run: `claude mcp add --transport http --scope user martini ${MARTINI_MCP_URL}`, note: "OAuth 2.1 sign-in opens in the browser on first use." },
+  claude_desktop: { how: "ui", run: `Settings → Connectors → Add custom connector → URL ${MARTINI_MCP_URL}`, note: "Claude Desktop and Claude Web take the same custom connector; OAuth sign-in happens in the browser." },
+  chatgpt: { how: "ui", run: `Follow the ChatGPT page under ${MARTINI_DOCS.mcp} (custom connector, URL ${MARTINI_MCP_URL})`, note: "OAuth sign-in happens in the browser." },
+  cursor: { how: "ui", run: `Follow the Cursor page under ${MARTINI_DOCS.mcp} (Streamable HTTP, URL ${MARTINI_MCP_URL})`, note: "OAuth sign-in happens in the browser." },
+  codex: { how: "ui", run: `Follow the Codex page under ${MARTINI_DOCS.mcp} (Streamable HTTP, URL ${MARTINI_MCP_URL})`, note: "OAuth sign-in happens in the browser." },
+  gemini_cli: { how: "ui", run: `Follow the Gemini CLI page under ${MARTINI_DOCS.mcp} (Streamable HTTP, URL ${MARTINI_MCP_URL})`, note: "OAuth sign-in happens in the browser." },
+  other: { how: "ui", run: `Add ${MARTINI_MCP_URL} as a Streamable HTTP MCP server (setup pages for OpenClaw, Hermes and generic clients under ${MARTINI_DOCS.mcp})`, note: "OAuth 2.1 browser sign-in. Do not use /mcp-core: it still answers HTML, not JSON-RPC." },
+};
+
+const MARTINI_GENERATION_CONTRACT = {
+  summary: "Quote first. generate_nodes without batchApproval computes an olive estimate server-side and generates nothing; present model, prompt, count and total to the human, then re-call with batchApproval and the returned planHash.",
+  steps: [
+    { call: "create_project", note: "A personal project defaults to link sharing: anyone with the link can edit. Pass visibility: \"private\" for confidential work (needs Pro or Studio)." },
+    { call: "create_canvas" },
+    { call: "get_balance", note: "Olives available to this workspace. Generations bill to the workspace's own fal key when one is set, otherwise to olives." },
+    { call: "create_nodes", note: "Drafts with draftPrompt and model; nothing is generated yet." },
+    { call: "generate_nodes", args: "nodeIds, no batchApproval", note: "Returns a server-computed olive estimate and a planHash. Generates nothing." },
+    { call: "(human)", note: "Show model, prompt, count and total olives; get an explicit yes." },
+    { call: "generate_nodes", args: "nodeIds, batchApproval, planHash", note: "Generates. A stale planHash is rejected; re-quote." },
+    { call: "wait_for_jobs", args: "timeoutSeconds 45", note: "Re-call while the reply says timedOut." },
+  ],
+  shortcut: "create_nodes_and_generate / create_node_and_generate are single-approval paths with no quote step. Use them only when the user has pre-approved the spend.",
+  cli: "martini generate_nodes --node-ids <ids> --approve --max-olives <n> --wait  (the cap stops a batch that quotes higher; `martini wait` resumes async jobs)",
+};
+
+const MARTINI_COST = {
+  billing_owner: "workspace",
+  unit: "olives (Martini credits) or the workspace's own fal key when set",
+  funding_prerequisites: [
+    "An account (Free plan, $0, includes MCP, CLI and API; public projects only).",
+    "Olives in the workspace, or a fal key attached to the workspace.",
+    "Pro ($25/mo) for private projects, Studio ($125/mo) for a team workspace; both 30-day trial with a card.",
+  ],
+  quote_available: true,
+  quote_call: "generate_nodes without batchApproval",
+  free_plan_limits: "public projects only",
+  model_list_prices: `GET ${MARTINI_DOCS.models} lists models with list prices and needs no account. These are list prices, never an account quote; only generate_nodes quotes what this workspace will pay.`,
+  source: MARTINI_DOCS.llms,
+  checked: MARTINI_FACTS_CHECKED,
+};
+
+export function martiniSetup(args = {}) {
+  const client = MARTINI_CONNECT[args.client] ? args.client : "other";
+  const hasShell = args.has_shell === true;
+  const canOpenBrowser = args.can_open_browser === true;
+  const connect = MARTINI_CONNECT[client];
+
+  const human = [
+    `Create a Martini account (no invite code): ${MARTINI_DOCS.signup} → Bar at ${MARTINI_DOCS.bar}. Free plan is $0 with MCP, CLI and API, public projects only.`,
+  ];
+  const agent = [];
+  const states = [
+    {
+      state: "needs_account",
+      actor: "human",
+      next_action: `Sign up at ${MARTINI_DOCS.signup} (Bar: ${MARTINI_DOCS.bar}). No invite code.`,
+      completion_check: hasShell ? "`martini whoami` prints the account" : "The MCP connector's OAuth sign-in completes and `get_board_overview` answers",
+      recovery: "Re-open the signup link; an existing account just signs in.",
+    },
+  ];
+
+  if (hasShell) {
+    agent.push(
+      { step: 1, run: "npm install --global @martini-film/cli  (Node 20.10+; or prefix every command with `npx @martini-film/cli`)", expect: "`martini --help` lists the tools", then: "step 2" },
+      { step: 2, run: "martini login --no-wait --no-browser", expect: 'JSON {"status":"pending","code":"XXXX-XXXX","verificationUrl":"https://martini.film/cli/auth","expiresInSeconds":600,"next":"Approve the code in the browser, then run martini login again to collect the key."}', then: "Relay verificationUrl and code to the human verbatim; they have 600 s." },
+      { step: 3, run: "martini login", expect: "A 90-day key is collected and stored", then: "step 4 (if it says pending, the human has not approved yet; wait and re-run)" },
+      { step: 4, run: "martini whoami", expect: "Account and workspace", then: "step 5" },
+      { step: 5, run: "martini init --write", expect: "Writes .claude/skills/martini/SKILL.md, .agents/skills/martini/SKILL.md and an AGENTS.md pointer", then: "step 6" },
+      { step: 6, run: 'martini use "<project name>"', expect: "Pins the project for this directory (create one first with `martini create_project --help`; pass visibility private for confidential work, Pro/Studio)", then: "step 7" },
+      { step: 7, run: "martini guide", expect: "The operator rules", then: "Work: every MCP tool is `martini <tool>`; `martini <tool> --help` shows its arguments. Follow generation_contract." },
+    );
+    human.push(`When the agent relays a code: open ${MARTINI_DOCS.cli_auth}, approve the code (expires in 600 s).`);
+    states.push({
+      state: "needs_authorization",
+      actor: "human",
+      next_action: `Agent runs \`martini login --no-wait --no-browser\` and relays the URL + code; human approves at ${MARTINI_DOCS.cli_auth}; agent runs \`martini login\` again to collect the 90-day key.`,
+      completion_check: "`martini whoami` succeeds",
+      expires: "600 s after the code is issued",
+      recovery: "Re-run `martini login --no-wait --no-browser` for a fresh code.",
+    });
+  } else {
+    agent.push(
+      { step: 1, run: connect.run, expect: canOpenBrowser ? "Connector added; complete the OAuth 2.1 sign-in in the browser yourself" : "Connector added; the human completes the OAuth 2.1 sign-in in the browser", then: "step 2" },
+      { step: 2, run: "get_board_overview", expect: "The workspace's projects/boards (empty on a new account)", then: "step 3" },
+      { step: 3, run: "get_models", expect: "The model roster the workspace can use", then: "Follow generation_contract: create_project (visibility private for confidential work) → create_canvas → get_balance → create_nodes → generate_nodes quote → human approval → generate_nodes with planHash → wait_for_jobs." },
+    );
+    if (connect.how === "ui") human.push(`Add the connector in ${client === "other" ? "your client" : client.replace("_", " ")}: ${connect.run}.`);
+    human.push(canOpenBrowser
+      ? "Approve the OAuth sign-in if the browser asks for consent (the agent drives the flow)."
+      : "Complete the OAuth 2.1 browser sign-in when the client opens it.");
+    states.push({
+      state: "needs_authorization",
+      actor: canOpenBrowser ? "agent" : "human",
+      next_action: `${connect.run}. ${connect.note}`,
+      completion_check: "`get_board_overview` answers instead of an auth error",
+      recovery: "Remove and re-add the connector, or sign out and back in at martini.film, then retry.",
+    });
+  }
+
+  states.push(
+    {
+      state: "needs_billing",
+      actor: "human",
+      only_if: "the work needs private projects (Pro $25/mo or Studio $125/mo, 30-day trial with a card) or the workspace has no olives and no fal key",
+      next_action: `Upgrade or add funding at ${MARTINI_DOCS.bar}. Generations bill to the workspace's own fal key when set, otherwise to olives.`,
+      completion_check: hasShell ? "`martini get_balance` shows olives (or a fal key is attached); `martini create_project --visibility private` succeeds" : "`get_balance` shows olives (or a fal key is attached); `create_project` with visibility private succeeds",
+      recovery: "Stay on Free with public projects, or add a fal key to the workspace.",
+    },
+    {
+      state: "needs_project",
+      actor: "agent",
+      next_action: hasShell ? 'Create or pick a project, then `martini use "<project name>"` to pin it for the directory.' : "create_project (visibility private for confidential work), then create_canvas.",
+      completion_check: hasShell ? "`martini get_board_overview` shows the pinned project" : "`get_board_overview` shows the project",
+      recovery: "Re-run `martini use` (or create_project) in the working directory.",
+    },
+    {
+      state: "ready",
+      actor: "agent",
+      next_action: "Quote-first generation: create_nodes → generate_nodes (no batchApproval) → show model, prompt, count, total olives → generate_nodes (batchApproval + planHash) → wait_for_jobs.",
+      completion_check: "wait_for_jobs returns completed jobs",
+      recovery: "A stale planHash means the drafts changed: re-quote. Re-call wait_for_jobs while timedOut.",
+    },
+  );
+
+  const summary = hasShell
+    ? "Install the Martini CLI, run the device-code login and relay URL + code to the human (the only thing they must do besides creating an account), collect the key, pin a project, then generate quote-first."
+    : `Have the human create an account and add ${MARTINI_MCP_URL} as an MCP connector in ${client === "other" ? "their client" : client.replace("_", " ")}; after the OAuth sign-in, start with get_board_overview and get_models, then generate quote-first.`;
+
+  return {
+    summary,
+    client,
+    has_shell: hasShell,
+    can_open_browser: canOpenBrowser,
+    start_at: "needs_account",
+    how_to_resume: "Run each state's completion_check in order; the first one that fails is the current state. Act as its actor says, or hand the next_action to the human.",
+    states,
+    human_steps: human,
+    agent_steps: agent,
+    first_calls: MARTINI_FIRST_CALLS,
+    generation_contract: MARTINI_GENERATION_CONTRACT,
+    no_account_needed: {
+      tools_manifest: `GET ${MARTINI_DOCS.tools_manifest} (104 tools, JSON Schema per tool)`,
+      models: `GET ${MARTINI_DOCS.models} (model catalogue with list prices)`,
+    },
+    cost: MARTINI_COST,
+    not_when: MARTINI_NOT_WHEN,
+    referral: {
+      send_humans_to: MARTINI_DOCS.signup,
+      vendor_agent_link: MARTINI_DOCS.agent_referral,
+      note: `Martini documents ${MARTINI_DOCS.agent_referral} as its generic agent-referral link; ${MARTINI_DOCS.signup} credits mcp.film.`,
+    },
+    links: {
+      signup: MARTINI_DOCS.signup,
+      bar: MARTINI_DOCS.bar,
+      mcp_endpoint: MARTINI_DOCS.mcp_endpoint,
+      docs_mcp: MARTINI_DOCS.mcp,
+      docs_cli: MARTINI_DOCS.cli,
+      docs_api: MARTINI_DOCS.api,
+      llms: MARTINI_DOCS.llms,
+      cli_install: MARTINI_CLI,
+      avoid: "https://www.martini.film/mcp-core (returns HTML, not JSON-RPC, as of the check date)",
+    },
+    checked: MARTINI_FACTS_CHECKED,
+    disclosure: MARTINI_SPONSOR_DISCLOSURE,
+  };
+}
+
 export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations, loadPulse }, VERSION) {
   return async function callTool(name, args = {}) {
+    if (name === "get_martini_setup") return martiniSetup(args);
+
     const reg = await loadRegistry();
     const servers = reg.servers;
+    const bySlug = new Map(servers.map((s) => [s.slug, s]));
 
     if (name === "search_film_mcps") {
-      const q = (args.query ?? "").toLowerCase();
-      let hits = servers.filter((s) => {
+      const query = String(args.query ?? "").trim();
+      const qTokens = tokenize(query, reg, { stopwords: true });
+      const catIds = (reg.categories ?? []).map((c) => c.id);
+      if (args.category && !catIds.includes(args.category)) {
+        return {
+          error: `Unknown category '${args.category}'.`,
+          valid_categories: catIds,
+          ...(didYouMean(args.category, reg) ? { did_you_mean: didYouMean(args.category, reg) } : {}),
+        };
+      }
+      const index = capabilityIndex(servers, reg);
+      let capability = null;
+      if (args.capability) {
+        capability = resolveCapability(args.capability, index, reg)?.capability ?? null;
+        if (!capability) {
+          return {
+            error: `No capability tag '${args.capability}'.`,
+            ...(didYouMean(args.capability, reg, { capabilities: index.map((c) => c.capability) }) ? { did_you_mean: didYouMean(args.capability, reg, { capabilities: index.map((c) => c.capability) }) } : {}),
+            hint: "Use list_film_capabilities to browse tags.",
+          };
+        }
+      }
+      const catName = new Map((reg.categories ?? []).map((c) => [c.id, c.name]));
+      const hits = servers.filter((s) => {
+        if (!args.include_inactive && !isActive(s)) return false;
         if (args.category && s.category !== args.category) return false;
-        if (args.capability && !(s.capabilities ?? []).includes(args.capability)) return false;
+        if (capability && !canonicalTags(s, reg).includes(capability)) return false;
         if (args.official_only && !s.official) return false;
         if (args.remote_only && !s.install?.remote_url) return false;
-        if (q) {
-          const hay = [s.name, s.vendor, s.tagline, s.description, ...(s.capabilities ?? [])].join(" ").toLowerCase();
-          return q.split(/\s+/).every((w) => hay.includes(w));
-        }
+        if (qTokens.length) return matchesAll(qTokens, serverHaystack(s, reg, catName.get(s.category)));
         return true;
       });
-      return { count: hits.length, source: reg._source, servers: hits.map(compact) };
+      const { page, meta } = paged(hits, args);
+      const out = { ...meta, source: reg._source };
+      if (query) out.query_tokens = qTokens;
+      if (capability && capability !== args.capability) out.capability = { requested: args.capability, resolved: capability };
+      if (!hits.length) {
+        const near = didYouMean(query || capability || args.category, reg, { capabilities: index.map((c) => c.capability) });
+        if (near) out.did_you_mean = near;
+        out.hint = "No entry matched every query token. Try fewer words, a capability tag from list_film_capabilities, or recommend_film_mcps with the brief.";
+      }
+      out.servers = page.map(compact);
+      return out;
     }
 
     if (name === "get_film_mcp") {
@@ -427,34 +1032,62 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
 
     if (name === "list_film_capabilities") {
       const q = String(args.query ?? "").toLowerCase();
-      const min = Number(args.min_count ?? 1);
-      let capabilities = capabilityIndex(servers).filter((c) => c.count >= min);
-      if (q) capabilities = capabilities.filter((c) => c.capability.includes(q));
+      const min = Number(args.min_count ?? 2);
+      let capabilities = capabilityIndex(servers, reg).filter((c) => c.count >= min);
+      if (q) {
+        const qTokens = tokenize(q, reg, { stopwords: true });
+        capabilities = capabilities.filter((c) => c.capability.includes(q) || (qTokens.length && matchesAll(qTokens, tokenIndex([c.capability], reg))));
+      }
+      const { page, meta } = paged(capabilities, args, 50);
       return {
+        ...meta,
+        min_count: min,
         source: reg._source,
-        count: capabilities.length,
-        capabilities: capabilities.map(({ servers: _servers, ...c }) => c),
+        capabilities: page.map(({ servers: _servers, ...c }) => c),
       };
     }
 
     if (name === "get_film_capability") {
-      const entry = capabilityIndex(servers).find((c) => c.capability === args.capability);
-      if (!entry) return { error: `No capability tag '${args.capability}'. Try list_film_capabilities first.` };
+      const index = capabilityIndex(servers, reg);
+      const entry = resolveCapability(args.capability, index, reg);
+      if (!entry) {
+        const near = didYouMean(args.capability, reg, { capabilities: index.map((c) => c.capability) });
+        return {
+          error: `No capability tag '${args.capability}'. Try list_film_capabilities first.`,
+          ...(near ? { did_you_mean: near } : {}),
+        };
+      }
       let found = entry.servers;
       if (args.official_only) found = found.filter((s) => s.official);
       if (args.remote_only) found = found.filter((s) => s.remote);
+      const { page, meta } = paged(found, args);
       return {
         ...entry,
+        ...(entry.capability !== args.capability ? { resolved_from: args.capability } : {}),
         source: reg._source,
-        servers: found,
+        ...meta,
+        servers: page,
         filters: { official_only: Boolean(args.official_only), remote_only: Boolean(args.remote_only) },
       };
     }
 
     if (name === "get_install_config") {
+      const profiles = clientProfiles().clients;
+      const validClients = profiles.flatMap((c) => [c.id, ...(c.aliases ?? [])]);
+      const client = typeof args.client === "string" ? args.client.trim().toLowerCase() : "";
+      if (!validClients.includes(client)) {
+        return {
+          error: client ? `Unknown client '${args.client}'.` : "client is required.",
+          valid_clients: validClients,
+          hint: "Pick an id from list_client_profiles.",
+        };
+      }
       const s = servers.find((x) => x.slug === args.slug);
-      if (!s) return { error: `No server with slug '${args.slug}'.` };
-      return installConfig(s, args.client);
+      if (!s) {
+        const near = didYouMean(args.slug, reg);
+        return { error: `No server with slug '${args.slug}'.`, ...(near?.servers ? { did_you_mean: near.servers } : {}) };
+      }
+      return installConfig(s, client);
     }
 
     if (name === "list_client_profiles") {
@@ -464,14 +1097,24 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
     if (name === "get_catalog_pulse") {
       const currentPulse = await loadPulse();
       const section = args.section || "all";
-      if (section === "all") return currentPulse;
-      if (!(section in currentPulse)) {
+      const observed = {
+        data_source: currentPulse._source ?? null,
+        observed_at: currentPulse._observed_at ?? currentPulse.generated ?? null,
+      };
+      if (section === "all") {
+        const { [PULSE_OPS_SECTIONS[0]]: _demand, [PULSE_OPS_SECTIONS[1]]: _martini, ...rest } = currentPulse;
         return {
-          error: `No pulse section '${section}'.`,
-          valid_sections: ["all", "summary", "demand_signals", "curator_agenda", "martini_growth_checks", "verification_queue", "machine_surfaces"],
+          ...rest,
+          summary: { ...(rest.summary ?? {}), ...observed },
+          opt_in_sections: PULSE_OPS_SECTIONS,
+          note: "demand_signals and martini_growth_checks are curator/ops sections; request them by name.",
         };
       }
-      return { section, source: currentPulse._source, value: currentPulse[section] };
+      if (!(section in currentPulse) || section.startsWith("_")) {
+        return { error: `No pulse section '${section}'.`, valid_sections: PULSE_SECTIONS };
+      }
+      const value = section === "summary" ? { ...currentPulse.summary, ...observed } : currentPulse[section];
+      return { section, source: currentPulse._source, value };
     }
 
     if (name === "submit_listing") {
@@ -552,7 +1195,8 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
           return q.split(/\s+/).every((w) => hay.includes(w));
         });
       }
-      return { count: hits.length, source: pb._source, playbooks: hits.map(compactPlaybook) };
+      const { page, meta } = paged(hits, args);
+      return { ...meta, source: pb._source, playbooks: page.map(compactPlaybook) };
     }
 
     if (name === "get_film_playbook") {
@@ -569,7 +1213,8 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
       if (q) {
         hits = hits.filter((r) => includesAllWords(recommendationHaystack(r), q));
       }
-      return { count: hits.length, source: rec._source, recommendations: hits.map(compactRecommendation) };
+      const { page, meta } = paged(hits, args);
+      return { ...meta, source: rec._source, recommendations: page.map((r) => compactRecommendation(r, bySlug, { lean: true })) };
     }
 
     if (name === "get_film_recommendation") {
@@ -582,29 +1227,100 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
     if (name === "recommend_film_mcps") {
       const rec = await loadRecommendations();
       const brief = String(args.brief ?? "").toLowerCase();
-      const hostedOnly = Boolean(args.hosted_only);
-      const ranked = scoreRecommendations(rec.recommendations ?? [], brief, hostedOnly)
+      const constraints = resolveConstraints(args, brief);
+      const hostedOnly = Boolean(constraints.hosted_only);
+      // Retired listings leave the shortlist before scoring; a route with no live primary leaves too.
+      const live = (slug) => args.include_inactive || isActive(bySlug.get(slug) ?? {});
+      const liveRoutes = (rec.recommendations ?? []).map((r) => ({
+        ...r,
+        primary: (r.primary ?? []).filter((p) => live(p.server?.slug)),
+        fallback_servers: (r.fallback_servers ?? []).filter((s) => live(s.slug)),
+      }));
+      // Hard constraints come before relevance: a pick that cannot run where the
+      // agent is, or costs what the user will not pay, is removed before scoring.
+      const exclusions = new Map();
+      const candidates = liveRoutes.map((r) => {
+        const excluded = [];
+        const keep = (slug) => {
+          const violated = violatedConstraints(bySlug.get(slug) ?? {}, constraints);
+          if (violated.length) excluded.push({ slug, constraint: violated[0] });
+          return !violated.length;
+        };
+        const route = {
+          ...r,
+          primary: r.primary.filter((p) => keep(p.server?.slug)),
+          fallback_servers: r.fallback_servers.filter((s) => keep(s.slug)),
+        };
+        if (excluded.length) exclusions.set(r.id, excluded);
+        return route;
+      });
+      const full = args.verbosity === "full";
+      const ranked = scoreRecommendations(candidates, brief, hostedOnly)
         .slice(0, 3)
-        .map((r) => ({
-          ...compactRecommendation(r),
-          ...(needsMartini(r, brief) ? { martini_handoff: martiniHandoff(r, `recommendation:${r.id}`) } : {}),
-          primary: r.primary,
-          fallback_servers: r.fallback_servers,
-        }));
-      if (!ranked.length) return {
-        brief: args.brief,
-        no_match: true,
-        message: "No route in the directory matches this brief. Try search_film_mcps with a capability such as text-to-video, or list_film_recommendations to browse routes.",
-        recommendations: [],
-      };
+        .map((r) => {
+          const shaped = compactRecommendation(r, bySlug);
+          return {
+            ...shaped,
+            match: { score: r._score, strength: matchStrength(r._score) },
+            // `primary` stays for older callers; compact by default, the full objects on verbosity=full.
+            primary: full ? r.primary : shaped.primary_servers,
+            ...(full ? { fallback_servers: r.fallback_servers } : {}),
+            ...(exclusions.has(r.id) ? { excluded_by_constraints: exclusions.get(r.id) } : {}),
+            ...(needsMartini(r, brief) ? {
+              martini_handoff: martiniHandoff(r, `recommendation:${r.id}`),
+              martini_handoff_structured: martiniHandoffStructured(r, `recommendation:${r.id}`),
+            } : {}),
+          };
+        });
+      const activeConstraints = Object.fromEntries(Object.entries(constraints).filter(([, v]) => v !== undefined && v !== false && v !== null));
+      if (!ranked.length) {
+        // Relevant routes existed but every primary pick broke a constraint: say which, rather than
+        // return a shortlist the agent cannot use.
+        const relevant = scoreRecommendations(liveRoutes, brief, false).slice(0, 3);
+        if (relevant.length && Object.keys(activeConstraints).length) {
+          const unsatisfied = {};
+          for (const r of relevant) for (const x of exclusions.get(r.id) ?? []) (unsatisfied[x.constraint] ??= new Set()).add(x.slug);
+          return {
+            brief: args.brief,
+            no_match: true,
+            constraints: activeConstraints,
+            unsatisfied_constraints: Object.entries(unsatisfied).map(([constraint, slugs]) => ({
+              constraint,
+              value: constraints[constraint],
+              reason: CONSTRAINT_REASONS[constraint],
+              excluded: [...slugs],
+            })),
+            relevant_routes: relevant.map((r) => r.id),
+            message: `The closest routes (${relevant.map((r) => r.id).join(", ")}) only have picks that violate the brief's constraints. Relax a constraint, or use get_film_recommendation to read a route and choose by hand.`,
+            recommendations: [],
+          };
+        }
+        const matched = capabilitiesMatching(tokenize(brief, reg, { stopwords: true }), capabilityIndex(servers, reg), reg).slice(0, 5);
+        const suggestion = matched.length
+          ? `Try search_film_mcps with capability ${matched.map((c) => `'${c}'`).join(" or ")}, or list_film_recommendations to browse routes.`
+          : "No capability tag matches the brief's words either. Try list_film_capabilities to find the right tag, or list_film_recommendations to browse routes.";
+        return {
+          brief: args.brief,
+          no_match: true,
+          ...(Object.keys(activeConstraints).length ? { constraints: activeConstraints } : {}),
+          message: `No route in the directory matches this brief. ${suggestion}`,
+          ...(matched.length ? { matched_capabilities: matched } : {}),
+          recommendations: [],
+        };
+      }
+      const confidence = ranked[0].match.strength;
       return {
         brief: args.brief,
         hosted_only: hostedOnly,
+        ...(Object.keys(activeConstraints).length ? { constraints: activeConstraints } : {}),
+        confidence,
         source: rec._source,
         recommendations: ranked,
-        note: hostedOnly
-          ? "Hosted-only mode removes local primary/fallback servers when the recommendation data marks a server as non-remote."
-          : "Use get_film_recommendation for one full route, or get_film_mcp for full server detail.",
+        note: confidence === "weak"
+          ? "The brief shares only a word or two with these routes. Treat them as a place to browse, not an answer; search_film_mcps with the job's capability tag may serve better."
+          : hostedOnly
+            ? "Hosted-only mode removes local primary/fallback servers when the recommendation data marks a server as non-remote."
+            : "Use get_film_recommendation for one full route, or get_film_mcp for full server detail.",
       };
     }
 
@@ -622,7 +1338,7 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
         return sc;
       };
       const plan = STAGES.map(({ stage, categories }) => {
-        const pool = servers.filter((s) => categories.includes(s.category));
+        const pool = servers.filter((s) => categories.includes(s.category) && (args.include_inactive || isActive(s)));
         const picks = pool.sort((a, b) => score(b) - score(a)).slice(0, 3);
         return { stage, picks: picks.map((p) => ({ ...compact(p), why: p.tagline })) };
       });

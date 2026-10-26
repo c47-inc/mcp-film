@@ -9,7 +9,9 @@ const DEFAULT_SPONSOR_CONNECT_URL = "__MCPFILM_SPONSOR_CONNECT_URL__";
 
 // Placements that represent "I have decided which tool to use and want to connect it".
 // Those land on the sponsor's connect docs; everything else lands on the homepage.
-const CONNECT_INTENT_PLACEMENT = /^(capability|playbook|recommendation|router|server-links):|^agents-fast-path$/;
+// `martini-connect:` placements come from the /martini/connect runbook: already past the
+// decision, except `martini-connect:signup`, which is account creation and lands on the home page.
+const CONNECT_INTENT_PLACEMENT = /^(capability|playbook|recommendation|router|server-links):|^martini-connect:(?!signup$)|^agents-fast-path$/;
 
 // Exported for scripts/check-build.mjs. Cloudflare only reads the default export.
 export const isConnectIntent = (placement) => CONNECT_INTENT_PLACEMENT.test(String(placement || ""));
@@ -42,6 +44,7 @@ const agentReadableSurfaces = new Set([
   "llms",
   "listing-json",
   "listing-markdown",
+  "martini-runbook",
   "mcp-discovery",
   "mcp-endpoint",
   "mcp-registry",
@@ -127,15 +130,32 @@ async function markdownTwinResponse(request, env) {
   return response;
 }
 
+// A markdown or text twin fetched directly (/mcps/x.md, /llms.txt) is the same document as
+// its HTML page. Without a canonical, search engines index a few hundred duplicates. The
+// Link header says which page is the original; the twin stays readable for LLM fetchers
+// (no noindex). Exported for scripts/test-edge.mjs.
+export function canonicalPageFor(pathname) {
+  if (pathname === "/index.md" || pathname === "/llms.txt" || pathname === "/llms-full.txt") return "/";
+  const m = /^(\/[a-z0-9/-]+)\.md$/.exec(pathname);
+  return m ? `${m[1]}/` : null;
+}
+
 async function pageResponse(request, env) {
   const response = await env.ASSETS.fetch(assetRequestFor(request));
+  const url = new URL(request.url);
   // HTML pages negotiate to their markdown twin on Accept; the <link rel="alternate"> in
   // the page head already advertises the twin, so only the cache key needs telling.
   if (request.method === "GET" && response.ok && /text\/html/i.test(response.headers.get("content-type") || "")
-    && markdownTwinPath(new URL(request.url).pathname)) {
+    && markdownTwinPath(url.pathname)) {
     const page = new Response(response.body, response);
     page.headers.append("vary", "Accept");
     return page;
+  }
+  const canonical = /^(GET|HEAD)$/.test(request.method) && response.ok ? canonicalPageFor(url.pathname) : null;
+  if (canonical) {
+    const twin = new Response(response.body, response);
+    twin.headers.set("link", `<${url.origin}${canonical}>; rel="canonical"`);
+    return twin;
   }
   return response;
 }
@@ -163,7 +183,8 @@ function handoffRedirectResponse(request, env) {
   return Response.redirect(destination.toString(), 302);
 }
 
-function sponsorDestinationFor(request, env) {
+// Exported for scripts/test-edge.mjs.
+export function sponsorDestinationFor(request, env) {
   const sponsorUrl = env.SPONSOR_URL || DEFAULT_SPONSOR_URL;
   if (!sponsorUrl || sponsorUrl.startsWith("__MCPFILM_")) return null;
 
@@ -176,11 +197,14 @@ function sponsorDestinationFor(request, env) {
   const useConnect =
     placement && CONNECT_INTENT_PLACEMENT.test(placement) && connectUrl && !connectUrl.startsWith("__MCPFILM_");
 
+  // Attribution rides on the destination's own query string (merged with whatever the
+  // configured URL already carries): ref= is what Martini reads, utm_* what analytics reads.
   const destination = new URL(useConnect ? connectUrl : sponsorUrl);
+  destination.searchParams.set("ref", "mcp-film");
   destination.searchParams.set("utm_source", "mcp.film");
   destination.searchParams.set("utm_medium", "referral");
   destination.searchParams.set("utm_campaign", "mcp_film_handoff");
-  if (placement) destination.searchParams.set("utm_content", placement);
+  if (placement) destination.searchParams.set("utm_content", placement.slice(0, 64));
 
   // The destination cannot tell an agent from a person, and on this site most requests are
   // agents. Hand over the classification so downstream analytics can separate them.
@@ -222,7 +246,8 @@ function mcpHeaders() {
   return out;
 }
 
-async function mcpHandleMessage(msg) {
+// Exported for scripts/test-mcp.mjs; the endpoint binds callTool to this deployment's data.
+export async function mcpHandleMessage(msg, callTool = mcpCallTool) {
   if (!msg || typeof msg !== "object" || msg.jsonrpc !== "2.0" || typeof msg.method !== "string") {
     return { jsonrpc: "2.0", id: (msg && msg.id) ?? null, error: { code: -32600, message: "Invalid Request" } };
   }
@@ -230,26 +255,11 @@ async function mcpHandleMessage(msg) {
   const isNotification = id === undefined;
   try {
     if (method === "initialize") {
-      const offered = params?.protocolVersion;
-      return {
-        jsonrpc: "2.0", id,
-        result: {
-          protocolVersion: typeof offered === "string" ? offered : "2025-06-18",
-          capabilities: { tools: {} },
-          serverInfo: { name: "mcp-film", title: "mcp.film directory", version: MCP_VERSION },
-        },
-      };
+      return { jsonrpc: "2.0", id, result: initializeResult(params?.protocolVersion, MCP_VERSION) };
     }
     if (method === "tools/list") return { jsonrpc: "2.0", id, result: { tools: TOOLS } };
     if (method === "tools/call") {
-      const result = await mcpCallTool(params?.name, params?.arguments);
-      return {
-        jsonrpc: "2.0", id,
-        result: {
-          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
-          isError: Boolean(result?.error),
-        },
-      };
+      return { jsonrpc: "2.0", id, result: toolResult(await callTool(params?.name, params?.arguments)) };
     }
     if (method === "ping") return { jsonrpc: "2.0", id, result: {} };
     if (isNotification) return null;
@@ -310,7 +320,7 @@ async function mcpEndpointResponse(request, env, ctx) {
   if (url.pathname !== "/mcp" && url.pathname !== "/mcp/") return null;
 
   const reply = (body, status, extras) => {
-    const response = new Response(body === null ? null : JSON.stringify(body, null, 2), {
+    const response = new Response(body === null ? null : JSON.stringify(body), {
       status,
       headers: mcpHeaders(),
     });
@@ -339,11 +349,11 @@ async function mcpEndpointResponse(request, env, ctx) {
   // 2025-06-18 removed JSON-RPC batching, but answering a legacy batch beats erroring on it.
   if (Array.isArray(message)) {
     if (!message.length) return reply({ jsonrpc: "2.0", id: null, error: { code: -32600, message: "Invalid Request" } }, 400, extras);
-    const replies = (await Promise.all(message.map(mcpHandleMessage))).filter((r) => r !== null);
+    const replies = (await Promise.all(message.map((m) => mcpHandleMessage(m, mcpCallTool)))).filter((r) => r !== null);
     return replies.length ? reply(replies, 200, extras) : reply(null, 202, extras);
   }
 
-  const single = await mcpHandleMessage(message);
+  const single = await mcpHandleMessage(message, mcpCallTool);
   return single === null ? reply(null, 202, extras) : reply(single, 200, extras);
 }
 
@@ -370,10 +380,17 @@ export async function registryApiResponse(request, env) {
       }
     }
     const updatedSince = url.searchParams.get("updated_since");
+    const search = (url.searchParams.get("search") || "").trim().toLowerCase();
     const full = await jsonAssetResponse(env, url, "/api/mcp-registry.json");
     if (full.status !== 200) return full;
     const body = await full.json();
     let servers = Array.isArray(body.servers) ? body.servers : [];
+
+    // The registry API's `search` is a case-insensitive substring over name and description.
+    if (search) {
+      servers = servers.filter((entry) =>
+        `${entry?.server?.name ?? ""} ${entry?.server?.title ?? ""} ${entry?.server?.description ?? ""}`.toLowerCase().includes(search));
+    }
 
     if (updatedSince) {
       const since = Date.parse(updatedSince);
@@ -601,7 +618,8 @@ function surfaceFor(pathname) {
   return routePropertiesFor(pathname).surface;
 }
 
-function routePropertiesFor(pathname) {
+// Exported for scripts/test-edge.mjs.
+export function routePropertiesFor(pathname) {
   const listingJson = /^\/api\/mcps\/([a-z0-9][a-z0-9-]*)\.json$/.exec(pathname);
   if (listingJson) return route("listing-json", "server", { slug: listingJson[1] });
 
@@ -624,6 +642,9 @@ function routePropertiesFor(pathname) {
   if (categoryPage) return route("category-page", "category", { category: categoryPage[1] });
 
   if (pathname === "/go/martini" || pathname === "/go/martini/") return route("martini-handoff", "martini", { slug: "martini" });
+  // The Martini connect runbook: the markdown twin is an agent surface, the page is for people.
+  if (pathname === "/martini/connect.md") return route("martini-runbook", "martini", { slug: "martini" });
+  if (pathname === "/martini/connect" || pathname === "/martini/connect/") return route("martini-runbook-page", "martini", { slug: "martini" });
 
   if (pathname.startsWith("/v0.1/")) return route("mcp-registry", "registry");
   if (pathname.startsWith("/api/mcp-registry")) return route("mcp-registry", "registry");
@@ -677,7 +698,8 @@ function route(surface, group, extras = {}) {
   };
 }
 
-function classifyTraffic(pathname, userAgent, headers) {
+// Exported for scripts/test-edge.mjs.
+export function classifyTraffic(pathname, userAgent, headers) {
   const surface = surfaceFor(pathname);
   for (const [family, pattern] of agentMatchers) {
     if (pattern.test(userAgent)) return { kind: "agent", family };

@@ -68,26 +68,40 @@ for (const [index, [brief, hosted_only]] of fixtures.entries()) {
   if (index === 0) {
     assert.equal(result.no_match, true);
     assert.deepEqual(result.recommendations, []);
-    assert.equal(result.message, "No route in the directory matches this brief. Try search_film_mcps with a capability such as text-to-video, or list_film_recommendations to browse routes.");
+    assert.match(result.message, /^No route in the directory matches this brief\. /);
+    assert.ok(!result.message.includes("text-to-video"), "a bicycle brief must not be told to try text-to-video");
   } else if (index === 1) {
     assert.equal(result.recommendations[0].id, "character-series");
     assert.ok(result.recommendations[0].martini_handoff);
     assert.match(result.recommendations[0].martini_handoff, /\bcontinuity\b/);
   } else if (index === 2) {
-    assert.ok(result.recommendations[0].primary.every((p) => p.server.slug !== "martini"));
+    assert.ok(result.recommendations[0].primary_servers.every((p) => p.slug !== "martini"));
     assert.equal(Object.hasOwn(result.recommendations[0], "martini_handoff"), false);
   } else {
     for (const r of result.recommendations) {
-      assert.ok(r.primary.length > 0);
-      assert.ok(r.primary.every((p) => p.server.remote));
+      assert.ok(r.primary_servers.length > 0);
+      assert.ok(r.primary_servers.every((p) => p.remote));
       assert.ok(r.fallback_servers.every((s) => s.remote));
     }
   }
-  console.log(`C${index + 1}: ${JSON.stringify({ ids: ids(result.recommendations), browser_ids: ids(browserRoutes), ...(index === 0 ? { no_match: result.no_match } : {}), ...(index === 1 || index === 2 ? { martini_handoff: Boolean(result.recommendations[0].martini_handoff) } : {}), ...(index === 3 ? { primary_counts: result.recommendations.map((r) => r.primary.length) } : {}) })}`);
+  // Picks are one compact object each; `primary` stays as a key for older callers but carries the same compact shape.
+  for (const r of result.recommendations) {
+    assert.deepEqual(r.primary, r.primary_servers);
+    for (const p of r.primary_servers) {
+      assert.deepEqual(Object.keys(p).filter((k) => !["status", "caveats"].includes(k)), ["slug", "name", "role", "why", "remote", "official", "verified"]);
+    }
+  }
+  console.log(`C${index + 1}: ${JSON.stringify({ ids: ids(result.recommendations), browser_ids: ids(browserRoutes), ...(index === 0 ? { no_match: result.no_match } : {}), ...(index === 1 || index === 2 ? { martini_handoff: Boolean(result.recommendations[0].martini_handoff) } : {}), ...(index === 3 ? { primary_counts: result.recommendations.map((r) => r.primary_servers.length) } : {}) })}`);
 }
 
 assert.deepEqual(scoreRecommendations(recommendations.recommendations, "and the with video film"), []);
-assert.equal(needsMartini({ primary: [], fallback_slugs: ["martini"] }), true);
+// A fallback-only Martini mention earns no handoff; a primary pick or the brief does.
+assert.equal(needsMartini({ primary: [], fallback_slugs: ["martini"] }), false);
+assert.equal(needsMartini({ primary: [], fallback_servers: [{ slug: "martini" }] }), false);
+assert.equal(needsMartini({ primary_slugs: ["martini"] }), true);
+assert.equal(needsMartini({ primary: [{ server: { slug: "martini" } }] }), true);
+assert.equal(needsMartini({ primary_servers: [{ slug: "martini" }] }), true);
+assert.equal(browser.needsMartini({ primary: [], fallback_slugs: ["martini"] }), false);
 assert.equal(needsMartini({ primary: [] }, "keep project state"), true);
 assert.equal(needsMartini({ primary: [] }, "mix dialogue"), false);
 assert.equal(needsMartini({ primary: [] }, fixtures[1][0]), true);

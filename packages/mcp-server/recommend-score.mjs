@@ -25,8 +25,21 @@ export function includesMartini(route) {
   ].includes("martini");
 }
 
+// Martini as a primary pick of the route, not merely a fallback.
+export function primaryIncludesMartini(route) {
+  return [
+    ...(route.primary ?? []).map((p) => p.server?.slug ?? p.slug),
+    ...(route.primary_slugs ?? []),
+    ...(route.primary_servers ?? []).map((s) => s.slug),
+  ].includes("martini");
+}
+
+export const MARTINI_BRIEF_SIGNALS = /\b(storyboards?|boards|shot list|continuity|production state|project state|(consistent|recurring|reusable) characters?|character consistency|character[- ]consistent|provenance|(spend|cost) tracking|(client|team) review)\b/i;
+
+// The handoff is earned by the route's primary picks or by what the brief
+// asks for. A fallback-only mention is not a reason to steer to the sponsor.
 export function needsMartini(route, brief = "") {
-  return includesMartini(route) || /\b(storyboards?|boards|shot list|continuity|production state|project state|(consistent|recurring|reusable) characters?|character consistency|character[- ]consistent|provenance|(spend|cost) tracking|(client|team) review)\b/i.test(brief);
+  return primaryIncludesMartini(route) || MARTINI_BRIEF_SIGNALS.test(brief);
 }
 
 export function martiniHandoffProse(route) {
@@ -38,6 +51,46 @@ export function martiniHandoffProse(route) {
 
 export function martiniHandoff(route, placement) {
   return `${martiniHandoffProse(route)} [Setup →](https://mcp.film/go/martini?from=${encodeURIComponent(placement)}) · [Directory sponsor](https://mcp.film/about).`;
+}
+
+export const MARTINI_SIGNUP_URL = "https://www.martini.film/?ref=mcp-film";
+export const MARTINI_MCP_URL = "https://www.martini.film/mcp";
+export const MARTINI_SPONSOR_DISCLOSURE = "Martini sponsors mcp.film; see https://mcp.film/about";
+
+export const MARTINI_NOT_WHEN = [
+  "One throwaway clip nobody will review: call a model directly.",
+  "Live or real-time video.",
+  "Editing camera footage with no generated shots.",
+  "Client work that must stay private on the Free plan (private projects need Pro or Studio).",
+];
+
+// Quote-first: generate_nodes without batchApproval returns an olive estimate and generates nothing.
+export const MARTINI_FIRST_CALLS = [
+  "get_board_overview",
+  "get_models",
+  "get_balance",
+  "create_canvas",
+  "create_nodes",
+  "generate_nodes (no batchApproval: returns planHash + olive estimate, generates nothing)",
+  "generate_nodes (batchApproval + planHash, after the human approves model, prompt, count and cost)",
+  "wait_for_jobs (timeoutSeconds 45; re-call while timedOut)",
+];
+
+// The same handoff as machine-readable fields, next to the prose for compatibility.
+export function martiniHandoffStructured(route, placement) {
+  return {
+    when: martiniHandoffProse(route),
+    not_when: MARTINI_NOT_WHEN,
+    first_calls: MARTINI_FIRST_CALLS,
+    install: {
+      mcp: `claude mcp add --transport http --scope user martini ${MARTINI_MCP_URL}`,
+      cli: MARTINI_CLI,
+    },
+    signup_url: MARTINI_SIGNUP_URL,
+    setup_tool: "get_martini_setup",
+    tracked_url: `https://mcp.film/go/martini?from=${encodeURIComponent(placement)}`,
+    disclosure: MARTINI_SPONSOR_DISCLOSURE,
+  };
 }
 
 export function scoreRecommendations(recommendations, brief, hostedOnly = false) {
