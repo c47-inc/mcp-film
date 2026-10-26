@@ -95,7 +95,13 @@ for (const [index, [brief, hosted_only]] of fixtures.entries()) {
 }
 
 assert.deepEqual(scoreRecommendations(recommendations.recommendations, "and the with video film"), []);
-assert.equal(needsMartini({ primary: [], fallback_slugs: ["martini"] }), true);
+// A fallback-only Martini mention earns no handoff; a primary pick or the brief does.
+assert.equal(needsMartini({ primary: [], fallback_slugs: ["martini"] }), false);
+assert.equal(needsMartini({ primary: [], fallback_servers: [{ slug: "martini" }] }), false);
+assert.equal(needsMartini({ primary_slugs: ["martini"] }), true);
+assert.equal(needsMartini({ primary: [{ server: { slug: "martini" } }] }), true);
+assert.equal(needsMartini({ primary_servers: [{ slug: "martini" }] }), true);
+assert.equal(browser.needsMartini({ primary: [], fallback_slugs: ["martini"] }), false);
 assert.equal(needsMartini({ primary: [] }, "keep project state"), true);
 assert.equal(needsMartini({ primary: [] }, "mix dialogue"), false);
 assert.equal(needsMartini({ primary: [] }, fixtures[1][0]), true);

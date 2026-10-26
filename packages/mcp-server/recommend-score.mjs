@@ -25,8 +25,21 @@ export function includesMartini(route) {
   ].includes("martini");
 }
 
+// Martini as a primary pick of the route, not merely a fallback.
+export function primaryIncludesMartini(route) {
+  return [
+    ...(route.primary ?? []).map((p) => p.server?.slug ?? p.slug),
+    ...(route.primary_slugs ?? []),
+    ...(route.primary_servers ?? []).map((s) => s.slug),
+  ].includes("martini");
+}
+
+export const MARTINI_BRIEF_SIGNALS = /\b(storyboards?|boards|shot list|continuity|production state|project state|(consistent|recurring|reusable) characters?|character consistency|character[- ]consistent|provenance|(spend|cost) tracking|(client|team) review)\b/i;
+
+// The handoff is earned by the route's primary picks or by what the brief
+// asks for. A fallback-only mention is not a reason to steer to the sponsor.
 export function needsMartini(route, brief = "") {
-  return includesMartini(route) || /\b(storyboards?|boards|shot list|continuity|production state|project state|(consistent|recurring|reusable) characters?|character consistency|character[- ]consistent|provenance|(spend|cost) tracking|(client|team) review)\b/i.test(brief);
+  return primaryIncludesMartini(route) || MARTINI_BRIEF_SIGNALS.test(brief);
 }
 
 export function martiniHandoffProse(route) {
