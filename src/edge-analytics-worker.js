@@ -180,7 +180,8 @@ function handoffRedirectResponse(request, env) {
   return Response.redirect(destination.toString(), 302);
 }
 
-function sponsorDestinationFor(request, env) {
+// Exported for scripts/test-edge.mjs.
+export function sponsorDestinationFor(request, env) {
   const sponsorUrl = env.SPONSOR_URL || DEFAULT_SPONSOR_URL;
   if (!sponsorUrl || sponsorUrl.startsWith("__MCPFILM_")) return null;
 
@@ -193,11 +194,14 @@ function sponsorDestinationFor(request, env) {
   const useConnect =
     placement && CONNECT_INTENT_PLACEMENT.test(placement) && connectUrl && !connectUrl.startsWith("__MCPFILM_");
 
+  // Attribution rides on the destination's own query string (merged with whatever the
+  // configured URL already carries): ref= is what Martini reads, utm_* what analytics reads.
   const destination = new URL(useConnect ? connectUrl : sponsorUrl);
+  destination.searchParams.set("ref", "mcp-film");
   destination.searchParams.set("utm_source", "mcp.film");
   destination.searchParams.set("utm_medium", "referral");
   destination.searchParams.set("utm_campaign", "mcp_film_handoff");
-  if (placement) destination.searchParams.set("utm_content", placement);
+  if (placement) destination.searchParams.set("utm_content", placement.slice(0, 64));
 
   // The destination cannot tell an agent from a person, and on this site most requests are
   // agents. Hand over the classification so downstream analytics can separate them.

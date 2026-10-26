@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { TOOLS } from "../packages/mcp-server/core.mjs";
-import worker, { markdownTwinPath, prefersMarkdown, mcpGetResponse, SCANNER_PROBE, registryApiResponse, canonicalPageFor } from "../dist/_worker.js";
+import worker, { markdownTwinPath, prefersMarkdown, mcpGetResponse, SCANNER_PROBE, registryApiResponse, canonicalPageFor, sponsorDestinationFor } from "../dist/_worker.js";
 
 const read = (file) => fs.readFileSync(new URL(`../${file}`, import.meta.url), "utf8");
 
@@ -98,6 +98,33 @@ try {
   globalThis.fetch = realFetch;
 }
 console.log("E2: canonical Link on direct markdown twins");
+
+// /go/martini?from=<placement> passes attribution through to the sponsor, merged with the
+// configured URL's own query string; the placement is sanitised and capped at 64 chars.
+const handoffEnv = { SPONSOR_URL: "https://www.martini.film/?existing=1", SPONSOR_CONNECT_URL: "https://www.martini.film/docs/mcp?lang=en" };
+const handoff = (from, ua = "Mozilla/5.0") => sponsorDestinationFor(new Request(`https://mcp.film/go/martini?from=${encodeURIComponent(from)}`, { headers: { "user-agent": ua } }), handoffEnv);
+const home = handoff("home-featured");
+assert.equal(home.origin + home.pathname, "https://www.martini.film/");
+assert.equal(home.searchParams.get("existing"), "1", "the configured query string survives");
+assert.equal(home.searchParams.get("ref"), "mcp-film");
+assert.equal(home.searchParams.get("utm_source"), "mcp.film");
+assert.equal(home.searchParams.get("utm_medium"), "referral");
+assert.equal(home.searchParams.get("utm_content"), "home-featured");
+const connect = handoff("recommendation:character-series");
+assert.equal(connect.pathname, "/docs/mcp");
+assert.equal(connect.searchParams.get("lang"), "en");
+assert.equal(connect.searchParams.get("ref"), "mcp-film");
+assert.equal(connect.searchParams.get("utm_content"), "recommendation:character-series");
+const dirty = handoff(`Weird Place/${"x".repeat(100)}?<script>`);
+assert.match(dirty.searchParams.get("utm_content"), /^[a-z0-9:_-]{1,64}$/);
+assert.equal(handoff("").searchParams.get("utm_content"), null);
+assert.equal(handoff("").searchParams.get("ref"), "mcp-film");
+const redirect = await worker.fetch(new Request("https://mcp.film/go/martini?from=playbook:commercial-sprint"), { ...siteEnv, ...handoffEnv }, ctx);
+assert.equal(redirect.status, 302);
+const location = new URL(redirect.headers.get("location"));
+assert.equal(location.searchParams.get("ref"), "mcp-film");
+assert.equal(location.searchParams.get("utm_content"), "playbook:commercial-sprint");
+console.log(`E3: ${location}`);
 
 // /v0.1/servers?search= filters by name/description substring, case-insensitively, before paging.
 const builtRegistry = JSON.parse(read("dist/api/mcp-registry.json"));
