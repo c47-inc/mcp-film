@@ -21,6 +21,11 @@
     "links": { "repo": null, "docs": "https://developers.vivideo.ai/mcp", "site": "https://vivideo.ai" },
     "added": "2026-08-18",
     "verified": "2026-09-26",
+    "caveats": [
+      "Closed source with no public repo, and @vivideo/mcp has sat at 1.0.2 since Jul 2026 while the API around it moves.",
+      "The homepage still advertises Sora 2 after OpenAI's shutdown, so call list_models before planning a shoot around any model.",
+      "The free tier's unlimited, watermark-free commercial rights are homepage copy unverified against terms; read the plan before client work."
+    ],
     "notes": "Listed in the official MCP registry with both the npm package and the hosted remote, and the endpoint still answers 405 to a GET on 26 Sep 2026 — correct behaviour for a POST-only streamable HTTP server. The docs match this entry: the same thirteen tools, the same `claude mcp add --transport http` command with a vv_live_-prefixed Bearer key, and VIVIDEO_API_KEY for the npx route. Everything else is vendor-stated: the package is closed source with no public repo, so you cannot audit what the wrapper sends, and @vivideo/mcp has sat at 1.0.2 since 28 Jul 2026 while the API around it moves. The homepage still leads with 'Powered by Sora 2' and lists Sora 2 Pro two days after OpenAI's announced 24 Sep 2026 API removal — treat the published roster as stale marketing and call list_models before you plan a shoot around any model. The free tier's 'unlimited', watermark-free generation with commercial rights is homepage copy we could not verify against machine-readable terms; read the plan before delivering client work."
   },
   {
@@ -44,6 +49,12 @@
     "links": { "repo": "https://github.com/runwayml/runway-api-mcp-server", "docs": "https://help.runwayml.com/hc/en-us/articles/51931843164691-Connecting-to-Runway-MCP", "site": "https://runway.com/mcp" },
     "added": "2026-06-11",
     "verified": "2026-10-10",
+    "caveats": [
+      "The self-hosting repo is archived; the hosted OAuth endpoint is the only maintained route and a black box, so let the client enumerate tools.",
+      "Valid ratios and durations are per-model, so call listModels first.",
+      "Generated asset URLs expire after 24h, so download outputs promptly.",
+      "It bills Runway credits, and the Zendesk help article blocks scripted fetches."
+    ],
     "notes": "Hosted server (OAuth, no API key, bills Runway credits) is the flagship; the open-source self-hosting repo is archived as of 10 Oct 2026 (README warning, MIT, 23 stars, last push 30 Sep 2026) and now points developers to dev.runwayml.com/agents, a separate Runway Dev MCP for coding agents with a quickstart.txt, and everyone else to runway.com/mcp, where Runway lists itself in the ChatGPT app directory alongside Claude, Grok, Cursor and Replit. The tool names listed here are read from that repo's README — the hosted endpoint is a black box, so treat them as indicative and let the client enumerate. Since the last check the repo added `runway_listModels`, `runway_generateAudio` (TTS), `runway_cancelTask` and `runway_getOrg`, plus local OpenAPI-derived payload validation that rejects bad ratio/duration combinations before they cost credits. Recommended model defaults are Nano Banana Pro (`gemini_image3_pro`) for images, Seedance (`seedance2`) for video and Aleph (`aleph2`) for editing; valid ratios and durations are per-model, so call listModels first. The marketing page moved Seedance from 2.0 to 2.5. Runway has moved its web presence from runwayml.com to runway.com — the old host 308s across, and the mcp.runwayml.com endpoint still answers (401 unauthenticated). The Zendesk help article blocks scripted fetches; open it in a browser. Self-hosting from the archived repo is a clone-and-build job, not an npx one, and it wants MCP_TOOL_TIMEOUT raised; expect no fixes. Generated asset URLs from the API expire after 24h — download outputs promptly."
   },
   {
@@ -67,6 +78,12 @@
     "links": { "repo": "https://github.com/MiniMax-AI/MiniMax-MCP", "docs": "https://platform.minimax.io/docs/guides/mcp-guide", "site": "https://www.minimax.io" },
     "added": "2026-06-11",
     "verified": "2026-10-17",
+    "caveats": [
+      "music_generation was retired in Aug 2026; score elsewhere (Mureka, Sonilo or Epidemic Sound).",
+      "The key region must match MINIMAX_API_HOST (api.minimax.io global, api.minimaxi.com mainland) or auth fails.",
+      "The generate_video schema still enumerates older models than the Hailuo 2.3 default, so an agent reading it will not know what it is given.",
+      "image_to_video is JS-only, and the README now steers you to the mmx-cli agent skill ahead of this server."
+    ],
     "notes": "MIT, 1,590 stars, with an official JS sibling (MiniMax-AI/MiniMax-MCP-JS, 130 stars, pushed 2026-08-21). Re-checked 2026-10-17: no commits on either repo since August and PyPI is still 0.0.19 — quiet, not abandoned, and the vendor's MCP guide still documents both servers. The three-month quiet spell ended on 2026-08-20: the server migrated to MCP Python SDK v2 and **retired the `music_generation` tool** in the same batch, shipped as PyPI minimax-mcp 0.0.19 on 2026-08-21. Score elsewhere — Mureka, Sonilo or Epidemic Sound. `play_audio` survives in the code but has been dropped from the README's tool table, so treat it as undocumented rather than guaranteed. Watch the model drift: the default text-to-video model constant is now `MiniMax-Hailuo-2.3`, while `generate_video`'s own tool description still enumerates only up to `MiniMax-Hailuo-02` and the older T2V/I2V-01 Director line — an agent reading the schema will not know what it is actually being given. Default speech model is `speech-2.8-hd`. image_to_video is JS-only. The README now steers you to MiniMax's `mmx-cli` agent skill ahead of this server, which is the vendor telling you where the newest models land first. MINIMAX_API_RESOURCE_MODE toggles URL vs local-file output; MINIMAX_MCP_BASE_PATH sets the output directory."
   },
   {
@@ -90,6 +107,11 @@
     "links": { "repo": null, "docs": "https://higgsfield.ai/mcp", "site": "https://higgsfield.ai" },
     "added": "2026-06-11",
     "verified": "2026-10-18",
+    "caveats": [
+      "No published tool list and the endpoint requires auth, so call tools/list after connecting.",
+      "The slash-command workflows on the MCP page are Higgsfield presets, not tool names.",
+      "It spends existing Higgsfield plan credits, and the page gives no Claude Code command, so the one here is the standard HTTP add."
+    ],
     "notes": "Re-checked 18 Oct 2026: endpoint still answers 401 unauthenticated, so it is alive and OAuth-gated; the MCP page now names GPT Image 2.5 where it said GPT Image 2, otherwise the roster is unchanged. The page also advertises slash-command workflows (/katana, /ugc-flow, /marketing-adapt-video, /illustration-animation) — those are Higgsfield presets, not MCP tool names. Sora is no longer in the roster — OpenAI shut it down on 24 Sep 2026, see `sora`. tools_sample stays null because the endpoint requires auth and Higgsfield publishes no tool list; call tools/list after connecting. The page gives no Claude Code command; the one here is the standard HTTP add for the published endpoint. Works with Claude and any MCP client; also ships a CLI and agent skills."
   },
   {
@@ -113,6 +135,11 @@
     "links": { "repo": null, "docs": "https://pika.art/mcp", "site": "https://pika.art" },
     "added": "2026-06-11",
     "verified": "2026-10-19",
+    "caveats": [
+      "Pika has moved endpoints twice; older configs still route for now but should be moved to mcp.pika.art/mcp.",
+      "Per-tool documentation is thinner than Runway or fal, so call tools/list.",
+      "The Pika-Plugins skills repo has not been pushed since Jul 2026 and still points at a retired host."
+    ],
     "notes": "Pika has moved house again. Checked 19 Oct 2026: experiment.pika.art/mcp now 308s to pika.art/mcp, which documents the endpoint as https://mcp.pika.art/mcp; both it and the previous experiment-mcp.pika.art/api/mcp answer 405 to a plain GET, so older configs still route for now — move them anyway. The page gives no Claude Code one-liner, only a generic 'connect Pika using the MCP server at…' prompt; the command above is the standard streamable-HTTP form of that URL. Its only plugin link is now the ChatGPT one. Pika-Labs/Pika-Plugins still holds 20 skill directories with Claude, Codex and Cursor plugin manifests (40 stars), but it has not been pushed since 20 Jul 2026 and its description still points at the retired mcp.pika.me host — treat it as unmaintained relative to the connector. The model roster no longer lists Sora. Per-tool documentation remains thinner than Runway or fal; call tools/list."
   },
   {
@@ -136,6 +163,11 @@
     "links": { "repo": "https://github.com/gitroomhq/agent-media", "docs": "https://agent-media.ai/skills", "site": "https://agent-media.ai" },
     "added": "2026-06-29",
     "verified": "2026-10-18",
+    "caveats": [
+      "An ad-format machine for vertical UGC, not a raw model endpoint.",
+      "The package is a stdio proxy to a hosted connector, and the root README and package README document different tool names, so trust tools/list.",
+      "Social publishing requires the user to complete OAuth for TikTok, Instagram or X, and credits must be on the account."
+    ],
     "notes": "Apache-2.0, 81 stars; re-checked 18 Oct 2026. Development picked back up after an August lull: npm @agentmedia/mcp-server shipped 0.8.0 on 5 Sep and 0.8.1 on 19 Sep 2026, and the public repo was last pushed 5 Oct. As of 0.8.x the package describes itself as a stdio proxy to a hosted connector at api.agent-media.ai/mcp — that endpoint answers 401 unauthenticated, but it is not documented as a direct remote install, so remote_url stays null until the vendor publishes connect details. Node >=20; the public repo is mirrored from the private gitroomhq/agent-media-app monorepo, which is the repository npm points at. Docs move fast: the root README describes the newer make_ugc skill while the published package README still documents create_video/show_your_app/product_acting_ugc/list_actors/get_video_status; trust MCP tools/list for the live schema. Social publishing requires the user to complete OAuth for TikTok, Instagram, or X."
   },
   {
@@ -159,6 +191,11 @@
     "links": { "repo": "https://github.com/PixVerseAI/PixVerse-MCP", "docs": "https://docs.platform.pixverse.ai/how-to-get-api-key-882968m0", "site": "https://platform.pixverse.ai" },
     "added": "2026-06-28",
     "verified": "2026-10-20",
+    "caveats": [
+      "Official but frozen for a full year (PyPI 0.2.2 from Oct 2025), so assume the model list lags the PixVerse platform.",
+      "The package metadata requires Python 3.12+ despite the README saying 3.10+.",
+      "PixVerse API credits are separate from consumer app credits."
+    ],
     "notes": "Re-checked 20 Oct 2026: official MIT repo, still 52 stars and not archived, PyPI pixverse-mcp still 0.2.2 from 2025-10-21 with no repo push since 2025-10-22 — official but effectively frozen for a full year, so assume the model list lags the PixVerse platform. README says Python 3.10+, but the published package metadata requires Python >=3.12; use a current uv/uvx runtime. PixVerse API credits are separate from consumer app credits."
   },
   {
@@ -182,6 +219,11 @@
     "links": { "repo": "https://github.com/GoogleCloudPlatform/genmedia-creative-studio/tree/main/experiments/mcp-genmedia", "docs": "https://github.com/GoogleCloudPlatform/genmedia-creative-studio/blob/main/experiments/mcp-genmedia/mcp-genmedia-go/README.md", "site": "https://ai.google.dev/gemini-api/docs/video" },
     "added": "2026-06-11",
     "verified": "2026-10-19",
+    "caveats": [
+      "Explicitly experimental (it lives in /experiments), installed by piping install-online.sh to bash or go install per binary; no npx one-liner.",
+      "Needs a Google Cloud project with Vertex AI and Application Default Credentials, and one binary per model that you wire in yourself.",
+      "Imagen is deprecated (June 2026), so use mcp-nanobanana-go for stills; Omni is preview-gated and global-only."
+    ],
     "notes": "Official Google Cloud code but explicitly experimental (lives in /experiments). The repo has been renamed: GoogleCloudPlatform/vertex-ai-creative-studio now redirects to GoogleCloudPlatform/genmedia-creative-studio, and the README's install-online.sh URL uses the new path — GitHub redirects old clone URLs, but update pinned raw links. Very active as of 19 Oct 2026: 1,223 stars, pushed 2026-10-18, VERSION 3.21.0 released 2026-10-17. Nine servers now: mcp-gemini-transcribe-go (gemini_transcribe on Gemini 3.5 Transcribe, global location only) joined, and the README's go install line finally includes mcp-omni-go. Veo exposes veo_t2v, veo_i2v, veo_extend_video, veo_first_last_to_video, veo_reference_to_video and veo_ingredients_to_video and defaults to veo-3.1-fast-generate-001; residual Veo 2.0 references were stripped on 2026-10-17. gemini_audio_tts gained Gemini 3.8 TTS. Imagen is on the way out: mcp-imagen-go carries a deprecation banner, is excluded from the default install line, and the README says Imagen models were deprecated as of June 30, 2026 — use mcp-nanobanana-go (defaults to gemini-nano-banana-2.1) for stills. Install is still the rough edge — no npx one-liner, no published claude mcp add, so you pipe install-online.sh to bash or go install per directory and wire each binary in yourself. Omni is preview-gated and calls the global-only Interactions endpoint, ignoring regional overrides. Supports stdio/HTTP/SSE and GCS or local output; ships agent skills for storyboarding. With Sora leaving the API on 2026-09-24, this is the most direct official route to Veo 3.1 for an agent."
   },
   {
@@ -206,6 +248,11 @@
     "links": { "repo": "https://github.com/Doriandarko/sora-mcp", "docs": "https://developers.openai.com/api/docs/deprecations", "site": null },
     "added": "2026-06-11",
     "verified": "2026-10-05",
+    "caveats": [
+      "Dead: OpenAI shut down the Videos API and every sora-2 model on 2026-09-24, so there is nothing left to call.",
+      "Use google-genmedia (Veo 3.1), runway or higgsfield instead.",
+      "Install fields are nulled on purpose; the repo still builds a client for a retired endpoint."
+    ],
     "notes": "Use `google-genmedia` (Veo 3.1), `runway` (Kling 3.0, Seedance 2.0) or `higgsfield` (Seedance 2.5, Kling 3) instead. Checked 5 Oct 2026: OpenAI's deprecation table still lists the Videos API, sora-2 and sora-2-pro against a 2026-09-24 shutdown with no recommended replacement, and that date has passed. Install fields are nulled because building this server now gets you a client for an endpoint OpenAI has retired — the README's clone-and-build steps still work, there is just nothing left for them to talk to. The repo (MIT, 209 stars) is not archived but has had no commit since 2025-10-08, and the writingmate/sora-2-mcp alternative is equally stale. The `verified` date records confirming the shutdown, not a working server."
   },
   {
@@ -229,6 +276,11 @@
     "links": { "repo": null, "docs": "https://kling.ai/app/mcp/guide", "site": "https://kling.ai" },
     "added": "2026-09-06",
     "verified": "2026-10-20",
+    "caveats": [
+      "Narrower than the community kling server: no effects, virtual try-on or KOLORS tools, and no documented model list, so call tool_list.",
+      "Closed source with no public repo, and it spends the same Kling credits as the consumer platform.",
+      "Expect a browser authorization on first connect; the CLI line is the standard HTTP form, not a vendor one-liner."
+    ],
     "notes": "First verified 2026-09-06 from primary sources only; re-checked 2026-10-20, when the protected-resource metadata still named https://kling.ai/mcp behind https://kling.ai/auth with the same three scopes. https://kling.ai/mcp answers 401, and /.well-known/oauth-protected-resource/mcp names it as the resource behind authorization server https://kling.ai/auth; that server's metadata publishes authorization_code and refresh_token grants, S256 PKCE and a registration_endpoint, so DCR works and no pre-shared credential is needed. Tool names come from Kling's own npm package @klingai/cli-global (0.1.3 at first check, 0.2.3 published 2026-10-16 so it is actively shipped; published by klingai-fe off a Kuaishou corp git remote), which calls itself a thin MCP client whose commands map 1:1 to backend MCP tools. Kling's setup page is a client-rendered app that returns nothing readable to a fetcher, so the CLI line above is the standard streamable-HTTP form of the documented endpoint, not a copy of a vendor one-liner — expect a browser authorization on first connect. Narrower than the community `kling` server: no effects, no virtual try-on, no KOLORS-specific tools, and no documented model list — call tool_list. Closed source, no public repo, and it spends the same Kling credits as the consumer platform."
   },
   {
@@ -252,6 +304,11 @@
     "links": { "repo": "https://github.com/199-mcp/mcp-kling", "docs": null, "site": null },
     "added": "2026-06-11",
     "verified": "2026-10-19",
+    "caveats": [
+      "The code has been frozen since Jun 2025 and is largely superseded by kling-official; keep it for key/secret auth or effects, try-on and KOLORS.",
+      "It documents models through Kling v1.x and v2-master; for Kling 3.0 use the official server, Runway, Higgsfield or fal.",
+      "It auto-downloads results locally."
+    ],
     "notes": "MIT, 44 stars. Correction on 19 Oct 2026: an earlier note here said npm was ahead of the repo. It is not — mcp-kling 5.2.0 was published 2025-06-14, the same day as the last repo push, and the repo's package.json is also 5.2.0; the 2025-12-22 date was npm registry metadata, not a release. So the code has been frozen for sixteen months, but source and package match. Not archived or deprecated on npm. Largely superseded: Kling now runs its own hosted MCP at kling.ai/mcp (listed here as `kling-official`), which is OAuth, vendor-maintained and declares its model list at runtime. Keep this one if you need key/secret JWT auth against your own Kling API account, or the tools the official server does not expose — effects, virtual try-on and KOLORS. The README documents models through Kling v1.x/v2-master; for Kling 3.0 the official server, Runway, Higgsfield or the fal hub are all fresher. Auto-downloads results locally."
   },
   {
@@ -275,6 +332,11 @@
     "links": { "repo": "https://github.com/bobtista/luma-ai-mcp-server", "docs": "https://docs.agents.lumalabs.ai", "site": null },
     "added": "2026-06-11",
     "verified": "2026-10-21",
+    "caveats": [
+      "No LICENSE file, so the code is technically all-rights-reserved, and there has been no commit since Apr 2025.",
+      "It speaks only the legacy Dream Machine API; ray-3.2 and uni-1 on the Agents API are reachable only via REST, SDKs or hub MCPs.",
+      "Runs from a cloned repo via uv, with no package."
+    ],
     "notes": "Correction on 2026-09-08: this entry previously called the repo MIT and claimed it was the only Luma server in MCP form. Neither holds — there is no LICENSE file in the repo and GitHub reports no license, so the code is technically all-rights-reserved, and Luma's own lumalabs/luma-api-mcp exists (listed here as `luma-official`). Tiny (6 stars) and last committed 2025-04-01 — functional rather than maintained; runs from a cloned repo via uv. Kept listed because nothing has been switched off: api.lumalabs.ai/dream-machine/v1/ping still answers `pong` as of 2026-10-21 and the Agents API docs announce no Dream Machine sunset, but the repo has not moved since April 2025. Luma publishes no MCP server for the Agents API, so ray-3.2 and uni-1 are reachable only over REST or the Go/Python/JS SDKs, or through fal, Replicate and Runway hub MCPs."
   },
   {
@@ -298,6 +360,11 @@
     "links": { "repo": "https://github.com/lumalabs/luma-api-mcp", "docs": "https://github.com/lumalabs/luma-api-mcp#readme", "site": "https://lumalabs.ai/api" },
     "added": "2026-09-08",
     "verified": "2026-10-21",
+    "caveats": [
+      "Official but frozen since Apr 2025: two tools, no polling, extension or upscaling, and no PyPI package.",
+      "Dream Machine API only; Luma's current Agents API (ray-3.2, uni-1) is not supported by any MCP.",
+      "The documented install only writes Claude Desktop's config, and there is no vendor claude mcp add form."
+    ],
     "notes": "Official but frozen: MIT, 26 stars, 11 forks, created 2025-04-15 and last pushed 2025-04-18 (still true on 2026-10-21), two open issues, no releases and no package on PyPI. It speaks the Dream Machine API only — Luma's current Agents API (uni-1, uni-1-max, ray-3.2 at agents.lumalabs.ai/v1 under LUMA_AGENTS_API_KEY) is not supported here or in any other MCP server, and the Agents API docs still mention no MCP as of 2026-10-21. The documented install path only writes Claude Desktop's config file; there is no vendor-published `claude mcp add` form, hence the null above rather than a command we made up. For a wider Dream Machine tool surface use the community `luma` server; for ray-3.2 today, reach it through the fal, Replicate or Runway hub MCPs."
   },
   {
@@ -321,6 +388,11 @@
     "links": { "repo": null, "docs": "https://www.wireflow.ai/docs/mcp", "site": "https://www.wireflow.ai" },
     "added": "2026-08-11",
     "verified": "2026-10-21",
+    "caveats": [
+      "Ad-format oriented and not a general shot-generation tool; it is also a direct competitor to this directory's sponsor, listed on the same terms.",
+      "Closed source, and the tool list jumped from 25 to 80 since September, so trust live tools/list.",
+      "The Free plan has no video models; budget about 17 credits per second of video, and run_workflow, automations and X posts spend credits."
+    ],
     "notes": "Disclosure: a direct competitor to Martini, this directory's sponsor, listed on the same terms as everything else. Tool list re-read from Wireflow's own MCP docs on 2026-10-21: the table now names 80 tools, up from 25 in September, adding content calendars, social publishing and post insights, voice cloning, team management, board comments and a run_app entry point. It now reaches into distribution as much as generation, so trust live `tools/list` over any count. Closed source, no public repo, and the vendor documents only connector-UI setup — the CLI command above is the standard streamable-HTTP form of the documented endpoint. Pricing moved since September: Free is $0 with up to 60 starter credits and no video models, Starter $36/month for 2,660 credits, Professional $59 for 4,370, Team $299 for 22,140 pooled. Unused credits now carry over, and the pricing page no longer lists top-up prices. Budget roughly 30 credits per image and 17 credits per second of video; a single Seedance 2.5 or Kling run is quoted at 135 credits. Drafting and editing workflows cost nothing; run_workflow, run_app, run_automation_now, every scheduled automation fire and build_starter_board (capped at 300 credits) spend them, and publish_post to X costs 2-23 credits per account while other platforms are free. Ad-format oriented; it is not a general shot-generation tool."
   },
   {
@@ -344,6 +416,12 @@
     "links": { "repo": null, "docs": "https://www.revid.ai/mcp", "site": "https://www.revid.ai" },
     "added": "2026-08-12",
     "verified": "2026-10-24",
+    "caveats": [
+      "A faceless TikTok, Reels and Shorts factory, not shot-level cinematic control; nothing here gives frame continuity across a scene.",
+      "publish_now and schedule_publish push to connected accounts with no staging step, and delete_project and cancel_episode are irreversible.",
+      "Renders burn credits, so call calculate_credits first; the tool list grew from 13 to 30, so trust tools/list.",
+      "Closed source, and the companion revid-cli ships UNLICENSED."
+    ],
     "notes": "Short-form and social first — this is a faceless TikTok/Reels/Shorts factory, not shot-level cinematic control, and nothing here gives you frame continuity across a scene. Treat publish_now and schedule_publish as live-fire tools: they push to your connected accounts with no staging step, so gate them behind explicit approval; delete_project and cancel_episode are equally irreversible. Renders burn credits from your account or active workspace; call calculate_credits first. Re-checked against the vendor's MCP page on 24 Oct 2026: endpoint, OAuth 2.1 (PKCE plus dynamic client registration) and the claude mcp add command are unchanged, but the tool list has grown from 13 to 30 — series and episode creation, viral-video search, upload URLs, presets, music tracks, voices, project duplication and visibility, and publish-status polling are new — so trust live `tools/list` over any count. The page also offers a Claude Code plugin route (`/plugin marketplace add tmakersas/revid-skills`, then `/plugin install revid@revid`) that bundles the server with 12 video skills. Header auth is documented for clients that cannot do OAuth. Closed source: there is no public repo for the server, and the companion CLI (npm revid-cli, now 0.5.0 published 21 Oct 2026) still ships UNLICENSED, so read the terms before you build on it."
   },
   {
@@ -367,6 +445,11 @@
     "links": { "repo": "https://github.com/mateohysa/reelsfarm-mcp", "docs": "https://reelsfarm.com/docs/mcp", "site": "https://reelsfarm.com" },
     "added": "2026-08-16",
     "verified": "2026-09-21",
+    "caveats": [
+      "In Creator or Autopilot mode the prepare tools execute immediately with no confirmation, so check the account mode before letting an agent loose.",
+      "rfmcp_ API keys are shown once and never re-readable, and you should reuse the same idempotencyKey when retrying a mutation.",
+      "Generation and publishing need an active plan and connected social accounts, and the linked repo is the client SDK, not the server."
+    ],
     "notes": "Re-verified 21 Sep 2026: the endpoint is alive and still returns a 401 Bearer challenge pointing at its OAuth protected-resource metadata, which advertises nineteen granular scopes from account:read up to content:delete_permanent. The docs now also document a second, simpler path the August listing did not have — rfmcp_ API keys created in the account MCP tab and sent as an Authorization: Bearer header, which is the better route for CLI and config-file setups that cannot do a browser round trip. Keys are shown once and are never re-readable from the account or the list tools. Confirmation behaviour depends on mode: in Review mode prepare tools return a confirmationId and the agent must call reelsfarm_confirm_action, but in Creator or Autopilot the allowed prepare tools execute immediately — check which mode the account is in before you let an agent loose. Reuse the same idempotencyKey when retrying a mutation. Generation and publishing need an active plan, and publishing also needs connected social accounts. The official MCP registry still pins v2.0.1, published 2026-08-16 with nothing newer since, and the docs no longer state a tool count — the 106-tool figure recorded here in August is no longer verifiable from a public source. The linked GitHub repository is the public TypeScript client SDK/CLI, not the hosted server source; it was last pushed 2026-09-16, so the project is still moving."
   },
   {
@@ -390,6 +473,12 @@
     "links": { "repo": null, "docs": "https://docs.motion.so/guides/mcp", "site": "https://motion.so" },
     "added": "2026-09-27",
     "verified": "2026-09-27",
+    "caveats": [
+      "The MCP exposes purchase_credits, subscribe_to_plan and set_auto_topup, so decline those scopes or keep a card off the account.",
+      "$5 per 200 credits equals only one or two videos; longer videos, voiceover and follow-ups all cost more, and no free allotment is documented.",
+      "A SaaS-promo house look, MP4 only, with no layered or project-file export documented.",
+      "Not Motion the calendar app (usemotion.com); check the domain before you install."
+    ],
     "notes": "Read the tool list before you connect it: besides generation, the MCP exposes `purchase_credits`, `subscribe_to_plan`, `setup_payment_method` and `set_auto_topup`, and its OAuth metadata advertises `motion:credits:purchase` and `motion:account:manage` scopes. The docs say a purchase completes immediately if a payment method is on file, so decline those scopes or keep a card off the account unless you want the agent spending on its own. Pricing is $5 per 200 credits, which the docs equate to only one or two videos; longer videos, premium models, voiceover and follow-up edits all cost more, and no free allotment is documented. The docs also contradict themselves: the API overview says purchasing and top-ups are web-app only, while the MCP and credits guides list tools for both. It is a brand and marketing product at heart — launch videos, product demos, logo animations — so expect a house look tuned for SaaS promos, not grade-matched titles for a feature. Output is MP4 at a resolution the docs don't state, with no project-file or layered export documented. Checked 27 Sep 2026: https://mcp.motion.so/mcp serves live OAuth protected-resource metadata naming Claude Code among its expected clients, but this pass did not complete a tools/list call, so the tool names come from the vendor guide. No public source repo. The name collides with Motion (usemotion.com), the unrelated calendar app that also has MCP servers, so check the domain before you install."
   },
   {
@@ -413,6 +502,11 @@
     "links": { "repo": null, "docs": null, "site": "https://invideo.io/ai/mcp/" },
     "added": "2026-08-17",
     "verified": "2026-09-23",
+    "caveats": [
+      "Exactly one tool, generate-video-from-script: no status, no shot control, no asset upload and no way to feed it your own footage.",
+      "No auth means no account linkage, so expect anonymous rate limits, watermarking and hosted output URLs you do not own.",
+      "invideo pulled its MCP documentation, so there is no published quota or credit model."
+    ],
     "notes": "invideo pulled its MCP documentation some time between 17 Aug and 23 Sep 2026: help centre article 11316042 now 404s, the landing page at invideo.io/ai/mcp/ still links to it, and no replacement exists — the help centre's agent collections now cover the invideo Editor and its model line-up instead, with no MCP article among them. So `docs` is null: there is no published quota, credit model or transport guidance left to point at. The server outlived its docs and is in better shape than in August: on 23 Sep 2026 an unauthenticated POST to https://mcp.invideo.io/mcp completed a full handshake — Streamable HTTP, protocol 2024-11-05, serverInfo `invideo-ai` 0.0.2 — and returned tools/list, so the fields above now point there rather than at the deprecated /sse form, which still answers 200 if your client insists on SSE. That tools/list is the headline caveat: exactly one tool, `generate-video-from-script`, taking five required strings (script, topic, vibe, targetAudience, platform) and returning a video URL. No status tool, no shot control, no asset upload, no way to feed it your own footage. No auth also means no account linkage — expect anonymous rate limits, watermarking, or invideo-hosted output URLs whose lifecycle you do not own. Output is a templated stock-and-voiceover assembly; for shot-level generative control stay with the model servers in this category."
   },
   {
@@ -436,6 +530,11 @@
     "links": { "repo": null, "docs": "https://makeaivideo.ai/docs/mcp", "site": "https://makeaivideo.ai" },
     "added": "2026-09-05",
     "verified": "2026-10-18",
+    "caveats": [
+      "Six weeks of history is not a maintenance record, and the vendor names no company, jurisdiction, repo or rendering models.",
+      "Unauthenticated calls return JSON-RPC error -32001 rather than HTTP 401, which trips some clients; headless clients need the Bearer header.",
+      "A 7-day trial with 350 credits, then plans from $9 a month; invideo covers the same ground for free."
+    ],
     "notes": "Re-checked 18 Oct 2026: the docs (still headed v1.2) now list 44 tools rather than the 39 the endpoint advertised at launch, adding format-specific creators and social posting (list_social_accounts, publish_video). The older app.makeaivideo.ai/api/mcp address still works. Six weeks of history is not a maintenance record — re-verify before you build a paid pipeline on it. The vendor names no company, no jurisdiction and no repo, and describes its engines only as 'a curated stack of leading AI models', so you cannot audit which model renders your footage or what the output licence is. Unauthenticated calls return JSON-RPC error -32001 rather than an HTTP 401, which trips clients that key off status codes. The docs' own Claude Code example passes --header \"Authorization: Bearer $MAV_API_KEY\"; the command here omits it and relies on OAuth (read/write/ai scopes), so add the header for headless clients. An assistant spends the same credits you do: 7-day trial with 350 credits, then plans from $9/month. Overlaps heavily with invideo: both are templated script-to-video assemblers, and invideo costs nothing to try while this one has a real endpoint and real auth."
   },
   {
@@ -498,6 +597,12 @@
     },
     "added": "2026-09-15",
     "verified": "2026-09-15",
+    "caveats": [
+      "The OAuth is a shim: the flow validates your API key and uses it as the token, so the agent holds a full-account credential either way.",
+      "API access is listed as a paid-plan feature, so do not assume a free account can mint a working key.",
+      "A thin generated layer over the REST API with long operationId-style tool names; the vendor names only Claude, Claude Code and Codex as supported.",
+      "The repo has no licence file."
+    ],
     "notes": "Verified live 2026-09-15: initialize answered protocol 2025-06-18 as magic-hour 0.1.0, and an unauthenticated tools/list returned all 44 tools — discovery is public, calls need the key. The connect line is copied from magichour.ai/mcp. The OAuth is a shim, not delegated auth: mcp.magichour.ai names itself as both protected resource and authorization server, and the flow validates an API key and uses it as the access token, so the agent holds a full-account credential either way. Money: the same credits as the web app, $1 buys 400 in packs or 144k to 840k a year on the $12 to $66 monthly plans, and the pricing page lists API access as a paid-plan feature — we did not confirm that a free account can mint a working key. The server is a thin generated layer over the REST API, so tool names are long operationId-style strings and quality is whatever Magic Hour's underlying models deliver; the vendor's own setup page says only Claude, Claude Code and Codex are verified clients. The repo has no licence file and 6 stars, but the GitHub org dates from 2023 and the submitter's account states Magic Hour employment."
   },
   {
@@ -521,6 +626,12 @@
     "links": { "repo": "https://github.com/byteplus-sa/ark-mcp", "docs": "https://github.com/byteplus-sa/ark-mcp/blob/main/docs/getting-started.md", "site": "https://docs.byteplus.com/en/docs/ModelArk/1520757" },
     "added": "2026-09-16",
     "verified": "2026-09-16",
+    "caveats": [
+      "Vendor-adjacent, not official: byteplus-sa is a solution-architect program org, not the ModelArk product team.",
+      "Clone plus uv sync on Python 3.12+ is the only install, with no releases or tags, so you get whatever main is that day.",
+      "Three credentials with three auth schemes, and the default ModelArk host is region-scoped to ap-southeast.",
+      "Seedance reference video must be a public HTTPS URL, so you need TOS or S3 credentials, and output URLs expire in 2 to 24 hours."
+    ],
     "notes": "Read the vendor line carefully: byteplus-sa is BytePlus's solution-architect program org (created 16 May 2026, blog byteplus.com, four public repos), not the ModelArk product team, so this is listed as unofficial — the keys and the billing are first-party, the server is not. MIT by GitHub's licence detection, although the README's own licence section punts to 'project configuration'. It is young and unnoticed: 1 star, repo created 20 Jul 2026, last pushed 14 Sep 2026, no releases or tags and no published package, so a clone plus uv sync on Python 3.12+ is the only install and you get whatever main happens to be that day. Its own quality claims disagree with themselves — the feature list says 1,155 offline tests at 86% coverage, the status section says 631 at 88% — and we have not run it, so treat the polish as unverified. Three credentials, three auth schemes: ModelArk is Bearer, Seed Speech is X-Api-Key, VOD MediaKit is Bearer, and the default ModelArk host is region-scoped to ap-southeast, so accounts elsewhere must override BYTEPLUS_MODELARK_BASE_URL. The 3D tools (Hyper3D/Hitem3d) stay hidden unless you set BYTEPLUS_MODELARK_3D_ENABLED. The edge that will bite a filmmaker first: Seedance reference video must be a public HTTPS URL with no inline Base64 option, so you need TOS or S3 credentials for media_upload or your own hosting, and the server's SSRF policy rejects anything resolving to a private address. Model IDs are ModelArk endpoint strings you configure yourself (SEEDANCE_DEFAULT_MODEL, SEEDREAM_DEFAULT_MODEL), not friendly names."
   },
   {
@@ -544,6 +655,12 @@
     "links": { "repo": null, "docs": "https://clipstudio.ai/mcp", "site": "https://clipstudio.ai" },
     "added": "2026-09-21",
     "verified": "2026-09-21",
+    "caveats": [
+      "Not Celsys Clip Studio Paint: unrelated company, so check the domain.",
+      "No social posting, by the vendor's own rule that the agent cannot do what a human cannot do on clipstudio.ai; pair it with a distribution server.",
+      "Agents spend the same monthly story-part allowance as the website (Clip Pro is about 6 parts at 720p), and tools return HTTP 402 when it runs out.",
+      "Published 20 Sep 2026 with no track record, no source repo and no published tool count."
+    ],
     "notes": "First: this is not Celsys Clip Studio Paint. Same words, unrelated company, unrelated product — check the domain before you install anything for an illustrator. Endpoint verified alive 21 Sep 2026 (401 invalid_token with an OAuth challenge scoped `clipstudio` and resource metadata at /.well-known/oauth-protected-resource/api/mcp); we could not run the tools, since there is no unauthenticated path. It is new here for a reason — the official registry entry ai.clipstudio/mcp was published 2026-09-20, so there is no track record to judge yet. Clip Studio publishes no `claude mcp add` one-liner; its documented Claude route is the custom-connector UI, and the command above is the generic Streamable HTTP form. The scope rule is stated bluntly in their own docs — 'if a human cannot do it on clipstudio.ai, the agent cannot do it here' — which means no social posting: the MCP will not publish to YouTube, Instagram or TikTok, so pair it with a distribution server. Agents spend the same monthly story-part allowance as the website with no separate agent quota: Clip Pro is about 6 parts at 720p, Studio Elite about 15, Studio Scale about 35 at 1080p, quoted on the marketing page at $19, $39 and $99 a month, and eligible new accounts get one free story part without a card. Run short of allowance and tools return HTTP 402 with requiredCredits and availableCredits, then create_checkout_url hands back a Stripe link. No public source repo and no published tool count; the tool names above are read off the vendor's own MCP page, which also warns that its Mixpanel event names are analytics, not tools."
   },
   {
@@ -568,6 +685,12 @@
     "links": { "repo": "https://github.com/video-gen/videogen-mcp", "docs": "https://docs.videogen.io/use-with-ai-agents", "site": "https://videogen.io/videogen-mcp" },
     "added": "2026-10-02",
     "verified": "2026-10-10",
+    "caveats": [
+      "Brand new to the public, submitted to registries on 1 Oct 2026, so treat it as unproven.",
+      "Long jobs return immediately on the hosted server because the Cloudflare proxy caps request time, so poll get_workflow_run.",
+      "Free-plan output carries a watermark, and per-call credit costs are not published.",
+      "Templated explainer and social output; for an editable timeline compare invideo or martini."
+    ],
     "notes": "Vendor-maintained (npm @videogen/mcp is published by videogen.io staff; v2.2.1 on 2026-09-15, MIT, repo pushed 2 Oct 2026) but brand new to the public: zero GitHub stars and submitted to MCP registries on 1 Oct 2026, so treat it as unproven. The hosted endpoint is stateless and reads your key from an Authorization header; the README also describes an OAuth 2.1 challenge for Cursor, Claude Desktop, Windsurf and ChatGPT Apps, with a separate /mcp/chatgpt variant. Long jobs return immediately on the hosted server — the Cloudflare proxy caps request time — so the agent has to poll get_workflow_run or get_tool_execution. Free-plan output carries a VideoGen watermark; Pro removes it, and neither the docs nor the README publish per-call credit costs. The local stdio package needs Node 20+. Output skews toward templated explainer and social video; for an editable timeline compare invideo or martini, and for raw model access fal."
   },
   {
@@ -591,6 +714,11 @@
     "links": { "repo": null, "docs": "https://www.incarn.co/en/developers/docs", "site": "https://www.incarn.co" },
     "added": "2026-10-10",
     "verified": "2026-10-10",
+    "caveats": [
+      "No free trial through the API; a developer plan starts at EUR 19 a month for 25 photos, at one credit per animation.",
+      "No prompt control beyond a subtle motion hint, so it is not a general image-to-video tool.",
+      "Tool descriptions come back in French, and jobs take one to three minutes."
+    ],
     "notes": "Checked 10 Oct 2026: initialize and tools/list answer anonymously (five tools, server version 1.1.0) and list_examples runs without an account; the official MCP Registry lists co.incarn/photo-animation. Tool descriptions come back in French. The animate_photo description says there is no free trial through the API and a developer plan starts at EUR 19 per month for 25 photos (EUR 0.76 each); the consumer site sells one-off packs from EUR 1.99 per photo. Each animation costs one credit, failed runs are refunded, and jobs take one to three minutes. There is no prompt control beyond a subtle motion hint, so this is not a general image-to-video tool: for that compare kling, runway or luma."
   },
   {
@@ -614,6 +742,11 @@
     "links": { "repo": "https://github.com/tonnooooo/kleo-mcp", "docs": "https://kleooai.com/connect/", "site": "https://kleooai.com" },
     "added": "2026-10-10",
     "verified": "2026-10-10",
+    "caveats": [
+      "A one-person project on Cloudflare's free plan renting a Vast.ai GPU per job, so treat availability as best-effort.",
+      "5 free credits on connect; films cost 1 credit per 1.5 seconds with a 10-credit minimum and require a purchased pack.",
+      "Narration is English or Italian only, and the Terms specify a small Kleo mark on output."
+    ],
     "notes": "Checked 10 Oct 2026: the endpoint answers initialize with an OAuth 2.1 challenge, the official MCP Registry lists com.kleooai/kleo, and the README documents the tools; nothing was rendered. One-person project (repo created 9 Sep 2026, zero stars) that runs on Cloudflare's free plan and rents a Vast.ai GPU per job, so treat availability as best-effort. Pricing is public and specific: 5 free credits on connect (the submission said 7), an animatic costs 5 credits up to 20 seconds, films cost 1 credit per 1.5 seconds with a 10-credit minimum and require a purchased pack (EUR 5 for 10 credits). The Terms specify a small Kleo mark on output. Narration is English or Italian only; the README frames the product around YouTube videos and Shorts."
   },
   {
@@ -637,6 +770,11 @@
     "links": { "repo": "https://github.com/vargHQ/sdk", "docs": "https://varg.ai/mcp", "site": "https://varg.ai" },
     "added": "2026-10-18",
     "verified": "2026-10-18",
+    "caveats": [
+      "No free tier: plans start at $24 a month for 700 credits, and a 5-second clip runs roughly 37 to 200 credits depending on model.",
+      "Tools beyond the seven the vendor names are unconfirmed, so call tools/list; the linked repo is the SDK, not the server.",
+      "Credits are held at render start and charged only on success, and commercial use without a watermark is included."
+    ],
     "notes": "Checked 18 Oct 2026 against varg.ai/mcp and the changelog; nothing was rendered. The endpoint is up (it rejects a bare GET with 400, as streamable HTTP servers do), but Glama's health check on 18 Oct could not complete an authenticated call, so tools beyond the seven the vendor names are unconfirmed — call tools/list. varg's page offers an Add-to-Claude link rather than a CLI command; the claude_code line is the standard HTTP add for the published endpoint. A ChatGPT plugin shipped on 16 Oct 2026. No free tier: plans start at $24/month for 700 credits, a 5-second clip runs roughly 37-200 credits depending on model, and credits are held at render start and only charged on success. Commercial use without a watermark is included on every plan per the homepage. The linked repo is the separate open-source vargai TypeScript SDK (Apache-2.0, 342 stars, pushed 16 Oct 2026), not the MCP server itself. Overlaps with higgsfield and fal as an aggregator; pick varg if you want a priced, agent-planned ad pipeline rather than raw model access."
   }
 ]
