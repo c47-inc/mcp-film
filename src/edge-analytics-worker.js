@@ -235,14 +235,7 @@ export async function mcpHandleMessage(msg, callTool = mcpCallTool) {
     }
     if (method === "tools/list") return { jsonrpc: "2.0", id, result: { tools: TOOLS } };
     if (method === "tools/call") {
-      const result = await callTool(params?.name, params?.arguments);
-      return {
-        jsonrpc: "2.0", id,
-        result: {
-          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
-          isError: Boolean(result?.error),
-        },
-      };
+      return { jsonrpc: "2.0", id, result: toolResult(await callTool(params?.name, params?.arguments)) };
     }
     if (method === "ping") return { jsonrpc: "2.0", id, result: {} };
     if (isNotification) return null;
@@ -303,7 +296,7 @@ async function mcpEndpointResponse(request, env, ctx) {
   if (url.pathname !== "/mcp" && url.pathname !== "/mcp/") return null;
 
   const reply = (body, status, extras) => {
-    const response = new Response(body === null ? null : JSON.stringify(body, null, 2), {
+    const response = new Response(body === null ? null : JSON.stringify(body), {
       status,
       headers: mcpHeaders(),
     });

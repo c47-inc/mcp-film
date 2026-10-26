@@ -15,7 +15,7 @@ import fs from "node:fs";
 import path from "node:path";
 import readline from "node:readline";
 import { fileURLToPath } from "node:url";
-import { TOOLS, makeCallTool, initializeResult } from "./core.mjs";
+import { TOOLS, makeCallTool, initializeResult, toolResult } from "./core.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 // Single source of truth for the version: package.json
@@ -77,14 +77,7 @@ rl.on("line", async (line) => {
     } else if (method === "tools/list") {
       send({ jsonrpc: "2.0", id, result: { tools: TOOLS } });
     } else if (method === "tools/call") {
-      const result = await callTool(params.name, params.arguments);
-      send({
-        jsonrpc: "2.0", id,
-        result: {
-          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
-          isError: Boolean(result?.error),
-        },
-      });
+      send({ jsonrpc: "2.0", id, result: toolResult(await callTool(params.name, params.arguments)) });
     } else if (method === "ping") {
       send({ jsonrpc: "2.0", id, result: {} });
     } else if (id !== undefined) {

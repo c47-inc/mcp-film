@@ -40,10 +40,42 @@ export function initializeResult(offered, version) {
   };
 }
 
-const compact = (s) => ({
+// Every tool result goes out twice per the MCP spec: as compact JSON text for
+// clients that only read content[], and as structuredContent for those that
+// parse it. Pretty-printing cost ~30% of every response and bought nothing.
+export function toolResult(result) {
+  return {
+    content: [{ type: "text", text: JSON.stringify(result) }],
+    structuredContent: result,
+    isError: Boolean(result?.error),
+  };
+}
+
+// Paging for list tools: never return the whole catalogue by accident.
+const DEFAULT_LIMIT = 20;
+const MAX_LIMIT = 100;
+
+function pageArgs(args, fallback = DEFAULT_LIMIT) {
+  const limit = Math.min(MAX_LIMIT, Math.max(1, Math.floor(Number(args.limit) || fallback)));
+  const offset = Math.max(0, Math.floor(Number(args.offset) || 0));
+  return { limit, offset };
+}
+
+function paged(list, args, fallback = DEFAULT_LIMIT) {
+  const { limit, offset } = pageArgs(args, fallback);
+  const page = list.slice(offset, offset + limit);
+  const next = offset + page.length;
+  return { page, meta: { count: page.length, total: list.length, offset, next_offset: next < list.length ? next : null } };
+}
+
+// Optional registry fields (a listing can be retired without being deleted).
+const INACTIVE = new Set(["dead", "archived", "deprecated"]);
+const isActive = (s) => !INACTIVE.has(s?.status);
+const withStatus = (out, s) => (s?.status ? { ...out, status: s.status } : out);
+
+const compact = (s) => withStatus({
   slug: s.slug,
   url: `https://mcp.film/mcps/${s.slug}/`,
-  markdown_url: `https://mcp.film/mcps/${s.slug}.md`,
   verified: s.verified,
   caveat: (s.notes?.trim().match(/^.*?[.!?](?=\s|$)|^.+$/s)?.[0] ?? "").slice(0, 200).trim(),
   name: s.name,
@@ -54,7 +86,29 @@ const compact = (s) => ({
   pricing: s.pricing,
   remote: Boolean(s.install?.remote_url),
   capabilities: s.capabilities,
-});
+}, s);
+
+// One line per pick: the registry entry (looked up by slug) supplies the
+// fields the recommendation doc does not carry.
+const compactPick = (p, bySlug) => {
+  const s = bySlug?.get(p.server?.slug) ?? {};
+  const out = withStatus({
+    slug: p.server?.slug,
+    name: p.server?.name,
+    role: p.role,
+    why: p.why,
+    remote: p.server?.remote,
+    official: p.server?.official,
+    verified: s.verified ?? p.server?.verified,
+  }, s);
+  if (Array.isArray(s.caveats) && s.caveats.length) out.caveats = s.caveats.slice(0, 1);
+  return out;
+};
+
+const compactFallback = (f, bySlug) => {
+  const s = bySlug?.get(f.slug) ?? {};
+  return withStatus({ slug: f.slug, name: f.name, remote: f.remote, official: f.official, verified: s.verified ?? f.verified }, s);
+};
 
 const compactPlaybook = (p) => ({
   id: p.id,
@@ -68,20 +122,15 @@ const compactPlaybook = (p) => ({
   primary_servers: (p.primary_servers ?? []).map((s) => s.slug),
 });
 
-const compactRecommendation = (r) => ({
+const compactRecommendation = (r, bySlug) => ({
   id: r.id,
   title: r.title,
   summary: r.summary,
   best_for: r.best_for,
   tags: r.tags,
   url: r.url,
-  primary_servers: (r.primary ?? []).map((p) => ({
-    slug: p.server?.slug,
-    name: p.server?.name,
-    role: p.role,
-    remote: p.server?.remote,
-    official: p.server?.official,
-  })),
+  primary_servers: (r.primary ?? []).map((p) => compactPick(p, bySlug)),
+  fallback_servers: (r.fallback_servers ?? []).map((f) => compactFallback(f, bySlug)),
   playbook: r.playbook,
 });
 
@@ -106,8 +155,6 @@ function capabilityIndex(servers) {
       return {
         capability,
         url: published ? `https://mcp.film/capabilities/${capability}/` : null,
-        markdown: published ? `https://mcp.film/capabilities/${capability}.md` : null,
-        json: `https://mcp.film/api/capabilities/${capability}.json`,
         count: sorted.length,
         official: sorted.filter((s) => s.official).length,
         remote: sorted.filter((s) => s.install?.remote_url).length,
@@ -217,7 +264,7 @@ export const TOOLS = [
     title: "Search film MCP servers",
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
-      "Search the mcp.film directory of MCP servers for AI filmmaking. Filter by free-text query (matches name, vendor, tagline, capabilities), category id, or capability. Returns compact entries; use get_film_mcp for full detail.",
+      "Search the mcp.film directory of MCP servers for AI filmmaking. Filter by free-text query (matches name, vendor, tagline, description, capabilities, tools, category, pricing, auth), category id, or capability. Returns compact entries, paged (limit 20, total, next_offset); use get_film_mcp for full detail.",
     inputSchema: {
       type: "object",
       properties: {
@@ -226,6 +273,8 @@ export const TOOLS = [
         capability: { type: "string", description: "Exact capability tag, e.g. 'image-to-video'" },
         official_only: { type: "boolean", description: "Only vendor-maintained servers" },
         remote_only: { type: "boolean", description: "Only hosted remote MCPs (no local install)" },
+        limit: { type: "number", description: "Page size, 1-100. Default 20." },
+        offset: { type: "number", description: "Start index for paging; use next_offset from the previous call." },
       },
     },
   },
@@ -253,12 +302,14 @@ export const TOOLS = [
     title: "List capability tags",
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
-      "List capability tags in the mcp.film registry, ranked by number of matching servers. Use get_film_capability for the server cluster behind one tag.",
+      "List capability tags in the mcp.film registry, ranked by number of matching servers (tag, page url, counts). Paged. Use get_film_capability for the server cluster behind one tag.",
     inputSchema: {
       type: "object",
       properties: {
         query: { type: "string", description: "Optional substring filter, e.g. 'video', 'voice', or 'timeline'." },
-        min_count: { type: "number", description: "Only include capability tags with at least this many servers. Default 1." },
+        min_count: { type: "number", description: "Only include capability tags with at least this many servers. Default 2 (tags with a published page)." },
+        limit: { type: "number", description: "Page size, 1-100. Default 50." },
+        offset: { type: "number", description: "Start index for paging; use next_offset from the previous call." },
       },
     },
   },
@@ -274,6 +325,8 @@ export const TOOLS = [
         capability: { type: "string", description: "Exact capability tag." },
         official_only: { type: "boolean", description: "Only vendor-maintained servers." },
         remote_only: { type: "boolean", description: "Only hosted remote MCPs." },
+        limit: { type: "number", description: "Page size, 1-100. Default 20." },
+        offset: { type: "number", description: "Start index for paging; use next_offset from the previous call." },
       },
       required: ["capability"],
     },
@@ -396,7 +449,7 @@ export const TOOLS = [
     title: "Recommend MCP servers for a brief",
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
-      "Given a filmmaking brief, return the closest intent-routed MCP recommendations and the first servers to connect. Use hosted_only=true when the agent cannot spawn local tools.",
+      "Given a filmmaking brief, return the closest intent-routed MCP recommendations: one compact pick per primary server (slug, role, why, remote, official, verified) plus compact fallbacks. Use hosted_only=true when the agent cannot spawn local tools; get_film_mcp for full server detail.",
     inputSchema: {
       type: "object",
       properties: {
@@ -425,6 +478,7 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
   return async function callTool(name, args = {}) {
     const reg = await loadRegistry();
     const servers = reg.servers;
+    const bySlug = new Map(servers.map((s) => [s.slug, s]));
 
     if (name === "search_film_mcps") {
       const q = (args.query ?? "").toLowerCase();
@@ -439,7 +493,8 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
         }
         return true;
       });
-      return { count: hits.length, source: reg._source, servers: hits.map(compact) };
+      const { page, meta } = paged(hits, args);
+      return { ...meta, source: reg._source, servers: page.map(compact) };
     }
 
     if (name === "get_film_mcp") {
@@ -454,13 +509,15 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
 
     if (name === "list_film_capabilities") {
       const q = String(args.query ?? "").toLowerCase();
-      const min = Number(args.min_count ?? 1);
+      const min = Number(args.min_count ?? 2);
       let capabilities = capabilityIndex(servers).filter((c) => c.count >= min);
       if (q) capabilities = capabilities.filter((c) => c.capability.includes(q));
+      const { page, meta } = paged(capabilities, args, 50);
       return {
+        ...meta,
+        min_count: min,
         source: reg._source,
-        count: capabilities.length,
-        capabilities: capabilities.map(({ servers: _servers, ...c }) => c),
+        capabilities: page.map(({ servers: _servers, ...c }) => c),
       };
     }
 
@@ -470,10 +527,12 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
       let found = entry.servers;
       if (args.official_only) found = found.filter((s) => s.official);
       if (args.remote_only) found = found.filter((s) => s.remote);
+      const { page, meta } = paged(found, args);
       return {
         ...entry,
         source: reg._source,
-        servers: found,
+        ...meta,
+        servers: page,
         filters: { official_only: Boolean(args.official_only), remote_only: Boolean(args.remote_only) },
       };
     }
@@ -596,7 +655,7 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
       if (q) {
         hits = hits.filter((r) => includesAllWords(recommendationHaystack(r), q));
       }
-      return { count: hits.length, source: rec._source, recommendations: hits.map(compactRecommendation) };
+      return { count: hits.length, source: rec._source, recommendations: hits.map((r) => compactRecommendation(r, bySlug)) };
     }
 
     if (name === "get_film_recommendation") {
@@ -613,10 +672,8 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
       const ranked = scoreRecommendations(rec.recommendations ?? [], brief, hostedOnly)
         .slice(0, 3)
         .map((r) => ({
-          ...compactRecommendation(r),
+          ...compactRecommendation(r, bySlug),
           ...(needsMartini(r, brief) ? { martini_handoff: martiniHandoff(r, `recommendation:${r.id}`) } : {}),
-          primary: r.primary,
-          fallback_servers: r.fallback_servers,
         }));
       if (!ranked.length) return {
         brief: args.brief,

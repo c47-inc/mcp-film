@@ -66,4 +66,58 @@ assert.equal(stdioInit.result.instructions, SERVER_INSTRUCTIONS);
 assert.deepEqual(stdioList.result.tools.map((t) => t.name), TOOLS.map((t) => t.name));
 console.log(`M1: ${JSON.stringify({ negotiated: stdioInit.result.protocolVersion, instructions_chars: SERVER_INSTRUCTIONS.length })}`);
 
+// ---- 2. Token diet: compact JSON text + structuredContent, paged lists, lean picks.
+const size = (x) => JSON.stringify(x).length;
+const sizes = {};
+for (const [tool, args] of [
+  ["search_film_mcps", {}],
+  ["list_film_capabilities", {}],
+  ["recommend_film_mcps", { brief: "avatar UGC ad with voiceover" }],
+  ["get_film_capability", { capability: "text-to-video" }],
+]) sizes[`${tool}${Object.keys(args).length ? ":" + Object.values(args)[0] : ""}`] = size(await call(tool, args));
+assert.ok(sizes.search_film_mcps < 20000, `no-arg search_film_mcps is ${sizes.search_film_mcps} chars`);
+assert.ok(sizes.list_film_capabilities < 12000, `list_film_capabilities is ${sizes.list_film_capabilities} chars`);
+assert.ok(sizes["recommend_film_mcps:avatar UGC ad with voiceover"] < 8000, "recommend_film_mcps");
+
+const firstPage = await call("search_film_mcps", {});
+assert.equal(firstPage.count, 20);
+assert.equal(firstPage.total, registry.servers.length);
+assert.equal(firstPage.offset, 0);
+assert.equal(firstPage.next_offset, 20);
+assert.equal(Object.hasOwn(firstPage.servers[0], "markdown_url"), false);
+assert.ok(firstPage.servers[0].url.startsWith("https://mcp.film/mcps/"));
+const secondPage = await call("search_film_mcps", { offset: firstPage.next_offset, limit: 5 });
+assert.equal(secondPage.count, 5);
+assert.equal(secondPage.servers[0].slug, (await call("search_film_mcps", { limit: 25 })).servers[20].slug);
+const lastPage = await call("search_film_mcps", { offset: registry.servers.length - 3, limit: 100 });
+assert.equal(lastPage.count, 3);
+assert.equal(lastPage.next_offset, null);
+assert.equal((await call("search_film_mcps", { limit: 0 })).count, 20, "non-positive limit falls back to the default");
+assert.equal((await call("search_film_mcps", { limit: 9999 })).count, 100);
+
+const caps = await call("list_film_capabilities", {});
+assert.equal(caps.min_count, 2);
+assert.ok(caps.capabilities.every((c) => c.count >= 2 && c.url && !("markdown" in c) && !("json" in c)));
+assert.ok(caps.total > caps.count || caps.next_offset === null);
+const capOne = await call("list_film_capabilities", { min_count: 1, limit: 1 });
+assert.equal(capOne.count, 1);
+assert.equal(capOne.next_offset, 1);
+assert.ok(capOne.total > caps.total);
+const t2v = await call("get_film_capability", { capability: "text-to-video", limit: 3 });
+assert.equal(t2v.servers.length, 3);
+assert.ok(t2v.total >= 3 && t2v.next_offset === 3);
+
+const rpc = await mcpHandleMessage({ jsonrpc: "2.0", id: 3, method: "tools/call", params: { name: "search_film_mcps", arguments: { limit: 2 } } }, call);
+assert.equal(rpc.result.content[0].text, JSON.stringify(rpc.result.structuredContent));
+assert.ok(!rpc.result.content[0].text.includes("\n  "), "compact JSON, not pretty-printed");
+assert.equal(rpc.result.structuredContent.count, 2);
+assert.equal(rpc.result.isError, false);
+const rpcErr = await mcpHandleMessage({ jsonrpc: "2.0", id: 4, method: "tools/call", params: { name: "get_film_mcp", arguments: { slug: "nope" } } }, call);
+assert.equal(rpcErr.result.isError, true);
+assert.ok(rpcErr.result.structuredContent.error);
+const [stdioCall] = await stdio([{ jsonrpc: "2.0", id: 1, method: "tools/call", params: { name: "list_client_profiles", arguments: {} } }]);
+assert.deepEqual(JSON.parse(stdioCall.result.content[0].text), stdioCall.result.structuredContent);
+assert.ok(stdioCall.result.structuredContent.clients.length >= 4);
+console.log(`M2: ${JSON.stringify(sizes)}`);
+
 console.log("✓ mcp server checks passed");
