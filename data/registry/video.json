@@ -191,6 +191,7 @@
     "official": false,
     "category": "video-generation",
     "featured": false,
+    "status": "dead",
     "tagline": "Dead: OpenAI's shutdown date for the Videos API and every sora-2 model was 2026-09-24.",
     "description": "OpenAI announced the deprecation of the Videos API and the sora-2 family on 2026-03-24 and set 2026-09-24 as the shutdown date; the consumer Sora app was discontinued on 2026-04-26. This community server was the most-starred Sora MCP, and it is a thin wrapper over that one endpoint, so it has nothing left to call. Kept listed so agents that ask for Sora get an explanation and a migration path instead of a blank page.",
     "capabilities": ["text-to-video", "remix", "job-management", "auto-download"],

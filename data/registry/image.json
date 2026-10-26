@@ -52,6 +52,7 @@
     "official": true,
     "category": "image-generation",
     "featured": false,
+    "status": "dead",
     "tagline": "Dead: the official repo is deleted and Freepik's developer platform is now Magnific.",
     "description": "Freepik's official FastMCP server exposed Mystic image generation, stock resource and icon search, and AI image classification. It is gone: github.com/freepik-company/freepik-mcp returns 404, and Freepik's whole developer platform has been rebranded to Magnific — docs.freepik.com now 301s to docs.magnific.com, whose API reference documents only api.magnific.com. Filmmaker-agents who want this surface should connect the Magnific MCP instead, which covers the same Mystic generation plus upscaling, video, TTS and 3D over one OAuth endpoint. Kept listed so old links and configs resolve to an explanation rather than a blank page.",
     "capabilities": ["text-to-image", "stock-search", "icon-search", "asset-download", "ai-image-classification"],
