@@ -6,7 +6,10 @@
     "icon": "clapper",
     "stage": "shoot",
     "blurb": "End-to-end AI film production platforms — generate, organize, and finish entire productions from one MCP connection.",
-    "agent_hint": "Start here if you want one connection that covers generation, character consistency, shot organization, and editing."
+    "agent_hint": "Start here if you want one connection that covers generation, character consistency, shot organization, and editing.",
+    "intro": "A studio server is the one connection that holds a production together: shots, takes, characters, the timeline and the spend, with the humans reviewing in the same place the agent works. Reach for one when a project has more than a handful of generated shots, needs continuity across them, or has a director who wants to see and change what the agent made.\n\nCheck three things before choosing. Where the models come from (hosted roster, or bring your own keys), what leaves at the end (MP4 only, or XML and project files for an NLE), and what the free or trial tier actually permits — several of these make projects public or link-shared by default. All but Nomi, a desktop app, are hosted.\n\nThe usual starting points are Martini (this directory's sponsor, listed on the same terms: a public 104-tool manifest, MCP plus CLI and API, XML out to Premiere, Resolve and Final Cut), Frameo (58 tools behind one OAuth connection, with a quote before every paid generation) and Nomi (open source, local-first, your own model keys).",
+    "start_here": "martini",
+    "start_here_why": "It earns the pick on evidence rather than sponsorship: first-party and hosted, the only studio whose full 104-tool manifest is readable without a key, re-verified 26 Oct 2026 with the vendor's own Claude Code command, and the only one that exports XML to Premiere, Resolve and Final Cut; Frameo is the closest competitor but is two weeks old with no anonymous path."
   },
   {
     "id": "video-generation",
@@ -15,7 +18,10 @@
     "icon": "camera",
     "stage": "shoot",
     "blurb": "Text-to-video and image-to-video models — the virtual cameras of AI filmmaking.",
-    "agent_hint": "Use these to generate shots. Check duration limits, resolution, and whether image-to-video is supported for shot continuity."
+    "agent_hint": "Use these to generate shots. Check duration limits, resolution, and whether image-to-video is supported for shot continuity.",
+    "intro": "These are the virtual cameras: text-to-video and image-to-video models, plus the hosted assemblers that turn a script into a narrated cut. Use them for coverage once the boards exist, not as a place to find the story.\n\nBefore choosing, check the duration ceiling (most models stop at five to fifteen seconds), whether image-to-video and first-and-last-frame control exist, because that is what holds a sequence together, and whether the server is hosted or a local package that has quietly frozen. Many entries here spend credits with no quote step, and several still advertise models that have been shut down upstream, so call the model-list tool before planning a shoot.\n\nThe usual starting points are Runway (official, hosted, OAuth, with per-model ratios and durations from listModels), Kling's own hosted server (official, OAuth, current models declared at runtime) and Google GenMedia for Veo (official, but a rough per-binary install on Vertex AI).",
+    "start_here": "runway",
+    "start_here_why": "Official and hosted with browser OAuth, re-checked 10 Oct 2026 with new tools still landing, and it covers Gen-4.5, Seedance, Kling and Veo from one endpoint, where Kling's official server is narrower and Google GenMedia needs a Vertex project and a per-binary install."
   },
   {
     "id": "image-generation",
@@ -24,7 +30,10 @@
     "icon": "frame",
     "stage": "visualize",
     "blurb": "Stills, concept frames, storyboards, and start frames for image-to-video pipelines.",
-    "agent_hint": "Generate keyframes and reference images here, then feed them to video models as start/end frames."
+    "agent_hint": "Generate keyframes and reference images here, then feed them to video models as start/end frames.",
+    "intro": "Stills come first in an AI film pipeline: concept frames, character sheets, start and end frames for image-to-video, and the posters and title cards at the other end. A good still engine saves more generation credits than any video model, because a bad frame is cheaper to throw away than a bad clip.\n\nCheck whether the server is hosted (all the official ones here are OAuth remotes), whether it holds a style across a batch (reference images, custom styles, trained models), and whether rendered text survives if the frame carries type. Watch the billing: most of these draw on the same subscription balance as the vendor's web app.\n\nThe usual starting points are FLUX from Black Forest Labs (official, hosted, all seven tools matching the docs, now with FLUX 3 video from a chosen frame), Ideogram (official, hosted, the strongest engine for legible text and trainable on a show's look) and Recraft (official, hosted, vector output and custom styles for key art).",
+    "start_here": "flux-bfl",
+    "start_here_why": "Official, hosted over OAuth, repo pushed 29 Sep 2026, every tool verified against the docs on 8 Oct 2026, and it carries a chosen frame straight into FLUX 3 video; Ideogram and Recraft are equally official but narrower in what they feed downstream."
   },
   {
     "id": "model-hub",
@@ -33,7 +42,10 @@
     "icon": "grid",
     "stage": "shoot",
     "blurb": "Aggregators exposing hundreds of hosted models — video, image, and audio — through a single MCP connection.",
-    "agent_hint": "One key, many models. Best when you need a model that has no first-party MCP server."
+    "agent_hint": "One key, many models. Best when you need a model that has no first-party MCP server.",
+    "intro": "Hubs put many vendors' models behind one key and one bill. They are the practical route to models with no first-party MCP, and the cheapest way to compare several on the same shot before committing a budget.\n\nThe things to check are whether a schema or pricing tool exists before you spend (several hubs here take the model name as a bare string and surface errors only after the charge), whether the catalogue is read live or embedded at build time and therefore stale, and what the rights story is for resold models — Midjourney and Suno access through a hub is a terms-of-service gray area whatever the hub says. Hosted remotes dominate; a few are npm packages that lag their own repos.\n\nThe usual starting points are fal (official, hosted, stateless, with schema, pricing and async-job tools), Replicate (official, hosted over OAuth, strong on upscalers) and Krea (official, hosted, with deprecation metadata so a dead model path fails loudly).",
+    "start_here": "fal",
+    "start_here_why": "Official, hosted and stateless, with get_model_schema and get_pricing in front of run_model, unchanged tool surface since August, and it is the route the directory's own notes name for Topaz video, LTX-2, Stable Audio and other models with no first-party server."
   },
   {
     "id": "voice-speech",
@@ -42,7 +54,10 @@
     "icon": "mic",
     "stage": "sound",
     "blurb": "Text-to-speech, voice cloning, and emotionally directed performance for dialogue and narration.",
-    "agent_hint": "For dialogue and narration. Look for voice cloning if you need character consistency across scenes."
+    "agent_hint": "For dialogue and narration. Look for voice cloning if you need character consistency across scenes.",
+    "intro": "Dialogue and narration: text-to-speech, voice cloning, speech-to-speech and emotionally directed performance. For film the questions are whether a voice can be held consistent across scenes and language versions, and whether the delivery can be directed rather than merely pronounced.\n\nCheck the auth model (the official servers have moved to hosted OAuth, and several local packages are archived or frozen), where the audio lands (a vendor workspace versus a local file your next ffmpeg step can read) and what the plan permits commercially. Credits are spent by every call, and download URLs from hosted servers tend to expire within a day.\n\nThe usual starting points are Cartesia (official, hosted, actively released, with voice localization and pronunciation dictionaries), ElevenLabs (official, hosted, the broadest surface once its creative tools finish rolling out — the local server is archived) and Hume (official, Octave performs a line with directed emotion, but the package is dormant).",
+    "start_here": "cartesia",
+    "start_here_why": "Official, hosted with a working OAuth handshake verified 22 Sep 2026, and the fastest-moving voice server here (0.22.3 shipped the day before); ElevenLabs is broader but its hosted creative tools are still rolling out and its vendor pages contradict each other, so its surface has to be confirmed per workspace."
   },
   {
     "id": "music",
@@ -51,7 +66,10 @@
     "icon": "note",
     "stage": "sound",
     "blurb": "Generative soundtracks, songs, and score composition.",
-    "agent_hint": "Score and songs. Mind licensing terms — some services are unofficial wrappers without commercial-rights guarantees."
+    "agent_hint": "Score and songs. Mind licensing terms — some services are unofficial wrappers without commercial-rights guarantees.",
+    "intro": "Score and songs, from three different sources: generative models, cleared catalogues of real recordings, and a DAW the agent drives directly. Which one you want depends on whether the cue has to be cleared for broadcast or just has to exist by tomorrow.\n\nLicensing is the check that matters. Suno has no official API, so every Suno wrapper here is an unofficial reseller with no commercial-rights guarantee; catalogue servers follow your subscription's terms, not the API's; and generative vendors gate commercial use by plan. After that, check whether the server scores to picture or only to a prompt, and whether stems come back.\n\nThe usual starting points are Sonilo (official, scores to the cut from a catalogue the vendor says is licensed, with the fastest release cadence in the category), Epidemic Sound (official, hosted, real recordings recut to a target duration, still beta) and Mureka (official songs and instrumentals, though the package has not moved since 2025).",
+    "start_here": "sonilo",
+    "start_here_why": "Official, 47 releases since mid-July and listed in the official MCP registry, and it is the one server here that composes to picture (video_to_music, video_to_sfx) with a licensed-training claim; Epidemic Sound is the pick for cleared recordings but is still labelled beta with freshly renamed tools."
   },
   {
     "id": "sound-design",
@@ -60,7 +78,10 @@
     "icon": "wave",
     "stage": "sound",
     "blurb": "Sound effects generation, library search, and audio cleanup for the final mix.",
-    "agent_hint": "Foley and ambience. Combine generative SFX with licensed-library search for the best coverage."
+    "agent_hint": "Foley and ambience. Combine generative SFX with licensed-library search for the best coverage.",
+    "intro": "Effects, ambience and the measurement that proves the mix is deliverable. The category runs from generative Foley synced to the picture, through CC-licensed library search, to DAW control and loudness metering.\n\nCheck the input the server reads (a video plate, a text prompt, or neither), whether it runs locally for footage that cannot leave the building, and whether it generates or only measures — two entries here never produce audio, they tell you whether a file passes a delivery spec. Library pulls carry per-sound licences, and CC-BY still needs a credit.\n\nThe usual starting points are Mirelo (official, hosted, video-to-SFX with a preflight credit estimate and region-level inpainting), AudioLab (official, LUFS and true-peak grading against named broadcast and streaming specs) and REAPER MCP (community, puts the agent inside a real DAW session for the mix and the stems).",
+    "start_here": "mirelo",
+    "start_here_why": "Official and hosted, endpoint re-checked 3 Oct 2026, and the only server here that generates effects against the picture with a cost estimate first; the alternatives either measure without generating (AudioLab) or need a licensed desktop app running (REAPER)."
   },
   {
     "id": "transcription",
@@ -69,7 +90,10 @@
     "icon": "text",
     "stage": "cut",
     "blurb": "Speech-to-text, diarization, and dialogue logging for edits, subtitles, and accessibility.",
-    "agent_hint": "Transcribe dailies and generate caption files. Diarization matters for multi-character scenes."
+    "agent_hint": "Transcribe dailies and generate caption files. Diarization matters for multi-character scenes.",
+    "intro": "Speech-to-text for dailies, interviews and dialogue logging, and the subtitle and caption files that come out of it. Diarization is the feature that separates a transcript you can cut against from one you cannot, so check for it first.\n\nThen check the output formats (SRT and VTT with speaker labels, or plain text), whether the server runs locally for confidential footage, and what each minute costs. Several servers in other categories also transcribe — ElevenLabs, Cartesia, AudioPod and the local crv watcher — so this category is small, and the official vendors are thinner here than their marketing suggests.\n\nThe usual starting points are Deepgram (official, diarization and audio intelligence, though the package is a thin shim that fetches its tools at runtime), MultiVoice (hosted, speaker-labelled SRT and VTT across about a hundred languages with a quote a human approves) and Sanzaru (community, Whisper and GPT-4o transcription on an OpenAI key, moving fast).",
+    "start_here": "deepgram",
+    "start_here_why": "The only official transcription-first server in the directory, with diarization built in and no ToS gray area; its weakness is maintenance (one PyPI release, repo quiet since May 2026), which the hosted upstream API rather than the package carries."
   },
   {
     "id": "editing-post",
@@ -78,7 +102,10 @@
     "icon": "scissors",
     "stage": "cut",
     "blurb": "NLE control (DaVinci Resolve, Premiere), programmatic editing, ffmpeg, and render pipelines.",
-    "agent_hint": "Assemble and cut. Local NLE servers need the app running on the same machine as your agent."
+    "agent_hint": "Assemble and cut. Local NLE servers need the app running on the same machine as your agent.",
+    "intro": "Where the cut happens: NLE control for Resolve, Premiere, Final Cut and CapCut, local FFmpeg benches, cloud JSON renderers, transcript editors and the clip-repurposing services. It is the largest category because post is where agents meet the most existing software.\n\nThe first check is local versus hosted. NLE servers need the application running on the same machine as the agent, usually with a bridge panel started by hand; cloud renderers need nothing installed but spend credits and return URLs rather than projects. Then ask what comes back: an editable project or timeline, or a flattened MP4. Several entries here are archived or deprecated and are kept only so old configs resolve to an explanation.\n\nThe usual starting points are the community DaVinci Resolve MCP (the most actively maintained NLE server, Resolve 18.5+ with a free-edition bridge), Kinocut (local, guardrailed FFmpeg with receipts and quality gates) and Descript (official, hosted, transcript-based editing with captions).",
+    "start_here": "davinci-resolve",
+    "start_here_why": "The most actively maintained NLE MCP in the directory (v4.10.4 released 10 Oct 2026, two major versions since September), it covers edit, grade, Fusion and render on Resolve 18.5+ including the free edition; Blackmagic's own Studio 21.1 server is official but publishes no docs, endpoint or tool list."
   },
   {
     "id": "enhancement",
@@ -87,7 +114,10 @@
     "icon": "sparkle",
     "stage": "finish",
     "blurb": "Video upscaling, frame interpolation, denoising, and image enhancement — the finishing suite.",
-    "agent_hint": "Final-quality pass. Upscale delivery masters, not working files — it is slow and credit-hungry."
+    "agent_hint": "Final-quality pass. Upscale delivery masters, not working files — it is slow and credit-hungry.",
+    "intro": "The finishing suite: upscaling, denoising, frame cleanup and restoration. Run it on delivery masters, not working files — every server here is slow, credit-hungry or both, and an upscaled take you later cut is money gone.\n\nCheck whether the tool handles video or only stills (the official Topaz server is image-only; its video models are reachable through the fal hub), the resolution ceiling, and whether the engine is faithful or creative — some upscalers reinterpret a frame unless told not to. All three entries are official; two are hosted remotes and one is a dormant npm package.\n\nThe usual starting points are Magnific (official, hosted, upscale plus relight and crop for plates), Topaz Labs (official, eight enhancement models for stills, with video via fal) and AVCLabs (official, cloud video upscale and denoise to 1080p/2K billed by the second, a spot-fix tool rather than a reel pass).",
+    "start_here": "magnific",
+    "start_here_why": "Official and hosted over OAuth, endpoint and command re-verified 21 Sep 2026, and it handles both stills and video where Topaz's package is image-only and has not moved since Feb 2026 and AVCLabs tops out at 1080p/2K."
   },
   {
     "id": "3d-vfx",
@@ -96,7 +126,10 @@
     "icon": "cube",
     "stage": "shoot",
     "blurb": "Blender, game engines, 3D asset generation, and node-based VFX workflows.",
-    "agent_hint": "Build sets, props, and previs. Most of these control a local app that must be running."
+    "agent_hint": "Build sets, props, and previs. Most of these control a local app that must be running.",
+    "intro": "Sets, props, previz and the node-based VFX end of post: Blender, Unreal, Houdini, Maya, Cinema 4D, Silhouette, and the text-to-3D generators that feed them. Most of these control a desktop application that must be running next to the agent.\n\nCheck the application version the server targets (Blender's official server needs 5.1+, Epic's needs UE 5.8, Maxon's needs Cinema 4D 2026.4), whether the server executes arbitrary code inside the app — several do, and the official Blender Lab docs say to run theirs in a VM — and whether the DCC itself is a paid licence. The generators are the exception: Meshy and Tripo run hosted on credits.\n\nThe usual starting points are the community Blender MCP (the de facto standard by install base, works on Blender 3.0+, actively maintained), Meshy (official, text and image to rigged, animatable 3D assets with a brisk release cadence) and Epic's Unreal MCP (official, in-editor, experimental, UE 5.8 only).",
+    "start_here": "blender",
+    "start_here_why": "Pushed 6 Oct 2026 with a package release the same day, works on Blender 3.0 onward with asset-library integrations the official server lacks, and the Blender Foundation's own server is explicitly experimental, 5.1-only and a three-part manual install."
   },
   {
     "id": "avatars-performance",
@@ -105,7 +138,10 @@
     "icon": "person",
     "stage": "shoot",
     "blurb": "Talking avatars, lip-sync, and digital performers.",
-    "agent_hint": "Presenter-style and character performance video. Check lip-sync language support."
+    "agent_hint": "Presenter-style and character performance video. Check lip-sync language support.",
+    "intro": "Talking avatars, lip-sync and digital performers: presenter inserts, localized to-camera reads, and mouth replacement on footage you already shot. Two different jobs live here, and it pays to know which one you have — synthesizing a presenter from a photo, or retiming a real performer's lips to new dialogue.\n\nCheck language support for lip-sync, whether the server works on your own footage or stock characters only, what the plan permits, and consent: relighting a real person's mouth or swapping a face needs their release, and several union agreements now say so explicitly. Most entries are hosted; a couple need a local CLI or a build from source.\n\nThe usual starting points are HeyGen (official, hosted, lip-synced translation in 175+ languages), Sync (official, lip-sync and dub passes on existing footage with a cost estimate first) and Hedra's own hosted server, filed under model hubs because it has become one.",
+    "start_here": "heygen",
+    "start_here_why": "Official, hosted over OAuth on every HeyGen plan, re-confirmed against the vendor's docs on 20 Oct 2026, and it covers avatar video, lip-sync and translation in one connection; Sync is the better tool for footage you shot but is per-second billed with clip caps."
   },
   {
     "id": "story-preproduction",
@@ -114,7 +150,10 @@
     "icon": "book",
     "stage": "develop",
     "blurb": "Screenwriting, storyboarding, and planning tools for the development phase.",
-    "agent_hint": "Develop the script and boards before spending generation credits."
+    "agent_hint": "Develop the script and boards before spending generation credits.",
+    "intro": "Development before anyone spends a generation credit: script breakdowns, shot lists, storyboard walls, reference stills, filming-location research and production-state tracking. The cheapest place to fix a film is here.\n\nCheck what each server actually writes. Some are read-only reference tools (frame libraries, location atlases), some are hosted boards, and one is an LLM pipeline that needs its own model endpoint, embeddings and Redis before it answers. Screenwriting itself has no dedicated MCP — Fountain is plain text, so write with the agent directly and store the draft in Notion or Drive.\n\nThe usual starting points are Miro (official, hosted, storyboard and planning walls written as SVG, on every plan), PenShot (community, screenplay to shot list to video prompts, heavy to set up) and FrameThrower (hosted reference search across 5,489 films by lighting, lens, shot size and mood).",
+    "start_here": "miro",
+    "start_here_why": "The only official, hosted, vendor-maintained server in the category (repo pushed 17 Sep 2026, works on all Miro plans), with the caveat that it is still public beta; PenShot is more film-specific but needs an LLM endpoint, embeddings and Redis before it runs."
   },
   {
     "id": "distribution",
@@ -123,7 +162,10 @@
     "icon": "send",
     "stage": "ship",
     "blurb": "Publishing to YouTube and Vimeo, review and approval, and video hosting infrastructure.",
-    "agent_hint": "Get the film out. Upload servers usually need OAuth set up once by a human."
+    "agent_hint": "Get the film out. Upload servers usually need OAuth set up once by a human.",
+    "intro": "Getting the film out and finding out what happened to it: upload and publishing, scheduling, client review and approval, hosting and the analytics afterwards. Upload servers usually need OAuth set up once by a human in a Google or Adobe console before the agent can touch them.\n\nCheck quota and plan limits before automating (YouTube's default quota allows about six uploads a day, and unverified projects can only upload private videos), which actions are irreversible — publish, delete, trim and archive tools post to live accounts and libraries — and whether the server is in beta. Both official review and hosting servers from Adobe and Vimeo are, as of October 2026.\n\nThe usual starting points are yutu (community, the only maintained MCP that does real YouTube uploads), Adobe's hosted Frame.io MCP (official, review comments, version stacks and share links, public beta) and Mux (official, hosted and npm, video hosting with analytics).",
+    "start_here": "youtube-yutu",
+    "start_here_why": "Apache-2.0, pushed 28 Sep 2026, and the only well-maintained MCP that performs real YouTube uploads with metadata, captions and thumbnails; the official Frame.io and Vimeo servers are both public beta and neither uploads to a public platform."
   },
   {
     "id": "production-ops",
@@ -132,6 +174,9 @@
     "icon": "board",
     "stage": "ship",
     "blurb": "Production tracking, asset management, and file storage for film teams.",
-    "agent_hint": "The production office: trackers, docs, and media storage your agent can read and write."
+    "agent_hint": "The production office: trackers, docs, and media storage your agent can read and write.",
+    "intro": "The production office: trackers, docs, file storage and licensed archives the agent can read and write. Nothing here renders a frame; it keeps the shot list, the budget, the dailies folder and the rights paperwork where the crew already looks.\n\nCheck plan and role gates (Airtable follows collaborator rights, Wistia-style owner gating appears elsewhere, Getty is enterprise-only), whether headless jobs can connect at all (Notion's hosted server is OAuth-only and refuses non-interactive auth), and whether a server is still in a preview program. Licensed archives search wider than your subscription lets you download, so an agent can find a clip it has no right to deliver.\n\nThe usual starting points are Airtable (official, hosted, every plan, OAuth or token), Notion (official, hosted, scripts, bibles and shot lists as pages and databases) and Google Drive (official, hosted, but still gated behind the Workspace Developer Preview).",
+    "start_here": "airtable",
+    "start_here_why": "Official and hosted, available on every plan at no extra cost with both OAuth and a personal access token, re-checked 26 Oct 2026 with an official Claude Code plugin; Notion is equally official but its hosted server cannot serve headless jobs, and Google Drive is still a developer preview."
   }
 ]
