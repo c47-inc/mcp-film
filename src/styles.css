@@ -1159,9 +1159,10 @@ img.avatar { object-fit: cover; background: var(--paper); }
   .agent-callout a, .playbook-links a, .stage-list a { padding: 10px 0; }
   .nav-sheet a { min-height: 48px; }
   /* heading links: the hit area grows, the rhythm does not (negative margins) */
-  .cat-section h2 a, .recommendation h3 a, .remote-ident h2 a {
+  .cat-section h2 a, .recommendation h3 a, .remote-ident h2 a, .playbook h2 a {
     display: inline-flex; align-items: center; min-height: 44px; margin: -11px 0;
   }
+  .auth-box a { display: inline-block; padding: 10px 0; }
   .notes-details summary { min-height: 44px; display: flex; align-items: center; }
   .router-toggle { min-height: 44px; }
   .router-toggle input { width: 20px; height: 20px; margin: 0; }
