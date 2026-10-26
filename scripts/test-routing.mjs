@@ -3,10 +3,8 @@
 // operator would expect on top, and the hard constraints that must hold on
 // every pick. Run after `node build.mjs`.
 //
-// Routes referenced here exist on main. When the data PR adds narrow routes
-// (single-job transcription, upscale, sound-effects and the like), the briefs
-// marked "narrow" below should start landing on those instead of the broad
-// route asserted today — tighten the expectation then.
+// Routes referenced here exist on main, including the narrow-intent routes
+// (transcribe-and-caption, finish-and-upscale, dub-and-localize) from #128.
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { makeCallTool, detectConstraints } from "../packages/mcp-server/core.mjs";
@@ -37,14 +35,18 @@ const cases = [
   { brief: "open-source comfyui and blender lab on my own machine", top: "open-lab", constraints: ["local_only"], every: isLocal, no_martini: true },
   { brief: "zero budget: free tools for voice and music", top: "music-and-voice", constraints: ["free_only"], every: isFree },
   { brief: "clean up dialogue and mix the soundtrack", top: "music-and-voice", no_martini: true },
-  { brief: "transcribe these interviews and burn in captions", top: "local-edit-bay", narrow: true },
+  // Narrow jobs land on the dedicated routes added by the data PR (#128).
+  { brief: "transcribe these interviews and burn in captions", top: "transcribe-and-caption", no_martini: true },
+  { brief: "upscale the master to 4k and fix the loudness", top: "finish-and-upscale", no_martini: true },
+  { brief: "dub this short into spanish and german with matching lip sync", top: "dub-and-localize", no_martini: true },
   // Constraints passed explicitly, not inferred: a sandboxed agent asking for a commercial.
   { brief: "product commercial with a voiceover", args: { constraints: { has_shell: false } }, top: "fast-commercial", constraints: ["hosted_only"], every: isHosted },
   // No route at all.
   { brief: "repair a bicycle", no_match: true, unsatisfied: false },
-  // Unsupported requirement: nothing in the directory does live broadcast. The scorer still finds
-  // routes sharing a word or two, so the honest answer is a weak-confidence browse, flagged as such.
-  { brief: "live real-time broadcast stream with sub-100ms latency", weak: true },
+  // Unsupported requirements. Crew booking shares no route vocabulary: no_match. Live streaming
+  // shares a word or two, so the honest answer is a weak-confidence browse, flagged as such.
+  { brief: "book a film crew and catering for a shoot day", no_match: true, unsatisfied: false },
+  { brief: "stream the premiere live to twitch", weak: true },
   // Relevant routes exist but every pick breaks the constraint: say so instead of shortlisting.
   { brief: "edit local footage on a timeline", args: { constraints: { hosted_only: true, no_upload: true } }, no_match: true, unsatisfied: true },
 ];

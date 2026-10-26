@@ -158,12 +158,17 @@ const compactRecommendation = (r, bySlug) => ({
   playbook: r.playbook,
 });
 
-function capabilityIndex(servers) {
+function capabilityIndex(servers, reg) {
   const groups = new Map();
+  const aliases = new Map();
   for (const s of servers) {
-    for (const capability of s.capabilities ?? []) {
+    for (const capability of canonicalTags(s, reg)) {
       if (!groups.has(capability)) groups.set(capability, []);
       groups.get(capability).push(s);
+    }
+    for (const tag of s.capabilities ?? []) {
+      const canonical = canonicalTags({ capabilities: [tag] }, reg)[0];
+      if (canonical !== tag) (aliases.get(canonical) ?? aliases.set(canonical, new Set()).get(canonical)).add(tag);
     }
   }
   const sortServers = (list) =>
@@ -178,6 +183,7 @@ function capabilityIndex(servers) {
       const published = sorted.length >= 2;
       return {
         capability,
+        ...(aliases.has(capability) ? { aliases: [...aliases.get(capability)].sort() } : {}),
         url: published ? `https://mcp.film/capabilities/${capability}/` : null,
         count: sorted.length,
         official: sorted.filter((s) => s.official).length,
@@ -193,18 +199,28 @@ function capabilityIndex(servers) {
 // match the middle of "clip". The registry may ship its own alias map
 // (capability_aliases, from data/capability-aliases.json); this built-in one
 // is the floor when it does not.
+// Canonical tags follow data/capability-aliases.json so the index agrees with the site.
 const BUILTIN_ALIASES = {
   "lip-sync": ["lipsync", "lip sync", "lip syncing", "lip-syncing", "lipsyncing"],
-  "tts": ["text-to-speech", "text to speech", "speech synthesis"],
-  "captions": ["caption", "captioning", "subtitles", "subtitle", "subtitling", "closed captions"],
-  "upscaling": ["upscale", "upscaler", "upscaled", "4k", "video-upscaling", "super-resolution", "super resolution"],
-  "speech-to-text": ["stt", "transcription", "transcribe", "transcript"],
-  "text-to-video": ["t2v"],
+  "tts": ["text-to-speech", "text to speech", "speech synthesis", "voiceover", "voice-over"],
+  "captioning": ["captions", "caption", "subtitles", "subtitle", "subtitling", "closed captions", "srt"],
+  "upscaling": ["upscale", "upscaler", "upscaled", "4k", "video-upscaling", "image-upscaling", "super-resolution", "super resolution"],
+  "transcription": ["speech-to-text", "stt", "transcribe", "transcript", "transcripts"],
+  "sfx": ["sound-effects", "sound effect", "sound-design", "foley"],
+  "text-to-video": ["t2v", "video-generation"],
   "image-to-video": ["i2v"],
-  "text-to-image": ["t2i"],
+  "text-to-image": ["t2i", "image-generation"],
   "voice-cloning": ["voice clone", "clone voice", "clone a voice"],
-  "sound-effects": ["sfx", "sound effect", "foley"],
+  "avatar-video": ["avatars", "avatar-generation", "talking-head", "talking-avatar"],
 };
+
+// A server's tags with aliases folded onto their canonical form, in listing order.
+function canonicalTags(s, reg) {
+  const table = aliasTable(reg?.capability_aliases);
+  const canonical = new Map();
+  for (const [key, aliases] of Object.entries(table)) for (const a of aliases) canonical.set(a, key);
+  return [...new Set((s.capabilities ?? []).map((tag) => canonical.get(tag) ?? tag))];
+}
 
 const SEARCH_STOPWORDS = new Set(["a", "an", "the", "and", "or", "of", "for", "to", "in", "on", "with", "mcp", "mcps", "server", "servers", "tool", "tools", "ai"]);
 
@@ -964,7 +980,7 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
           ...(didYouMean(args.category, reg) ? { did_you_mean: didYouMean(args.category, reg) } : {}),
         };
       }
-      const index = capabilityIndex(servers);
+      const index = capabilityIndex(servers, reg);
       let capability = null;
       if (args.capability) {
         capability = resolveCapability(args.capability, index, reg)?.capability ?? null;
@@ -980,7 +996,7 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
       const hits = servers.filter((s) => {
         if (!args.include_inactive && !isActive(s)) return false;
         if (args.category && s.category !== args.category) return false;
-        if (capability && !(s.capabilities ?? []).includes(capability)) return false;
+        if (capability && !canonicalTags(s, reg).includes(capability)) return false;
         if (args.official_only && !s.official) return false;
         if (args.remote_only && !s.install?.remote_url) return false;
         if (qTokens.length) return matchesAll(qTokens, serverHaystack(s, reg, catName.get(s.category)));
@@ -1012,7 +1028,7 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
     if (name === "list_film_capabilities") {
       const q = String(args.query ?? "").toLowerCase();
       const min = Number(args.min_count ?? 2);
-      let capabilities = capabilityIndex(servers).filter((c) => c.count >= min);
+      let capabilities = capabilityIndex(servers, reg).filter((c) => c.count >= min);
       if (q) {
         const qTokens = tokenize(q, reg, { stopwords: true });
         capabilities = capabilities.filter((c) => c.capability.includes(q) || (qTokens.length && matchesAll(qTokens, tokenIndex([c.capability], reg))));
@@ -1027,7 +1043,7 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
     }
 
     if (name === "get_film_capability") {
-      const index = capabilityIndex(servers);
+      const index = capabilityIndex(servers, reg);
       const entry = resolveCapability(args.capability, index, reg);
       if (!entry) {
         const near = didYouMean(args.capability, reg, { capabilities: index.map((c) => c.capability) });
@@ -1274,7 +1290,7 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
             recommendations: [],
           };
         }
-        const matched = capabilitiesMatching(tokenize(brief, reg, { stopwords: true }), capabilityIndex(servers), reg).slice(0, 5);
+        const matched = capabilitiesMatching(tokenize(brief, reg, { stopwords: true }), capabilityIndex(servers, reg), reg).slice(0, 5);
         const suggestion = matched.length
           ? `Try search_film_mcps with capability ${matched.map((c) => `'${c}'`).join(" or ")}, or list_film_recommendations to browse routes.`
           : "No capability tag matches the brief's words either. Try list_film_capabilities to find the right tag, or list_film_recommendations to browse routes.";

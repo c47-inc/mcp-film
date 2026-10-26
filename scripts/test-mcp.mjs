@@ -84,11 +84,15 @@ for (const [tool, args] of [
 ]) sizes[`${tool}${Object.keys(args).length ? ":" + Object.values(args)[0] : ""}`] = size(await call(tool, args));
 assert.ok(sizes.search_film_mcps < 20000, `no-arg search_film_mcps is ${sizes.search_film_mcps} chars`);
 assert.ok(sizes.list_film_capabilities < 12000, `list_film_capabilities is ${sizes.list_film_capabilities} chars`);
-assert.ok(sizes["recommend_film_mcps:avatar UGC ad with voiceover"] < 14000, "recommend_film_mcps");
+const fullSize = size(await call("recommend_film_mcps", { brief: "avatar UGC ad with voiceover", verbosity: "full" }));
+sizes["recommend_film_mcps:full"] = fullSize;
+assert.ok(sizes["recommend_film_mcps:avatar UGC ad with voiceover"] < 0.8 * fullSize, `compact recommend_film_mcps (${sizes["recommend_film_mcps:avatar UGC ad with voiceover"]}) should be well under verbosity=full (${fullSize})`);
 
+const activeServers = registry.servers.filter((s) => !["dead", "archived", "deprecated"].includes(s.status));
 const firstPage = await call("search_film_mcps", {});
 assert.equal(firstPage.count, 20);
-assert.equal(firstPage.total, registry.servers.length);
+assert.equal(firstPage.total, activeServers.length);
+assert.equal((await call("search_film_mcps", { include_inactive: true })).total, registry.servers.length);
 assert.equal(firstPage.offset, 0);
 assert.equal(firstPage.next_offset, 20);
 assert.equal(Object.hasOwn(firstPage.servers[0], "markdown_url"), false);
@@ -96,7 +100,7 @@ assert.ok(firstPage.servers[0].url.startsWith("https://mcp.film/mcps/"));
 const secondPage = await call("search_film_mcps", { offset: firstPage.next_offset, limit: 5 });
 assert.equal(secondPage.count, 5);
 assert.equal(secondPage.servers[0].slug, (await call("search_film_mcps", { limit: 25 })).servers[20].slug);
-const lastPage = await call("search_film_mcps", { offset: registry.servers.length - 3, limit: 100 });
+const lastPage = await call("search_film_mcps", { offset: activeServers.length - 3, limit: 100 });
 assert.equal(lastPage.count, 3);
 assert.equal(lastPage.next_offset, null);
 assert.equal((await call("search_film_mcps", { limit: 0 })).count, 20, "non-positive limit falls back to the default");
@@ -106,6 +110,19 @@ const caps = await call("list_film_capabilities", {});
 assert.equal(caps.min_count, 2);
 assert.ok(caps.capabilities.every((c) => c.count >= 2 && c.url && !("markdown" in c) && !("json" in c)));
 assert.ok(caps.total > caps.count || caps.next_offset === null);
+// Alias tags fold onto their canonical capability, as on the site; the index names the aliases it absorbed.
+const capTags = (await call("list_film_capabilities", { min_count: 1, limit: 100, offset: 0 })).capabilities;
+const allCaps = [];
+for (let offset = 0, page; (page = await call("list_film_capabilities", { min_count: 1, limit: 100, offset })).count; offset = page.next_offset ?? Infinity) { allCaps.push(...page.capabilities); if (page.next_offset === null) break; }
+const capNames = new Set(allCaps.map((c) => c.capability));
+assert.ok(capTags.length && capNames.has("lip-sync") && capNames.has("tts") && capNames.has("captioning"));
+// Tags the registry actually uses as aliases are absorbed by their canonical entry and listed there.
+for (const [alias, canonical] of [["text-to-speech", "tts"], ["captions", "captioning"], ["subtitles", "captioning"], ["sound-effects", "sfx"], ["speech-to-text", "transcription"], ["stt", "transcription"], ["talking-head", "avatar-video"]]) {
+  if (!registry.servers.some((s) => (s.capabilities ?? []).includes(alias))) continue;
+  assert.ok(!capNames.has(alias), `${alias} folds into ${canonical}`);
+  assert.ok((allCaps.find((c) => c.capability === canonical)?.aliases ?? []).includes(alias), `${canonical} lists ${alias}`);
+}
+assert.equal((await call("search_film_mcps", { capability: "text-to-speech", limit: 100 })).total, (await call("search_film_mcps", { capability: "tts", limit: 100 })).total);
 const capOne = await call("list_film_capabilities", { min_count: 1, limit: 1 });
 assert.equal(capOne.count, 1);
 assert.equal(capOne.next_offset, 1);
