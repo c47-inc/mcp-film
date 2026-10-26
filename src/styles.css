@@ -417,7 +417,7 @@ button.quick-filter .count { font-family: var(--mono); font-size: 10.5px; color:
 
 .grid {
   display: grid; gap: 10px;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(290px, 100%), 1fr)); /* no overflow at 320px */
 }
 
 /* Progressive disclosure on phones and tablets. Collapse is a class on the section,
@@ -625,7 +625,7 @@ img.avatar { object-fit: cover; background: var(--paper); }
 .side-caps a { display: inline-block; margin: 0 3px 5px 0; }
 .side-caps code { color: var(--ink-2); }
 .foot-h { margin: 0 0 3px; }
-.grid-pairs { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+.grid-pairs { grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr)); }
 
 .verify-box { background: var(--paper-dim); }
 .verify-status {
@@ -794,7 +794,7 @@ img.avatar { object-fit: cover; background: var(--paper); }
 .playbook-stack {
   display: grid;
   gap: 10px;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
 }
 .playbook-steps {
   list-style: none;
