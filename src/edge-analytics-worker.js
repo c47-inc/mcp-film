@@ -356,10 +356,17 @@ export async function registryApiResponse(request, env) {
       }
     }
     const updatedSince = url.searchParams.get("updated_since");
+    const search = (url.searchParams.get("search") || "").trim().toLowerCase();
     const full = await jsonAssetResponse(env, url, "/api/mcp-registry.json");
     if (full.status !== 200) return full;
     const body = await full.json();
     let servers = Array.isArray(body.servers) ? body.servers : [];
+
+    // The registry API's `search` is a case-insensitive substring over name and description.
+    if (search) {
+      servers = servers.filter((entry) =>
+        `${entry?.server?.name ?? ""} ${entry?.server?.title ?? ""} ${entry?.server?.description ?? ""}`.toLowerCase().includes(search));
+    }
 
     if (updatedSince) {
       const since = Date.parse(updatedSince);

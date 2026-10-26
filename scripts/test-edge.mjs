@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 // Edge worker checks that need no Cloudflare bindings. Run after `node build.mjs`.
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { TOOLS } from "../packages/mcp-server/core.mjs";
-import { markdownTwinPath, prefersMarkdown, mcpGetResponse, SCANNER_PROBE } from "../dist/_worker.js";
+import { markdownTwinPath, prefersMarkdown, mcpGetResponse, SCANNER_PROBE, registryApiResponse } from "../dist/_worker.js";
+
+const read = (file) => fs.readFileSync(new URL(`../${file}`, import.meta.url), "utf8");
 
 // Markdown twins: HTML page paths map to <path>.md; machine files and assets do not.
 assert.equal(markdownTwinPath("/"), "/index.md");
@@ -51,5 +54,20 @@ for (const p of ["/.env", "/wp-admin/", "/phpinfo.php", "/_profiler/phpinfo", "/
 for (const p of ["/mcps/missing-server/", "/capabilities/", "/for-agents.md", "/.well-known/mcp/server.json"]) {
   assert.ok(!SCANNER_PROBE.test(p), p);
 }
+
+// /v0.1/servers?search= filters by name/description substring, case-insensitively, before paging.
+const builtRegistry = JSON.parse(read("dist/api/mcp-registry.json"));
+const registryEnv = { ASSETS: { fetch: async () => Response.json(builtRegistry) } };
+const registryPage = (params) => registryApiResponse(new Request(`https://mcp.film/v0.1/servers?${new URLSearchParams(params)}`), registryEnv);
+const martiniHits = await (await registryPage({ search: "MARTINI" })).json();
+assert.ok(martiniHits.servers.length >= 1);
+assert.ok(martiniHits.servers.every((s) => /martini/i.test(`${s.server.name} ${s.server.description}`)));
+assert.ok(martiniHits.servers.some((s) => s.server.name === "film.mcp/martini"));
+const lipHits = await (await registryPage({ search: "lip-sync", limit: "2" })).json();
+assert.ok(lipHits.servers.length <= 2 && lipHits.servers.every((s) => /lip-sync/i.test(`${s.server.name} ${s.server.description}`)));
+const none = await (await registryPage({ search: "zzqxzzqx" })).json();
+assert.deepEqual(none, { servers: [], metadata: { count: 0, nextCursor: null } });
+assert.equal((await (await registryPage({ search: "" })).json()).metadata.count, 30, "empty search is no filter");
+console.log(`E1: ${JSON.stringify({ martini: martiniHits.servers.length, lip_sync: lipHits.servers.length })}`);
 
 console.log("✓ edge checks passed");

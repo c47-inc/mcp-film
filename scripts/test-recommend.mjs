@@ -68,7 +68,8 @@ for (const [index, [brief, hosted_only]] of fixtures.entries()) {
   if (index === 0) {
     assert.equal(result.no_match, true);
     assert.deepEqual(result.recommendations, []);
-    assert.equal(result.message, "No route in the directory matches this brief. Try search_film_mcps with a capability such as text-to-video, or list_film_recommendations to browse routes.");
+    assert.match(result.message, /^No route in the directory matches this brief\. /);
+    assert.ok(!result.message.includes("text-to-video"), "a bicycle brief must not be told to try text-to-video");
   } else if (index === 1) {
     assert.equal(result.recommendations[0].id, "character-series");
     assert.ok(result.recommendations[0].martini_handoff);

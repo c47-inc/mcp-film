@@ -433,6 +433,10 @@ function clientProfiles() {
   };
 }
 
+// Pulse sections for curators and ops: served on request, never folded into "all".
+const PULSE_OPS_SECTIONS = ["demand_signals", "martini_growth_checks"];
+const PULSE_SECTIONS = ["all", "summary", "curator_agenda", "verification_queue", "machine_surfaces", ...PULSE_OPS_SECTIONS];
+
 // The pipeline stages and which categories serve them (mirrors mcp.film/stack).
 const STAGES = [
   { stage: "develop", categories: ["story-preproduction"] },
@@ -569,14 +573,14 @@ export const TOOLS = [
     title: "Get catalog pulse",
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
-      "Get the mcp.film operating pulse: catalog freshness, demand signals, curator agenda, Martini growth checks, and machine-readable surfaces. Use this before deciding what to update next.",
+      "Get the mcp.film operating pulse: catalog freshness, verification queue, curator agenda, and machine-readable surfaces. Use this before deciding what to update next. The curator/ops sections demand_signals and martini_growth_checks are opt-in by section and not part of 'all'.",
     inputSchema: {
       type: "object",
       properties: {
         section: {
           type: "string",
-          enum: ["all", "summary", "demand_signals", "curator_agenda", "martini_growth_checks", "verification_queue", "machine_surfaces"],
-          description: "Optional top-level pulse section. Default all.",
+          enum: ["all", "summary", "curator_agenda", "verification_queue", "machine_surfaces", "demand_signals", "martini_growth_checks"],
+          description: "Optional top-level pulse section. Default all (which omits the curator/ops sections demand_signals and martini_growth_checks; request those by name).",
         },
       },
     },
@@ -586,7 +590,7 @@ export const TOOLS = [
     title: "List production playbooks",
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
-      "List mcp.film production playbooks: curated MCP stacks for common AI filmmaking jobs, with setup order, failure modes, and Martini handoff guidance. Use get_film_playbook for full steps and auth gates.",
+      "List mcp.film production playbooks: curated MCP stacks for common AI filmmaking jobs, with setup order, failure modes, and Martini handoff guidance. Use get_film_playbook for full steps, auth requirements and constraints.",
     inputSchema: {
       type: "object",
       properties: {
@@ -599,7 +603,7 @@ export const TOOLS = [
     title: "Get one production playbook",
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
-      "Get one production playbook by id, including primary servers, setup order, auth gates, workflow steps, failure modes, fallback servers, constraints, and links to each server's mcp.film page.",
+      "Get one production playbook by id, including primary servers, setup order, auth requirements, workflow steps, failure modes, fallback servers, constraints, and links to each server's mcp.film page.",
     inputSchema: {
       type: "object",
       properties: { id: { type: "string", description: "Playbook id, e.g. 'commercial-sprint' or 'local-edit-bay'" } },
@@ -652,7 +656,7 @@ export const TOOLS = [
     title: "Plan a full film MCP stack",
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
-      "Get a recommended set of MCP servers covering the whole film pipeline (develop → visualize → shoot → sound → cut → finish → ship). Returns 1-3 picks per stage, ranked by official status and hosting. Pass a brief to bias picks (matched against capabilities and taglines).",
+      "Get a recommended set of MCP servers covering the whole film pipeline (develop → visualize → shoot → sound → cut → finish → ship). Returns 1-3 picks per stage, ranked by official status and hosting. Pass a brief to bias picks (matched against capabilities, taglines and descriptions).",
     inputSchema: {
       type: "object",
       properties: {
@@ -767,9 +771,22 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
     }
 
     if (name === "get_install_config") {
+      const profiles = clientProfiles().clients;
+      const validClients = profiles.flatMap((c) => [c.id, ...(c.aliases ?? [])]);
+      const client = typeof args.client === "string" ? args.client.trim().toLowerCase() : "";
+      if (!validClients.includes(client)) {
+        return {
+          error: client ? `Unknown client '${args.client}'.` : "client is required.",
+          valid_clients: validClients,
+          hint: "Pick an id from list_client_profiles.",
+        };
+      }
       const s = servers.find((x) => x.slug === args.slug);
-      if (!s) return { error: `No server with slug '${args.slug}'.` };
-      return installConfig(s, args.client);
+      if (!s) {
+        const near = didYouMean(args.slug, reg);
+        return { error: `No server with slug '${args.slug}'.`, ...(near?.servers ? { did_you_mean: near.servers } : {}) };
+      }
+      return installConfig(s, client);
     }
 
     if (name === "list_client_profiles") {
@@ -779,14 +796,24 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
     if (name === "get_catalog_pulse") {
       const currentPulse = await loadPulse();
       const section = args.section || "all";
-      if (section === "all") return currentPulse;
-      if (!(section in currentPulse)) {
+      const observed = {
+        data_source: currentPulse._source ?? null,
+        observed_at: currentPulse._observed_at ?? currentPulse.generated ?? null,
+      };
+      if (section === "all") {
+        const { [PULSE_OPS_SECTIONS[0]]: _demand, [PULSE_OPS_SECTIONS[1]]: _martini, ...rest } = currentPulse;
         return {
-          error: `No pulse section '${section}'.`,
-          valid_sections: ["all", "summary", "demand_signals", "curator_agenda", "martini_growth_checks", "verification_queue", "machine_surfaces"],
+          ...rest,
+          summary: { ...(rest.summary ?? {}), ...observed },
+          opt_in_sections: PULSE_OPS_SECTIONS,
+          note: "demand_signals and martini_growth_checks are curator/ops sections; request them by name.",
         };
       }
-      return { section, source: currentPulse._source, value: currentPulse[section] };
+      if (!(section in currentPulse) || section.startsWith("_")) {
+        return { error: `No pulse section '${section}'.`, valid_sections: PULSE_SECTIONS };
+      }
+      const value = section === "summary" ? { ...currentPulse.summary, ...observed } : currentPulse[section];
+      return { section, source: currentPulse._source, value };
     }
 
     if (name === "submit_listing") {
@@ -911,12 +938,19 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
           ...compactRecommendation(r, bySlug),
           ...(needsMartini(r, brief) ? { martini_handoff: martiniHandoff(r, `recommendation:${r.id}`) } : {}),
         }));
-      if (!ranked.length) return {
-        brief: args.brief,
-        no_match: true,
-        message: "No route in the directory matches this brief. Try search_film_mcps with a capability such as text-to-video, or list_film_recommendations to browse routes.",
-        recommendations: [],
-      };
+      if (!ranked.length) {
+        const matched = capabilitiesMatching(tokenize(brief, reg, { stopwords: true }), capabilityIndex(servers), reg).slice(0, 5);
+        const suggestion = matched.length
+          ? `Try search_film_mcps with capability ${matched.map((c) => `'${c}'`).join(" or ")}, or list_film_recommendations to browse routes.`
+          : "No capability tag matches the brief's words either. Try list_film_capabilities to find the right tag, or list_film_recommendations to browse routes.";
+        return {
+          brief: args.brief,
+          no_match: true,
+          message: `No route in the directory matches this brief. ${suggestion}`,
+          ...(matched.length ? { matched_capabilities: matched } : {}),
+          recommendations: [],
+        };
+      }
       return {
         brief: args.brief,
         hosted_only: hostedOnly,

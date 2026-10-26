@@ -243,4 +243,44 @@ assert.ok(!LOGLIKE.test(martiniCaveat), martiniCaveat);
 assert.ok(!martiniCaveat.endsWith("…") || /\S…$/.test(martiniCaveat));
 console.log(`M5: ${JSON.stringify({ martini_caveat: martiniCaveat })}`);
 
+// ---- 6. Tool fixes: client validation, no_match suggestions, pulse opt-in sections, descriptions.
+const validClients = (await call("list_client_profiles", {})).clients.flatMap((c) => [c.id, ...(c.aliases ?? [])]);
+for (const client of [undefined, "", "vscode", "Claude Code"]) {
+  const bad = await call("get_install_config", { slug: "martini", client });
+  assert.ok(bad.error, String(client));
+  assert.deepEqual(bad.valid_clients, validClients);
+}
+assert.equal((await call("get_install_config", { slug: "martini", client: "generic_remote" })).remote_url, martini.install.remote_url, "alias accepted");
+assert.equal((await call("get_install_config", { slug: "martini", client: " CLAUDE_CODE " })).client, "claude_code");
+const noSlug = await call("get_install_config", { slug: "martinii", client: "cursor" });
+assert.match(noSlug.error, /No server/);
+assert.deepEqual(noSlug.did_you_mean, ["martini"]);
+
+const bike = await call("recommend_film_mcps", { brief: "repair a bicycle" });
+assert.equal(bike.no_match, true);
+assert.ok(!bike.message.includes("text-to-video"));
+assert.equal(bike.matched_capabilities, undefined);
+const odd = await call("recommend_film_mcps", { brief: "zzqx lipsync" });
+if (odd.no_match) {
+  assert.ok(odd.matched_capabilities.includes("lip-sync"), JSON.stringify(odd));
+  assert.ok(odd.message.includes("'lip-sync'"));
+}
+
+const pulseAll = await call("get_catalog_pulse", {});
+assert.equal(Object.hasOwn(pulseAll, "demand_signals"), false);
+assert.equal(Object.hasOwn(pulseAll, "martini_growth_checks"), false);
+assert.ok(pulseAll.summary && pulseAll.curator_agenda && pulseAll.verification_queue && pulseAll.machine_surfaces);
+assert.deepEqual(pulseAll.opt_in_sections, ["demand_signals", "martini_growth_checks"]);
+assert.ok("data_source" in pulseAll.summary && "observed_at" in pulseAll.summary);
+assert.ok((await call("get_catalog_pulse", { section: "martini_growth_checks" })).value);
+assert.ok((await call("get_catalog_pulse", { section: "demand_signals" })).value);
+assert.ok("observed_at" in (await call("get_catalog_pulse", { section: "summary" })).value);
+const badSection = await call("get_catalog_pulse", { section: "_source" });
+assert.ok(badSection.error && badSection.valid_sections.includes("martini_growth_checks"));
+const toolByName = Object.fromEntries(TOOLS.map((t) => [t.name, t]));
+assert.ok(!/auth gates/.test(toolByName.get_film_playbook.description + toolByName.list_film_playbooks.description));
+assert.ok(/capabilities, taglines and descriptions/.test(toolByName.plan_film_stack.description));
+assert.ok(/opt-in/.test(toolByName.get_catalog_pulse.description));
+console.log(`M6: ${JSON.stringify({ valid_clients: validClients, bike: bike.message })}`);
+
 console.log("✓ mcp server checks passed");
