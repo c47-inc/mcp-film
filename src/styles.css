@@ -1027,6 +1027,22 @@ img.avatar { object-fit: cover; background: var(--paper); }
 }
 .pulse-table td { color: var(--ink-2); }
 .pulse-table td:first-child { color: var(--ink); font-weight: 500; }
+/* Small screens: html/body clip horizontal overflow, so a wide table lost its last
+   columns. The table becomes its own scroller (no wrapper markup needed) and cells keep
+   a readable minimum width instead of wrapping into one-word columns. The trailing
+   fade is a scroll affordance; the inner table carries the hairline at the end. */
+@media (max-width: 719px) {
+  .pulse-table {
+    display: block; max-width: 100%;
+    overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
+    margin-left: calc(-1 * clamp(1.25rem, 4vw, 2.5rem)); margin-right: calc(-1 * clamp(1.25rem, 4vw, 2.5rem));
+    padding: 0 clamp(1.25rem, 4vw, 2.5rem);
+    width: auto;
+  }
+  .pulse-table th, .pulse-table td { min-width: 9rem; white-space: normal; }
+  .pulse-table th:first-child, .pulse-table td:first-child { min-width: 7rem; }
+  .pulse-table td:last-child, .pulse-table th:last-child { min-width: 12rem; max-width: 18rem; }
+}
 
 /* ----------------------------------------------------------------- faq */
 .faq { margin: 4rem 0 2rem; padding-top: 2rem; border-top: 1px solid var(--hairline); }
