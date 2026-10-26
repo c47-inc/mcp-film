@@ -65,7 +65,8 @@ function paged(list, args, fallback = DEFAULT_LIMIT) {
   const { limit, offset } = pageArgs(args, fallback);
   const page = list.slice(offset, offset + limit);
   const next = offset + page.length;
-  return { page, meta: { count: page.length, total: list.length, offset, next_offset: next < list.length ? next : null } };
+  const truncated = next < list.length;
+  return { page, meta: { count: page.length, total: list.length, limit, offset, next_offset: truncated ? next : null, truncated } };
 }
 
 // Optional registry fields (a listing can be retired without being deleted).
@@ -162,6 +163,168 @@ function capabilityIndex(servers) {
       };
     })
     .sort((a, b) => b.count - a.count || a.capability.localeCompare(b.capability));
+}
+
+// ---- Search tokens. Queries and haystacks go through the same normaliser, so
+// "lip sync", "lip-sync" and "lipsync" become one token and "lip" can no longer
+// match the middle of "clip". The registry may ship its own alias map
+// (capability_aliases, from data/capability-aliases.json); this built-in one
+// is the floor when it does not.
+const BUILTIN_ALIASES = {
+  "lip-sync": ["lipsync", "lip sync", "lip syncing", "lip-syncing", "lipsyncing"],
+  "tts": ["text-to-speech", "text to speech", "speech synthesis"],
+  "captions": ["caption", "captioning", "subtitles", "subtitle", "subtitling", "closed captions"],
+  "upscaling": ["upscale", "upscaler", "upscaled", "4k", "video-upscaling", "super-resolution", "super resolution"],
+  "speech-to-text": ["stt", "transcription", "transcribe", "transcript"],
+  "text-to-video": ["t2v"],
+  "image-to-video": ["i2v"],
+  "text-to-image": ["t2i"],
+  "voice-cloning": ["voice clone", "clone voice", "clone a voice"],
+  "sound-effects": ["sfx", "sound effect", "foley"],
+};
+
+const SEARCH_STOPWORDS = new Set(["a", "an", "the", "and", "or", "of", "for", "to", "in", "on", "with", "mcp", "mcps", "server", "servers", "tool", "tools", "ai"]);
+
+const squash = (s) => String(s ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+
+// Accepts {canonical: [aliases]} or [{capability, aliases}] and merges onto the built-ins.
+function aliasTable(runtime) {
+  const table = Object.fromEntries(Object.entries(BUILTIN_ALIASES).map(([k, v]) => [k, [...v]]));
+  const entries = Array.isArray(runtime)
+    ? runtime.map((e) => [e?.capability ?? e?.canonical, e?.aliases])
+    : Object.entries(runtime && typeof runtime === "object" ? runtime : {});
+  for (const [canonical, aliases] of entries) {
+    if (typeof canonical !== "string" || !Array.isArray(aliases)) continue;
+    table[canonical] = [...new Set([...(table[canonical] ?? []), ...aliases.filter((a) => typeof a === "string")])];
+  }
+  return table;
+}
+
+const aliasCache = new WeakMap();
+const DEFAULT_ALIAS_KEY = {};
+
+// Compiled once per registry document: [regex, canonical token] pairs, longest phrase first.
+function aliasRules(reg) {
+  const key = reg && typeof reg === "object" ? reg : DEFAULT_ALIAS_KEY;
+  if (aliasCache.has(key)) return aliasCache.get(key);
+  const table = aliasTable(reg?.capability_aliases);
+  const rules = [];
+  for (const [canonical, aliases] of Object.entries(table)) {
+    const token = squash(canonical);
+    for (const phrase of [canonical, ...aliases]) {
+      const words = String(phrase).toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+      if (!words.length) continue;
+      rules.push([new RegExp(`\\b${words.join("[\\s_-]*")}\\b`, "g"), ` ${token} `, words.join("").length]);
+    }
+  }
+  rules.sort((a, b) => b[2] - a[2]);
+  aliasCache.set(key, rules);
+  return rules;
+}
+
+// A light stem so "captions" meets "captioning" and "voices" meets "voice".
+const stem = (w) => (w.length > 5 && /(ing|ed|er|es|s)$/.test(w) ? w.replace(/(ing|ed|er|es|s)$/, "") : w);
+
+// A query collapses an alias phrase to its canonical token only; a haystack
+// keeps the original words too, so "voice cloning" (phrase) finds a subset of
+// what "cloning voice" (any order) finds, never something different.
+function tokenize(text, reg, { stopwords = false, expand = false } = {}) {
+  let t = String(text ?? "").toLowerCase();
+  for (const [re, replacement] of aliasRules(reg)) t = t.replace(re, expand ? `${replacement}$& ` : replacement);
+  const out = [];
+  for (const w of t.match(/[a-z0-9]+/g) ?? []) {
+    if (stopwords && SEARCH_STOPWORDS.has(w)) continue;
+    out.push(stem(w));
+  }
+  return out;
+}
+
+// Query token q hits haystack token h when equal, or when q (4+ chars) prefixes h.
+const tokenHit = (q, hay) => hay.set.has(q) || (q.length >= 4 && hay.list.some((h) => h.startsWith(q)));
+const matchesAll = (qTokens, hay) => qTokens.every((q) => tokenHit(q, hay));
+const tokenIndex = (texts, reg) => {
+  const list = [...new Set(tokenize(texts.filter(Boolean).join(" "), reg, { expand: true }))];
+  return { list, set: new Set(list) };
+};
+
+function serverHaystack(s, reg, categoryName) {
+  return tokenIndex([
+    s.name, s.vendor, s.tagline, s.description,
+    ...(s.capabilities ?? []), ...(s.tools_sample ?? []),
+    s.category, categoryName, s.pricing, s.auth?.type,
+  ], reg);
+}
+
+function levenshtein(a, b) {
+  if (a === b) return 0;
+  if (!a.length) return b.length;
+  if (!b.length) return a.length;
+  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i];
+    for (let j = 1; j <= b.length; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+    prev = cur;
+  }
+  return prev[b.length];
+}
+
+// 0..1: exact squashed match, containment, else edit distance.
+function similarity(a, b) {
+  const x = squash(a), y = squash(b);
+  if (!x || !y) return 0;
+  if (x === y) return 1;
+  if (x.includes(y) || y.includes(x)) return 0.1 + 0.9 * Math.min(x.length, y.length) / Math.max(x.length, y.length);
+  return 1 - levenshtein(x, y) / Math.max(x.length, y.length);
+}
+
+// Nearest capability tags, category ids and server names for a query that found nothing.
+function didYouMean(query, reg, { capabilities = null, limit = 3, threshold = 0.7 } = {}) {
+  const q = String(query ?? "").trim();
+  if (!q) return null;
+  const qTokens = tokenize(q, reg, { stopwords: true });
+  const score = (candidate) => {
+    let best = similarity(q, candidate);
+    for (const qt of qTokens) for (const ct of tokenize(candidate, reg, { expand: true })) best = Math.max(best, 0.9 * similarity(qt, ct));
+    return best;
+  };
+  const rank = (items, label) => items
+    .map((item) => ({ item, score: Math.max(...label(item).map(score)) }))
+    .filter((x) => x.score >= threshold)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map((x) => x.item);
+  const tags = capabilities ?? [...new Set((reg.servers ?? []).flatMap((s) => s.capabilities ?? []))];
+  const out = {};
+  const caps = rank(tags, (t) => [t]);
+  if (caps.length) out.capabilities = caps;
+  const cats = rank(reg.categories ?? [], (c) => [c.id, c.name]).map((c) => c.id);
+  if (cats.length) out.categories = cats;
+  const servers = rank(reg.servers ?? [], (s) => [s.name, s.slug]).map((s) => s.slug);
+  if (servers.length) out.servers = servers;
+  return Object.keys(out).length ? out : null;
+}
+
+// Exact tag, else the tag whose normalised tokens equal the input's (so
+// "lipsync", "lip sync" and "text to speech" land on lip-sync and tts).
+function resolveCapability(input, index, reg) {
+  const wanted = String(input ?? "").trim();
+  if (!wanted) return null;
+  const exact = index.find((c) => c.capability === wanted);
+  if (exact) return exact;
+  const key = tokenize(wanted, reg).join(" ");
+  if (!key) return null;
+  return index.find((c) => tokenize(c.capability, reg).join(" ") === key) ?? null;
+}
+
+// Capability tags whose tokens overlap the given query tokens, most-populated first.
+function capabilitiesMatching(qTokens, index, reg) {
+  if (!qTokens.length) return [];
+  return index.filter((c) => {
+    const hay = tokenIndex([c.capability], reg);
+    return qTokens.some((q) => tokenHit(q, hay));
+  }).map((c) => c.capability);
 }
 
 const cmdLike = (cmd) =>
@@ -481,20 +644,48 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
     const bySlug = new Map(servers.map((s) => [s.slug, s]));
 
     if (name === "search_film_mcps") {
-      const q = (args.query ?? "").toLowerCase();
-      let hits = servers.filter((s) => {
+      const query = String(args.query ?? "").trim();
+      const qTokens = tokenize(query, reg, { stopwords: true });
+      const catIds = (reg.categories ?? []).map((c) => c.id);
+      if (args.category && !catIds.includes(args.category)) {
+        return {
+          error: `Unknown category '${args.category}'.`,
+          valid_categories: catIds,
+          ...(didYouMean(args.category, reg) ? { did_you_mean: didYouMean(args.category, reg) } : {}),
+        };
+      }
+      const index = capabilityIndex(servers);
+      let capability = null;
+      if (args.capability) {
+        capability = resolveCapability(args.capability, index, reg)?.capability ?? null;
+        if (!capability) {
+          return {
+            error: `No capability tag '${args.capability}'.`,
+            ...(didYouMean(args.capability, reg, { capabilities: index.map((c) => c.capability) }) ? { did_you_mean: didYouMean(args.capability, reg, { capabilities: index.map((c) => c.capability) }) } : {}),
+            hint: "Use list_film_capabilities to browse tags.",
+          };
+        }
+      }
+      const catName = new Map((reg.categories ?? []).map((c) => [c.id, c.name]));
+      const hits = servers.filter((s) => {
         if (args.category && s.category !== args.category) return false;
-        if (args.capability && !(s.capabilities ?? []).includes(args.capability)) return false;
+        if (capability && !(s.capabilities ?? []).includes(capability)) return false;
         if (args.official_only && !s.official) return false;
         if (args.remote_only && !s.install?.remote_url) return false;
-        if (q) {
-          const hay = [s.name, s.vendor, s.tagline, s.description, ...(s.capabilities ?? [])].join(" ").toLowerCase();
-          return q.split(/\s+/).every((w) => hay.includes(w));
-        }
+        if (qTokens.length) return matchesAll(qTokens, serverHaystack(s, reg, catName.get(s.category)));
         return true;
       });
       const { page, meta } = paged(hits, args);
-      return { ...meta, source: reg._source, servers: page.map(compact) };
+      const out = { ...meta, source: reg._source };
+      if (query) out.query_tokens = qTokens;
+      if (capability && capability !== args.capability) out.capability = { requested: args.capability, resolved: capability };
+      if (!hits.length) {
+        const near = didYouMean(query || capability || args.category, reg, { capabilities: index.map((c) => c.capability) });
+        if (near) out.did_you_mean = near;
+        out.hint = "No entry matched every query token. Try fewer words, a capability tag from list_film_capabilities, or recommend_film_mcps with the brief.";
+      }
+      out.servers = page.map(compact);
+      return out;
     }
 
     if (name === "get_film_mcp") {
@@ -511,7 +702,10 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
       const q = String(args.query ?? "").toLowerCase();
       const min = Number(args.min_count ?? 2);
       let capabilities = capabilityIndex(servers).filter((c) => c.count >= min);
-      if (q) capabilities = capabilities.filter((c) => c.capability.includes(q));
+      if (q) {
+        const qTokens = tokenize(q, reg, { stopwords: true });
+        capabilities = capabilities.filter((c) => c.capability.includes(q) || (qTokens.length && matchesAll(qTokens, tokenIndex([c.capability], reg))));
+      }
       const { page, meta } = paged(capabilities, args, 50);
       return {
         ...meta,
@@ -522,14 +716,22 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
     }
 
     if (name === "get_film_capability") {
-      const entry = capabilityIndex(servers).find((c) => c.capability === args.capability);
-      if (!entry) return { error: `No capability tag '${args.capability}'. Try list_film_capabilities first.` };
+      const index = capabilityIndex(servers);
+      const entry = resolveCapability(args.capability, index, reg);
+      if (!entry) {
+        const near = didYouMean(args.capability, reg, { capabilities: index.map((c) => c.capability) });
+        return {
+          error: `No capability tag '${args.capability}'. Try list_film_capabilities first.`,
+          ...(near ? { did_you_mean: near } : {}),
+        };
+      }
       let found = entry.servers;
       if (args.official_only) found = found.filter((s) => s.official);
       if (args.remote_only) found = found.filter((s) => s.remote);
       const { page, meta } = paged(found, args);
       return {
         ...entry,
+        ...(entry.capability !== args.capability ? { resolved_from: args.capability } : {}),
         source: reg._source,
         ...meta,
         servers: page,

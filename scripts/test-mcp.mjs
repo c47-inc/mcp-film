@@ -120,4 +120,60 @@ assert.deepEqual(JSON.parse(stdioCall.result.content[0].text), stdioCall.result.
 assert.ok(stdioCall.result.structuredContent.clients.length >= 4);
 console.log(`M2: ${JSON.stringify(sizes)}`);
 
+// ---- 3. Search quality: word-boundary tokens, aliases, did_you_mean.
+const slugs = async (args) => (await call("search_film_mcps", { limit: 100, ...args })).servers.map((s) => s.slug);
+const lipSync = await slugs({ query: "lip sync" });
+assert.ok(lipSync.length > 0);
+assert.ok(lipSync.includes("sync-labs"));
+assert.ok(!lipSync.includes("autoposting"), "'lip sync' must not match clip + async in a social scheduler");
+assert.ok(lipSync.every((slug) => {
+  const s = registry.servers.find((x) => x.slug === slug);
+  return /\blip[\s-]?sync/i.test(`${s.tagline} ${s.description} ${(s.capabilities ?? []).join(" ")} ${(s.tools_sample ?? []).join(" ")}`);
+}), "every lip sync hit says lip sync somewhere");
+assert.deepEqual(await slugs({ query: "lipsync" }), lipSync);
+assert.deepEqual(await slugs({ query: "lip-sync" }), lipSync);
+assert.deepEqual(await slugs({ query: "LIP SYNC" }), lipSync);
+assert.deepEqual(await slugs({ query: "text to speech" }), await slugs({ query: "tts" }));
+assert.deepEqual(await slugs({ query: "subtitles" }), await slugs({ query: "captions" }));
+assert.deepEqual(await slugs({ query: "4k" }), await slugs({ query: "upscale" }));
+assert.ok((await slugs({ query: "upscale video" })).includes("topaz") || (await slugs({ query: "upscale" })).length > 0);
+// All tokens must match, in any field and any order; an alias phrase is the stricter form of its loose word order.
+const phrase = await slugs({ query: "voice cloning" });
+const loose = await slugs({ query: "cloning voice" });
+assert.ok(phrase.length > 0 && phrase.every((s) => loose.includes(s)));
+assert.deepEqual(await slugs({ query: "video upscale" }), await slugs({ query: "upscale video" }));
+assert.ok((await slugs({ query: "oauth elevenlabs" })).includes("elevenlabs"), "auth type and name are searchable");
+assert.ok((await slugs({ query: "freemium elevenlabs" })).includes("elevenlabs"), "pricing is searchable");
+assert.ok((await slugs({ query: "voice-speech" })).length > 0, "category id is searchable");
+const tokensOut = await call("search_film_mcps", { query: "the lip sync for a video" });
+assert.deepEqual(tokensOut.query_tokens, ["lipsync", "video"]);
+// Zero results: did_you_mean and a hint; unknown category and capability are errors with valid values.
+const typo = await call("search_film_mcps", { query: "lipsinc" });
+assert.equal(typo.total, 0);
+assert.deepEqual(typo.did_you_mean.capabilities, ["lip-sync"]);
+assert.ok(typo.hint);
+const badCat = await call("search_film_mcps", { category: "video_generation" });
+assert.match(badCat.error, /Unknown category/);
+assert.deepEqual(badCat.valid_categories, registry.categories.map((c) => c.id));
+assert.equal(badCat.did_you_mean.categories[0], "video-generation");
+const badCap = await call("search_film_mcps", { capability: "lipsinc" });
+assert.match(badCap.error, /No capability tag/);
+assert.deepEqual(badCap.did_you_mean.capabilities, ["lip-sync"]);
+const viaAlias = await call("search_film_mcps", { capability: "lipsync", limit: 100 });
+assert.deepEqual(viaAlias.capability, { requested: "lipsync", resolved: "lip-sync" });
+assert.deepEqual(viaAlias.servers.map((s) => s.slug), (await call("search_film_mcps", { capability: "lip-sync", limit: 100 })).servers.map((s) => s.slug));
+assert.equal((await call("search_film_mcps", { query: "xyzzy plugh" })).did_you_mean, undefined);
+// get_film_capability resolves aliases and names the resolution.
+const capAlias = await call("get_film_capability", { capability: "lipsync" });
+assert.equal(capAlias.capability, "lip-sync");
+assert.equal(capAlias.resolved_from, "lipsync");
+assert.equal((await call("get_film_capability", { capability: "text to speech" })).capability, "tts");
+assert.equal((await call("get_film_capability", { capability: "lip-sync" })).resolved_from, undefined);
+assert.deepEqual((await call("get_film_capability", { capability: "lipsinc" })).did_you_mean.capabilities, ["lip-sync"]);
+assert.deepEqual((await call("list_film_capabilities", { query: "lip sync" })).capabilities.map((c) => c.capability), ["lip-sync"]);
+// A runtime alias map on the registry document extends the built-ins.
+const aliased = makeCallTool({ ...loaders, loadRegistry: async () => ({ ...registry, capability_aliases: { "lip-sync": ["mouth matching"] } }) }, "test");
+assert.deepEqual((await aliased("search_film_mcps", { query: "mouth matching", limit: 100 })).servers.map((s) => s.slug), lipSync);
+console.log(`M3: ${JSON.stringify({ lip_sync: lipSync.length, typo: typo.did_you_mean, bad_category: badCat.did_you_mean.categories })}`);
+
 console.log("✓ mcp server checks passed");
