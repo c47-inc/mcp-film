@@ -520,12 +520,35 @@
   // enhancement: the static HTML (what agents read) is complete without it.
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // header earns its hairline on scroll
+  // header earns its hairline on scroll, and publishes its real height so anchors
+  // (scroll-padding-top) clear it even when the search row wraps on phones
   const head = document.querySelector(".site-head");
   if (head) {
     const onScroll = () => head.classList.toggle("is-scrolled", scrollY > 10);
     addEventListener("scroll", onScroll, { passive: true });
     onScroll();
+    const measure = () => document.documentElement.style.setProperty("--head-h", `${Math.round(head.getBoundingClientRect().height)}px`);
+    addEventListener("resize", measure, { passive: true });
+    measure();
+  }
+
+  // phone/tablet menu: a native <details>, so it opens without this file; here it
+  // reports state to assistive tech and closes on Escape, outside tap, and navigation
+  const menu = document.querySelector(".nav-menu");
+  const menuToggle = menu?.querySelector("summary");
+  if (menu && menuToggle) {
+    const close = () => { menu.open = false; };
+    const sync = () => menuToggle.setAttribute("aria-expanded", String(menu.open));
+    menu.addEventListener("toggle", sync);
+    sync();
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && menu.open) { close(); menuToggle.focus(); }
+    });
+    document.addEventListener("pointerdown", (e) => {
+      if (menu.open && !menu.contains(e.target)) close();
+    }, { passive: true });
+    menu.querySelectorAll("a").forEach((a) => a.addEventListener("click", close));
+    matchMedia("(min-width: 960px)").addEventListener?.("change", (e) => { if (e.matches) close(); });
   }
 
   // hero: pointer-reactive dot grid (fine pointers only, monochrome, faint)

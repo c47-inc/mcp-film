@@ -8,6 +8,7 @@
   --paper-dim: #fafafa;
   --fill: #f4f4f5;
   --ink: #09090b;
+  --ink-hover: #2e2e33;
   --ink-2: #52525b;
   --ink-3: #9395a0;
   --hairline: #e9e9eb;
@@ -33,7 +34,12 @@
 /* Author display rules (.card, .cat-section) outrank the UA sheet's [hidden] rule,
    so search and the quick filters silently did nothing. This restores them. */
 [hidden] { display: none !important; }
-html { scroll-behavior: smooth; scroll-padding-top: 5.5rem; }
+/* Anchors must clear the sticky header. app.js measures the real header into --head-h;
+   the :has() rule covers the wrapped (search-row) header on phones without JavaScript. */
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--head-h, 57px) + 1.5rem); }
+@media (max-width: 719px) {
+  html:has(body:not([data-page="home"])) { scroll-padding-top: calc(var(--head-h, 102px) + 1rem); }
+}
 body {
   margin: 0;
   background: var(--paper);
@@ -105,33 +111,85 @@ code {
   transition: border-color 0.25s ease;
 }
 .site-head.is-scrolled { border-bottom-color: var(--hairline); }
-.brand { font-size: 14.5px; font-weight: 600; letter-spacing: 0; display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; white-space: nowrap; }
+.brand { font-size: 14.5px; font-weight: 600; letter-spacing: 0; display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; white-space: nowrap; min-height: 44px; }
 .brand-dot { color: var(--ink-3); }
 .site-nav {
   display: flex; align-items: center; justify-content: flex-end; gap: clamp(0.2rem, 1vw, 0.45rem);
-  flex: 1 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none;
+  flex: 1 1 auto; min-width: 0;
 }
-.site-nav::-webkit-scrollbar { display: none; }
 .site-nav a {
   font-size: 13px; font-weight: 500; color: var(--ink-2);
   padding: 6px 10px; border-radius: 7px;
-  flex: 0 0 auto;
+  flex: 0 0 auto; display: inline-flex; align-items: center; min-height: 44px;
   transition: background 0.12s, color 0.12s;
 }
 .site-nav a:hover { color: var(--ink); background: var(--fill); }
-.site-nav .nav-cta {
+.nav-cta {
   color: var(--paper); background: var(--ink); margin-left: 6px;
   padding: 6px 14px; border-radius: 999px;
 }
-.site-nav .nav-cta:hover { background: #2e2e33; color: var(--paper); }
+.nav-cta:hover { background: var(--ink-hover); color: var(--paper); }
 .nav-gh { color: var(--ink-3); }
 .head-search { flex: 0 0 168px; }
 [data-page="home"] .head-search { display: none; }
-@media (max-width: 720px) {
-  .site-nav { justify-content: flex-start; }
-  body:not([data-page="home"]) .site-head { flex-wrap: wrap; height: auto; padding-top: 10px; padding-bottom: 10px; gap: 10px; }
-  body:not([data-page="home"]) .site-nav { flex-basis: 0; }
-  .head-search { flex-basis: 100%; }
+
+/* Phones and tablets: the row of links becomes a native <details> sheet that works
+   without JavaScript and from the keyboard; Submit stays visible beside it. The full
+   row with Playbooks needs ~630px plus brand and search, which no tablet width has. */
+.nav-menu, .nav-cta-sm { display: none; }
+@media (max-width: 959px) {
+  .site-nav { display: none; }
+  .brand { margin-right: auto; }
+  .nav-cta-sm {
+    display: inline-flex; align-items: center; min-height: 44px;
+    font-size: 13px; font-weight: 500; margin-left: 0;
+  }
+  .nav-menu { display: block; flex: 0 0 auto; }
+  .nav-toggle {
+    list-style: none; cursor: pointer; user-select: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    min-height: 44px; padding: 0 10px; border-radius: 7px;
+    font-size: 13px; font-weight: 500; color: var(--ink-2);
+  }
+  .nav-toggle::-webkit-details-marker { display: none; }
+  .nav-toggle::marker { content: ""; }
+  .nav-toggle:hover, .nav-menu[open] .nav-toggle { color: var(--ink); background: var(--fill); }
+  .nav-burger {
+    position: relative; width: 16px; height: 12px; flex: 0 0 auto;
+  }
+  .nav-burger::before, .nav-burger::after {
+    content: ""; position: absolute; left: 0; width: 16px; height: 2px;
+    background: currentColor; border-radius: 2px;
+    transition: transform 0.15s, top 0.15s;
+  }
+  .nav-burger::before { top: 0; box-shadow: 0 5px 0 currentColor; }
+  .nav-burger::after { top: 10px; }
+  .nav-menu[open] .nav-burger::before { top: 5px; transform: rotate(45deg); box-shadow: none; }
+  .nav-menu[open] .nav-burger::after { top: 5px; transform: rotate(-45deg); }
+  .nav-sheet {
+    position: absolute; left: 0; right: 0; top: 100%;
+    display: flex; flex-direction: column;
+    padding: 4px clamp(1.25rem, 4vw, 2.5rem) 12px;
+    background: var(--paper);
+    border-top: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline);
+    box-shadow: var(--shadow-sm);
+    max-height: calc(100vh - 100%); overflow-y: auto;
+  }
+  .nav-sheet a {
+    display: flex; align-items: center; min-height: 48px;
+    font-size: 15px; font-weight: 500; color: var(--ink);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .nav-sheet a:last-child { border-bottom: 0; }
+  .nav-sheet .nav-gh { color: var(--ink-2); }
+  .nav-sheet .nav-cta { display: none; } /* Submit is already in the header row */
+  .head-search { order: 1; flex: 0 1 200px; }
+  .nav-cta-sm { order: 2; }
+  .nav-menu { order: 3; }
+}
+@media (max-width: 719px) {
+  body:not([data-page="home"]) .site-head { flex-wrap: wrap; height: auto; padding-top: 6px; padding-bottom: 8px; row-gap: 2px; }
+  .head-search { order: 4; flex-basis: 100%; }
 }
 
 main { max-width: 1200px; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 2.5rem); }
@@ -218,7 +276,7 @@ h1 {
 }
 .btn:hover { border-color: var(--ink-3); }
 .btn-primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-.btn-primary:hover { background: #2e2e33; border-color: #2e2e33; color: var(--paper); }
+.btn-primary:hover { background: var(--ink-hover); border-color: var(--ink-hover); color: var(--paper); }
 
 /* ----------------------------------------------- featured (inverse band) */
 .featured-row {
@@ -1004,7 +1062,3 @@ img.avatar { object-fit: cover; background: var(--paper); }
   font-family: var(--mono);
 }
 
-@media (max-width: 640px) {
-  .site-nav a { font-size: 12px; padding: 5px 7px; }
-  .nav-gh { display: none; }
-}
