@@ -726,6 +726,9 @@ const registryDoc = {
   count: servers.length,
   sponsor: sponsorDisclosure,
   categories,
+  // canonical capability → aliases, so clients (and the npm mcp-film server) normalise
+  // queries the same way the build does.
+  capability_aliases: Object.fromEntries(Object.entries(capabilityAliasDoc).filter(([k]) => !k.startsWith("_"))),
   servers,
 };
 write("api/registry.json", JSON.stringify(registryDoc, null, 2));

@@ -263,7 +263,7 @@ export const renderClientProfiles = (ctx) => {
 
 <section class="server-main agents-doc">
   <h2>Pick the install shape</h2>
-  <table class="pulse-table">
+  <table class="pulse-table" tabindex="0">
     <thead><tr><th>Client</th><th>Works with</th><th>Config surface</th><th>Use when</th></tr></thead>
     <tbody>${profileRows}</tbody>
   </table>
@@ -275,7 +275,7 @@ export const renderClientProfiles = (ctx) => {
   ${martini?.claude_code ? codeBlock("Claude Code: Martini (sponsor; fewest-steps onboarding in the runbook)", martini.claude_code, "sh", { "copy-kind": "connect", "copy-method": "client-profile:claude_code", "copy-slug": "martini" }) : ""}
 
   <h2>Starter examples</h2>
-  <table class="pulse-table">
+  <table class="pulse-table" tabindex="0">
     <thead><tr><th>Server</th><th>Auth</th><th>Remote endpoint</th></tr></thead>
     <tbody>${exampleRows}</tbody>
   </table>

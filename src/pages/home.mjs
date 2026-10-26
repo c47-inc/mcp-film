@@ -127,7 +127,7 @@ export const renderHome = (ctx) => {
   <div class="agent-callout">
     <div class="feature-eyebrow">For agents</div>
     <p>This site is machine-first. One request gets you everything:</p>
-    <pre class="mono">curl -s ${site.url}/api/registry.json</pre>
+    <pre class="mono" tabindex="0">curl -s ${site.url}/api/registry.json</pre>
     <p>Or start at <a href="/router/">brief router</a> · <a href="/llms.txt" class="mono">/llms.txt</a> · <a href="/recommendations/">agent recommendations</a> · <a href="/for-agents/">full agent docs</a></p>
   </div>
 </section>

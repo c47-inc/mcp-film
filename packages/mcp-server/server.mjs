@@ -41,6 +41,7 @@ const TTL_MS = Number(process.env.MCP_FILM_CACHE_TTL_MS) > 0 ? Number(process.en
 const SNAPSHOT_RETRY_MS = Math.min(TTL_MS, 5 * 60 * 1000);
 
 const cache = {};
+const loading = {}; // key → in-flight first load
 
 async function fetchLive(key) {
   if (OFFLINE) return null;
@@ -79,11 +80,20 @@ const loaderFor = (key) => async () => {
     }
     return entry.data;
   }
-  const live = await fetchLive(key);
-  cache[key] = live
-    ? { data: live, expires: now + TTL_MS, refreshing: null }
-    : { data: readSnapshot(key), expires: now + SNAPSHOT_RETRY_MS, refreshing: null };
-  return cache[key].data;
+  // First load: concurrent calls share one fetch, so they all see the same copy and
+  // observed_at instead of racing to overwrite the cache.
+  if (!loading[key]) {
+    loading[key] = fetchLive(key)
+      .then((live) => {
+        const at = Date.now();
+        cache[key] = live
+          ? { data: live, expires: at + TTL_MS, refreshing: null }
+          : { data: readSnapshot(key), expires: at + SNAPSHOT_RETRY_MS, refreshing: null };
+        return cache[key].data;
+      })
+      .finally(() => { delete loading[key]; });
+  }
+  return loading[key];
 };
 
 const callTool = makeCallTool(

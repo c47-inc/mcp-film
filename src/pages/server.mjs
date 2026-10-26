@@ -44,7 +44,7 @@ export const usedIn = (ctx, s) => [
 export const codeBlock = (label, code, lang = "sh", copyAttrs = {}) => `
 <div class="code-block">
   <div class="code-head"><span>${esc(label)}</span><button class="copy-btn" data-copy data-copy-label="${esc(label)}"${dataAttrs(copyAttrs)}>Copy</button></div>
-  <pre class="mono" data-lang="${lang}"><code>${esc(code)}</code></pre>
+  <pre class="mono" data-lang="${lang}" tabindex="0"><code>${esc(code)}</code></pre>
 </div>`;
 
 const hostedLabel = (s) => (s.install?.remote_url ? "Hosted remote" : "Local");

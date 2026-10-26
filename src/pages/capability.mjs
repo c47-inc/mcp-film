@@ -24,7 +24,7 @@ export const renderCapabilities = (ctx) => {
   </div>
 
   <h2>Highest-signal clusters</h2>
-  <table class="pulse-table">
+  <table class="pulse-table" tabindex="0">
     <thead><tr><th>Capability</th><th>Servers</th><th>Official</th><th>Remote</th></tr></thead>
     <tbody>
       ${top.map((c) => `<tr><td><a href="/capabilities/${esc(c.capability)}/">${esc(c.capability)}</a></td><td>${c.count}</td><td>${c.official}</td><td>${c.remote}</td></tr>`).join("")}

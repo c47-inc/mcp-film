@@ -366,6 +366,7 @@
 
       const renderPicksTable = (picks) => {
         const table = node("table", "pulse-table recommendation-table");
+        table.tabIndex = 0;
         const thead = document.createElement("thead");
         thead.innerHTML = "<tr><th>Role</th><th>Server</th><th>Why</th></tr>";
         const tbody = document.createElement("tbody");
