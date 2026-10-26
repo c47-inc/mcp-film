@@ -212,9 +212,36 @@
   }
 
   // -------------------------------------------------------- copy buttons
+  // Clipboard API first (secure contexts, user gesture); execCommand for the rest
+  // (older WebViews, some in-app browsers). Either way a polite live region says what
+  // happened, and on failure the snippet is selected so a manual copy is one keystroke.
+  const copyLive = document.createElement("p");
+  copyLive.className = "sr-only";
+  copyLive.setAttribute("aria-live", "polite");
+  document.body.append(copyLive);
+  const writeClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch { /* fall through */ }
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.cssText = "position:fixed;top:-1000px;left:0;opacity:0";
+      document.body.append(ta);
+      ta.select();
+      const ok = document.execCommand("copy");
+      ta.remove();
+      return ok;
+    } catch {
+      return false;
+    }
+  };
   for (const btn of document.querySelectorAll("[data-copy]")) {
     btn.addEventListener("click", async () => {
-      const code = btn.closest(".code-block")?.querySelector("code")?.textContent ?? "";
+      const codeEl = btn.closest(".code-block")?.querySelector("code");
+      const code = codeEl?.textContent ?? "";
       const slug = btn.dataset.copySlug || document.querySelector(".server")?.dataset.slug || null;
       const copyKind = btn.dataset.copyKind || "snippet";
       const copyMethod = btn.dataset.copyMethod || null;
@@ -228,14 +255,25 @@
         path: location.pathname,
         snippet: code.slice(0, 60),
       };
-      try {
-        await navigator.clipboard.writeText(code);
+      if (await writeClipboard(code)) {
         btn.textContent = "Copied";
         btn.classList.add("is-done");
+        copyLive.textContent = `Copied ${copyLabel || "snippet"} to the clipboard.`;
         setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("is-done"); }, 1600);
         ph("mcpfilm_copy", props);
         if (copyKind === "connect") ph("mcpfilm_connect", props);
-      } catch { /* clipboard unavailable */ }
+      } else {
+        btn.textContent = "Select and copy";
+        copyLive.textContent = "Copy failed. The snippet is selected; copy it manually.";
+        if (codeEl) {
+          const range = document.createRange();
+          range.selectNodeContents(codeEl);
+          const sel = getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }
+        setTimeout(() => { btn.textContent = "Copy"; }, 2400);
+      }
     });
   }
 
@@ -703,6 +741,15 @@
   }
 
   // --------------------------------------------- outbound + detail signal
+  // Playbooks and recommendations have both an anchor on the index (/playbooks/#id)
+  // and their own page (/playbooks/id/); both count as opening that item.
+  const collectionId = (href, base) => {
+    if (!href?.startsWith(base)) return null;
+    const rest = href.slice(base.length);
+    if (rest.startsWith("#")) return rest.slice(1).split(/[?/]/)[0] || null;
+    const id = rest.split(/[/?#.]/)[0];
+    return id || null;
+  };
   const externalIntentAt = new WeakMap();
   const captureExternalLink = (a, trigger) => {
     const from = location.pathname;
@@ -749,10 +796,10 @@
     } else if (href.startsWith("/capabilities/") && href !== "/capabilities/") {
       const capability = href.split("/")[2]?.replace(/\.md$/, "") || null;
       if (capability) ph("mcpfilm_open_capability", { capability, from });
-    } else if (href.startsWith("/playbooks/#")) {
-      ph("mcpfilm_open_playbook", { playbook: href.split("#")[1], from });
-    } else if (href.startsWith("/recommendations/#")) {
-      ph("mcpfilm_open_recommendation", { recommendation: href.split("#")[1], from });
+    } else if (collectionId(href, "/playbooks/")) {
+      ph("mcpfilm_open_playbook", { playbook: collectionId(href, "/playbooks/"), from });
+    } else if (collectionId(href, "/recommendations/")) {
+      ph("mcpfilm_open_recommendation", { recommendation: collectionId(href, "/recommendations/"), from });
     } else if (href.startsWith("/mcps/")) {
       const slug = href.split("/")[2];
       const playbook = a.closest(".playbook")?.dataset.playbook || null;
