@@ -7,7 +7,7 @@
     "category": "studio",
     "featured": true,
     "tagline": "The film set for AI videos — direct entire productions from your agent.",
-    "description": "Martini is the command surface for agentic filmmaking: one MCP connection that puts an entire film set — the latest video models, infinite production canvases, consistent characters, and a real timeline — under your agent's direction. It is an open platform, agent-friendly by design: the MCP server is a first-class product surface rather than an integration afterthought, so any MCP-capable agent (Claude, Cursor, ChatGPT, Gemini CLI, or one you built) gets the same full control of the set that the UI offers. The model roster stays current, and the server resolves natural-language model requests to the right engine. Fifty-nine registered tools span the pipeline: project and board context, reusable subjects and collections, prompt variables, frame extraction for shot chaining, image upload, multi-track timeline context and edits, model/job lookup, and approved generation with cost confirmation. Over 200 professional films have been made on Martini — aired as TV commercials, shown as artwork, and gone viral.",
+    "description": "Martini is the command surface for agentic filmmaking: one connection that puts an entire film set — the latest video models, infinite production canvases, a shared Library of characters, props and locations, and a real multi-track timeline — under your agent's direction, inside the same project the people on the team have open. The MCP server is a first-class product surface rather than an integration afterthought, so any MCP-capable agent (Claude, Codex, Cursor, ChatGPT, Gemini CLI, or one you built) gets the control of the set the UI offers. The same tools now also ship as the `martini` CLI, one command per tool with the same names and arguments, for agents that work in a shell, and as a REST tool route plus a Generation API with TypeScript and Python clients for a studio's own pipeline. The public manifest lists 104 tools: project, board and Library context, shot nodes and batch generation behind a server-checked cost quote, draft enhancement and upscaling, video inspection and shot detection, frame extraction for shot chaining, uploads and downloads, timeline edits with checkpoints, MP4 render and Premiere XML export, motion-graphics overlays, comments, and project memory files. Over 200 professional films have been made on Martini — aired as TV commercials, shown as artwork, and gone viral.",
     "capabilities": [
       "text-to-video",
       "image-to-video",
@@ -24,20 +24,30 @@
       "frame-extraction",
       "audio-generation",
       "3d-sets",
-      "asset-management"
+      "asset-management",
+      "upscaling",
+      "video-analysis",
+      "shot-detection",
+      "motion-graphics",
+      "cross-nle-export",
+      "comments",
+      "cli"
     ],
     "tools_sample": [
       "create_project",
-      "create_canvas",
       "get_board_overview",
+      "get_models",
       "create_nodes_and_generate",
-      "list_models",
-      "resolve_model",
-      "create_subject",
-      "create_subject_collection",
+      "generate_nodes",
+      "enhance_draft",
+      "edit_library",
       "create_variable",
-      "apply_timeline_edit",
       "extract_video_frame",
+      "inspect_video",
+      "detect_shots",
+      "apply_timeline_edit",
+      "render_timeline",
+      "export_timeline_xml",
       "upload_assets_prepare",
       "get_jobs"
     ],
@@ -50,7 +60,7 @@
     "auth": {
       "type": "oauth",
       "env_var": null,
-      "key_url": "https://www.martini.film — sign in with your Martini account"
+      "key_url": "https://www.martini.film — sign in with your Martini account (browser OAuth for MCP; `martini login` device code for the CLI; Settings → API keys for the Generation API)"
     },
     "pricing": "credits",
     "links": {
@@ -59,8 +69,8 @@
       "site": "https://www.martini.film"
     },
     "added": "2026-06-11",
-    "verified": "2026-09-21",
-    "notes": "Remote MCP server maintained first-party by Martini (YC-backed), with live production endpoint https://www.martini.film/mcp returning OAuth protected-resource metadata and a Supabase-backed bearer challenge — re-confirmed 21 Sep 2026, and the install command above is the one the vendor's own Claude Code page prints. The 59-tool figure in the description comes from the backend source read in June 2026 and is not independently checkable from outside: the public docs publish a representative table of roughly 40 read and write tools and state explicitly that it is not the complete catalogue, so treat live `tools/list` as the count that matters. The narrower core profile the docs still advertise at https://www.martini.film/mcp-core — the same project, board, canvas, subject, upload, download, review and organization tools minus direct generation, for clients or directories that disallow AI media generation — did not answer as an MCP endpoint on 21 Sep 2026: POST initialize returns the marketing page as 200 text/html instead of JSON-RPC, on both the apex and www hosts, and the site's protected-resource metadata declares only https://www.martini.film/mcp. Use the full endpoint until that is fixed. Generation tools require explicit user approval of model, prompt, count, target shot, and estimated olive cost before spending credits. Public setup docs now cover Claude Desktop/Web, Claude Code, Codex, ChatGPT, Gemini CLI, Cursor, Hermes, OpenClaw, and generic Streamable HTTP clients."
+    "verified": "2026-10-26",
+    "notes": "Remote MCP server maintained first-party by Martini (YC-backed). Re-checked 26 Oct 2026: https://www.martini.film/mcp answers POST initialize with 401 and a Bearer challenge whose protected-resource metadata names a Supabase authorization server, and the Claude Code command above is still the one the vendor's setup page prints. The tool count is now checkable from outside: GET https://api.martini.film/v1/tools answers without a key with the 104 tools every account can invoke (41 marked read-only, 95 also in the core profile); tools/list after sign-in remains the authority for your account. Several tool names from earlier releases are gone — model lookup is get_models (list, resolve a natural-language name, or inspect) and reusable subjects now live in the Library (get_library, edit_library) — so prompts or scripts written against list_models, resolve_model or create_subject will fail. The CLI (npm @martini-film/cli 0.5.0, MIT, Node 20.10+) signs in with a browser device code and saves a 90-day per-device key; it caches the server's tool list, so a tool added server-side becomes a command without an upgrade, and `martini init --write` installs a Martini skill under .claude/skills and .agents/skills. Martini's own guidance tells shell-equipped agents (Claude Code, Codex, Cursor, Gemini CLI) to prefer the CLI even with the connector installed, and the connector repeats that in-session. The Generation API (@martini-film/client 0.11.0, martini-client 0.4.0 on PyPI) reaches a narrower model list than the tools — Seedance 2.0 and 2.5, Wan 3.0, Grok Imagine 1.5, MiniMax H3, Nano Banana 2 and a few more — and per the vendor's llms.txt comes with fal-key plans but is on request for olive plans; MCP and CLI work on every plan, and fal-key workspaces bill most generations to their own fal account. generate_nodes, enhance_draft and upscale_assets start nothing until called again with a server-computed quote's planHash; other generation tools such as create_node_and_generate rely on your MCP client's write-tool approval, so leave approval on. The core profile at https://www.martini.film/mcp-core, for which the Claude Code page now prints its own install command, still does not answer as an MCP endpoint on 26 Oct 2026: POST initialize returns the marketing page as 200 text/html, and the protected-resource metadata declares only /mcp. Use the full endpoint. The public github.com/martini-film/mcp repo holds client setup docs only (last pushed May 2026); server source is private. Setup docs cover Claude Desktop/Web, Claude Code, Codex, ChatGPT, Gemini CLI, Cursor, Hermes, OpenClaw, and generic Streamable HTTP clients."
   },
   {
     "slug": "nomi",
