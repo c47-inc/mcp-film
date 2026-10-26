@@ -74,11 +74,34 @@ const INACTIVE = new Set(["dead", "archived", "deprecated"]);
 const isActive = (s) => !INACTIVE.has(s?.status);
 const withStatus = (out, s) => (s?.status ? { ...out, status: s.status } : out);
 
+// Notes mix the caveat that bites with the curator's verification log
+// ("re-checked 21 Sep 2026", "653 stars"). The compact caveat is the explicit
+// caveats[0] when the entry has one, else the first sentence of notes that does
+// not read like a log line; failing that, the first sentence. Never cut mid-word.
+const LOG_LINE = /\b(re-?checked|re-?verified|re-?confirmed|checked|verified|confirmed|unchanged)\b|\b\d[\d,]*\s*stars?\b|★|\b\d{1,2}\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+\d{4}\b|\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+\d{1,2},?\s+\d{4}\b|\b\d{4}-\d{2}-\d{2}\b/i;
+
+function clipWords(text, max = 200) {
+  const t = String(text ?? "").trim();
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max - 1);
+  const at = cut.lastIndexOf(" ");
+  return `${(at > max / 2 ? cut.slice(0, at) : cut).replace(/[\s,;:(-]+$/, "")}…`;
+}
+
+export function caveatFor(s) {
+  if (Array.isArray(s?.caveats) && typeof s.caveats[0] === "string" && s.caveats[0].trim()) return clipWords(s.caveats[0]);
+  const notes = String(s?.notes ?? "").trim();
+  if (!notes) return "";
+  const sentences = notes.split(/(?<=[.!?])\s+(?=[A-Z0-9"'(])/).map((x) => x.trim()).filter(Boolean);
+  const caveat = sentences.find((x) => !LOG_LINE.test(x)) ?? sentences[0] ?? "";
+  return clipWords(caveat);
+}
+
 const compact = (s) => withStatus({
   slug: s.slug,
   url: `https://mcp.film/mcps/${s.slug}/`,
   verified: s.verified,
-  caveat: (s.notes?.trim().match(/^.*?[.!?](?=\s|$)|^.+$/s)?.[0] ?? "").slice(0, 200).trim(),
+  caveat: caveatFor(s),
   name: s.name,
   vendor: s.vendor,
   official: s.official,
@@ -436,6 +459,7 @@ export const TOOLS = [
         capability: { type: "string", description: "Exact capability tag, e.g. 'image-to-video'" },
         official_only: { type: "boolean", description: "Only vendor-maintained servers" },
         remote_only: { type: "boolean", description: "Only hosted remote MCPs (no local install)" },
+        include_inactive: { type: "boolean", description: "Also return listings whose status is dead, archived or deprecated. Default false." },
         limit: { type: "number", description: "Page size, 1-100. Default 20." },
         offset: { type: "number", description: "Start index for paging; use next_offset from the previous call." },
       },
@@ -618,6 +642,7 @@ export const TOOLS = [
       properties: {
         brief: { type: "string", description: "What you're trying to make, e.g. 'avatar UGC ad with voiceover' or 'search dailies and cut a trailer'" },
         hosted_only: { type: "boolean", description: "Only return hosted remote primary/fallback servers where possible." },
+        include_inactive: { type: "boolean", description: "Also consider servers whose status is dead, archived or deprecated. Default false." },
       },
       required: ["brief"],
     },
@@ -632,6 +657,7 @@ export const TOOLS = [
       type: "object",
       properties: {
         brief: { type: "string", description: "Optional: what you're making, e.g. 'a 60s commercial with a consistent character and licensed music'" },
+        include_inactive: { type: "boolean", description: "Also consider servers whose status is dead, archived or deprecated. Default false." },
       },
     },
   },
@@ -668,6 +694,7 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
       }
       const catName = new Map((reg.categories ?? []).map((c) => [c.id, c.name]));
       const hits = servers.filter((s) => {
+        if (!args.include_inactive && !isActive(s)) return false;
         if (args.category && s.category !== args.category) return false;
         if (capability && !(s.capabilities ?? []).includes(capability)) return false;
         if (args.official_only && !s.official) return false;
@@ -871,7 +898,14 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
       const rec = await loadRecommendations();
       const brief = String(args.brief ?? "").toLowerCase();
       const hostedOnly = Boolean(args.hosted_only);
-      const ranked = scoreRecommendations(rec.recommendations ?? [], brief, hostedOnly)
+      // Retired listings leave the shortlist before scoring; a route with no live primary leaves too.
+      const live = (slug) => args.include_inactive || isActive(bySlug.get(slug) ?? {});
+      const candidates = (rec.recommendations ?? []).map((r) => ({
+        ...r,
+        primary: (r.primary ?? []).filter((p) => live(p.server?.slug)),
+        fallback_servers: (r.fallback_servers ?? []).filter((s) => live(s.slug)),
+      }));
+      const ranked = scoreRecommendations(candidates, brief, hostedOnly)
         .slice(0, 3)
         .map((r) => ({
           ...compactRecommendation(r, bySlug),
@@ -908,7 +942,7 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
         return sc;
       };
       const plan = STAGES.map(({ stage, categories }) => {
-        const pool = servers.filter((s) => categories.includes(s.category));
+        const pool = servers.filter((s) => categories.includes(s.category) && (args.include_inactive || isActive(s)));
         const picks = pool.sort((a, b) => score(b) - score(a)).slice(0, 3);
         return { stage, picks: picks.map((p) => ({ ...compact(p), why: p.tagline })) };
       });

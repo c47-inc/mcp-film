@@ -176,4 +176,71 @@ const aliased = makeCallTool({ ...loaders, loadRegistry: async () => ({ ...regis
 assert.deepEqual((await aliased("search_film_mcps", { query: "mouth matching", limit: 100 })).servers.map((s) => s.slug), lipSync);
 console.log(`M3: ${JSON.stringify({ lip_sync: lipSync.length, typo: typo.did_you_mean, bad_category: badCat.did_you_mean.categories })}`);
 
+// ---- 4. Dead/archived/deprecated listings (synthetic: the live data may not carry status yet).
+const martini = registry.servers.find((s) => s.slug === "martini");
+const synth = (slug, status, extra = {}) => ({ ...martini, slug, name: `Zzsynth ${slug}`, official: true, featured: false, ...(status ? { status } : {}), ...extra });
+const withStatus = {
+  ...registry,
+  servers: [
+    synth("synth-live", undefined),
+    synth("synth-dead", "dead"),
+    synth("synth-archived", "archived", { category: "video-generation" }),
+    synth("synth-deprecated", "deprecated"),
+    ...registry.servers,
+  ],
+};
+const recs = json("dist/api/recommendations.json");
+const retire = (slug) => ({ ...martini, slug, status: "dead" });
+const statusCall = makeCallTool({
+  ...loaders,
+  loadRegistry: async () => withStatus,
+  // Retire a real primary pick in one route and the whole primary list in another.
+  loadRecommendations: async () => recs,
+}, "test");
+const active = await statusCall("search_film_mcps", { query: "zzsynth", limit: 100 });
+assert.deepEqual(active.servers.map((s) => s.slug), ["synth-live"]);
+assert.equal(active.servers[0].status, undefined);
+const all = await statusCall("search_film_mcps", { query: "zzsynth", include_inactive: true, limit: 100 });
+assert.deepEqual(all.servers.map((s) => [s.slug, s.status]), [["synth-live", undefined], ["synth-dead", "dead"], ["synth-archived", "archived"], ["synth-deprecated", "deprecated"]]);
+assert.equal((await statusCall("get_film_mcp", { slug: "synth-dead" })).status, "dead", "get_film_mcp stays full and keeps status");
+// plan_film_stack: a retired studio never becomes a pick, even when it would out-score the field.
+const plan = await statusCall("plan_film_stack", {});
+const shootPicks = plan.plan.find((p) => p.stage === "shoot").picks.map((p) => p.slug);
+assert.ok(shootPicks.includes("synth-live"));
+assert.ok(!shootPicks.some((s) => ["synth-dead", "synth-archived", "synth-deprecated"].includes(s)));
+const planAll = await statusCall("plan_film_stack", { include_inactive: true });
+assert.ok(planAll.plan.find((p) => p.stage === "shoot").picks.some((p) => p.status === "dead" || p.status === "deprecated"));
+// recommend_film_mcps: a retired primary drops out of the pick list; the status rides on survivors.
+const retiredMartini = makeCallTool({ ...loaders, loadRegistry: async () => ({ ...registry, servers: registry.servers.map((s) => (s.slug === "martini" ? { ...s, status: "archived" } : s)) }) }, "test");
+const commercial = await retiredMartini("recommend_film_mcps", { brief: "polished commercial fast" });
+assert.ok(commercial.recommendations.length > 0);
+for (const r of commercial.recommendations) {
+  assert.ok(!r.primary_servers.some((p) => p.slug === "martini"), "archived martini is not a pick");
+  assert.ok(!r.fallback_servers.some((f) => f.slug === "martini"));
+}
+const commercialAll = await retiredMartini("recommend_film_mcps", { brief: "polished commercial fast", include_inactive: true });
+const martiniPick = commercialAll.recommendations.flatMap((r) => r.primary_servers).find((p) => p.slug === "martini");
+assert.equal(martiniPick?.status, "archived");
+// A route whose every primary is retired disappears entirely.
+const everyPrimaryDead = makeCallTool({ ...loaders, loadRegistry: async () => ({ ...registry, servers: registry.servers.map((s) => ({ ...s, status: "dead" })) }) }, "test");
+assert.equal((await everyPrimaryDead("recommend_film_mcps", { brief: "polished commercial fast" })).no_match, true);
+console.log(`M4: ${JSON.stringify({ active: active.servers.map((s) => s.slug), all: all.servers.map((s) => s.status ?? "active") })}`);
+
+// ---- 5. caveat: caveats[0] first, else the first notes sentence that is not a verification log; never mid-word.
+const { caveatFor } = await import("../packages/mcp-server/core.mjs");
+const LOGLIKE = /\b(re-?checked|re-?verified|re-?confirmed|unchanged)\b|\b\d+\s*stars?\b/i;
+assert.equal(caveatFor({ caveats: ["Needs a paid plan for exports."], notes: "Re-checked 1 Sep 2026: fine." }), "Needs a paid plan for exports.");
+assert.equal(caveatFor({ notes: "Re-checked 1 Sep 2026: endpoint unchanged. 653 stars, MIT. Exports are watermarked on the free tier. Verified 2026-09-01." }), "Exports are watermarked on the free tier.");
+assert.equal(caveatFor({ notes: "Checked 25 Sep 2026 and unchanged." }), "Checked 25 Sep 2026 and unchanged.", "all-log notes fall back to the first sentence");
+assert.equal(caveatFor({ notes: "" }), "");
+assert.equal(caveatFor({}), "");
+const long = caveatFor({ notes: `${"word ".repeat(60)}end.` });
+assert.ok(long.length <= 200 && long.endsWith("…") && !/wor…$/.test(long), long);
+assert.ok(/\bword…$/.test(long), "cut lands on a word boundary");
+assert.equal(caveatFor({ notes: "Suno has no official API — all wrappers are ToS gray areas. Re-verified 2 Oct 2026." }), "Suno has no official API — all wrappers are ToS gray areas.");
+const martiniCaveat = (await call("search_film_mcps", { query: "martini" })).servers.find((s) => s.slug === "martini").caveat;
+assert.ok(!LOGLIKE.test(martiniCaveat), martiniCaveat);
+assert.ok(!martiniCaveat.endsWith("…") || /\S…$/.test(martiniCaveat));
+console.log(`M5: ${JSON.stringify({ martini_caveat: martiniCaveat })}`);
+
 console.log("✓ mcp server checks passed");
