@@ -443,6 +443,19 @@ export const layout = (ctx, { title, description, path: pagePath, body, jsonLd =
   const { site } = ctx;
   const url = site.url + pagePath;
   const ld = jsonLd.map((o) => `<script type="application/ld+json">${JSON.stringify(o)}</script>`).join("\n");
+  // One list, rendered twice: the desktop row and the phone/tablet sheet. The stylesheet shows
+  // exactly one of them, so only one set of links is ever in the accessibility tree.
+  const navLinks = `
+    <a href="/#directory">Directory</a>
+    <a href="/playbooks/">Playbooks</a>
+    <a href="/router/">Router</a>
+    <a href="/stack/">The Stack</a>
+    <a href="/clients/">Clients</a>
+    <a href="/remotes/">Remotes</a>
+    <a href="/for-agents/">For Agents</a>
+    <a href="/about/">About</a>
+    <a class="nav-gh" href="https://github.com/${site.github_repo}" rel="noopener">GitHub</a>
+    <a class="nav-cta" href="/submit/">Submit</a>`;
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -466,27 +479,23 @@ ${md ? `<link rel="alternate" type="text/markdown" href="${site.url}${md}" title
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <link rel="alternate" type="application/atom+xml" title="New MCP servers" href="/feed.xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="/assets/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/geist-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/styles.css">
 ${ld}
 ${posthogSnippet(site)}
 </head>
 <body data-page="${page}" data-sponsor="${esc(sponsorKey(site))}" data-sponsor-url="${esc(site.sponsor?.url ?? "")}">
 <header class="site-head">
-  <a class="brand" href="/"><svg class="brand-mark" width="18" height="18" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="15" fill="#0d0d0d"/><rect x="11" y="15.5" width="9" height="9" rx="2.5" fill="#fff" opacity=".58"/><rect x="11" y="39.5" width="9" height="9" rx="2.5" fill="#fff" opacity=".58"/><rect x="26.5" y="15.5" width="27" height="33" rx="5" fill="#fff"/></svg><span>mcp<span class="brand-dot">.</span>film</span></a>
-  <nav class="site-nav">
-    <a href="/#directory">Directory</a>
-    <a href="/router/">Router</a>
-    <a href="/stack/">The Stack</a>
-    <a href="/clients/">Clients</a>
-    <a href="/remotes/">Remotes</a>
-    <a href="/for-agents/">For Agents</a>
-    <a href="/about/">About</a>
-    <a class="nav-gh" href="https://github.com/${site.github_repo}" rel="noopener">GitHub</a>
-    <a class="nav-cta" href="/submit/">Submit</a>
+  <a class="brand" href="/"><svg class="brand-mark" width="18" height="18" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="15" fill="currentColor"/><rect x="11" y="15.5" width="9" height="9" rx="2.5" fill="var(--paper)" opacity=".58"/><rect x="11" y="39.5" width="9" height="9" rx="2.5" fill="var(--paper)" opacity=".58"/><rect x="26.5" y="15.5" width="27" height="33" rx="5" fill="var(--paper)"/></svg><span>mcp<span class="brand-dot">.</span>film</span></a>
+  <nav class="site-nav" aria-label="Site">${navLinks}
   </nav>
+  <a class="nav-cta nav-cta-sm" href="/submit/">Submit</a>
+  <details class="nav-menu">
+    <summary class="nav-toggle" aria-label="Menu"><span class="nav-burger" aria-hidden="true"></span>Menu</summary>
+    <nav class="nav-sheet" aria-label="Site">${navLinks}
+    </nav>
+  </details>
   <form class="head-search" role="search" action="/#directory" method="get">
     <input type="search" name="q" placeholder="Search servers" aria-label="Search servers" autocomplete="off">
   </form>

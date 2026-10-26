@@ -59,9 +59,20 @@
   const quickFilters = [...document.querySelectorAll(".quick-filter[data-quick-filter]")];
   let activeCat = "";
   const activeQuick = new Set();
+  // Sections the reader expanded with "Show all". Collapse state is a class on the section,
+  // separate from `card.hidden` (search/filter), so a query reveals matches past the preview
+  // and "Show all" never fights the filter.
+  const expanded = new WeakSet();
+  const heroFind = document.querySelector(".hero-find");
+  const heroQ = heroFind?.querySelector("input[name='q']");
+  const catSelect = heroFind?.querySelector("[data-cat-select]");
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const jumpToDirectory = () =>
+    document.getElementById("directory")?.scrollIntoView({ block: "start", behavior: reducedMotion ? "auto" : "smooth" });
 
   const applyFilter = () => {
     const q = (search?.value ?? "").trim().toLowerCase();
+    const filtering = Boolean(q || activeCat || activeQuick.size);
     let shown = 0;
     for (const card of cards) {
       const hit =
@@ -74,6 +85,7 @@
     }
     for (const sec of sections) {
       sec.hidden = ![...sec.querySelectorAll(".card")].some((c) => !c.hidden);
+      if ("collapsible" in sec.dataset) sec.classList.toggle("is-collapsed", !filtering && !expanded.has(sec));
     }
     if (noResults) {
       noResults.hidden = shown > 0;
@@ -98,7 +110,44 @@
     activeQuick.clear();
     filters.forEach((b) => b.classList.toggle("is-on", b.dataset.filter === ""));
     quickFilters.forEach((b) => { b.classList.remove("is-on"); b.setAttribute("aria-pressed", "false"); });
+    if (catSelect) catSelect.value = "";
     applyFilter();
+  });
+
+  // "Show all N" reveals the rest of a category in place; without JS it is a category link.
+  for (const btn of document.querySelectorAll("[data-show-more]")) {
+    btn.addEventListener("click", (e) => {
+      const sec = btn.closest("[data-cat-section]");
+      if (!sec) return;
+      e.preventDefault();
+      expanded.add(sec);
+      sec.classList.remove("is-collapsed");
+      ph("mcpfilm_show_more", { category: sec.dataset.catSection, page: document.body.dataset.page, path: location.pathname });
+    });
+  }
+
+  // Hero find (phones and tablets): mirrors into #search so one filter owns the grid, and
+  // takes the reader to the directory on submit or category pick.
+  if (heroQ && search) {
+    heroQ.addEventListener("input", () => { search.value = heroQ.value; applyFilter(); });
+    search.addEventListener("input", () => { heroQ.value = search.value; });
+    heroFind.addEventListener("submit", (e) => {
+      e.preventDefault();
+      search.value = heroQ.value;
+      applyFilter();
+      ph("mcpfilm_search_submit", {
+        query: heroQ.value.trim().slice(0, 100),
+        page: document.body.dataset.page,
+        path: location.pathname,
+        placement: "hero",
+      });
+      jumpToDirectory();
+    });
+  }
+  catSelect?.addEventListener("change", () => {
+    const target = filters.find((b) => b.dataset.filter === catSelect.value);
+    if (target) target.click();
+    jumpToDirectory();
   });
 
   let searchTimer;
@@ -130,7 +179,7 @@
     search.addEventListener("input", applyFilter);
     // support /?q= deep links (also the schema.org SearchAction target)
     const q = new URLSearchParams(location.search).get("q");
-    if (q) { search.value = q; applyFilter(); }
+    if (q) { search.value = q; if (heroQ) heroQ.value = q; applyFilter(); }
     document.addEventListener("keydown", (e) => {
       if (e.key === "/" && document.activeElement !== search && !e.metaKey && !e.ctrlKey) {
         e.preventDefault();
@@ -144,6 +193,7 @@
     btn.addEventListener("click", () => {
       activeCat = btn.dataset.filter;
       filters.forEach((b) => b.classList.toggle("is-on", b === btn));
+      if (catSelect) catSelect.value = activeCat;
       applyFilter();
       ph("mcpfilm_filter", { category: activeCat || null, quick: [...activeQuick], results: cards.filter((c) => !c.hidden).length });
     });
@@ -162,9 +212,36 @@
   }
 
   // -------------------------------------------------------- copy buttons
+  // Clipboard API first (secure contexts, user gesture); execCommand for the rest
+  // (older WebViews, some in-app browsers). Either way a polite live region says what
+  // happened, and on failure the snippet is selected so a manual copy is one keystroke.
+  const copyLive = document.createElement("p");
+  copyLive.className = "sr-only";
+  copyLive.setAttribute("aria-live", "polite");
+  document.body.append(copyLive);
+  const writeClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch { /* fall through */ }
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.cssText = "position:fixed;top:-1000px;left:0;opacity:0";
+      document.body.append(ta);
+      ta.select();
+      const ok = document.execCommand("copy");
+      ta.remove();
+      return ok;
+    } catch {
+      return false;
+    }
+  };
   for (const btn of document.querySelectorAll("[data-copy]")) {
     btn.addEventListener("click", async () => {
-      const code = btn.closest(".code-block")?.querySelector("code")?.textContent ?? "";
+      const codeEl = btn.closest(".code-block")?.querySelector("code");
+      const code = codeEl?.textContent ?? "";
       const slug = btn.dataset.copySlug || document.querySelector(".server")?.dataset.slug || null;
       const copyKind = btn.dataset.copyKind || "snippet";
       const copyMethod = btn.dataset.copyMethod || null;
@@ -178,14 +255,25 @@
         path: location.pathname,
         snippet: code.slice(0, 60),
       };
-      try {
-        await navigator.clipboard.writeText(code);
+      if (await writeClipboard(code)) {
         btn.textContent = "Copied";
         btn.classList.add("is-done");
+        copyLive.textContent = `Copied ${copyLabel || "snippet"} to the clipboard.`;
         setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("is-done"); }, 1600);
         ph("mcpfilm_copy", props);
         if (copyKind === "connect") ph("mcpfilm_connect", props);
-      } catch { /* clipboard unavailable */ }
+      } else {
+        btn.textContent = "Select and copy";
+        copyLive.textContent = "Copy failed. The snippet is selected; copy it manually.";
+        if (codeEl) {
+          const range = document.createRange();
+          range.selectNodeContents(codeEl);
+          const sel = getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }
+        setTimeout(() => { btn.textContent = "Copy"; }, 2400);
+      }
     });
   }
 
@@ -470,12 +558,35 @@
   // enhancement: the static HTML (what agents read) is complete without it.
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // header earns its hairline on scroll
+  // header earns its hairline on scroll, and publishes its real height so anchors
+  // (scroll-padding-top) clear it even when the search row wraps on phones
   const head = document.querySelector(".site-head");
   if (head) {
     const onScroll = () => head.classList.toggle("is-scrolled", scrollY > 10);
     addEventListener("scroll", onScroll, { passive: true });
     onScroll();
+    const measure = () => document.documentElement.style.setProperty("--head-h", `${Math.round(head.getBoundingClientRect().height)}px`);
+    addEventListener("resize", measure, { passive: true });
+    measure();
+  }
+
+  // phone/tablet menu: a native <details>, so it opens without this file; here it
+  // reports state to assistive tech and closes on Escape, outside tap, and navigation
+  const menu = document.querySelector(".nav-menu");
+  const menuToggle = menu?.querySelector("summary");
+  if (menu && menuToggle) {
+    const close = () => { menu.open = false; };
+    const sync = () => menuToggle.setAttribute("aria-expanded", String(menu.open));
+    menu.addEventListener("toggle", sync);
+    sync();
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && menu.open) { close(); menuToggle.focus(); }
+    });
+    document.addEventListener("pointerdown", (e) => {
+      if (menu.open && !menu.contains(e.target)) close();
+    }, { passive: true });
+    menu.querySelectorAll("a").forEach((a) => a.addEventListener("click", close));
+    matchMedia("(min-width: 960px)").addEventListener?.("change", (e) => { if (e.matches) close(); });
   }
 
   // hero: pointer-reactive dot grid (fine pointers only, monochrome, faint)
@@ -485,12 +596,16 @@
     const dpr = Math.min(devicePixelRatio || 1, 2);
     const GAP = 26, RADIUS = 130;
     let dots = [], px = -1e4, py = -1e4, raf = null;
+    // dot colour follows the stylesheet (light: near-black, dark: near-white)
+    const dotColor = () => getComputedStyle(document.documentElement).getPropertyValue("--canvas-dot").trim() || "#0d0d0d";
+    let fill = dotColor();
+    matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => { fill = dotColor(); queue(); });
     const draw = () => {
       raf = null;
       const w = canvas.width / dpr, h = canvas.height / dpr;
       g.setTransform(dpr, 0, 0, dpr, 0, 0);
       g.clearRect(0, 0, w, h);
-      g.fillStyle = "#0d0d0d";
+      g.fillStyle = fill;
       for (const [x, y] of dots) {
         const t = Math.max(0, 1 - Math.hypot(x - px, y - py) / RADIUS);
         g.globalAlpha = 0.045 + t * 0.12;
@@ -608,6 +723,15 @@
   }
 
   // --------------------------------------------- outbound + detail signal
+  // Playbooks and recommendations have both an anchor on the index (/playbooks/#id)
+  // and their own page (/playbooks/id/); both count as opening that item.
+  const collectionId = (href, base) => {
+    if (!href?.startsWith(base)) return null;
+    const rest = href.slice(base.length);
+    if (rest.startsWith("#")) return rest.slice(1).split(/[?/]/)[0] || null;
+    const id = rest.split(/[/?#.]/)[0];
+    return id || null;
+  };
   const externalIntentAt = new WeakMap();
   const captureExternalLink = (a, trigger) => {
     const from = location.pathname;
@@ -654,10 +778,10 @@
     } else if (href.startsWith("/capabilities/") && href !== "/capabilities/") {
       const capability = href.split("/")[2]?.replace(/\.md$/, "") || null;
       if (capability) ph("mcpfilm_open_capability", { capability, from });
-    } else if (href.startsWith("/playbooks/#")) {
-      ph("mcpfilm_open_playbook", { playbook: href.split("#")[1], from });
-    } else if (href.startsWith("/recommendations/#")) {
-      ph("mcpfilm_open_recommendation", { recommendation: href.split("#")[1], from });
+    } else if (collectionId(href, "/playbooks/")) {
+      ph("mcpfilm_open_playbook", { playbook: collectionId(href, "/playbooks/"), from });
+    } else if (collectionId(href, "/recommendations/")) {
+      ph("mcpfilm_open_recommendation", { recommendation: collectionId(href, "/recommendations/"), from });
     } else if (href.startsWith("/mcps/")) {
       const slug = href.split("/")[2];
       const playbook = a.closest(".playbook")?.dataset.playbook || null;
