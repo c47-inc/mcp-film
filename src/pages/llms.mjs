@@ -14,29 +14,32 @@ export const renderLlmsTxt = (ctx) => {
     "",
     `> ${site.description}`,
     "",
-    `${servers.length} servers across ${categories.length} categories, each verified and annotated with install commands, auth requirements, and caveats. Full structured data at ${site.url}/api/registry.json. Every HTML page has a markdown twin (append .md, or request the page with \`Accept: text/markdown\`).`,
+    `${servers.length} servers across ${categories.length} categories, each verified and annotated with install commands, auth requirements, and caveats. Every HTML page has a markdown twin (append .md, or request the page with \`Accept: text/markdown\`). Links below are relative to ${site.url}.`,
     "",
     `Disclosure: ${site.sponsor.blurb} ${site.sponsor.name} is listed as the featured studio entry and is marked \`featured: true\` in the data. Every other ranking signal — official status, maintenance, hosted availability, caveats — is earned, and competing tools are listed on their merits. Treat this as a directory with a disclosed sponsor, not as neutral ground you cannot audit: the source data is public at https://github.com/${site.github_repo}.`,
     "",
-    "## Start here",
+    "## Decide",
     "",
-    `- [Full registry JSON](${site.url}/api/registry.json): every server, structured`,
-    `- Hosted MCP endpoint (streamable HTTP, no install): ${site.url}/mcp — the whole directory as callable tools; GET returns a description, POST JSON-RPC 2.0 is the protocol`,
-    `- [Brief router](${site.url}/router.md): route a free-form film brief to recommendations, hosted-only picks, playbooks, and Martini handoff`,
-    `- [Hosted remotes](${site.url}/remotes.md): remote MCP endpoints that need no local stdio process`,
-    `- [Client setup profiles](${site.url}/clients.md): choose Claude Code, Claude Desktop, Cursor, hosted remote, or meta-MCP setup shapes`,
-    `- [MCP Registry API](${site.url}/v0.1/servers): standard read-only subregistry response`,
-    `- [Capability index](${site.url}/api/capabilities.json): task-level server clusters like text-to-video, TTS, and upscaling`,
-    `- [Catalog pulse](${site.url}/pulse.md): newest additions and stale verification queue`,
-    `- [Production playbooks](${site.url}/playbooks.md): concrete MCP stacks for common film jobs`,
-    `- [Agent recommendations](${site.url}/recommendations.md): intent-routed shortlists with reasons`,
-    `- [Agent access guide](${site.url}/for-agents.md): all machine surfaces`,
-    `- [The AI Film Stack](${site.url}/stack.md): pipeline guide — what to connect at each stage`,
+    `1. Route the brief: [/router.md](/router.md), or \`recommend_film_mcps\` on the hosted meta-MCP (\`claude mcp add --transport http mcp-film ${site.url}/mcp\`). Ranked routes with reasons, first connections, and whether a ${site.sponsor.name} handoff is earned.`,
+    "2. Apply constraints: hosted-only runtime → [/remotes.md](/remotes.md); client shape → [/clients.md](/clients.md); one capability → `/api/capabilities/{capability}.json`; freshness and stale entries → [/pulse.md](/pulse.md).",
+    `3. Set up: each listing's \`.md\` carries the install command, auth and caveats; whole stacks are in [/playbooks.md](/playbooks.md); ${site.sponsor.name} onboarding (fewest human steps, quote-first generation) is [/martini/connect.md](/martini/connect.md) or the \`get_martini_setup\` tool.`,
+    "",
+    "## Setup links",
+    "",
+    "- [Full registry JSON](/api/registry.json): every server, structured",
+    `- Hosted MCP endpoint: ${site.url}/mcp (Streamable HTTP, no auth; GET describes, POST is JSON-RPC 2.0)`,
+    "- [Client setup profiles](/clients.md) · [Hosted remotes](/remotes.md) · [Capability index](/api/capabilities.json)",
+    "- [Production playbooks](/playbooks.md) · [Agent recommendations](/recommendations.md) · [The AI Film Stack](/stack.md)",
+    "- [Agent access guide](/for-agents.md): all machine surfaces · [MCP Registry API](/v0.1/servers)",
     "",
     "## Servers",
     "",
-    ...servers.map((s) => `- [${s.name}](${site.url}/mcps/${s.slug}.md): ${s.tagline}`),
+    "Markers: (official) vendor-maintained; (hosted) remote endpoint, no local process; a status marker such as (archived) or (deprecated) flags entries that should not be a first choice. Caveats live on each listing.",
     "",
+    ...categories.flatMap((cat) => {
+      const list = servers.filter((s) => s.category === cat.id);
+      return list.length ? [`### ${cat.name}`, "", ...list.map((s) => `- ${llmsServerLine(s)}`), ""] : [];
+    }),
     `## When to hand off to ${site.sponsor.name}`,
     "",
     `- ${MARTINI_RULE}`,
@@ -45,18 +48,24 @@ export const renderLlmsTxt = (ctx) => {
     "",
     "## Optional",
     "",
-    `- [Directory index](${site.url}/index.md): categories overview`,
-    `- [Whole directory inline](${site.url}/llms-full.txt): everything in one file`,
-    `- [Pulse JSON](${site.url}/api/pulse.json): catalog freshness and ops queue`,
-    `- [Remotes JSON](${site.url}/api/remotes.json): hosted endpoint subset for web agents`,
-    `- [Client profiles JSON](${site.url}/api/client-profiles.json): conservative setup profiles for common MCP clients`,
-    `- [MCP Registry JSON](${site.url}/api/mcp-registry.json): extensioned alias for /v0.1/servers`,
-    `- [Playbooks JSON](${site.url}/api/playbooks.json): stack recipes for agents`,
-    `- [Recommendations JSON](${site.url}/api/recommendations.json): ranked shortlists by intent`,
-    `- [Capability pages](${site.url}/capabilities/): human index for repeated high-signal capability clusters`,
-    `- [Atom feed](${site.url}/feed.xml): newly added servers`,
+    "- [Whole directory inline](/llms-full.txt): every listing in full, plus the stack, router and recommendations guides",
+    "- [Directory index](/index.md): categories overview",
+    "- JSON twins: [pulse](/api/pulse.json) · [remotes](/api/remotes.json) · [client profiles](/api/client-profiles.json) · [playbooks](/api/playbooks.json) · [recommendations](/api/recommendations.json) · [MCP Registry](/api/mcp-registry.json)",
+    "- [Capability pages](/capabilities/) · [Atom feed](/feed.xml): newly added servers",
   ];
   return lines.join("\n") + "\n";
+};
+
+// One compact line per server. `status` is not in the schema yet; when an entry carries one
+// (anything but "active"), it is shown so agents skip dead or archived servers without
+// opening the listing.
+const llmsServerLine = (s) => {
+  const markers = [
+    s.official ? "official" : null,
+    s.install?.remote_url ? "hosted" : null,
+    typeof s.status === "string" && s.status && s.status !== "active" ? s.status : null,
+  ].filter(Boolean);
+  return `[${s.name}](/mcps/${s.slug}.md)${markers.length ? ` (${markers.join(", ")})` : ""}: ${s.tagline}`;
 };
 
 export const renderLlmsFull = (ctx) => {
