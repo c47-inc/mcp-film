@@ -175,7 +175,7 @@
     "install": {
       "claude_code": null,
       "remote_url": null,
-      "stdio_command": "npx davinci-resolve-mcp setup"
+      "stdio_command": "Run `npx davinci-resolve-mcp setup` once — it is the installer, not the server: the npm bootstrapper installs a managed copy under your user app-data directory, then runs the project's Python installer, which creates the venv, detects the Resolve path and can write the config for Claude Desktop, Claude Code, Cursor, VS Code, Windsurf, Zed, Codex CLI and other clients itself. Before connecting, open DaVinci Resolve Studio and set Preferences > General > External scripting using to Local (on the free edition that preference has no effect — use the in-app bridge script instead)."
     },
     "auth": { "type": "local-app", "env_var": null, "key_url": "Requires DaVinci Resolve 18.5+ running locally — Studio with External Scripting set to Local, or the free edition through the project's in-app bridge script" },
     "pricing": "free",
@@ -841,7 +841,7 @@
     "install": {
       "claude_code": null,
       "remote_url": null,
-      "stdio_command": "npx davinci-resolve-ai-bridge-mcp"
+      "stdio_command": "Run `npx davinci-resolve-ai-bridge-mcp` once — without --serve it is the installer, not an MCP stdio process: it creates ~/.resolve-ai-bridge with a private Python environment, adds the Resolve menu entries and merges MCP config into the clients it detects. Then start the server with the absolute Python command the installer writes to ~/.resolve-ai-bridge/mcp-config.json, or with `npx -y davinci-resolve-ai-bridge-mcp --serve`."
     },
     "auth": {
       "type": "local-app",
