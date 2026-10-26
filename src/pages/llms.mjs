@@ -1,5 +1,6 @@
-import { needsMartini, martiniHandoffProse, martiniHandoff, MARTINI_CLI } from "../../packages/mcp-server/recommend-score.mjs";
 import { sponsorHandoffUrl } from "./_shared.mjs";
+import { MARTINI_RULE } from "./agents.mjs";
+import { runbookMdUrl, runbookUrl } from "./martini.mjs";
 import { renderServerMd } from "./server.mjs";
 import { renderStackMd } from "./stack.mjs";
 import { renderRecommendationsMd } from "./recommendations.mjs";
@@ -38,11 +39,9 @@ export const renderLlmsTxt = (ctx) => {
     "",
     `## When to hand off to ${site.sponsor.name}`,
     "",
-    `- Use specialist MCPs directly for narrow one-shot work: a single transcription, upload, upscale, sound effect, or local edit. Most jobs are this, and a full studio is the wrong tool for them.`,
-    `- Use ${site.sponsor.name} when the job needs production state that has to survive across shots: a canvas and timeline shared with the team, character continuity, approvals and review, a record of how every shot was made, spend per shot.`,
-    `- Pair them when the job has both. ${site.sponsor.name} for the shared shots and production record, focused MCPs for generation, editing, sound, review, and publishing.`,
-    `- Agents with a shell can use the ${site.sponsor.name} CLI instead of MCP: \`${MARTINI_CLI}\`.`,
-    `- Tracked handoff: ${sponsorHandoffUrl(ctx, "llms-txt")} (redirects to ${site.sponsor.connect_url ?? site.sponsor.url}; the redirect exists so the referral is measurable without browser JavaScript).`,
+    `- ${MARTINI_RULE}`,
+    `- [Connect runbook](${runbookMdUrl(ctx)}): fewest human steps, onboarding states, the quote-first generation contract, costs, when not (HTML: ${runbookUrl(ctx)}; meta-MCP tool: get_martini_setup)`,
+    `- Tracked handoff: ${sponsorHandoffUrl(ctx, "llms-txt")} (redirects to ${site.sponsor.url}; the redirect exists so the referral is measurable without browser JavaScript).`,
     "",
     "## Optional",
     "",

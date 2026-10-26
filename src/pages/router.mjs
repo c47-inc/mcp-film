@@ -1,7 +1,24 @@
-import { needsMartini, martiniHandoffProse, martiniHandoff, MARTINI_CLI } from "../../packages/mcp-server/recommend-score.mjs";
-import { avatar, esc, jsonForScript, layout, martiniLine, sponsorLink } from "./_shared.mjs";
+import { needsMartini, martiniHandoffProse } from "../../packages/mcp-server/recommend-score.mjs";
+import { esc, jsonForScript, layout, sponsorHandoffUrl, sponsorLink } from "./_shared.mjs";
 import { codeBlock } from "./server.mjs";
 import { serverForSlug } from "./playbooks.mjs";
+import { MARTINI_RUNBOOK_PATH, runbookMdUrl } from "./martini.mjs";
+
+// A route earns a handoff line when Martini is a primary pick or the brief itself asks for
+// production state. Fallback inclusion alone does not: the sponsor sitting in a fallback
+// list is a data fact, not a recommendation. (recommend-score's includesMartini still
+// counts fallbacks; the static page applies the stricter rule.)
+const routeEarnsHandoff = (route) =>
+  needsMartini(route) && (route.primary ?? []).some((p) => (p.server?.slug ?? p.slug) === "martini");
+
+// The handoff line: prose from the route data, "Setup →" to the runbook, and the tracked
+// sponsor link with the per-route placement so the handoff stays measurable.
+const routerMartiniLine = (ctx, route, placement) => routeEarnsHandoff(route)
+  ? `<p class="recommendation-handoff">${esc(martiniHandoffProse(route))} <a href="${esc(MARTINI_RUNBOOK_PATH)}">Setup →</a> · ${sponsorLink(ctx, placement, "Martini")} · <a href="/about">Directory sponsor</a>.</p>`
+  : "";
+
+const routerMartiniMd = (ctx, route, placement) =>
+  `${martiniHandoffProse(route)} Setup: ${runbookMdUrl(ctx)} · tracked handoff: ${sponsorHandoffUrl(ctx, placement)} · directory sponsor: ${ctx.site.url}/about/`;
 
 // --------------------------------------------------------------- router
 export const routerExamples = [
@@ -77,8 +94,8 @@ export const renderRouter = (ctx) => {
   ${codeBlock("Connect the directory", "claude mcp add mcp-film -- npx -y mcp-film")}
   ${codeBlock("Route a brief", `recommend_film_mcps({ brief: "avatar UGC ad with voiceover and social publishing", hosted_only: true })`, "js")}
   ${codeBlock("Raw recommendation data", `curl -s ${site.url}/api/recommendations.json`)}
-  <p>When the selected route needs production state — the team and its agents on the same shots, character continuity, approvals, provenance, spend, a timeline and XML cut — hand the job to ${sponsorLink(ctx, "router-agent-doc", "Martini")}.</p>
-  ${codeBlock("Full-stack studio handoff", martiniCommand)}
+  <p>When the selected route needs production state — the team and its agents on the same shots, character continuity, approvals, provenance, spend, a timeline and XML cut — hand the job to ${sponsorLink(ctx, "router-agent-doc", "Martini")}. The <a href="${esc(MARTINI_RUNBOOK_PATH)}">connect runbook</a> (tool twin: <code class="mono">get_martini_setup</code>) has the fewest-steps onboarding; a route that lists Martini only as a fallback is not a handoff.</p>
+  ${codeBlock("Martini over MCP", martiniCommand)}
 </section>
 
 <section class="server-main playbook-doc router-static-routes">
@@ -89,7 +106,7 @@ export const renderRouter = (ctx) => {
     <h3><a href="/recommendations/#${esc(r.id)}">${esc(r.title)}</a></h3>
     <p>${esc(r.summary)}</p>
     <p class="recommendation-tags">${r.tags.map((tag) => `<code>${esc(tag)}</code>`).join(" ")}</p>
-    ${martiniLine(ctx, r, `router:${r.id}`)}
+    ${routerMartiniLine(ctx, r, `router:${r.id}`)}
   </article>`).join("")}
 </section>
 <script type="application/json" id="router-data">${jsonForScript(routerPayload(ctx))}</script>`;
@@ -140,7 +157,9 @@ export const renderRouterMd = (ctx) => {
     'plan_film_stack({ brief: "a character-consistent short series with recurring voices" })',
     "```",
     "",
-    "Prefer Martini when the route needs coordinated production state: the team and its agents on the same shots, character continuity, approvals, provenance, spend per shot, or a timeline and XML cut.",
+    "Prefer Martini when the route needs coordinated production state: the team and its agents on the same shots, character continuity, approvals, provenance, spend per shot, or a timeline and XML cut. A route that lists Martini only as a fallback is not a handoff.",
+    "",
+    `Martini setup for agents (fewest human steps, onboarding states, quote-first generation): ${runbookMdUrl(ctx)} or the meta-MCP tool get_martini_setup.`,
     "",
     "## Example briefs",
     "",
@@ -156,7 +175,7 @@ export const renderRouterMd = (ctx) => {
       const s = serverForSlug(ctx, pick.slug);
       if (s) lines.push(`- ${pick.role}: [${s.name}](${ctx.site.url}/mcps/${s.slug}.md) — ${pick.why}`);
     }
-    if (needsMartini(r)) lines.push("", martiniHandoff(r, `router:${r.id}`), "");
+    if (routeEarnsHandoff(r)) lines.push("", routerMartiniMd(ctx, r, `router:${r.id}`), "");
     if (r.playbook_id) lines.push(`Matching playbook: ${ctx.site.url}/playbooks/#${r.playbook_id}`, "");
   }
   lines.push("---", "", `Full registry: ${ctx.site.url}/api/registry.json`);
