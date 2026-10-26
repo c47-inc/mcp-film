@@ -190,10 +190,32 @@ const checks = [
     validateHeaders: (headers) => {
       const location = headers.get("location") || "";
       return /^https:\/\/www\.martini\.film\//.test(location) &&
+        location.includes("ref=mcp-film") &&
         location.includes("utm_source=mcp.film") &&
         location.includes("utm_campaign=mcp_film_handoff");
     },
   },
+  // POST /mcp with the default user agents of common HTTP stacks. A reviewer saw a 403 with
+  // Python's default UA; a WAF rule that keys on user-agent would show up here, not in the
+  // browser.
+  ...[
+    ["python-requests", "python-requests/2.32.3"],
+    ["python-urllib", "Python-urllib/3.12"],
+    ["httpx", "python-httpx/0.27.2"],
+    ["node-fetch", "node"],
+    ["go-http-client", "Go-http-client/2.0"],
+    ["curl", "curl/8.7.1"],
+  ].map(([family, userAgent]) => ({
+    name: `${family} can POST /mcp initialize`,
+    url: `${base}/mcp?monitor=${smoke}`,
+    method: "POST",
+    userAgent,
+    accept: "application/json",
+    body: { jsonrpc: "2.0", id: 1, method: "initialize", params: { protocolVersion: "2025-06-18", capabilities: {}, clientInfo: { name: "mcpfilm-monitor", version: "1.0" } } },
+    expect: (status) => status === 200,
+    validateJson: (body) => typeof body?.result?.protocolVersion === "string" && typeof body.result.instructions === "string",
+    wafSensitive: true,
+  })),
   {
     name: "WWW playbooks API",
     url: `${wwwBase}/api/playbooks.json?monitor=${smoke}`,
@@ -325,10 +347,12 @@ async function runHttpCheck(check) {
 
   const started = Date.now();
   try {
+    if (check.body !== undefined) headers["content-type"] = "application/json";
     const res = await fetch(check.url, {
       method: check.method,
       headers,
       redirect: "manual",
+      ...(check.body !== undefined ? { body: JSON.stringify(check.body) } : {}),
     });
     const ms = Date.now() - started;
     let detail = `${ms}ms`;
