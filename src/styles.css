@@ -1074,6 +1074,44 @@ img.avatar { object-fit: cover; background: var(--paper); }
   .pulse-table td:last-child, .pulse-table th:last-child { min-width: 12rem; max-width: 18rem; }
 }
 
+/* ------------------------------------------- touch: no zoom, 44px targets */
+/* iOS zooms any focused field under 16px; every interactive element gets a 44px hit
+   area via padding and min-height, never font size. Applies on small screens and on
+   any coarse pointer (touch tablets at desktop widths). */
+@media (max-width: 999px), (pointer: coarse) {
+  #search, .head-search input, .feedback textarea, .router-form textarea, .hero-find input, .hero-find select {
+    font-size: 16px;
+  }
+  #search, .head-search input { height: 44px; }
+  .btn, .feedback .btn, .copy-btn, .router-examples button, .show-more,
+  button.chip-filter, button.quick-filter, .feedback summary, .capability-cloud a {
+    min-height: 44px;
+  }
+  .copy-btn { padding: 0 14px; font-size: 12.5px; }
+  .code-head { padding: 4px 6px 4px 13px; }
+  .feedback summary { display: flex; align-items: center; }
+  button.chip-filter, button.quick-filter { padding: 0 14px; }
+  .capability-cloud a { padding: 0 12px; align-items: center; }
+  .side-box { gap: 0; }
+  .side-box a { display: flex; align-items: center; min-height: 44px; }
+  .side-box .foot-h { margin-bottom: 0; }
+  .side-caps a { padding: 10px 2px; margin: 0 6px 0 0; }
+  .foot-col { gap: 0; }
+  .foot-col a { display: flex; align-items: center; min-height: 44px; }
+  .crumbs { align-items: center; flex-wrap: wrap; }
+  .crumbs a { display: inline-flex; align-items: center; min-height: 44px; }
+  .agent-callout a, .playbook-links a, .stage-list a { padding: 10px 0; }
+  .nav-sheet a { min-height: 48px; }
+  /* heading links: the hit area grows, the rhythm does not (negative margins) */
+  .cat-section h2 a, .recommendation h3 a, .remote-ident h2 a {
+    display: inline-flex; align-items: center; min-height: 44px; margin: -11px 0;
+  }
+  .notes-fold > summary { min-height: 44px; display: flex; align-items: center; }
+  .notes-fold > summary h2 { flex: 1; }
+  .router-toggle { min-height: 44px; }
+  .router-toggle input { width: 20px; height: 20px; margin: 0; }
+}
+
 /* ----------------------------------------------------------------- faq */
 .faq { margin: 4rem 0 2rem; padding-top: 2rem; border-top: 1px solid var(--hairline); }
 .faq h2 { font-size: 1.2rem; font-weight: 600; letter-spacing: 0; margin: 0 0 1.4rem; }
