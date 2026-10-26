@@ -476,7 +476,8 @@ ${md ? `<link rel="alternate" type="text/markdown" href="${site.url}${md}" title
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(description)}">
 <meta name="twitter:image" content="${site.url}/assets/og.png">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c0c0e" media="(prefers-color-scheme: dark)">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <link rel="alternate" type="application/atom+xml" title="New MCP servers" href="/feed.xml">
 <link rel="preload" href="/assets/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
