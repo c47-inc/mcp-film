@@ -10,6 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as T from "./src/templates.mjs";
+import { renderMartiniConnect, renderMartiniConnectMd } from "./src/pages/martini.mjs";
 import { martiniHandoff, MARTINI_CLI } from "./packages/mcp-server/recommend-score.mjs";
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
@@ -654,6 +655,8 @@ write("pulse/index.html", T.renderPulse(ctx));
 write("about/index.html", T.renderAbout(ctx));
 write("submit/index.html", T.renderSubmit(ctx));
 write("404.html", T.render404(ctx));
+write("martini/connect/index.html", renderMartiniConnect(ctx));
+write("martini/connect.md", renderMartiniConnectMd(ctx));
 
 for (const cat of categories) {
   write(`categories/${cat.id}/index.html`, T.renderCategory(ctx, cat));
