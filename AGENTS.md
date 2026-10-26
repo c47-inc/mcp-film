@@ -82,16 +82,56 @@ Schema per entry (all fields required unless noted):
     "claude_code": "exact verified command or null",
     "remote_url": "https hosted MCP endpoint or null",
     "remote_headers": ["required header names"] /* optional, only for hosted remotes that need non-OAuth headers */,
-    "stdio_command": "npx/uvx command, or prose if install is multi-step, or null"
+    "stdio_command": "npx/uvx command, or prose if install is multi-step, or null",
+    "cli": "shell one-liner for the vendor's CLI" /* optional; Martini only for now */,
+    "cli_docs": "https docs for that CLI" /* optional, with cli */,
+    "generate": false /* optional; opt this listing out of derived Claude Code/Desktop/Cursor snippets and package exports */
   },
   "auth": { "type": "api_key|oauth|none|local-app", "env_var": "X or null", "key_url": "where to get access" },
   "pricing": "free|freemium|paid|credits",
+  "pricing_note": "one line on what the tier buys" /* optional */,
   "links": { "repo": null, "docs": null, "site": null }, // https or null
   "added": "YYYY-MM-DD",       // first listed — never change retroactively
   "verified": "YYYY-MM-DD",    // last confirmed accurate — update when you check
+  "status": "dead|archived|deprecated" /* optional; omit for active listings */,
+  "caveats": ["≤160 chars each"] /* optional; the 2-3 things that bite, shown above the fold */,
   "notes": "The caveats that bite people: quotas, ToS gray areas, local-app requirements, better alternatives."
 }
 ```
+
+Optional field semantics:
+
+- `status` — absent means active. `dead` (endpoint/package/API gone), `archived`
+  (repo read-only, unmaintained), `deprecated` (vendor superseded it or scheduled a
+  shutdown). Inactive entries keep their pages, sort last in grids, show a status badge
+  instead of "Freshly checked", and are excluded from every list an agent acts on:
+  "Also in", "Pairs well with", playbooks, recommendations, remotes, client-profile
+  starter examples. `registry.json` carries the field as written; the MCP-registry
+  output maps dead → `deleted` and archived/deprecated → `deprecated`.
+- `caveats` — when absent, the server page shows the first two non-log sentences of
+  `notes` (sentences starting "Re-checked …" are skipped). Set it when those two are
+  not the right two.
+- Derived install snippets never register an installer wizard: a `stdio_command`
+  whose first bare argument after the package is `setup`, `install`, `init`,
+  `configure` or `login` is shown as prose, not as a command. Write the real server
+  command, or the prose, in `stdio_command`.
+
+`data/categories.json` optional fields: `intro` (plain paragraphs separated by blank
+lines, rendered above the grid), `start_here` (a slug in that category) and
+`start_here_why` (the stated reason; required with `start_here`). Without `start_here`
+no pick is shown — the grid order (official → hosted → name, inactive last) is a
+browsing tie-breaker, not an endorsement.
+
+`data/capability-aliases.json` maps canonical tag → aliases
+(`{ "tts": ["text-to-speech"] }`). Entries keep their own tags for display; the
+capability index, pages and search use the canonical tag. An alias may not itself be
+a canonical key. `--validate-only` warns with the list of tags used by exactly one
+server; prefer an alias to a new tag.
+
+Playbooks and recommendations: `primary_slugs` / `primary` need at least one server
+(narrow routes are allowed), `martini_handoff` is optional — a string renders the
+handoff line, `null` or absent renders nothing. Each playbook and recommendation also
+has its own page at `/playbooks/{id}/` and `/recommendations/{id}/` (plus `.md`).
 
 House style: write like a sharp film-tech editor, not a press release. Notes
 should say the inconvenient thing (e.g. "Suno has no official API — all
