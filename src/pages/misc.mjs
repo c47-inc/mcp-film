@@ -112,7 +112,7 @@ export const sitemapEntries = (ctx) => {
   const newest = (list) => list.map((s) => s.verified).sort().at(-1) ?? today;
   const bySlug = (slugs) => slugs.map((slug) => ctx.servers.find((s) => s.slug === slug)).filter(Boolean);
   return [
-    ...["/", "/router/", "/stack/", "/clients/", "/playbooks/", "/recommendations/", "/capabilities/", "/remotes/", "/for-agents/", "/pulse/", "/about/", "/submit/"]
+    ...["/", "/router/", "/stack/", "/clients/", "/playbooks/", "/recommendations/", "/capabilities/", "/remotes/", "/for-agents/", "/pulse/", "/about/", "/submit/", "/martini/connect/"]
       .map((u) => ({ loc: u, lastmod: today })),
     ...ctx.categories.map((c) => ({ loc: `/categories/${c.id}/`, lastmod: newest(ctx.servers.filter((s) => s.category === c.id)) })),
     ...ctx.capabilityPages.map((c) => ({ loc: `/capabilities/${c.capability}/`, lastmod: newest(c.servers) })),

@@ -190,8 +190,11 @@ export const cursorConfig = (s) => {
 };
 
 export const clientProfilesFor = (ctx) => {
-  const martini = ctx.servers.find((s) => s.slug === "martini");
-  const sampleSlugs = ["martini", "runway", "fal", "canva", "airtable", "palmier-pro", "blender"];
+  // One example server per client shape, chosen for being official, hosted and well known;
+  // the sponsor appears once, like any other entry.
+  const pick = (...slugs) => slugs.map((slug) => ctx.servers.find((s) => s.slug === slug)).find((s) => s && !isInactive(s)) ?? null;
+  const exampleFor = { claude_code: pick("runway", "martini"), claude_desktop: pick("elevenlabs", "runway"), cursor: pick("martini", "runway"), hosted_remote: pick("runway", "elevenlabs") };
+  const sampleSlugs = ["runway", "elevenlabs", "fal", "davinci-resolve", "martini", "canva", "airtable"];
   const installExample = (s) => ({
     slug: s.slug,
     name: s.name,
@@ -222,7 +225,7 @@ export const clientProfilesFor = (ctx) => {
         config_surface: "CLI command",
         best_for: "Local coding agents that can run commands and connect hosted Streamable HTTP MCP servers.",
         install_strategy: "Prefer install.claude_code when present; otherwise use install.remote_url with --transport http or install.stdio_command after required env vars are set.",
-        example: martini ? claudeCodeCmd(martini) : null,
+        example: exampleFor.claude_code ? claudeCodeCmd(exampleFor.claude_code) : null,
       },
       {
         id: "claude_desktop",
@@ -232,7 +235,7 @@ export const clientProfilesFor = (ctx) => {
         config_surface: "claude_desktop_config.json",
         best_for: "Local desktop sessions that can spawn stdio servers or bridge hosted remotes through mcp-remote.",
         install_strategy: "Use the generated JSON on each listing; remote servers are represented with npx mcp-remote, local servers with command/args/env.",
-        example: martini && desktopConfig(martini) ? JSON.parse(desktopConfig(martini)) : null,
+        example: exampleFor.claude_desktop && desktopConfig(exampleFor.claude_desktop) ? JSON.parse(desktopConfig(exampleFor.claude_desktop)) : null,
       },
       {
         id: "cursor",
@@ -242,7 +245,7 @@ export const clientProfilesFor = (ctx) => {
         config_surface: ".cursor/mcp.json",
         best_for: "Coding-agent workspaces that need project-local MCP configuration.",
         install_strategy: "Use the generated Cursor JSON on each listing; hosted servers use a url field, local servers use command/args/env.",
-        example: martini && cursorConfig(martini) ? JSON.parse(cursorConfig(martini)) : null,
+        example: exampleFor.cursor && cursorConfig(exampleFor.cursor) ? JSON.parse(cursorConfig(exampleFor.cursor)) : null,
       },
       {
         id: "hosted_remote",
@@ -252,7 +255,7 @@ export const clientProfilesFor = (ctx) => {
         config_surface: "Client connector UI or remote MCP URL field",
         best_for: "ChatGPT, Claude web, Gemini-style hosted clients, and automations that cannot spawn local stdio processes.",
         install_strategy: "Use only entries with install.remote_url, complete the vendor OAuth/API-key flow, and avoid local-only servers unless the client provides a trusted bridge.",
-        example: martini?.install?.remote_url ?? null,
+        example: exampleFor.hosted_remote?.install?.remote_url ?? null,
       },
       {
         id: "meta_mcp",

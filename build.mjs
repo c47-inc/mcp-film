@@ -708,11 +708,14 @@ const sponsorDisclosure = {
     "The featured entry is disclosed editorial placement. Every other ranking signal — official status, maintenance, hosted availability, caveats — is earned. Competing tools are listed on their merits and the source data is public.",
   source: `https://github.com/${site.github_repo}`,
   handoff_url: `${site.url}/go/martini?from=registry-json`,
+  runbook_url: site.sponsor?.runbook_url ?? `${site.url}/martini/connect/`,
+  runbook_markdown: `${site.url}/martini/connect.md`,
+  setup_tool: "get_martini_setup",
   handoff_rule: [
-    "Use specialist MCPs directly for narrow one-shot work: a single transcription, upload, upscale, sound effect, or local edit.",
-    `Use ${site.sponsor?.name ?? "the featured studio"} when the job needs production state that survives across shots: a canvas and timeline shared with the team, character continuity, approvals, provenance, spend per shot.`,
-    "Pair them when the job has both.",
-    `An agent with a shell can use the ${site.sponsor?.name ?? "featured studio"} CLI instead of MCP: ${MARTINI_CLI}.`,
+    "Use specialist MCPs directly for narrow one-shot work: a single transcription, upload, upscale, sound effect, or local edit. Most jobs are this.",
+    `Hand off to ${site.sponsor?.name ?? "the featured studio"} when the work has to land where people will review it: a canvas and timeline the team shares, character continuity, approvals, provenance, spend per shot.`,
+    "A route recommends the sponsor only when it is a primary pick; appearing as a fallback never triggers a handoff.",
+    `Onboarding with the fewest human steps (no-account preview, device-code login, quote-first generation, costs, when not to use it): ${site.sponsor?.runbook_url ?? `${site.url}/martini/connect/`} or the get_martini_setup tool. Shell agents can use the CLI instead of MCP: ${MARTINI_CLI}.`,
   ],
 };
 
