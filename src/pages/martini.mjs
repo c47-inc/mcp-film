@@ -142,6 +142,53 @@ const HUMAN_STEPS = [
   ["Fund generation", "Set the workspace's fal key, or hold olives. The agent should run get_balance and tell you what it found rather than guess."],
 ];
 
+// Worked example shared by /router.md, /for-agents.md and the router page. Every value in
+// it is a placeholder; the only numbers an agent may show a human are the ones the quote
+// returned.
+export const APPROVAL_PROMPT = "Plan: 6 shots on Seedance 2.5, estimate N olives. Approve?";
+export const EXAMPLE_BRIEF = "A 30-second product commercial: six shots, voiceover, social cutdowns, client review.";
+export const EXAMPLE_CALLS = [
+  ["create_project", 'visibility: "private" if the client\'s work is confidential (paid plan); tell the human which kind you made'],
+  ["create_canvas", "where the human will see the shots"],
+  ["get_balance", "report what the workspace can spend"],
+  ["create_nodes", "six drafts; nothing generated"],
+  ["generate_nodes", "no batchApproval: returns the estimate and a planHash, generates nothing"],
+  ["(ask the human)", APPROVAL_PROMPT],
+  ["generate_nodes", "batchApproval plus the returned planHash; only after a yes"],
+  ["wait_for_jobs", "timeoutSeconds 45; call again while the result says timedOut"],
+];
+export const EXAMPLE_PLACEHOLDER_NOTE = "6, Seedance 2.5 and N are placeholders: use the count, the model and the estimate the quote returned. Never show a number the server did not return.";
+
+export const workedExampleMd = (ctx) => [
+  "## Worked example: brief to first shots",
+  "",
+  `Brief (placeholder): "${EXAMPLE_BRIEF}"`,
+  "",
+  "1. recommend_film_mcps({ brief }) → a route. Martini is a primary pick on the commercial route, so the handoff is earned; if it were only a fallback, stop here and use the specialist picks.",
+  `2. get_martini_setup() → the onboarding state for this runtime (needs_account → needs_authorization → needs_project → ready) and the quote-first contract. Same content as ${runbookMdUrl(ctx)}.`,
+  "3. Martini, in order (argument names come from the tool manifest; values are placeholders):",
+  "",
+  "```text",
+  ...EXAMPLE_CALLS.map(([call, note]) => `${call.padEnd(18)} # ${note}`),
+  "```",
+  "",
+  `4. The approval prompt, as the agent should phrase it: "${APPROVAL_PROMPT}" ${EXAMPLE_PLACEHOLDER_NOTE}`,
+  "5. On no: stop; nothing was spent. On yes: the second generate_nodes call, then wait_for_jobs.",
+  "",
+  "Shell equivalent of steps 3 to 5: `martini generate_nodes --node-ids <id…> --approve --max-olives <N> --wait` (exit code 5 when the quote exceeds the cap).",
+].join("\n");
+
+export const workedExampleHtml = (ctx) => `
+  <h2>Worked example: brief to first shots</h2>
+  <p>Brief (placeholder): <em>${esc(EXAMPLE_BRIEF)}</em></p>
+  <ol class="agents-list runbook-steps">
+    <li><code class="mono">recommend_film_mcps({ brief })</code> → a route. Martini is a primary pick on the commercial route, so the handoff is earned; if it were only a fallback, stop here and use the specialist picks.</li>
+    <li><code class="mono">get_martini_setup()</code> → the onboarding state for this runtime (<code class="mono">needs_account → needs_authorization → needs_project → ready</code>) and the quote-first contract. Same content as <a href="${esc(MARTINI_RUNBOOK_PATH)}">the runbook</a>.</li>
+    <li>Martini, in order. Argument names come from the tool manifest; values are placeholders.</li>
+  </ol>
+  ${codeBlock("Martini calls, in order", EXAMPLE_CALLS.map(([call, note]) => `${call.padEnd(18)} # ${note}`).join("\n"), "text")}
+  <p>The approval prompt, as the agent should phrase it: <q>${esc(APPROVAL_PROMPT)}</q> ${esc(EXAMPLE_PLACEHOLDER_NOTE)} On no: stop; nothing was spent. On yes: the second <code class="mono">generate_nodes</code> call, then <code class="mono">wait_for_jobs</code>. Shell equivalent: <code class="mono">martini generate_nodes --node-ids &lt;id…&gt; --approve --max-olives &lt;N&gt; --wait</code> (exit code 5 when the quote exceeds the cap).</p>`;
+
 export const renderMartiniConnect = (ctx) => {
   const rb = martiniRunbook(ctx);
   const statesJson = JSON.stringify({ checked: rb.checked, states: rb.states }, null, 2);
