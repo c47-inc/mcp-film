@@ -433,6 +433,66 @@ function clientProfiles() {
   };
 }
 
+// ---- Hard constraints on a brief. Explicit `constraints` win; phrases in the
+// brief fill the gaps. Best effort from install/auth/pricing metadata: a local
+// stdio wrapper around a cloud API still uploads, so no_upload also needs an
+// auth type that proves nothing leaves the machine (none or local-app).
+const CONSTRAINT_PHRASES = {
+  local_only: /\b(locally|on[- ]device|on my (own )?(machine|laptop|workstation)|offline|air[- ]gapped|local[- ]only)\b/i,
+  no_upload: /\b(without uploading|no uploads?|never leaves|nothing leaves|confidential|under nda|private footage|on[- ]prem(ise)?s?)\b/i,
+  hosted_only: /\b(no local install|can(not|'t) install|hosted[- ]only|remote[- ]only|sandboxed|no shell|web agent|browser[- ]only)\b/i,
+  free_only: /\b(no budget|zero budget|for free|free (tools?|only|tier)|without paying|no credit card|free of charge)\b/i,
+};
+
+const CONSTRAINT_REASONS = {
+  local_only: "needs a local install path (stdio command or local app); hosted-only servers were excluded",
+  no_upload: "needs a local install with no cloud credential (auth none or local-app); anything that sends media to a vendor was excluded",
+  hosted_only: "needs a hosted remote MCP endpoint; local-only servers were excluded",
+  free_only: "needs free or freemium pricing; paid and credit-metered servers were excluded",
+  os: "the listing says it only runs on another operating system",
+};
+
+// scoreRecommendations floors at one token hit. One or two incidental words
+// (score <= 3) is a browse, not a match; real briefs score 7 and up.
+const matchStrength = (score) => (score >= 6 ? "strong" : score >= 4 ? "fair" : "weak");
+
+export function detectConstraints(brief) {
+  const out = {};
+  for (const [key, re] of Object.entries(CONSTRAINT_PHRASES)) if (re.test(String(brief ?? ""))) out[key] = true;
+  return out;
+}
+
+function resolveConstraints(args, brief) {
+  const given = args.constraints && typeof args.constraints === "object" ? args.constraints : {};
+  const detected = detectConstraints(brief);
+  const c = { ...detected, ...given };
+  if (args.hosted_only) c.hosted_only = true;
+  if (c.has_shell === false) c.hosted_only = true;
+  if (typeof c.os === "string") c.os = c.os.trim().toLowerCase();
+  else delete c.os;
+  return c;
+}
+
+const localInstall = (s) => Boolean(s.install?.stdio_command) || s.auth?.type === "local-app";
+const OS_ONLY = /\b(macos|mac|osx|windows|linux)[- ]only\b/i;
+
+function violatedConstraints(s, c) {
+  const out = [];
+  if (c.hosted_only && !s.install?.remote_url) out.push("hosted_only");
+  if (c.local_only && !localInstall(s)) out.push("local_only");
+  if (c.no_upload && !(localInstall(s) && ["none", "local-app"].includes(s.auth?.type))) out.push("no_upload");
+  if (c.free_only && !["free", "freemium"].includes(s.pricing)) out.push("free_only");
+  if (c.os) {
+    const said = OS_ONLY.exec(`${s.notes ?? ""} ${s.install?.stdio_command ?? ""}`);
+    if (said) {
+      const only = said[1].toLowerCase().replace(/^osx$/, "macos").replace(/^mac$/, "macos");
+      const want = c.os.replace(/^(darwin|osx|mac)$/, "macos").replace(/^win(32|dows)?$/, "windows");
+      if (only !== want) out.push("os");
+    }
+  }
+  return out;
+}
+
 // Pulse sections for curators and ops: served on request, never folded into "all".
 const PULSE_OPS_SECTIONS = ["demand_signals", "martini_growth_checks"];
 const PULSE_SECTIONS = ["all", "summary", "curator_agenda", "verification_queue", "machine_surfaces", ...PULSE_OPS_SECTIONS];
@@ -652,6 +712,18 @@ export const TOOLS = [
         hosted_only: { type: "boolean", description: "Only return hosted remote primary/fallback servers where possible." },
         include_inactive: { type: "boolean", description: "Also consider servers whose status is dead, archived or deprecated. Default false." },
         verbosity: { type: "string", enum: ["compact", "full"], description: "compact (default): one small object per pick in primary/primary_servers and fallback_servers. full: the complete server objects, as before." },
+        constraints: {
+          type: "object",
+          description: "Hard constraints applied before relevance. Also inferred from the brief ('locally', 'without uploading', 'confidential', 'offline', 'no budget', 'free', 'no local install'). Picks that violate one are excluded; if nothing survives, unsatisfied_constraints explains why.",
+          properties: {
+            local_only: { type: "boolean", description: "Only servers with a local install path (stdio or local app)." },
+            no_upload: { type: "boolean", description: "Only local servers with no cloud credential, so media never leaves the machine." },
+            hosted_only: { type: "boolean", description: "Only hosted remote MCP endpoints." },
+            has_shell: { type: "boolean", description: "false means the agent cannot run local processes; implies hosted_only." },
+            free_only: { type: "boolean", description: "Only free or freemium pricing." },
+            os: { type: "string", description: "macos | windows | linux; excludes listings that say they only run elsewhere." },
+          },
+        },
       },
       required: ["brief"],
     },
@@ -931,14 +1003,33 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
     if (name === "recommend_film_mcps") {
       const rec = await loadRecommendations();
       const brief = String(args.brief ?? "").toLowerCase();
-      const hostedOnly = Boolean(args.hosted_only);
+      const constraints = resolveConstraints(args, brief);
+      const hostedOnly = Boolean(constraints.hosted_only);
       // Retired listings leave the shortlist before scoring; a route with no live primary leaves too.
       const live = (slug) => args.include_inactive || isActive(bySlug.get(slug) ?? {});
-      const candidates = (rec.recommendations ?? []).map((r) => ({
+      const liveRoutes = (rec.recommendations ?? []).map((r) => ({
         ...r,
         primary: (r.primary ?? []).filter((p) => live(p.server?.slug)),
         fallback_servers: (r.fallback_servers ?? []).filter((s) => live(s.slug)),
       }));
+      // Hard constraints come before relevance: a pick that cannot run where the
+      // agent is, or costs what the user will not pay, is removed before scoring.
+      const exclusions = new Map();
+      const candidates = liveRoutes.map((r) => {
+        const excluded = [];
+        const keep = (slug) => {
+          const violated = violatedConstraints(bySlug.get(slug) ?? {}, constraints);
+          if (violated.length) excluded.push({ slug, constraint: violated[0] });
+          return !violated.length;
+        };
+        const route = {
+          ...r,
+          primary: r.primary.filter((p) => keep(p.server?.slug)),
+          fallback_servers: r.fallback_servers.filter((s) => keep(s.slug)),
+        };
+        if (excluded.length) exclusions.set(r.id, excluded);
+        return route;
+      });
       const full = args.verbosity === "full";
       const ranked = scoreRecommendations(candidates, brief, hostedOnly)
         .slice(0, 3)
@@ -946,13 +1037,37 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
           const shaped = compactRecommendation(r, bySlug);
           return {
             ...shaped,
+            match: { score: r._score, strength: matchStrength(r._score) },
             // `primary` stays for older callers; compact by default, the full objects on verbosity=full.
             primary: full ? r.primary : shaped.primary_servers,
             ...(full ? { fallback_servers: r.fallback_servers } : {}),
+            ...(exclusions.has(r.id) ? { excluded_by_constraints: exclusions.get(r.id) } : {}),
             ...(needsMartini(r, brief) ? { martini_handoff: martiniHandoff(r, `recommendation:${r.id}`) } : {}),
           };
         });
+      const activeConstraints = Object.fromEntries(Object.entries(constraints).filter(([, v]) => v !== undefined && v !== false && v !== null));
       if (!ranked.length) {
+        // Relevant routes existed but every primary pick broke a constraint: say which, rather than
+        // return a shortlist the agent cannot use.
+        const relevant = scoreRecommendations(liveRoutes, brief, false).slice(0, 3);
+        if (relevant.length && Object.keys(activeConstraints).length) {
+          const unsatisfied = {};
+          for (const r of relevant) for (const x of exclusions.get(r.id) ?? []) (unsatisfied[x.constraint] ??= new Set()).add(x.slug);
+          return {
+            brief: args.brief,
+            no_match: true,
+            constraints: activeConstraints,
+            unsatisfied_constraints: Object.entries(unsatisfied).map(([constraint, slugs]) => ({
+              constraint,
+              value: constraints[constraint],
+              reason: CONSTRAINT_REASONS[constraint],
+              excluded: [...slugs],
+            })),
+            relevant_routes: relevant.map((r) => r.id),
+            message: `The closest routes (${relevant.map((r) => r.id).join(", ")}) only have picks that violate the brief's constraints. Relax a constraint, or use get_film_recommendation to read a route and choose by hand.`,
+            recommendations: [],
+          };
+        }
         const matched = capabilitiesMatching(tokenize(brief, reg, { stopwords: true }), capabilityIndex(servers), reg).slice(0, 5);
         const suggestion = matched.length
           ? `Try search_film_mcps with capability ${matched.map((c) => `'${c}'`).join(" or ")}, or list_film_recommendations to browse routes.`
@@ -960,19 +1075,25 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
         return {
           brief: args.brief,
           no_match: true,
+          ...(Object.keys(activeConstraints).length ? { constraints: activeConstraints } : {}),
           message: `No route in the directory matches this brief. ${suggestion}`,
           ...(matched.length ? { matched_capabilities: matched } : {}),
           recommendations: [],
         };
       }
+      const confidence = ranked[0].match.strength;
       return {
         brief: args.brief,
         hosted_only: hostedOnly,
+        ...(Object.keys(activeConstraints).length ? { constraints: activeConstraints } : {}),
+        confidence,
         source: rec._source,
         recommendations: ranked,
-        note: hostedOnly
-          ? "Hosted-only mode removes local primary/fallback servers when the recommendation data marks a server as non-remote."
-          : "Use get_film_recommendation for one full route, or get_film_mcp for full server detail.",
+        note: confidence === "weak"
+          ? "The brief shares only a word or two with these routes. Treat them as a place to browse, not an answer; search_film_mcps with the job's capability tag may serve better."
+          : hostedOnly
+            ? "Hosted-only mode removes local primary/fallback servers when the recommendation data marks a server as non-remote."
+            : "Use get_film_recommendation for one full route, or get_film_mcp for full server detail.",
       };
     }
 
