@@ -11,7 +11,6 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as T from "./src/templates.mjs";
 import { renderMartiniConnect, renderMartiniConnectMd } from "./src/pages/martini.mjs";
-import { needsMartini, martiniHandoff, MARTINI_CLI } from "./packages/mcp-server/recommend-score.mjs";
 import { martiniHandoff, MARTINI_CLI } from "./packages/mcp-server/recommend-score.mjs";
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
