@@ -855,8 +855,8 @@
       "site": null
     },
     "added": "2026-09-15",
-    "verified": "2026-09-15",
-    "notes": "Verified 2026-09-15 against the repo and npm: MIT, v1.12.0 published 7 Sep 2026, ~23 stars, one maintainer on a personal account created June 2026, repo created July 2026 — young, and the submission came from that maintainer. The npx line is an installer, not the server: it creates ~/.resolve-ai-bridge with a private Python environment, adds the Resolve menu entries and merges MCP config into the clients it detects; the stdio server it registers is a local Python command, with `npx -y davinci-resolve-ai-bridge-mcp --serve` as the alternative. Weigh it against davinci-resolve (2.6k stars, 36 compound tools, also Free-capable since its own in-app bridge shipped) and against Resolve Studio 21.1, whose first-party AI-assistant integration is Studio-only. Read the fine print: the README's live-tested matrix is macOS / Resolve Free 21.0.3.7 / Python 3.14.6 only, Windows and Linux are marked as still needing verification, and Studio-only effects stay Studio-only. FFmpeg is an optional extra download for source-frame capture. Tool names above come from the README's tool table, not a live tools/list."
+    "verified": "2026-10-26",
+    "notes": "Re-checked 2026-10-26 against the repo and npm: MIT, v1.13.0 published 17 Oct 2026 (stackable bridge-owned Fusion effects, a render_status tool and Free-edition delivery checks via project_health), ~37 stars, one maintainer on a personal account created June 2026, repo created July 2026 — still young, and the original submission came from that maintainer. The README's tool table now names 46 tools. The new Fusion effect tools (blur, spotlight, colour fx) are tested only against a simulated Fusion comp, not a live Resolve, by the README's own admission — check results with inspect_fusion. The npx line is an installer, not the server: it creates ~/.resolve-ai-bridge with a private Python environment, adds the Resolve menu entries and merges MCP config into the clients it detects; the stdio server it registers is a local Python command, with `npx -y davinci-resolve-ai-bridge-mcp --serve` as the alternative. Weigh it against davinci-resolve (3.8k stars, 36 compound tools, also Free-capable since its own in-app bridge shipped) and against Resolve Studio 21.1, whose first-party AI-assistant integration is Studio-only. Read the fine print: the README's live-tested matrix is macOS / Resolve Free 21.0.3.7 / Python 3.14.6 only, Windows and Linux are marked as still needing verification, and Studio-only effects stay Studio-only. FFmpeg is an optional extra download for source-frame capture. Tool names above come from the README's tool table, not a live tools/list."
   },
   {
     "slug": "davinci-resolve-studio",
@@ -896,5 +896,62 @@
     "added": "2026-09-20",
     "verified": "2026-09-20",
     "notes": "Listed 20 Sep 2026 after Blackmagic's own release text finally confirmed the feature: the download description for DaVinci Resolve Studio 21.1 (8 Sep 2026) says it 'adds new individual MultiMaster trims on the color page, integration with AI assistants and 20 new scripting APIs with built-in console support', while the free 21.1 description says nothing of the kind — which is the paywall, in the vendor's own words. Read the sourcing carefully before you trust the details. Blackmagic publishes no web setup page, no endpoint and no tool list; the only first-party documentation is the 183 MB Resolve 21.1 Reference Manual PDF linked above, which we confirmed exists but could not read in this environment. The File > Setup AI Assistants menu path, the named clients (Claude, Claude Code, ChatGPT Codex) and the widely repeated figure of 88 tools all come from that manual as reported consistently by trade coverage, not from a page we fetched — verify them in your own copy of Resolve before relying on them. Same caveat on the report that 21.1 moved Python scripting out of the free edition: if that holds, it also undercuts the free-edition workarounds the community servers rely on, so check your Resolve build before assuming those still work. We have no live tools/list, hence a null tools_sample. Practical comparison: davinci-resolve (samuelgursky) is far better documented, covers Resolve 18.5+ including older builds, and is the option if you are not on Studio 21.1; davinci-resolve-ai-bridge is the lighter Free-first alternative. This entry exists because first-party support changes the maintenance risk, not because it is the richer toolset."
+  },
+  {
+    "slug": "chatcut",
+    "name": "ChatCut",
+    "vendor": "ChatCut",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Hosted MCP into ChatCut's browser editor: real multitrack timelines, captions, motion graphics and export.",
+    "description": "ChatCut's first-party server drives its web video editor: an agent lists and creates projects, imports media, edits items on a real timeline, works from the transcript, edits captions and submits exports, while the bundled skills cover motion graphics, music, image generation, avatars and multicam sync. The point for a filmmaker-agent is that the result stays an editable project a human can open and trim, not a flattened render — the plugin's own rules forbid pre-compositing in ffmpeg as the deliverable.",
+    "capabilities": [
+      "timeline-editing",
+      "media-management",
+      "transcription",
+      "captioning",
+      "motion-graphics",
+      "text-to-image",
+      "music-generation",
+      "talking-head",
+      "multicam-sync",
+      "render",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "list_projects",
+      "create_project",
+      "read_project",
+      "import_media",
+      "edit_item",
+      "inspect_item",
+      "manage_timelines",
+      "manage_transcript",
+      "apply_script",
+      "edit_captions",
+      "preview_timeline",
+      "submit_export",
+      "track_export"
+    ],
+    "install": {
+      "claude_code": "claude plugin marketplace add https://github.com/ChatCut-Inc/agent-plugin.git && claude plugin install chatcut@chatcut-inc",
+      "remote_url": "https://api.chatcut.io/api/external-mcp/mcp",
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Browser sign-in with your ChatCut account (claude mcp login plugin:chatcut:chatcut in Claude Code); accounts at https://chatcut.io"
+    },
+    "pricing": "freemium",
+    "links": {
+      "repo": "https://github.com/ChatCut-Inc/agent-plugin",
+      "docs": "https://chatcut.io/docs/agent-plugin",
+      "site": "https://chatcut.io"
+    },
+    "added": "2026-10-26",
+    "verified": "2026-10-26",
+    "notes": "Verified 2026-10-26 against the vendor's plugin repo and docs; we have no account, so no live tools/list — the tool names above come from the plugin's basics skill, not the server. The endpoint and OAuth resource are taken from claude/.claude-plugin/plugin.json (plugin v1.10.23). The intended route is the Claude Code plugin, which also sends ChatCut client headers and loads the skills; a bare claude mcp add against the URL is untested by us. The repo (ChatCut-Inc/agent-plugin, created June 2026, ~980 stars, pushed 26 Oct 2026) is GPL-3.0 per the manifests but carries no LICENSE file, and it holds only the plugin and skills — the server itself is closed. Known friction from the vendor's own docs: tools load only at session start, so open a new session after install or update, and the plugin does not update itself; exports render in a signed-in browser tab that must stay open, cloud video tops out at 1080p, local-only files need a supported import path, and installing ChatCut Desktop on the same machine disables the plugin. Money: free tier caps web export at 60 minutes total; paid plans run $38 to $141 a month (annual) for 200 to 800 credits, and only paid tiers list 'all AI agent editing capabilities' — which agent features work on the free plan is not spelled out. One caution: the vendor's install doc is written as instructions for agents, including proxy-hunting advice; read it before letting an agent run it. Not to be confused with OpenChatCut, an unrelated open-source project."
   }
 ]
