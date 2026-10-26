@@ -146,15 +146,20 @@ const compactPlaybook = (p) => ({
   primary_servers: (p.primary_servers ?? []).map((s) => s.slug),
 });
 
-const compactRecommendation = (r, bySlug) => ({
+// Two sizes: the browse list (list_film_recommendations) names the picks and
+// their roles; the ranked reply (recommend_film_mcps) carries why, verified,
+// status, caveats and the fallbacks for the two or three routes that matter.
+const compactRecommendation = (r, bySlug, { lean = false } = {}) => ({
   id: r.id,
   title: r.title,
   summary: r.summary,
   best_for: r.best_for,
   tags: r.tags,
   url: r.url,
-  primary_servers: (r.primary ?? []).map((p) => compactPick(p, bySlug)),
-  fallback_servers: (r.fallback_servers ?? []).map((f) => compactFallback(f, bySlug)),
+  primary_servers: (r.primary ?? []).map((p) => lean
+    ? withStatus({ slug: p.server?.slug, name: p.server?.name, role: p.role, remote: p.server?.remote, official: p.server?.official }, bySlug?.get(p.server?.slug))
+    : compactPick(p, bySlug)),
+  ...(lean ? {} : { fallback_servers: (r.fallback_servers ?? []).map((f) => compactFallback(f, bySlug)) }),
   playbook: r.playbook,
 });
 
@@ -1209,7 +1214,7 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
         hits = hits.filter((r) => includesAllWords(recommendationHaystack(r), q));
       }
       const { page, meta } = paged(hits, args);
-      return { ...meta, source: rec._source, recommendations: page.map((r) => compactRecommendation(r, bySlug)) };
+      return { ...meta, source: rec._source, recommendations: page.map((r) => compactRecommendation(r, bySlug, { lean: true })) };
     }
 
     if (name === "get_film_recommendation") {

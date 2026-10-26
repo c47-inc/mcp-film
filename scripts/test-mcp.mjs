@@ -81,7 +81,12 @@ for (const [tool, args] of [
   ["list_film_capabilities", {}],
   ["recommend_film_mcps", { brief: "avatar UGC ad with voiceover" }],
   ["get_film_capability", { capability: "text-to-video" }],
+  ["list_film_recommendations", {}],
+  ["plan_film_stack", {}],
 ]) sizes[`${tool}${Object.keys(args).length ? ":" + Object.values(args)[0] : ""}`] = size(await call(tool, args));
+assert.ok(sizes.list_film_recommendations < 25000, `list_film_recommendations is ${sizes.list_film_recommendations} chars`);
+const browseList = await call("list_film_recommendations", {});
+assert.ok(browseList.recommendations.every((r) => !("fallback_servers" in r) && r.primary_servers.every((p) => !("why" in p) && "role" in p)), "the browse list stays lean");
 assert.ok(sizes.search_film_mcps < 20000, `no-arg search_film_mcps is ${sizes.search_film_mcps} chars`);
 assert.ok(sizes.list_film_capabilities < 12000, `list_film_capabilities is ${sizes.list_film_capabilities} chars`);
 const fullSize = size(await call("recommend_film_mcps", { brief: "avatar UGC ad with voiceover", verbosity: "full" }));
