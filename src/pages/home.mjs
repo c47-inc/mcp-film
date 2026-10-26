@@ -11,7 +11,22 @@ export const renderHome = (ctx) => {
       || a.name.localeCompare(b.name)
     )
     .slice(0, 6);
-  const byCat = (id) => servers.filter((s) => s.category === id);
+  // Within a category: official first, then hosted remotes, then name. The registry
+  // itself is alphabetical; the home grid ranks on the signals /about says it ranks on.
+  const byCat = (id) => servers
+    .filter((s) => s.category === id)
+    .sort((a, b) =>
+      Number(Boolean(b.official)) - Number(Boolean(a.official))
+      || Number(Boolean(b.install?.remote_url)) - Number(Boolean(a.install?.remote_url))
+      || a.name.localeCompare(b.name));
+
+  // Progressive disclosure on phones and tablets: every card stays in the HTML (agents and
+  // search engines read all of them); cards past the first six get a class the stylesheet
+  // hides while the section carries `is-collapsed`, and app.js reveals them in place. Without
+  // JS the "Show all" control is a plain link to the category page.
+  const PREVIEW = 6;
+  const rankedCard = (s, i) =>
+    i >= PREVIEW ? card(ctx, s).replace('class="card"', 'class="card card-more"') : card(ctx, s);
 
   const featuredHtml = featured.map((s) => `
   <a class="feature" href="/mcps/${s.slug}/">
@@ -26,19 +41,25 @@ export const renderHome = (ctx) => {
     .map((cat) => {
       const list = byCat(cat.id);
       if (!list.length) return "";
+      // Phones strip every category into one swipeable row, so small ones collapse too;
+      // only categories with more than the preview get the "Show all" control.
+      const collapsible = list.length > 1;
+      const attrs = `${collapsible ? " data-collapsible" : ""}${list.length > PREVIEW ? " data-more" : ""}`;
       return `
-<section class="cat-section" id="${cat.id}" data-cat-section="${cat.id}" data-track-section="directory:${cat.id}">
+<section class="cat-section${collapsible ? " is-collapsed" : ""}" id="${cat.id}" data-cat-section="${cat.id}" data-track-section="directory:${cat.id}"${attrs}>
   <div class="cat-head">
     <h2><a href="/categories/${cat.id}/">${esc(cat.name)}</a></h2>
     <span class="cat-count">${list.length}</span>
     <p class="cat-blurb">${esc(cat.blurb)}</p>
   </div>
-  <div class="grid">${list.map((s) => card(ctx, s)).join("")}</div>
+  <div class="grid">${list.map(rankedCard).join("")}</div>
+  ${list.length > PREVIEW ? `<a class="btn show-more" href="/categories/${cat.id}/" data-show-more>Show all ${list.length}</a>` : ""}
 </section>`;
     })
     .join("");
 
   const body = `
+<script>document.body.classList.add("js")</script>
 <section class="hero">
   <canvas class="hero-canvas" aria-hidden="true"></canvas>
   <div class="hero-inner">
@@ -51,6 +72,16 @@ export const renderHome = (ctx) => {
     <a class="btn" href="/stack/">The AI Film Stack</a>
     <a class="btn" href="/playbooks/">Production playbooks</a>
   </div>
+  <form class="hero-find" role="search" action="/#directory" method="get" aria-label="Find a server">
+    <input type="search" name="q" placeholder="Search ${servers.length} servers" aria-label="Search servers" autocomplete="off">
+    <select aria-label="Jump to a category" data-cat-select>
+      <option value="">All categories</option>
+      ${categories.map((c) => {
+        const n = byCat(c.id).length;
+        return n ? `<option value="${c.id}">${esc(c.short ?? c.name)} (${n})</option>` : "";
+      }).join("")}
+    </select>
+  </form>
   <p class="hero-stats"><span><b>${ctx.servers.length}</b> servers</span><span><b>${ctx.officialCount}</b> official</span><span><b>${ctx.remoteCount}</b> hosted remote</span><span><b>${categories.length}</b> categories</span><span><b>${nice(servers.map((s) => s.verified).sort().at(-1))}</b> last verified</span></p>
   <p class="hero-ticker" data-ticker='${esc(JSON.stringify([
     `registry rebuilt ${nice(ctx.built.slice(0, 10))} · ${ctx.servers.length} servers`,
@@ -77,7 +108,7 @@ export const renderHome = (ctx) => {
     <span class="cat-count">${newest.length}</span>
     <p class="cat-blurb">Freshly verified additions from the latest curator passes. <a href="/pulse/">Open the catalog pulse</a>.</p>
   </div>
-  <div class="grid">${newest.map((s) => card(ctx, s)).join("")}</div>
+  <div class="grid recent-scroller">${newest.map((s) => card(ctx, s)).join("")}</div>
 </section>
 
 <div class="directory" id="directory">

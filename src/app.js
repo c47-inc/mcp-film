@@ -59,9 +59,20 @@
   const quickFilters = [...document.querySelectorAll(".quick-filter[data-quick-filter]")];
   let activeCat = "";
   const activeQuick = new Set();
+  // Sections the reader expanded with "Show all". Collapse state is a class on the section,
+  // separate from `card.hidden` (search/filter), so a query reveals matches past the preview
+  // and "Show all" never fights the filter.
+  const expanded = new WeakSet();
+  const heroFind = document.querySelector(".hero-find");
+  const heroQ = heroFind?.querySelector("input[name='q']");
+  const catSelect = heroFind?.querySelector("[data-cat-select]");
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const jumpToDirectory = () =>
+    document.getElementById("directory")?.scrollIntoView({ block: "start", behavior: reducedMotion ? "auto" : "smooth" });
 
   const applyFilter = () => {
     const q = (search?.value ?? "").trim().toLowerCase();
+    const filtering = Boolean(q || activeCat || activeQuick.size);
     let shown = 0;
     for (const card of cards) {
       const hit =
@@ -74,6 +85,7 @@
     }
     for (const sec of sections) {
       sec.hidden = ![...sec.querySelectorAll(".card")].some((c) => !c.hidden);
+      if ("collapsible" in sec.dataset) sec.classList.toggle("is-collapsed", !filtering && !expanded.has(sec));
     }
     if (noResults) {
       noResults.hidden = shown > 0;
@@ -98,7 +110,44 @@
     activeQuick.clear();
     filters.forEach((b) => b.classList.toggle("is-on", b.dataset.filter === ""));
     quickFilters.forEach((b) => { b.classList.remove("is-on"); b.setAttribute("aria-pressed", "false"); });
+    if (catSelect) catSelect.value = "";
     applyFilter();
+  });
+
+  // "Show all N" reveals the rest of a category in place; without JS it is a category link.
+  for (const btn of document.querySelectorAll("[data-show-more]")) {
+    btn.addEventListener("click", (e) => {
+      const sec = btn.closest("[data-cat-section]");
+      if (!sec) return;
+      e.preventDefault();
+      expanded.add(sec);
+      sec.classList.remove("is-collapsed");
+      ph("mcpfilm_show_more", { category: sec.dataset.catSection, page: document.body.dataset.page, path: location.pathname });
+    });
+  }
+
+  // Hero find (phones and tablets): mirrors into #search so one filter owns the grid, and
+  // takes the reader to the directory on submit or category pick.
+  if (heroQ && search) {
+    heroQ.addEventListener("input", () => { search.value = heroQ.value; applyFilter(); });
+    search.addEventListener("input", () => { heroQ.value = search.value; });
+    heroFind.addEventListener("submit", (e) => {
+      e.preventDefault();
+      search.value = heroQ.value;
+      applyFilter();
+      ph("mcpfilm_search_submit", {
+        query: heroQ.value.trim().slice(0, 100),
+        page: document.body.dataset.page,
+        path: location.pathname,
+        placement: "hero",
+      });
+      jumpToDirectory();
+    });
+  }
+  catSelect?.addEventListener("change", () => {
+    const target = filters.find((b) => b.dataset.filter === catSelect.value);
+    if (target) target.click();
+    jumpToDirectory();
   });
 
   let searchTimer;
@@ -130,7 +179,7 @@
     search.addEventListener("input", applyFilter);
     // support /?q= deep links (also the schema.org SearchAction target)
     const q = new URLSearchParams(location.search).get("q");
-    if (q) { search.value = q; applyFilter(); }
+    if (q) { search.value = q; if (heroQ) heroQ.value = q; applyFilter(); }
     document.addEventListener("keydown", (e) => {
       if (e.key === "/" && document.activeElement !== search && !e.metaKey && !e.ctrlKey) {
         e.preventDefault();
@@ -144,6 +193,7 @@
     btn.addEventListener("click", () => {
       activeCat = btn.dataset.filter;
       filters.forEach((b) => b.classList.toggle("is-on", b === btn));
+      if (catSelect) catSelect.value = activeCat;
       applyFilter();
       ph("mcpfilm_filter", { category: activeCat || null, quick: [...activeQuick], results: cards.filter((c) => !c.hidden).length });
     });
