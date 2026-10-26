@@ -576,12 +576,16 @@
     const dpr = Math.min(devicePixelRatio || 1, 2);
     const GAP = 26, RADIUS = 130;
     let dots = [], px = -1e4, py = -1e4, raf = null;
+    // dot colour follows the stylesheet (light: near-black, dark: near-white)
+    const dotColor = () => getComputedStyle(document.documentElement).getPropertyValue("--canvas-dot").trim() || "#0d0d0d";
+    let fill = dotColor();
+    matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => { fill = dotColor(); queue(); });
     const draw = () => {
       raf = null;
       const w = canvas.width / dpr, h = canvas.height / dpr;
       g.setTransform(dpr, 0, 0, dpr, 0, 0);
       g.clearRect(0, 0, w, h);
-      g.fillStyle = "#0d0d0d";
+      g.fillStyle = fill;
       for (const [x, y] of dots) {
         const t = Math.max(0, 1 - Math.hypot(x - px, y - py) / RADIUS);
         g.globalAlpha = 0.045 + t * 0.12;

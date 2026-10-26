@@ -29,6 +29,50 @@
   --focus-ring: rgba(0, 0, 0, 0.06);
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05), 0 8px 24px -8px rgba(0, 0, 0, 0.08);
+  --head-bg: rgba(255, 255, 255, 0.92);
+  --band-code-bg: #000000;
+  --band-code-ink: #c9c9cf;
+  --amber: #a16207;
+  --red: #b91c1c;
+  --canvas-dot: #0d0d0d;
+  color-scheme: light;
+}
+
+/* Dark: the same system with paper and ink swapped. The inverse band flips to light so
+   the page keeps its one high-contrast moment. Logos keep a light tile so marks drawn
+   for white backgrounds stay legible. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0c0c0e;
+    --paper-dim: #121215;
+    --fill: #1b1b20;
+    --ink: #f2f2f4;
+    --ink-hover: #d9d9de;
+    --ink-2: #b6b6bf;   /* 9.6:1 on paper */
+    --ink-3: #8f8f9a;   /* 5.6:1 on paper */
+    --hairline: #24242a;
+    --hairline-2: #34343c;
+    --line-strong: #6f6f7a; /* 3.5:1 on paper */
+    --code-bg: #121215;
+    --inverse: #f4f4f6;
+    --inverse-2: #e9e9ed;
+    --inverse-ink: #0c0c0e;
+    --inverse-dim: #4f4f5a;
+    --inverse-line: #d2d2d8;
+    --green: #4ade80;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --focus-ring: rgba(255, 255, 255, 0.08);
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 24px -8px rgba(0, 0, 0, 0.6);
+    --head-bg: rgba(12, 12, 14, 0.9);
+    --band-code-bg: #ffffff;
+    --band-code-ink: #3a3a44;
+    --canvas-dot: #f2f2f4;
+    color-scheme: dark;
+  }
+  img.avatar { background: #f4f4f6; }
+  .feature-name img.avatar { background: #ffffff; }
 }
 
 * { box-sizing: border-box; }
@@ -107,7 +151,7 @@ code {
   display: flex; align-items: center; justify-content: space-between; gap: 1rem;
   padding: 0 clamp(1.25rem, 4vw, 2.5rem);
   height: 57px;
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--head-bg);
   backdrop-filter: blur(12px) saturate(1.5);
   border-bottom: 1px solid transparent;
   transition: border-color 0.25s ease;
@@ -126,11 +170,11 @@ code {
   transition: background 0.12s, color 0.12s;
 }
 .site-nav a:hover { color: var(--ink); background: var(--fill); }
-.nav-cta {
+.site-head .nav-cta {
   color: var(--paper); background: var(--ink); margin-left: 6px;
   padding: 6px 14px; border-radius: 999px;
 }
-.nav-cta:hover { background: var(--ink-hover); color: var(--paper); }
+.site-head .nav-cta:hover { background: var(--ink-hover); color: var(--paper); }
 .nav-gh { color: var(--ink-3); }
 .head-search { flex: 0 0 168px; }
 [data-page="home"] .head-search { display: none; }
@@ -318,8 +362,8 @@ h1 {
 .agent-callout a { color: var(--inverse-ink); text-decoration-color: var(--inverse-line); }
 .agent-callout pre {
   margin: 0.25rem 0; padding: 0.75rem 0.95rem;
-  background: #000; border: 1px solid var(--inverse-line); border-radius: var(--r-sm);
-  overflow-x: auto; color: #c9c9cf; font-size: 12px;
+  background: var(--band-code-bg); border: 1px solid var(--inverse-line); border-radius: var(--r-sm);
+  overflow-x: auto; color: var(--band-code-ink); font-size: 12px;
   font-family: var(--mono);
 }
 /* phones: the band is one compact row — disclosure, name, tagline, link — and the
@@ -637,8 +681,8 @@ img.avatar { object-fit: cover; background: var(--paper); }
   width: 7px; height: 7px; border-radius: 50%;
   background: var(--green); flex-shrink: 0;
 }
-.verify-watch span { background: #a16207; }
-.verify-due span { background: #b91c1c; }
+.verify-watch span { background: var(--amber); }
+.verify-due span { background: var(--red); }
 .verify-list {
   margin: 0; padding: 0;
   display: flex; flex-direction: column; gap: 3px;
