@@ -20,6 +20,12 @@
     "links": { "repo": "https://github.com/elevenlabs/elevenlabs-mcp", "docs": "https://elevenlabs.io/mcp", "site": "https://elevenlabs.io" },
     "added": "2026-06-11",
     "verified": "2026-09-17",
+    "caveats": [
+      "The local stdio server is archived (read-only since 16 Sep 2026); it still runs but is frozen and will not get new models.",
+      "The hosted endpoint's creative tools are still rolling out and the vendor contradicts itself, so run tools/list against your workspace first.",
+      "Hosted output lands in an ElevenCreative workspace rather than local files, a real difference if ffmpeg is the next step.",
+      "Credits are consumed by every tool; on the local path ELEVENLABS_MCP_BASE_PATH is a hard boundary for input as well as output files."
+    ],
     "notes": "This entry flipped to the hosted endpoint in September 2026, and the reason is blunt: ElevenLabs archived the local server. github.com/elevenlabs/elevenlabs-mcp is read-only as of 16 Sep 2026 (1.5k stars, last push 20 Aug, MIT) — PyPI elevenlabs-mcp 0.12.2 from 4 Aug 2026 still installs and still runs, so the stdio command above is not broken, but it is frozen and will not get new models. Two days before archiving it, on 14 Sep 2026, ElevenLabs extended the OAuth endpoint to ElevenCreative: speech, Scribe transcription across 99 languages, dubbing, music, sound effects, and 50+ image and video models, in Claude, ChatGPT and Cursor. Treat that as rolling out rather than finished, because the vendor contradicts itself — the hosted-MCP reference docs still describe agent management (create, duplicate, inspect, cost agents) plus a single text-to-speech tool, and elevenlabs.io/mcp still prints 'creative tools coming soon' three days after the announcement. Run tools/list against your own workspace before you plan a pipeline on it. The tools_sample above was verified against the local server, not the remote. Hosted output lands in an ElevenCreative workspace instead of coming back as local files, which is a real pipeline difference if you were shelling out to ffmpeg next. Regional endpoints exist (api.us, plus EU, India and Singapore variants) and workspace admins can restrict tool access and data residency. Credits are consumed by every tool either way. On the archived local path: ELEVENLABS_MCP_BASE_PATH (default ~/Desktop) is a hard security boundary for input files as well as output — any local path a tool reads must resolve inside it, so point it at your media root or reads will be rejected; other env is ELEVENLABS_MCP_OUTPUT_MODE (files/resources/both, default files) and ELEVENLABS_API_RESIDENCY (enterprise-only)."
   },
   {
@@ -43,6 +49,12 @@
     "links": { "repo": "https://github.com/cartesia-ai/cartesia-mcp", "docs": "https://docs.cartesia.ai/tools/ai/mcp", "site": "https://www.cartesia.ai" },
     "added": "2026-06-11",
     "verified": "2026-09-22",
+    "caveats": [
+      "There is no audio infill tool, so do not plan an ADR patch workflow around it; the count is 18 tools, not the 20 the README claims.",
+      "The local uvx route needs Python 3.13+, which breaks older pinned toolchains.",
+      "get_credit_usage needs a separate CARTESIA_ADMIN_API_KEY, and TTS download URLs expire in 24 hours.",
+      "The repo carries no LICENSE file."
+    ],
     "notes": "The August caveat is gone: OAuth discovery now works. /.well-known/oauth-authorization-server returns 200 on 22 Sep 2026 with an authorization-code + PKCE (S256) flow, dynamic client registration and an `mcp` scope, so standards-compliant clients complete the handshake; /.well-known/oauth-protected-resource is still a 404, which is the older half of the spec and matters only to clients that insist on it. The endpoint itself answers 401 unauthenticated. Development restarted hard — PyPI cartesia-mcp 0.22.3 shipped 21 Sep 2026 (was 0.19.0 in August), with voice accent attach/detach tools in 0.21.0, rate limiting and session capping on the hosted transport in 0.20.0–0.22.2, and a python-multipart CVE bump on 9 Sep. The README now recommends hosted over local. Tool count is 18, counted in cartesia_mcp/server.py, not the 20 the README claims; still no audio `infill`, so do not plan an ADR patch workflow around it. Local route: `claude mcp add -e CARTESIA_API_KEY=<your-api-key> cartesia-mcp -- uvx cartesia-mcp`, needing Python 3.13+, which uvx will fetch and which breaks older pinned toolchains. Repo still carries no LICENSE file and still only ~14 stars despite being first-party. get_credit_usage needs a separate CARTESIA_ADMIN_API_KEY; admin and standard keys are not interchangeable. TTS defaults to save=true, returning a file_id and a download_url that expires in 24 hours."
   },
   {
@@ -66,6 +78,12 @@
     "links": { "repo": null, "docs": "https://docs.fish.audio/overview/mcp", "site": "https://fish.audio" },
     "added": "2026-09-26",
     "verified": "2026-10-26",
+    "caveats": [
+      "Hosted only and closed source, and the tool names come from the announcement and docs, not a live tools/list.",
+      "Every image or video job is quote, approve, then submit, and the server reprices at submission; if the price moved, quote again.",
+      "Video, lip sync and avatars need Plus or higher, and the free tier is personal, non-commercial use only.",
+      "Generated outputs come back as permanent URLs, so assume anything you generate is reachable by link."
+    ],
     "notes": "Hosted only and closed source — no npm or PyPI package, no public server repo. Re-checked 2026-10-26: endpoint, Claude Code line and OAuth unchanged, but the surface grew. Correction to the earlier note here: Fish Audio's 7 Oct 2026 announcement adds image upscaling, lip sync and talking avatars, and the docs now list voice cloning, Story Studio (studio_generate, studio_export), an asset library and account tools. Lip sync and avatars run through generate_video rather than tools of their own. The tool names above come from that post and the docs page, not a live tools/list. Every image or video job goes discover, free estimate, your approval, then submit; the server reprices at submission and rejects the job if the price moved, so the agent has to quote again. Failed generations are refunded. Billing draws from your plan's package credits, not developer API credits; speech is 1 credit per UTF-8 byte and is charged on run with no quote. Video, lip sync and avatars need Plus ($11/mo promo, $15 list) or higher, Story Studio export needs a paid plan, and Fish publishes no fixed media price list — the estimate is the price; the free tier gets a daily image allowance and is personal, non-commercial use only, so anything headed for a paying client needs a paid plan. Connections are scoped to one team. Local files sent for transcription are uploaded to a temporary slot deleted after 7 days; generated outputs come back as permanent URLs, so assume anything you generate is reachable by link. Do not confuse it with Fish Audio's separate read-only docs MCP at docs.fish.audio/mcp, or with the community wrappers (da-okazaki/mcp-fish-audio-server, AceDataCloud/FishMCP), which are not maintained by Fish Audio."
   },
   {
@@ -89,6 +107,12 @@
     "links": { "repo": "https://github.com/HumeAI/mcp-server-hume", "docs": "https://dev.hume.ai/docs/text-to-speech-tts/mcp-server", "site": "https://www.hume.ai" },
     "added": "2026-06-11",
     "verified": "2026-09-22",
+    "caveats": [
+      "Effectively dormant: npm 0.3.0 dates from Jan 2026 and main has had no real commit since.",
+      "TTS only, with five tools, so pair it with something else for SFX and transcription.",
+      "dev.hume.ai/_mcp/server is a separate docs-search MCP that will not synthesize a line of dialogue.",
+      "Set --workdir or audio lands in the system temp directory; EMBEDDED_AUDIO_MODE returns audio inline for clients without filesystem reach."
+    ],
     "notes": "Official but effectively dormant, and the gap keeps widening: npm @humeai/mcp-server is still 0.3.0, published 8 Jan 2026 — over eight months with no release. The GitHub repo reports a push on 26 Aug 2026, but that is not the default branch: the newest commit on main is still 'bump v (#17)' from 8 Jan 2026, so read the push date as branch noise, not maintenance. ~9 stars, 3 open issues, no LICENSE file in the tree even though npm metadata declares ISC. Hume's docs site also serves a separate MCP at https://dev.hume.ai/_mcp/server, but that is Mintlify documentation search (one searchDocs tool) — it will not synthesize a line of dialogue, so do not wire it in expecting Octave. Five tools — a much narrower surface than ElevenLabs or Cartesia, and TTS-only, so pair it with something else for SFX and transcription. Set --workdir/-w (or WORKDIR) or audio lands in the system temp directory under /hume-tts; local playback wants ffplay or another CLI player on PATH. EMBEDDED_AUDIO_MODE (default false) returns audio inline instead, which is what you want in a client that cannot reach your filesystem."
   },
   {
@@ -112,6 +136,11 @@
     "links": { "repo": "https://github.com/allvoicelab/AllVoiceLab-MCP", "docs": "https://github.com/allvoicelab/AllVoiceLab-MCP#readme", "site": "https://www.allvoicelab.com" },
     "added": "2026-06-29",
     "verified": "2026-09-23",
+    "caveats": [
+      "Frozen: PyPI 0.0.5 and the repo have not moved since Aug 2025.",
+      "Region matters: mismatching the key to the API domain (.com global, .cn mainland) surfaces as tool unavailable, not an auth error.",
+      "Requires Python 3.11+ and paid credits, and renders land in your home directory unless ALLVOICELAB_BASE_PATH is set."
+    ],
     "notes": "The stale one in this category, and a month staler than last time: re-checked 23 Sep 2026, PyPI allvoicelab-mcp is still pinned at 0.0.5 from 1 Aug 2025 and the repo is still last pushed 5 Aug 2025 — thirteen months without a commit, now 61 stars, still MIT. The seven tools and both API domains are unchanged, so it is official and correct rather than maintained; treat the pin as frozen. Region matters: global keys use https://api.allvoicelab.com, mainland-China keys use https://api.allvoicelab.cn, and mismatching key to domain surfaces as a 'tool unavailable' error rather than an auth failure. Requires Python >=3.11 (PyPI metadata; the README does not say so) and paid credits. Renders land in your home directory unless you set ALLVOICELAB_BASE_PATH — point it at the shot folder before a dubbing pass or you will be hunting for files."
   },
   {
@@ -136,6 +165,12 @@
     "links": { "repo": "https://github.com/AceDataCloud/SunoMCP", "docs": null, "site": "https://platform.acedata.cloud" },
     "added": "2026-06-11",
     "verified": "2026-09-24",
+    "caveats": [
+      "Suno has no official public API, so this reseller wrapper is plausibly against Suno's ToS and no commercial-rights claim can be guaranteed.",
+      "For music you can actually clear, prefer Sonilo, Lyria (Google GenMedia) or Stable Audio via the fal hub.",
+      "SUNO_DEFAULT_MODEL still defaults to chirp-v5-5, so set a v6 id explicitly and call suno_list_models.",
+      "Renders are slow (the timeout is 1800s), and the unprefixed tool names in the lower half of the README are out of date."
+    ],
     "notes": "Suno still has NO official public API as of late September 2026 — its CPO posted an intake form in July 2026 saying the company is only exploring a developer API, partner-curated, with no public endpoints, docs or date. So this and every other Suno wrapper is an unofficial reseller, plausibly against Suno's ToS, and no commercial-rights claim on the output can be guaranteed. Same for all Udio wrappers. For music you can actually clear, prefer Sonilo, Lyria (Google GenMedia) or Stable Audio via the fal hub. Mechanically it is alive and moving: PyPI mcp-suno 2026.9.9.0 shipped 9 Sep 2026 — the same day Suno launched its v6 family — adding chirp-v6, chirp-v6-wild and chirp-v6-mini, plus new custom-model tools; MIT, 55 stars, roughly 35–40 suno_-prefixed tools. Trap: SUNO_DEFAULT_MODEL still defaults to chirp-v5-5 in both README and source, so set it to a v6 id explicitly if you want the current model, and call suno_list_models rather than trusting any list. SUNO_REQUEST_TIMEOUT is 1800s, because renders are slow. The older unprefixed tool names in the lower half of the README are out of date."
   },
   {
@@ -159,6 +194,12 @@
     "links": { "repo": "https://github.com/SkyworkAI/Mureka-mcp", "docs": "https://platform.mureka.ai/docs/en/quickstart.html", "site": "https://platform.mureka.ai" },
     "added": "2026-06-29",
     "verified": "2026-09-24",
+    "caveats": [
+      "Effectively abandoned as a package: PyPI 0.0.13 and the last commit are from May 2025, with an unreviewed PR about a missing httpx dependency.",
+      "Only four tools; the wider Mureka API has since grown stems, remix and TTS that this MCP does not expose.",
+      "TIME_OUT_SECONDS defaults to 60, far too short for a full song, so raise it before any production run.",
+      "Audio saves to $HOME/Desktop unless MUREKA_MCP_BASE_PATH is set, and credits are required."
+    ],
     "notes": "Official and MIT, but effectively abandoned as a package: PyPI mureka-mcp 0.0.13 and the last repo commit are both 13 May 2025 — sixteen months untouched at 116 stars. Community PRs are piling up unreviewed, including one opened 27 Aug 2026 to declare the missing httpx dependency and pin mcp to v1 — a hint that a fresh uvx install may resolve dependencies the code was never tested against. The wider Mureka API has since grown prompt-to-song, soundtrack, stems, remix, region editing and TTS endpoints; this MCP still exposes only four tools. Credits required. Confirmed in the source: audio saves to $HOME/Desktop unless MUREKA_MCP_BASE_PATH is set, and TIME_OUT_SECONDS defaults to 60 — far too short for a full song, so raise it (the README's own example uses 300) before any production run."
   },
   {
@@ -182,6 +223,12 @@
     "links": { "repo": "https://github.com/sonilo-ai/sonilo-mcp", "docs": "https://github.com/sonilo-ai/sonilo-mcp#readme", "site": "https://sonilo.com" },
     "added": "2026-08-18",
     "verified": "2026-09-24",
+    "caveats": [
+      "Commercial-use rights are plan-gated to Pro and above; Free and Creator output is personal use only.",
+      "Hard limits: video-to-music up to 360s, video-to-SFX up to 480s, dubbing up to 300s, uploads typically 300 MB.",
+      "Billing is per second generated with a couple of free runs per tool, except dubbing, which bills from the first call.",
+      "The licensed-training-data claim is Sonilo's, not independently audited, and there is no hosted remote."
+    ],
     "notes": "MIT, Python >=3.10, PyPI sonilo-mcp 0.27.0 shipped 19 Sep 2026 — 47 releases since mid-July, so it is the fastest-moving music server in this directory, at 53 stars and listed in the official MCP registry. The roster keeps growing: video_to_sound and video_to_video_sound (music plus effects in one pass), video_to_video_sfx and a proofread tool for dubbing scripts have joined the tools sampled here. Set SONILO_API_KEY or run `sonilo login` from the sonilo-cli npm package first; the server has no hosted remote. Read the licensing page before you deliver: commercial-use rights are plan-gated to Pro, Premium, Enterprise and 'eligible API users' — Free and Creator output is personal use only — and Sonilo states plainly that those rights 'do not remove every copyright, platform, client, or broadcast review'. The training-data claim is Sonilo's, not independently audited. Hard limits per the current README: video-to-music up to 360s, video-to-SFX up to 480s, dubbing up to 300s, uploads typically 300 MB; output lands in ~/Desktop unless SONILO_MCP_BASE_PATH is set, and TIME_OUT_SECONDS defaults to 600. Inputs: H.264/HEVC/VP9/AV1 in mp4/mov/m4v/webm. Billing is per second generated with a couple of free runs per tool, except dubbing, which bills from the first call."
   },
   {
@@ -206,6 +253,12 @@
     "links": { "repo": null, "docs": "https://developers.epidemicsite.com/docs/mcp/", "site": "https://www.epidemicsound.com/blog/mcp-server/" },
     "added": "2026-08-23",
     "verified": "2026-10-02",
+    "caveats": [
+      "Still beta, and every tool was renamed to PascalCase in Oct 2026, so update any saved prompts.",
+      "Keys are personal, cannot be shared and expire after a year; OAuth is restricted to Claude and Cursor.",
+      "Rights follow your Epidemic Sound plan, not the API, so confirm the subscription covers commercial use before you deliver an ad.",
+      "No published rate limits."
+    ],
     "notes": "Hosted Streamable HTTP and still labelled beta. Re-checked 2 Oct 2026, and the docs changed underneath this entry: every tool was renamed to PascalCase (search_music is now SearchRecordings, and so on — update any saved prompts), the count went from twelve to sixteen with an EditRecording/PollEditRecordingJob/DownloadRecordingEdit trio that adapts a track to a target duration, and API keys are now self-serve from your account's API Keys page rather than gated behind a partnership agreement. Keys are personal, cannot be shared, and expire after a year. OAuth uses Dynamic Client Registration but is restricted to vetted clients — the docs name Claude (Desktop and Code) and Cursor and say Epidemic Sound will not add redirect URIs on request, so anything else needs a key. The MCP docs say nothing about licensing; rights follow your Epidemic Sound plan, not the API, so confirm the subscription covers commercial use before you deliver an ad. No published rate limits. Use it where cleared recordings beat generated score; for generative alternatives see the ElevenLabs, Mureka and Sonilo entries."
   },
   {
@@ -229,6 +282,12 @@
     "links": { "repo": "https://github.com/js713-lab/sonic-match-mcp", "docs": "https://github.com/js713-lab/sonic-match-mcp#readme", "site": null },
     "added": "2026-09-23",
     "verified": "2026-09-23",
+    "caveats": [
+      "The built-in catalogue is 22 seed tracks with null preview and download URLs; the useful setup is your own licensed Artlist or Epidemic manifest.",
+      "Not on PyPI, so every install path is a git checkout; one maintainer, first public release Sep 2026.",
+      "Platform URL ingest via yt-dlp ships off for ToS reasons, so feed it local files.",
+      "A CC label is not a Content ID waiver, and CC-BY still needs attribution in your credits."
+    ],
     "notes": "Young and thin, listed for the shape of the idea rather than the catalogue behind it. Checked 23 Sep 2026: MIT, first public release 10 Sep 2026, one v0.2.0 tag, last commit 16 Sep, a single maintainer, 94 stars against zero forks — and published to the official MCP registry as io.github.js713-lab/sonicmatch-mcp with an .mcpb bundle. Not on PyPI, so every install path is a git checkout; the twelve tools above were read off the source, not just the README. The built-in catalogue is 22 seed tracks whose preview and download URLs are null on purpose, so out of the box recommend_bgm hands you rows you cannot fetch and preview_mix synthesises a demo bed instead of real music — the useful configuration is your own licensed Artlist or Epidemic manifest, or the optional Jamendo and Freesound keys. Platform URL ingest via yt-dlp ships off by default for ToS reasons; leave it off and feed it local files. The licensing discipline is the best thing here — non-commercial tracks are never auto-recommended and generated beds are excluded from recommendations — but a CC label is not a Content ID waiver, and CC-BY still needs attribution in your credits. For a cleared catalogue with the rights already settled, the Epidemic Sound entry is the grown-up option; Sonicmatch is the analysis layer you would put in front of it."
   },
   {
@@ -252,6 +311,12 @@
     "links": { "repo": null, "docs": "https://mirelo.ai/mcp", "site": "https://mirelo.ai" },
     "added": "2026-08-23",
     "verified": "2026-10-03",
+    "caveats": [
+      "Billed against Mirelo Studio credits, so the account needs balance; call the preflight estimate first.",
+      "Music and multi-stem generation are not in MCP v1, and result download links are temporary.",
+      "In Claude, file uploads fail until studio-project-assets.s3.eu-central-1.amazonaws.com is allowlisted under Settings > Capabilities.",
+      "Tool names are not published, so call tools/list."
+    ],
     "notes": "Announced 30 Jul 2026; hosted endpoint still answering with a 401 challenge on 3 Oct 2026, install command unchanged. Billed against the same Studio credits as the Mirelo web app, so it needs an account with balance — the preflight tool is worth calling first. Limits Mirelo states outright: music generation and multi-stem generation are not exposed in MCP v1, and result download links are temporary, so an agent that generates without saving loses the take. In Claude (web and Desktop), file uploads fail until you allowlist studio-project-assets.s3.eu-central-1.amazonaws.com under Settings → Capabilities — the usual reason a video-to-SFX call never sees the clip. Documented clients are Claude, Claude Code, Cursor, Codex and ChatGPT; Codex has its own `codex mcp add mirelo --url https://mcp.mirelo.ai/mcp` plus `codex mcp login mirelo`. Tool names are not published — call tools/list. Closest comparisons here are ElevenLabs text_to_sound_effects and Sonilo's video_to_sfx; Mirelo is the narrower specialist, and region-level inpainting is the thing neither of those offers."
   },
   {
@@ -275,6 +340,12 @@
     "links": { "repo": "https://github.com/bonfire-systems/reaper-mcp", "docs": "https://github.com/bonfire-systems/reaper-mcp#readme", "site": "https://www.reaper.fm" },
     "added": "2026-08-11",
     "verified": "2026-09-27",
+    "caveats": [
+      "A fresh pip install reaper-mcp-server resolves an SDK the 0.1.1 release was not written for and should fail at import; install from source.",
+      "reaper-mcp on PyPI is an unrelated project by a different author.",
+      "Two-stage setup: enable REAPER's distant API by running scripts/enable_reapy.py from Actions > Run ReaScript, then restart REAPER.",
+      "REAPER itself is a paid licence after evaluation, and the analysis tools pull in librosa, numpy and soundfile."
+    ],
     "notes": "Install friction is the story, and it got worse. The PyPI release, `reaper-mcp-server` 0.1.1 (27 Mar 2026, still the only version since), imports `mcp.server.fastmcp` and declares an unbounded `mcp>=1.0.0`. The repo's own port commit (merged 23 Aug 2026) says mcp 2.0 removed that module, and PyPI's current mcp is 2.2.0. So a fresh `pip install reaper-mcp-server` resolves an SDK the release was not written for, and it should fail at import. Install from source, where the server now targets mcp 2.x. Pinning `mcp<2` next to the PyPI package is the untested fallback. The same port also serialises tool calls, because parallel calls under mcp 2.x interleaved on reapy's single socket. Don't confuse the names either: `reaper-mcp` on PyPI is an unrelated project by a different author (nbdy). Setup is two-stage: the server talks to REAPER through python-reapy, which needs REAPER's distant API switched on by running `scripts/enable_reapy.py` via Actions > Run ReaScript and then restarting REAPER. MIT, Python >=3.10, ~143 stars, classified Alpha on PyPI. The repo was last pushed 23 Aug 2026 after two quiet months: alive, but not busy. REAPER itself is a paid licence after its evaluation period, and pulls in librosa, numpy and soundfile for the analysis tools."
   },
   {
@@ -298,6 +369,12 @@
     "links": { "repo": "https://github.com/ahujasid/ableton-mcp", "docs": "https://github.com/ahujasid/ableton-mcp#readme", "site": "https://www.ableton.com" },
     "added": "2026-08-11",
     "verified": "2026-09-26",
+    "caveats": [
+      "After the install script, you must still select AbletonMCP as a Control Surface under Settings > Link, Tempo & MIDI.",
+      "Anonymous telemetry is on by default; set ABLETON_MCP_DISABLE_TELEMETRY=true, and leave the dataset-recording mode unset.",
+      "Long arrangements time out and reading notes back out of existing clips is unreliable, so save your set first.",
+      "Run only one instance of the server across your clients; needs a licensed Live 10 or newer."
+    ],
     "notes": "By Siddharth Ahuja, the maintainer of Blender MCP already listed in this directory — the same architecture, and a fair maintenance signal rather than an endorsement: MIT, PyPI ableton-mcp 1.4.5 (22 Sep 2026, after 1.3.9 and 1.4.0 in late August), ~3.1k stars, repo pushed 22 Sep 2026. The Remote Script ships inside the package and `uvx --from ableton-mcp ableton-mcp-install-script` writes it into Live's MIDI Remote Scripts directory for you. You still have to select AbletonMCP as a Control Surface under Settings > Link, Tempo & MIDI with Input and Output set to None. Run only one instance of the server across your clients. Anonymous telemetry is on by default — set ABLETON_MCP_DISABLE_TELEMETRY=true to turn it off; a separate dataset-recording mode is opt-in via ABLETON_MCP_ENABLE_DATASET=true, so leave that unset on client sessions. Known limits: long arrangements time out and must be broken into smaller prompts, it works best with Live's stock devices, and reading notes back out of existing clips is unreliable. Save your set first."
   },
   {
@@ -321,6 +398,12 @@
     "links": { "repo": "https://github.com/johnkimdw/freesound-mcp-server", "docs": null, "site": "https://freesound.org" },
     "added": "2026-06-11",
     "verified": "2026-09-26",
+    "caveats": [
+      "Search only: it returns preview URLs, not downloads, so a separate fetch step is on you.",
+      "No PyPI release, so clone and build; nobody has pushed to it since Jun 2025.",
+      "The README's API-key link 404s; the working one is freesound.org/apiv2/apply/.",
+      "Licences are per-sound and include CC-BY and non-commercial terms, so read each one before it goes in a film."
+    ],
     "notes": "MIT, ~7 stars, last pushed 24 Jun 2025 and still untouched on 26 Sep 2026 — listed because it is the tidiest option for a library nothing else covers, not because anyone is maintaining it. Search-only: it returns preview URLs, not downloads, so a separate fetch step is still on you. The README's API-key link (freesound.org/api/apply/) 404s; the working one is freesound.org/apiv2/apply/, which bounces you through a Freesound login first. No PyPI release: clone and build. The alternatives are no healthier — MuShan-bit/freesound-mcp adds download by sound ID (1 star, Jan 2026) and timjrobinson/FreesoundMCPServer is Node.js (2 stars, Jul 2025). Freesound licences are per-sound and include CC-BY and non-commercial terms — read each one before it goes in a film."
   },
   {
@@ -344,6 +427,10 @@
     "links": { "repo": "https://github.com/peerjakobsen/audiogen-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
     "verified": "2026-09-28",
+    "caveats": [
+      "Apple Silicon only, Python 3.9 to 3.11, about 4GB of weights and 8GB RAM, with a manual install order because xformers will not build.",
+      "Frozen since Jan 2026 and well behind cloud SFX quality; come here only when the audio must not leave the machine."
+    ],
     "notes": "The weakest entry in this category and listed only for the offline use case, and re-checked unchanged on 28 Sep 2026: PyPI audiogen-mcp 0.2.1 and repo both frozen at 25 Jan 2026 — eight months without a commit — still one star, still MIT. Apple Silicon only, Python 3.9-3.11 (audiocraft does not support 3.12+), needs ffmpeg, ~4GB of disk for weights and ~8GB RAM. The install ordering is manual because xformers will not build on Apple Silicon. For quality, prefer ElevenLabs text_to_sound_effects or CassetteAI SFX via the fal MCP; come here only when the audio must not leave the machine."
   },
   {
@@ -367,6 +454,12 @@
     "links": { "repo": "https://github.com/kanaworksai-hue/audio-studio-mcp", "docs": "https://github.com/kanaworksai-hue/audio-studio-mcp#readme", "site": "https://kanaworksai-hue.github.io/audio-studio-mcp/" },
     "added": "2026-10-23",
     "verified": "2026-10-23",
+    "caveats": [
+      "Five days old at listing, so launch-week attention is not a track record; one maintainer and no PyPI package.",
+      "Apple Silicon (16 GB RAM recommended) or Windows with an 8 GB+ NVIDIA GPU; Linux is untested and Intel Macs and AMD GPUs are unsupported.",
+      "Instrumental only, with no vocals or lyrics, and timing cues like a climax at 15 s are not reliably followed.",
+      "Outputs fall under the Stability AI Community License, which allows free commercial use only below US$1M annual revenue."
+    ],
     "notes": "Five days old when listed: the repo was created 18 Oct 2026 and reached v0.2.2 on 22 Oct with 447 stars and 33 forks, so the star count is launch-week attention, not a track record. MIT, one maintainer, no PyPI package — install is a clone plus installer script. Hardware is the real gate: Apple Silicon (16 GB RAM recommended, ~6 GB for the medium model) or Windows with an 8 GB+ NVIDIA GPU (~14 GB with PyTorch); Linux with NVIDIA is untested and has no installer, Intel Macs and AMD GPUs are unsupported, and ffmpeg must be on PATH. Instrumental only — Stable Audio 3 cannot do vocals or lyrics — and the README says timing cues like 'climax at 15 s' are not reliably followed, so cut to picture with inpaint and continue rather than prompting for hits. Outputs fall under the Stability AI Community License, which allows free commercial use only below US$1M annual revenue; above that you need a Stability licence before anything ships. Not affiliated with Stability AI. For sync-to-picture scoring from licensed catalogues use `sonilo`; for hosted SFX, ElevenLabs or the fal MCP. Compared with `audiogen`, this is the better-maintained and broader offline option."
   },
   {
@@ -391,6 +484,12 @@
     "links": { "repo": null, "docs": "https://docs.zapier.com/mcp/overview/how-connections-work", "site": "https://zapier.com/mcp/auphonic" },
     "added": "2026-06-11",
     "verified": "2026-09-22",
+    "caveats": [
+      "A generic Zapier gateway, not a dedicated audio MCP: two Auphonic actions, so you get submit a job with a preset, not per-parameter control.",
+      "The token is minted per Zapier MCP server, shown once, and grants whatever that server exposes, so treat it as a password.",
+      "Servers default to agentic mode, which lets the agent enable actions mid-conversation; switch to managed mode for a fixed toolset.",
+      "Auphonic gives 2 free processing hours a month, and every call routes your audio through a third integration layer."
+    ],
     "notes": "Docs link moved: the old help.zapier.com article 301s to docs.zapier.com, and the page that actually specifies the wire format is now /mcp/overview/how-connections-work. The endpoint is unchanged and still live — one shared Streamable HTTP URL, https://mcp.zapier.com/api/v1/connect (401 unauthenticated on 22 Sep 2026), Streamable HTTP only, with `Authorization: Bearer <token>` as the documented form; the query-string variant ?token= still works and Zapier's own docs now warn it ends up in logs and shell history. The token is minted per MCP server you create at mcp.zapier.com after connecting Auphonic, is shown exactly once, and grants whatever tools that server exposes, so treat it as a password; there is no published CLI one-liner, so add it through your client's header config. New since August: servers default to 'agentic mode', which exposes 16 static meta-tools (discover_zapier_actions, enable_zapier_action, auto_provision_mcp and so on) and lets the agent enable actions mid-conversation — convenient interactively, unpredictable in a pipeline. Switch the server to managed mode at mcp.zapier.com if you want a fixed toolset with pre-filled fields. Still a generic Zapier gateway rather than a dedicated audio MCP: the surface is two Auphonic actions — Create Production and its trigger — so an agent gets 'submit a job with a preset', not per-parameter mastering control, and every call routes your audio through a third integration layer. Tool names stay null because Zapier mints them from the actions you enable rather than publishing a fixed list — read tools/list once connected. Auphonic gives 2 free processing hours per month, and its own docs at auphonic.com/help still make no mention of MCP. For measured loudness compliance without the middleman, REAPER MCP in this directory does analyze_loudness plus apply_limiter locally, and the AudioLab entry meters a finished file against named delivery targets; ElevenLabs isolate_audio remains the nearest one-shot dialogue denoiser."
   },
   {
@@ -415,6 +514,12 @@
     "links": { "repo": "https://github.com/Audio-Launch/audiolab-mcp-server", "docs": "https://audiolab.tools/api", "site": "https://audiolab.tools" },
     "added": "2026-09-23",
     "verified": "2026-09-23",
+    "caveats": [
+      "A hosted analyser: local files are uploaded, measured and deleted, so if the audio cannot leave the building, do not use it.",
+      "It measures and never fixes; the fix is an ffmpeg loudnorm string you run yourself.",
+      "Free keys get only the basic analyze_profile lens, local files cap at 50 MB, and voice routes cap near seven minutes.",
+      "A local path works only in the npx server; the hosted endpoint accepts public URLs only."
+    ],
     "notes": "Verified 23 Sep 2026: MIT, npm @audiolabtools/mcp-server at 0.4.1 published the day before, nine releases since 3 Jul 2026, and listed in the official MCP registry. Take the stdio form if your audio is on disk — a local `path` works only in the npx server; the hosted endpoint at https://audiolab.tools/mcp (401 unauthenticated, `Authorization: Bearer` rather than OAuth) accepts public URLs only. Either way it is a hosted analyser: a URL is fetched server-side, a local file is uploaded, measured and deleted, and only numbers come back, so if the audio cannot leave the building do not use it. Free tier is 1,000 calls and 2 GB a month with no card, but the seven named analyze_profile lenses (voice, master, provenance, dataset, environment, broadcast, loop) are plan-gated; free keys get `basic`. Limits that bite a feature: 50 MB per local file, loudness routes stream to roughly three hours, voice and signal routes cap near seven minutes, one file per call, and analyze_batch tops out at 20 sources while metering each as its own call. It measures and never fixes — the fix is an ffmpeg loudnorm string you run yourself, or the Auphonic entry for actual processing. Operated by AudioLaunch (KVK 54871204, EU-hosted), built by Nathan Renting; the GitHub repo is a generated mirror of an internal monorepo, so read the npm cadence rather than the star count."
   },
   {
@@ -438,6 +543,11 @@
     "links": { "repo": "https://github.com/deepgram/mcp", "docs": "https://developers.deepgram.com", "site": "https://deepgram.com" },
     "added": "2026-06-11",
     "verified": "2026-09-28",
+    "caveats": [
+      "A thin shim: the tool list is fetched at runtime from Deepgram's developer API, so you cannot see the surface before connecting.",
+      "PyPI 0.1.1 is the only release (Apr 2026) and the repo has not moved since May, with eight open issues.",
+      "It depends on https://api.dx.deepgram.com staying up."
+    ],
     "notes": "Official but thin on the ground, and re-checked on 28 Sep 2026 and the code has not moved: PyPI deepgram-mcp still 0.1.1 (4 Apr 2026, its only release), repo still last pushed 6 May 2026, MIT, two stars, eight open issues and climbing. Deepgram's own summary calls it a 'standalone MCP proxy… remote-proxy architecture with zero client upgrades', which is the honest framing — the package is a thin shim and the capability lives upstream. The runtime tool fetch is genuinely useful but means you cannot see the tool surface before connecting, and it depends on Deepgram's developer API at https://api.dx.deepgram.com staying up. An SSE HTTP mode exists: `deepgram-mcp --transport sse --port 8000`. AssemblyAI's only official MCP is a documentation server, not transcription, so Deepgram remains the strongest official cloud-STT MCP."
   },
   {
@@ -461,6 +571,12 @@
     "links": { "repo": "https://github.com/TJC-LP/sanzaru", "docs": null, "site": null },
     "added": "2026-06-11",
     "verified": "2026-09-29",
+    "caveats": [
+      "The video tools target sora-2, which OpenAI removed on 24 Sep 2026, so [all] installs a dead video module; pick sanzaru[audio].",
+      "Every call bills your OpenAI account, and the content guardrails are OpenAI's.",
+      "One maintainer's momentum, with three releases in a single day, so expect churn.",
+      "For fully offline transcription use jwulff/whisper-mcp or SmartLittleApps/local-stt-mcp."
+    ],
     "notes": "Successor to the widely-listed and now-deprecated arcaputo3/mcp-server-whisper. Still moving fast: PyPI sanzaru 0.12.2 (28 Sep 2026, three releases that day), MIT, Python >=3.10, but only 6 stars for a project of this scope, so it is one maintainer's momentum. Buy the audio, not the bundle: the video tools (create_video, remix_video and friends) target sora-2 and sora-2-pro, and OpenAI removed both models and the whole Videos API on 24 Sep 2026 with no replacement listed on its deprecations page — yet the README as of 29 Sep still presents them as current, so an agent that sees those tools will try them and fail. 0.12.1 did repair the audio side of the same churn: chat_with_audio had been broken on its defaults since OpenAI retired the gpt-4o audio-preview models, and now defaults to gpt-audio-1.5. 0.12.0 made ElevenLabs eleven_v4 the recommended podcast engine, and 0.11.1 added `wait_for` so agents block on long jobs instead of polling. The README now leads with `/plugin marketplace add TJC-LP/sanzaru` or `uv tool install sanzaru`; the uvx command above still works. Extras are video, audio, image, elevenlabs and databricks — pick `sanzaru[audio]` for transcription work and add `sanzaru[elevenlabs]` if you want ElevenLabs TTS instead of OpenAI's; `[all]` now installs a dead video module. No local moderation: content guardrails are OpenAI's. Every call bills your OpenAI account. For fully offline transcription use jwulff/whisper-mcp or SmartLittleApps/local-stt-mcp (whisper.cpp, Apple Silicon, diarization)."
   },
   {
@@ -485,6 +601,12 @@
     "links": { "repo": "https://github.com/AudiopodAI/audiopod-mcp", "docs": "https://docs.audiopod.ai/sdks/mcp", "site": "https://audiopod.ai" },
     "added": "2026-09-21",
     "verified": "2026-09-21",
+    "caveats": [
+      "The free tier is quoted two ways (1,000 credits a month or $1 of API credit), so confirm which pool your key draws on before a batch.",
+      "Hosted and closed: the MIT repo holds the README and manifests, not the server.",
+      "A podcast and audiobook workstation, so its music and TTS are broad rather than cinematic.",
+      "Use the header, not the api_key query parameter, because keys in URLs end up in logs."
+    ],
     "notes": "Verified 21 Sep 2026: an unauthenticated initialize returns a 401 that enumerates its own auth methods, and the server card at https://audiopod.ai/.well-known/mcp/server-card.json declares streamable-http on protocol 2025-06-18 with oauth2 and X-API-Key both supported. We did not run the tools — every one of them needs a key. Read the licence correctly: the repo is MIT and is actively pushed (19 Sep 2026), but it contains the README, the registry manifest and the server card, not the server, which is hosted and closed; the README says so itself. Judge maintenance by AudioPod the product, not the 0-star repo. The free tier is quoted two different ways depending where you look — the website says 1,000 credits a month with no card, the server card says new developer accounts start with $1 of free API credit — so confirm which pool your key draws on before planning a batch; paid is $1 for 7,500 credits pay-as-you-go or $20/month for 200,000. The auth 401 also advertises an `api_key` query-parameter form: use the header, because keys in URLs end up in logs and referrers. Scope check before you list it as a film tool: this is a podcast and audiobook workstation, so its music and TTS are broad rather than cinematic — for performance-grade voice direction see elevenlabs or cartesia, and for loudness and delivery QC see auphonic-zapier. convert_media does handle mp4 and mov, which makes it a light transcode step as well."
   },
   {
@@ -508,6 +630,12 @@
     "links": { "repo": null, "docs": "https://artyfile.com/llms.txt", "site": "https://artyfile.com" },
     "added": "2026-10-10",
     "verified": "2026-10-10",
+    "caveats": [
+      "The agent cannot complete payment: a human must approve the Stripe checkout.",
+      "The Limited Edition tier sells fractional master ownership, a financial product rather than a licence, not something an agent should buy for anyone.",
+      "Tracks marked master_only carry no sync licence, so read licenseScope before quoting.",
+      "A small catalogue (1,000+ masters, heavy on cinematic and classical) priced in EUR."
+    ],
     "notes": "Checked 10 Oct 2026 by running search_tracks and get_license_terms against the live endpoint without auth; the official MCP Registry lists com.artyfile/music-licensing. Basic licence is EUR 29.90 one-time per track for perpetual worldwide sync; the Limited Edition tier (EUR 69.90 per 1% share) sells fractional master ownership with royalty participation, which is a financial product rather than a licence and is not something an agent should buy on anyone's behalf. Tracks marked master_only carry no sync licence at all, so read licenseScope before quoting. The catalogue is small (the site says 1,000+ masters, heavy on cinematic and classical), prices are in EUR, and the agent cannot complete payment: a human must approve the Stripe checkout."
   },
   {
@@ -531,6 +659,11 @@
     "links": { "repo": null, "docs": "https://multivoice.ai/for-agents", "site": "https://multivoice.ai" },
     "added": "2026-10-10",
     "verified": "2026-10-10",
+    "caveats": [
+      "Dubbing targets only German, English, French, Latvian and Russian; for broad-language dubbing compare elevenlabs or allvoicelab.",
+      "Public beta, not GA, and the tool names come from the vendor page rather than a live tools/list.",
+      "Paid: transcription and subtitles EUR 0.015 per minute, AI dubbing EUR 0.40 per minute, with a human confirming each quote."
+    ],
     "notes": "Checked 10 Oct 2026: the endpoint answers initialize with an OAuth 2.1 challenge and the official MCP Registry lists ai.multivoice/video-dubbing-subtitles-transcription-audiobooks; no tools were run because there is no anonymous path, so the tool names above (namespaced orders.*) come from the vendor's agent page rather than a live tools/list. The vendor calls the MCP public beta, not GA. List prices on the agent page: transcription and subtitles EUR 0.015 per minute, AI dubbing EUR 0.40 per minute, audiobooks EUR 100 per book. The catch for film work is dubbing: target languages are only German, English, French, Latvian and Russian, and audiobook narration covers the same five. Human-reviewed subtitles are optional. For broad-language dubbing compare elevenlabs or allvoicelab."
   },
   {
@@ -576,6 +709,12 @@
     },
     "added": "2026-10-26",
     "verified": "2026-10-26",
+    "caveats": [
+      "Paid only: one credit per song, one active job per account, about two minutes per take.",
+      "Output is a private link that needs the owner's login; the MP3 comes from the web app.",
+      "No stems, voice cloning, line edits or melody upload, so it suits temp tracks and lyric sketches, not score.",
+      "Rights are assigned only as far as Savuko holds them with no content-ID clearance promised, and the Replicate model is undisclosed."
+    ],
     "notes": "Checked 26 Oct 2026: initialize (2025-06-18 and 2025-11-25) returns a 401 OAuth challenge with scopes account:read, songs:create and songs:read, the protected-resource metadata and dynamic client registration are in place, and the official MCP Registry lists io.github.constantinginga/words-into-music 0.1.0. Not tested past sign-in, so the tool list comes from the vendor docs, which also describe a create_checkout_link tool that opens Stripe. Paid only: subscriptions from $9.99 a month for 30 songs or one-time packs from $9.99 for 20, one credit per song, one active job per account, about two minutes per take. Output is a private link that needs the owner's login, and the MP3 comes from the web app. No stems, voice cloning, line edits or melody upload, so it suits temp tracks and lyric sketches more than score. The terms (15 Oct 2026) allow commercial use, but rights are assigned only as far as Savuko holds them and subject to provider restrictions, with no promise of exclusivity, copyright, non-infringement or content-ID clearance — clear it before release. Generation runs on Replicate; the model is not disclosed."
   }
 ]

@@ -20,6 +20,11 @@
     "links": { "repo": null, "docs": "https://airtable.com/developers/agents/mcp/getting-started", "site": "https://www.airtable.com" },
     "added": "2026-06-11",
     "verified": "2026-10-26",
+    "caveats": [
+      "Creates cap at 10 records per request, new automations land as drafts, and automations containing Script actions cannot be edited over MCP.",
+      "Access follows collaborator rights: Editors get records only, interface-only users see almost nothing, and development bases return 403.",
+      "Enterprise admins may have to allowlist the client ID, and PAT auth is a manual Authorization: Bearer header."
+    ],
     "notes": "Re-checked 2026-10-26: endpoint, OAuth with DCR, PAT option and all-plans availability unchanged on the developer guide. Earlier drift still stands: Airtable now runs a developer-portal guide (linked above, and the authoritative source on DCR and PAT auth) alongside the help-centre article at support.airtable.com/docs/using-the-airtable-mcp-server. The interface-page and workspace tools are now documented by name — list_pages_for_base, list_records_for_page, get_record_for_page, create_base, list_workspaces — and Airtable still publishes no total count, so treat the list above as a snapshot. Correction to the earlier note here: MCP is on every plan at no added cost, so base creation is gated by collaborator rights, not plan tier — base Owners/Creators get schema and records, Editors get records only, and interface-only users see nothing beyond the interface pages shared with them. Limits that bite: creates cap at 10 records per request, new automations land as drafts you must activate in the UI, automations containing Script actions cannot be edited at all over MCP, existing interfaces cannot be modified (create/publish/delete only), development bases return a 403, and usage counts against your normal API rate limits. Enterprise admins may still have to allowlist the client ID under Admin Panel > Settings > Integrations & development > Third party integration allowlist. The official Claude Code plugin — claude plugin install airtable@claude-plugins-official — is still published and bundles the server with skills; the plain claude mcp add form above works without it. PAT auth is a manual Authorization: Bearer ${AIRTABLE_PAT} header. Community stdio alternative, still active: domdomegg/airtable-mcp-server (455 stars, pushed 25 Oct 2026, npx airtable-mcp-server with a PAT)."
   },
   {
@@ -43,6 +48,11 @@
     "links": { "repo": "https://github.com/makenotion/notion-mcp-server", "docs": "https://developers.notion.com/guides/mcp/get-started-with-mcp", "site": "https://www.notion.com" },
     "added": "2026-06-11",
     "verified": "2026-09-16",
+    "caveats": [
+      "The hosted server is OAuth-only, so a headless nightly job cannot connect; use the local server with a NOTION_TOKEN for that.",
+      "notion-ai-search and notion-query-meeting-notes require Notion AI; plain notion-search works on a free workspace.",
+      "Notion calls the local server no longer actively maintained, though it still receives commits."
+    ],
     "notes": "Endpoint unchanged; the tool surface has been reshuffled rather than grown. Notion's supported-tools page now documents 24 tools, and the important change is that search has split in two: notion-search is plain keyword search over pages and people and works on a free workspace, while notion-ai-search — the one that reaches connected Slack, Drive and Jira — is a separate tool that requires Notion AI, as does notion-query-meeting-notes. Business or Enterprise is what buys the advanced filters and sorting, not search itself; the earlier note here overstated the plan wall. New since August: page-Skills tools (notion-search-skills, notion-download-skill, notion-convert-page-to-skill), notion-move-pages, notion-duplicate-page, notion-create-folder, notion-get-teams and notion-get-users. Correction that matters for scheduled agents: the hosted server is OAuth-only. Notion's own FAQ says non-interactive authorization is 'not yet' supported, and bearer tokens and PATs are not accepted over HTTP headers, so a headless nightly job cannot connect — use the local server with a NOTION_TOKEN integration token for that, accepting that Notion calls it no longer actively maintained (4.6k stars, MIT, still receiving commits — last pushed 13 Sep 2026)."
   },
   {
@@ -66,6 +76,11 @@
     "links": { "repo": null, "docs": "https://developers.google.com/workspace/drive/api/guides/configure-mcp-server", "site": "https://drive.google.com" },
     "added": "2026-06-11",
     "verified": "2026-09-16",
+    "caveats": [
+      "Still gated behind the Google Workspace Developer Preview Program, with no GA announcement.",
+      "Bring your own Google Cloud OAuth client: enable the Drive and Drive MCP APIs, and match the redirect URI to your client or consent fails.",
+      "Scopes are drive.readonly and drive.file, not full Drive access; the old Anthropic gdrive server is archived."
+    ],
     "notes": "Still gated behind the Google Workspace Developer Preview Program more than three months after listing, with no GA announcement — flag as preview. Nothing drifted on re-check: same endpoint, same eight tools, same two scopes (drive.readonly and drive.file, not full Drive access). Google has since published a per-tool MCP reference at developers.google.com/workspace/drive/api/reference/mcp, which is the place to check argument shapes. The setup cost is the same as before and worth budgeting for: enable both the Drive API and the Drive MCP API in your own Google Cloud project, configure the consent screen, then create a Web application OAuth client whose redirect URI depends on the client you are connecting from — Google documents different values for Antigravity, Claude and everything else, and a mismatch fails at consent, not at connect. The old Anthropic reference gdrive server is archived; don't use it. Broader community alternative covering Docs/Sheets/Slides/Gmail too: taylorwilsdon/google_workspace_mcp, listed here as google-workspace."
   },
   {
@@ -89,6 +104,11 @@
     "links": { "repo": null, "docs": "https://help.dropbox.com/integrations/connect-dropbox-mcp-server", "site": "https://www.dropbox.com" },
     "added": "2026-06-11",
     "verified": "2026-09-17",
+    "caveats": [
+      "Beta, so Dropbox's beta terms apply on top of your plan.",
+      "Dynamic Client Registration covers only a curated client list; everyone else creates a Dropbox app and configures OAuth redirect URIs by hand.",
+      "Change your Dropbox app scopes and you must reconnect the server, and access tokens are short-lived."
+    ],
     "notes": "Endpoint unchanged on re-check and still beta — Dropbox's beta terms apply on top of your plan. The help page (last revised 18 Mar 2026) now names its tools individually under 'Available tools' instead of the old '25+ tools' gesture, so tools_sample above is quoted from Dropbox rather than guessed; the full set also covers file requests, restore events, usage and quota, and DownloadLink. Dynamic Client Registration only covers a curated client list (Claude Code, Claude web, Cursor, ChatGPT web and Codex); everyone else creates a Dropbox app and configures OAuth 2 redirect URIs by hand, and those access tokens are short-lived enough that you will regenerate them. Change your Dropbox app scopes and you must reconnect the server. A separate official Dash MCP covers enterprise search (dropbox/mcp-server-dash, 10 stars, pushed 30 Jun 2026). The community Go alternative ngs/dropbox-mcp-server has had no commit since Sep 2025 — use the hosted server instead."
   },
   {
@@ -113,6 +133,11 @@
     "links": { "repo": "https://github.com/cloudinary/asset-management-mcp", "docs": "https://cloudinary.com/documentation/cloudinary_llm_mcp", "site": "https://cloudinary.com" },
     "added": "2026-06-29",
     "verified": "2026-09-20",
+    "caveats": [
+      "The hosted endpoint is POST-only and expects Cloudinary credentials as headers, or a single cloudinary-url header.",
+      "npm 0.11.0 lags the repo, and Cloudinary's own docs invoke an older SDK package, so the dedicated MCP package is the fresher route.",
+      "Cloudinary documents five official MCPs; this is the asset-management one, and the analysis server is OAuth-only on an /sse endpoint."
+    ],
     "notes": "npm @cloudinary/asset-management-mcp is still on 0.11.0, published 11 Aug 2026, but the repo has moved past it — last push 24 Aug 2026 — so there is unreleased work sitting ahead of the published package. The hosted Streamable HTTP endpoint is live but POST-only (a browser GET returns 405) and expects Cloudinary credentials as headers: either the three named above or a single cloudinary-url header carrying cloudinary://key:secret@cloud. Many clients will use stdio with env vars instead. Cloudinary's own docs invoke the server through its SDK package (npx -y --package @cloudinary/asset-management -- mcp start); both packages expose the same bin/mcp-server.js, but that SDK package last shipped Sep 2025, so the dedicated MCP package used above is the fresher route. Re-read the docs 20 Sep 2026: the header set has grown optional cloudinary-region, cloudinary-tools and cloudinary-embed-headers entries alongside the credential headers. Cloudinary now documents five official MCPs — asset management, environment config, structured metadata, MediaFlows, and analysis; analysis is the odd one out, still on an /sse endpoint and now documented as OAuth-only with no API-key path. This listing picks the broad asset-management server as the filmmaker-facing entry."
   },
   {
@@ -136,6 +161,11 @@
     "links": { "repo": "https://github.com/taylorwilsdon/google_workspace_mcp", "docs": "https://workspacemcp.com/docs", "site": "https://workspacemcp.com" },
     "added": "2026-06-11",
     "verified": "2026-09-17",
+    "caveats": [
+      "You supply your own Google Cloud OAuth client, which is about five minutes of console work per deployment.",
+      "The README now files stdio under legacy and prescribes HTTP mode; take HTTP for OAuth 2.1 multi-user or Connector support.",
+      "Use tool tiers (--tool-tier core) and --read-only to keep 120+ tools from flooding the context."
+    ],
     "notes": "3.2k stars, MIT, still shipping fast — v1.26.2 landed 15 Sep 2026 and the env vars and uvx command above are unchanged. What did change is the recommended transport: the README now files stdio under 'legacy configuration ... for clients without Connector support' and prescribes HTTP everywhere else, including Claude Code, where the documented path is to start the server in HTTP mode and run `claude mcp add --transport http workspace-mcp http://localhost:8000/mcp`. The stdio one-liner above still works and still needs no long-running process, which is why it stays; take the HTTP route if you want OAuth 2.1 multi-user, read-only enforcement across users, or Connector support in Claude web, desktop and mobile. Tool tiers keep the context small (--tool-tier core; extended and complete exist), and --tools, --disabled-tools and --read-only trim it further. You still supply your own Google Cloud OAuth client, which is the real setup cost: about five minutes of console work per deployment. The repo now also ships a bundled Claude skill (skills/managing-google-workspace) to keep an agent from flailing across 120+ tools. Documentation lives at workspacemcp.com, where the maintainer also sells a managed cloud instance — the self-hosted server remains free and MIT. npx-only Drive-focused alternative: piotr-agier/google-drive-mcp (219 stars, pushed 16 Sep 2026)."
   },
   {
@@ -159,6 +189,12 @@
     "links": { "repo": null, "docs": "https://developer.gettyimages.com/mcp/", "site": "https://www.gettyimages.com/ai/mcp" },
     "added": "2026-08-13",
     "verified": "2026-09-17",
+    "caveats": [
+      "Enterprise-gated: an active Getty agreement and an API key plus secret from an account rep, with no signup link.",
+      "No published header form, client config or tool names, and Getty asks you not to hard-code tool names because they are still changing.",
+      "Search spans the whole library while downloads are bounded by your subscription, so an agent can surface an asset it has no right to deliver.",
+      "Throttled at 20 queries per second."
+    ],
     "notes": "Enterprise-gated, not self-serve: access needs an active Getty agreement (Premium Access or Editorial Subscription) or a reseller partnership, acceptance of the Web Service Terms, and an API key plus secret issued by an account rep — there is no signup link, only contact-sales. Re-checked 17 Sep 2026 and nothing has moved in five weeks: same endpoint, same 20-queries-per-second throttle, same OAuth 2.0 client-credentials or authorization-code handshake, and still no published header form, client config snippet, or tool names. So claude_code stays null until the connect recipe is public; point your agent at the server and let it read the auth and tool descriptions there. Getty asks explicitly that you not hard-code tool names or parameters, because they are still changing. The sharp edge is licensing, not plumbing: search spans the whole library while downloads are bounded by your subscription, so an agent can surface an asset it has no right to deliver — check the licence before you cut it in. Nothing here generates; for a self-serve licensed-footage route see stockfilm, and for stills-with-an-open-API see magnific."
   },
   {
@@ -182,6 +218,12 @@
     "links": { "repo": null, "docs": "https://stockfilm.com/for-ai-agents", "site": "https://stockfilm.com" },
     "added": "2026-08-16",
     "verified": "2026-09-21",
+    "caveats": [
+      "The $149 direct 4K licence and the $10 USDC x402 offer are different products, and the latter is 144p; never equate them.",
+      "license_clip no longer transacts and returns options only; checkout is a Stripe URL a human completes.",
+      "check_clip_rights screens catalogue rights and does not guarantee third-party clearance, and AI training is excluded from the standard licence.",
+      "Amateur home movies only, with no news, sport or studio material; for those see getty-images."
+    ],
     "notes": "Re-verified 21 Sep 2026 by initialising the endpoint and reading tools/list: serverInfo 1.1.0, nine tools, still no auth on connect. Checkout is the part that changed, and the old caveat here no longer holds — there is now a card path inside the MCP. quote_4k_license verifies an eligible unwatermarked master and returns price and terms, create_4k_checkout returns a Stripe hosted checkout URL plus a private order token, and get_4k_order releases the license, receipt and private download once purchase_completed is true; the site quotes $149 per clip for that direct 4K license. The $10 USDC x402 offer survives but the server is now explicit that it is 144p and instructs agents never to equate the two products. license_clip no longer transacts at all — it returns licensing options only, and neither charges nor issues a license. check_clip_rights screens catalogue rights and does not guarantee third-party clearance, and AI training is excluded from the standard license: that needs a separate written agreement. The 217,000+ clip figure the server advertised in August is gone from serverInfo and from every tool description; the site now says 162,000+ clips across 121 countries and 900+ cities, 1930s–1980s. Scope is narrow by design — amateur home movies only, no news, sport or studio material; for those see getty-images in this directory. The second hostname, https://mcp.stockfilm.com/mcp, still answers identically; the vendor's own docs point at api.stockfilm.com, used above."
   }
 ]
