@@ -20,6 +20,12 @@
     "links": { "repo": null, "docs": "https://mcp-assistant.valossa.com/documentation", "site": "https://valossa.com/video-ai-assistant/" },
     "added": "2026-08-25",
     "verified": "2026-10-07",
+    "caveats": [
+      "No free tier: a 7-day trial with 30 analysis minutes and a 15-minute cap per video, then EUR 29 credit packs or plans from EUR 14.90 a month.",
+      "Two meters run at once: imports burn analysis minutes, exports and questions burn task credits, so check get_quota_status before a long rush.",
+      "It analyses, it does not edit: clips come back as download URLs with no NLE round-trip, EDL or timeline.",
+      "Closed source with no public repo, and roughly half the 23 tools write data or spend quota."
+    ],
     "notes": "There is no free tier, only a 7-day trial: 30 analysis minutes, 100 task credits, no card, and a 15-minute cap per video while trialling. After that it is a EUR 29 credit pack or monthly plans from EUR 14.90. Two meters run at once — imports burn analysis minutes, exports and agent questions burn task credits — so check get_quota_status before turning an agent loose on a feature-length rush. Hard ceilings are 7 GB and 5 hours per file. It analyses, it does not edit: clips arrive as download URLs, and there is no NLE round-trip, no EDL, no timeline. Closest comparison is the TwelveLabs entry; the reason to pick this one is jurisdiction — Valossa is Finnish and states that video stays in the EU and is not used to train models. Registered in the official MCP Registry as com.valossa/video-assistant-mcp (v1.0.0, published 2026-06-25). No public source repo, so the documentation page is the only reference, and roughly half the 23 documented tools write data or spend quota. Re-checked 7 Oct 2026: endpoint, OAuth flow, 23-tool split, 7 GB / 5 h limits, trial terms and EUR pricing all unchanged; the MCP Registry was unreachable that day, so the registry line above is from the previous check."
   },
   {
@@ -43,6 +49,12 @@
     "links": { "repo": "https://github.com/clueso-ai/clueso-mcp", "docs": "https://help.clueso.io/mcp-setup", "site": "https://www.clueso.io/mcp" },
     "added": "2026-08-30",
     "verified": "2026-10-12",
+    "caveats": [
+      "Built for SaaS product-marketing video, not narrative work: there is no generative video model and no NLE handoff.",
+      "Plan limits contradict each other at the source, so assume video export costs money (Solo is $40 a month billed yearly) until you have done one.",
+      "The implementation is closed and hosted; the GitHub repo is a listing anchor, so there is no self-host path and no way to audit the tools.",
+      "Cursor and VS Code connect through mcp-remote, which needs Node 22.16+."
+    ],
     "notes": "Know what you are pointing at: Clueso is a product-marketing video tool — walkthroughs, release notes, onboarding, support explainers — and its templates, brand kit and stock library are built for SaaS, not for narrative work. There is no generative video model here and no NLE handoff; you get Clueso's own timeline, its voices, and an export. Take it for agent-driven assembly and voiceover of screen-sourced material, not for anything you would shoot. Plan limits are contradictory at the source: the setup page says the MCP is on all plans but that video export and advanced branding need a paid plan and `record_screen` a specific one, while the pricing page still shows a watermarked free tier with 10 minutes of export a month (its FAQ says 15). Solo is $40/mo billed yearly, Business $120/mo; the Solo and Business export allowances also differ between the plan cards and the comparison table. Assume export costs money until you have done one. Re-checked 12 Oct 2026 against the vendor's own setup page: same endpoint and Claude Code command, browser sign-in, 40 tools across projects, clips, elements, voiceover, sync, articles, recording and export. Cursor and VS Code connect through mcp-remote, which needs Node 22.16+. The registry listing is unchanged, published to the official MCP Registry as io.clueso/video (v1.0.2, 19 Aug 2026) by DNS-authenticated publish from clueso.io. The GitHub repo (MIT, pushed 21 Aug 2026) is a listing anchor and server.json, not the server source — the implementation is closed and hosted, so there is no self-host path and no way to audit what the tools do."
   },
   {
@@ -66,6 +78,12 @@
     "links": { "repo": "https://github.com/twelvelabs-io/twelvelabs-js", "docs": "https://docs.twelvelabs.io/docs/advanced/model-context-protocol", "site": "https://www.twelvelabs.io" },
     "added": "2026-06-28",
     "verified": "2026-10-09",
+    "caveats": [
+      "This is the older single-video half of TwelveLabs' MCP; the docs now lead with Jockey, so treat this tool list as frozen (npm 1.0.0 since May 2026).",
+      "A hosted URL on mcp.twelvelabs.io connected before mid-2026 is stale, because that host now serves Jockey; the stdio install is the documented path.",
+      "Local file and folder uploads only work over stdio; hosted HTTP wants API-key headers and public video URLs.",
+      "The linked repo is the JS SDK, not the server, so there is no MCP source to read."
+    ],
     "notes": "This is now the older half of TwelveLabs' MCP surface: the single-video tools. TwelveLabs' docs have moved the hosted copy of them off mcp.twelvelabs.io to mcp-alpic.twelvelabs.io — if you connected a hosted URL before roughly mid-2026, it is stale — and mcp.twelvelabs.io now serves the cross-video Jockey server instead (listed separately as `twelvelabs-jockey`). The docs name only the new host, not a full endpoint path, so `remote_url` stays null here; the stdio install below is the path that is actually documented end to end. npm twelvelabs-mcp is still 1.0.0, published May 12 2026 and untouched since (re-checked 9 Oct 2026) — five months without a release while TwelveLabs' docs now lead with Jockey only, so treat this tool list as frozen. Maintained by the `twelvelabs` npm account plus Teraflop; the linked repo is the JS SDK (18 stars, pushed Oct 7 2026), not the MCP server — no MCP source exists anywhere in the twelvelabs-io org, so there is nothing to read for the server itself. The stdio bin is `twelvelabs-mcp-stdio`; the explicit `--package=twelvelabs-mcp` npx form avoids npm confusing the package name with the bin name. Local file and folder uploads only work over stdio; hosted HTTP expects API-key headers and public/direct video URLs. For new setups, start with Jockey unless you specifically need per-video embeddings or index-level control."
   },
   {
@@ -89,6 +107,12 @@
     "links": { "repo": null, "docs": "https://docs.twelvelabs.io/docs/advanced/model-context-protocol", "site": "https://www.twelvelabs.io/jockey" },
     "added": "2026-08-27",
     "verified": "2026-10-10",
+    "caveats": [
+      "A research preview with limited sign-ups, so a free account is not a guaranteed seat.",
+      "The free tier is 5 GB of knowledge store, which a real season of rushes outgrows quickly; Plus is $20 a month for 100 GB.",
+      "No published tool catalogue, so run tools/list after connecting; video URLs must be publicly reachable and ingestion is asynchronous.",
+      "Requires a client that supports remote HTTP with OAuth, and sessions expire and must be re-authenticated through /mcp."
+    ],
     "notes": "Still a research preview: the Jockey product page says it is \"currently accepting limited sign-ups\", so a free account is not a guaranteed seat. Pricing is now published there, metered by knowledge-store size: Free at 5 GB, Plus at $20/month for 100 GB, Pro at $100/month for 500 GB, with rate limits rising by tier. A real season of rushes outgrows the free tier quickly. Tool names are null because TwelveLabs does not publish a catalogue — the docs tell you to ask the connected client to list them, so run `tools/list` and see what you get rather than trusting any third-party listing. Hard limits are 4 GB per video and 32 MB per image, video URLs must be publicly reachable, and ingestion is asynchronous: adding a corpus is a wait, not a call. OAuth sessions can expire, and the docs tell you to re-authenticate through `/mcp` when that happens. Clients without widget support get a text fallback instead of the gallery/timeline/highlight-reel UI, which in practice means the citations are still usable but the assembly view is not. Requires a client that supports remote HTTP servers with OAuth. The docs name Claude and Claude Code, and the product page says ChatGPT support is \"coming soon\". Re-checked 10 Oct 2026: the endpoint and install command are unchanged. Do not confuse this with the single-video `twelvelabs` entry, which is a separate server on a separate host with an API key."
   },
   {
@@ -112,6 +136,11 @@
     "links": { "repo": "https://github.com/burningion/video-editing-mcp", "docs": "https://github.com/burningion/video-editing-mcp#readme", "site": "https://www.video-jungle.com" },
     "added": "2026-06-29",
     "verified": "2026-10-10",
+    "caveats": [
+      "Effectively unmaintained: PyPI 0.1.59 and the repo have not moved since Oct 2025, and GitHub detects no license.",
+      "The API key is passed as a positional CLI argument rather than an env var.",
+      "Local Photos search needs LOAD_PHOTOS_DB=1 plus macOS file access."
+    ],
     "notes": "Effectively unmaintained. PyPI video-editor-mcp 0.1.59 (uploaded Oct 9 2025) is still the latest release, and the repo was last pushed that same day. Re-checked 10 Oct 2026: a full year with no commit, 292 stars, not archived, and GitHub still detects no license. The hosted Video Jungle service is still up and its site advertises 6 free generated videos before usage depends on the account, but nobody is maintaining the client. The API key is passed as a positional CLI argument rather than an env var, and local Photos search requires LOAD_PHOTOS_DB=1 plus macOS file access."
   },
   {
@@ -135,6 +164,11 @@
     "links": { "repo": "https://github.com/plainly-videos/mcp-server", "docs": "https://github.com/plainly-videos/mcp-server#readme", "site": "https://plainlyvideos.com" },
     "added": "2026-06-29",
     "verified": "2026-10-10",
+    "caveats": [
+      "Templates must already exist in a paid Plainly account; the MCP renders them, it does not author them.",
+      "Shipped and parked: the last code change was 1.0.5 in Jan 2026, with only README edits since.",
+      "The Smithery install path needs a Smithery key on top of the Plainly one."
+    ],
     "notes": "Official. npm @plainly-videos/mcp-server 1.0.5 (MIT, Node >=18) was released Jan 8 2026 and is still the latest of six published versions (re-checked 10 Oct 2026). The repo (6 stars) was pushed on Sep 21 2026, but that commit only refreshed the README and added a star prompt; the last code change shipped with 1.0.5. Treat it as a shipped-and-parked vendor integration, not a living project. The README also offers a Smithery install path, which needs a Smithery key on top of the Plainly one. Four focused tools around template discovery and rendering, no prompts or resources. Templates must already exist in a paid Plainly account; the MCP renders them, it does not author them."
   },
   {
@@ -159,6 +193,12 @@
     "links": { "repo": null, "docs": "https://shotstack.io/docs/guide/agents/mcp-server/", "site": "https://shotstack.io" },
     "added": "2026-06-29",
     "verified": "2026-10-11",
+    "caveats": [
+      "Hosted only: the npm stdio package is deprecated at 1.1.0, so stdio-only clients must bridge through mcp-remote with an x-api-key header.",
+      "The generation tools name neither models nor credit prices, so call list_models and quote_generation and get a human yes before generate_asset.",
+      "No readable source: the GitHub repo npm points at 404s, so trust the vendor docs and the live endpoint, not GitHub signals.",
+      "Call get_shotstack_guide before composing Edit JSON, and pass real public HTTPS asset URLs rather than inventing them."
+    ],
     "notes": "Hosted only: npm @shotstack/shotstack-mcp-server is still frozen at a deprecated 1.1.0 (\"This local stdio server is deprecated. Use the hosted Shotstack MCP server instead\"), so stdio-only clients must bridge through mcp-remote, which the docs list as the fallback. Re-checked 11 Oct 2026: the docs now list 15 tools, up from 10 — `update_template` plus a generation set (`list_models`, `quote_generation`, `generate_asset`, `get_generation_status`) that makes single image, video or audio assets from a prompt, and an asset with `prompt` and `model` inside an Edit generates at render time. The docs name neither the models nor the credit prices, so have the agent call `list_models` and `quote_generation` and get a human yes before `generate_asset`. The beta / tools-may-change warning from August is no longer on the page. There is still no readable source: npm points at github.com/shotstack/shotstack-mcp-server, which 404s to both an anonymous fetch and the GitHub API, so there are no stars or commits to judge — trust the vendor docs and the live endpoint, not GitHub signals. Agents should call `get_shotstack_guide` before composing Edit JSON, prefer `studio` over `render_video` when a human is watching, and pass real public HTTPS asset URLs rather than inventing them."
   },
   {
@@ -182,6 +222,12 @@
     "links": { "repo": "https://github.com/samuelgursky/davinci-resolve-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
     "verified": "2026-10-10",
+    "caveats": [
+      "Blackmagic gates external scripting to Studio; the free edition goes through the project's in-app bridge, which is a 21.0.x path until 21.1 is measured.",
+      "On Resolve Studio 21.1, try Blackmagic's built-in path (davinci-resolve-studio) before installing this.",
+      "macOS gotcha: Resolve only finds Python in PYTHON3HOME or /usr/local/bin/python3, so Homebrew installs need a launchctl fix.",
+      "The tool list tracks Resolve's scripting API and moves between releases, so read tools/list rather than trusting a cached name."
+    ],
     "notes": "Blackmagic is now in this lane itself. Resolve 21.1 shipped 8 Sep 2026, and Blackmagic's own download description says DaVinci Resolve Studio 21.1 'adds new individual MultiMaster trims on the color page, integration with AI assistants and 20 new scripting APIs with built-in console support' — the free 21.1 description says nothing of the kind, so first-party agent control is Studio-only. It is now listed here as davinci-resolve-studio, with the sourcing limits spelled out in that entry — Blackmagic still publishes no fetchable setup page, endpoint or tool list. If you are on Studio 21.1, try the built-in path before installing anything below. The community server remains the option for the free edition and for older Resolve builds. 3,457 stars, MIT, v4.10.4 released 10 Oct 2026 with npm in step — the most actively maintained NLE MCP in this directory, two major versions since September. The Studio-only wall has come down: Blackmagic still gates external scripting to Studio, but the project ships an in-app bridge that runs from Resolve's ungated Workspace > Scripts menu, so free-edition users can reach the MCP too — on 21.0.x. The README now says Resolve 21.1 moved Python scripting to Studio and the free 21.1 Scripts menu no longer lists .py files, so treat the bridge as a 21.0.x path until the maintainer measures 21.1. Resolve 18.5+ on macOS, Windows or Linux; Python 3.10-3.12 is the low-risk range (3.13/3.14 work on recent Resolve builds and can fail on older ones). The README claims 37 compound tools (389 granular) and 338 of 361 scripting methods live-tested (93.6%) against Studio 19.1.3, 20.3.2 and 21.0.2 plus free 21.0.3 through the bridge — those numbers are the maintainer's, not ours. macOS gotcha: Resolve only looks for Python in PYTHON3HOME or /usr/local/bin/python3, so Homebrew installs need a launchctl fix. tools_sample is null because the exposed tool list tracks Resolve's scripting API and moves between releases — read tools/list rather than trusting a cached name."
   },
   {
@@ -205,6 +251,12 @@
     "links": { "repo": "https://github.com/palmier-io/palmier-pro", "docs": "https://github.com/palmier-io/palmier-pro#readme", "site": "https://palmier.io" },
     "added": "2026-06-29",
     "verified": "2026-10-12",
+    "caveats": [
+      "macOS 26 (Tahoe) on Apple Silicon only: no Windows, no Linux, no Intel Macs.",
+      "Closed source since v0.7.6 (Aug 2026); later binaries are proprietary and the GitHub GPL badge describes only the frozen historical source.",
+      "The local endpoint at 127.0.0.1:19789 exists only while the app is running with a project open.",
+      "Generative features need login plus a subscription or BYOK, and the README no longer publishes a tool list, so run tools/list."
+    ],
     "notes": "Not open source since August: the README states that releases through v0.7.6 (Aug 19 2026) and source through the `last-gpl-source` tag were GPLv3, that later binary releases are proprietary under a separate binary license with their source unpublished, and that the repo no longer accepts code contributions. Re-checked 12 Oct 2026: current release is v0.11.0 (Oct 5 2026), three minor versions since late August, at 14.6k stars — still shipping fast, but GitHub's GPL-3.0 badge describes only the frozen historical source, not the binary you download, so you are trusting a binary. The MCP endpoint and Claude Code command in the README are unchanged; Claude Desktop gets a bundled one-click mcpb extension from Help > MCP Instructions. The README no longer publishes a tool list, so tools_sample reflects the earlier open-source build — run tools/list on the current one. If a published-source editor matters to your pipeline, pin v0.7.6 or use `davinci-resolve`. Generative AI processing was always closed and needs login plus a subscription. Hard platform caveat that rules out most crews: macOS 26 (Tahoe) on Apple Silicon only — no Windows, no Linux, no Intel Macs. The MCP endpoint at 127.0.0.1:19789 is local-only and exists only while the app is running with a project open."
   },
   {
@@ -228,6 +280,12 @@
     "links": { "repo": "https://github.com/dreliq9/fcp-mcp", "docs": "https://github.com/dreliq9/fcp-mcp#readme", "site": "https://pypi.org/project/fcp-mcp/" },
     "added": "2026-06-29",
     "verified": "2026-10-10",
+    "caveats": [
+      "Name collision: this is dreliq9's PyPI package fcp-mcp; the fcpxml-mcp entry here is DareDev256's different server.",
+      "pipx install fcp-mcp gets the April 2026 0.2.0 build, not the 94-tool v0.3.0 the README describes; install from git for that.",
+      "FCP_MCP_PROFILE defaults to workflow, so a fresh connection does not expose every tool.",
+      "Live control needs AppleScript, a running Final Cut Pro and FCP_MCP_ENABLE_LIVE_CONTROL; no push since Aug 2026."
+    ],
     "notes": "Name collision warning: this is dreliq9's Python server, PyPI package `fcp-mcp`. The `fcpxml-mcp` entry in this directory is DareDev256/fcp-mcp-server — a different maintainer with a nearly identical name. MIT. The release drift has not been fixed and has widened: PyPI is still on 0.2.0 from Apr 23 2026 — also the only git tag — while `main` (pushed Aug 13 2026) now documents a v0.3.0 with 94 tools across 13 categories. `pipx install fcp-mcp` therefore gets you the April build, not the README; install from git if you want what the README describes. Tool count is also profile-gated: FCP_MCP_PROFILE picks inspect/workflow/edit/full and defaults to `workflow`, so a fresh connection does not expose everything. Maturity caveat: 10 GitHub stars, and no push since 13 Aug 2026 as of 10 Oct 2026. Live control depends on AppleScript, a running Final Cut Pro and FCP_MCP_ENABLE_LIVE_CONTROL; optional FCP_MCP_OUTPUT_DIR changes where modified FCPXML is written and FCP_MCP_ALLOWED_ROOTS widens the readable paths."
   },
   {
@@ -251,6 +309,12 @@
     "links": { "repo": "https://github.com/DareDev256/fcp-mcp-server", "docs": "https://github.com/DareDev256/fcp-mcp-server#readme", "site": "https://pypi.org/project/fcp-mcp-server/" },
     "added": "2026-06-29",
     "verified": "2026-10-12",
+    "caveats": [
+      "FCP_PROJECTS_DIR confines listing only; the opt-in FCP_PROJECTS_DIRS is what actually confines reads, and it is off by default.",
+      "The gen group calls paid generation APIs when you supply keys, capped by FCP_MCP_GEN_MAX_USD (default $5), a cost surface the old build lacked.",
+      "Not an in-FCP plugin: Live Mode pushes XML into Final Cut, but current timelines still come back by manual File > Export XML.",
+      "Ten minor versions since August and a doubled tool surface, so cached tool lists go stale quickly."
+    ],
     "notes": "Rename direction: `DareDev256/fcpxml-mcp-server` is the OLD path and 301-redirects to the canonical `DareDev256/fcp-mcp-server`; use the latter. Name collision warning: the `fcp-mcp` entry in this directory is dreliq9's separate Final Cut server, not this one. Re-checked 12 Oct 2026: MIT, v0.26.0 released Oct 9 2026 and matched on PyPI, 122 stars, Python >=3.10, MCP SDK 1.21.1 through 2.x, Final Cut Pro 10.4–12.x (live-verified on 12.2), reads FCPXML v1.8–1.14. Ten minor versions since August, and the surface has doubled: 15 grouped tools now (the original seven plus preview, watch, index, scenes, organize, find, view, gen) dispatch 102 operations; FCP_MCP_LEGACY_TOOLS=1 adds 71 flat schemas. The new `gen` group calls paid generation APIs (fal, Runway, Luma, Gemini, ElevenLabs) when you supply their keys, with spend capped by FCP_MCP_GEN_MAX_USD (default $5) — a cost surface the earlier build did not have. Optional extras install with `uvx --from \"fcp-mcp-server[intelligence,transcribe]\" fcp-mcp-server`. Writes stay beside the source file with `_modified` suffixes and are journaled for undo. Read the sandbox docs before pointing it at a shared machine: FCP_PROJECTS_DIR confines *listing* only and never restricts which files a tool can open — the opt-in FCP_PROJECTS_DIRS (PATH-separated roots, new in 0.16.0) is the variable that actually confines reads, and it is off by default. This is not an in-FCP plugin: Live Mode pushes XML into Final Cut via an Apple event, but current timelines still come back by manual File > Export XML."
   },
   {
@@ -274,6 +338,12 @@
     "links": { "repo": "https://github.com/hetpatel-11/Adobe_Premiere_Pro_MCP", "docs": null, "site": null },
     "added": "2026-06-11",
     "verified": "2026-09-25",
+    "caveats": [
+      "tools/list shows only five gateway tools by default; set PREMIERE_MCP_TOOLSET=full for the flat list of all 283.",
+      "Anonymous telemetry is on by default; opt out with PREMIERE_MCP_TELEMETRY=0 or DO_NOT_TRACK=1.",
+      "Nothing connects until you open the CEP panel in Premiere and click Start Bridge; run verify_premiere_connection first.",
+      "Adobe's own hosted connector cannot open or edit a Premiere project, so community bridges still own real editorial."
+    ],
     "notes": "Packaged on npm as adobe-premiere-pro-mcp (MIT; 1.2.8 on 2 Sep 2026), so a global install plus `--install-cep` is the documented path and the client just runs the premiere-pro-mcp binary. Two things changed since August that bite: (1) tools/list now advertises only five tools by default — search_tools, get_tool_schema, invoke_tool, verify_premiere_connection, list_sequences — and the other 280 operations are reached through search_tools then invoke_tool; set PREMIERE_MCP_TOOLSET=full for a flat list (the README recommends that for Claude Code's native tool search). (2) Anonymous usage telemetry is ON by default — install id, OS, version, tool names and success/failure, not project names or media paths per the README; opt out with PREMIERE_MCP_TELEMETRY=0, DO_NOT_TRACK=1, or the checkbox in the CEP panel. The panel also nags about npm updates (PREMIERE_MCP_UPDATE_CHECK=0 to silence). Nothing connects until you open the CEP panel in Premiere and click Start Bridge; run `verify_premiere_connection` first. CEP is the supported bridge; UXP is explicitly experimental. Adobe DOES have an official MCP — the hosted 'Adobe for Creativity' connector, listed separately here — but its video surface is reformat/quick-cut class with no tool that opens or edits a Premiere project, so community bridges still own real editorial. This one: 607 stars, pushed 25 Sep 2026. Alternatives: leancoderkavy/premiere-pro-mcp (288 stars, MIT, pushed 25 Sep 2026) and ayushozha/AdobePremiereProMCP (106 stars, MIT, pushed 31 Aug 2026) — both clone-and-build."
   },
   {
@@ -297,6 +367,12 @@
     "links": { "repo": "https://github.com/Dakkshin/after-effects-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
     "verified": "2026-09-25",
+    "caveats": [
+      "Unmaintained: last pushed Apr 2026, so expect no fixes for newer AE builds.",
+      "Clone-and-build only; nothing is on npm.",
+      "The bridge is a polling panel: open Window > mcp-bridge-auto.jsx with Auto-run commands enabled, or every tool call silently waits.",
+      "For template-based AE rendering in the cloud without a local install, see plainly-videos."
+    ],
     "notes": "653 stars, MIT — still the most popular After Effects MCP, but last pushed Apr 1 2026 (checked 25 Sep 2026): nearly six months without a commit, so treat it as unmaintained and do not expect fixes for newer AE builds. Install path is unchanged and still clone-and-build; nothing is on npm. The bridge is a polling panel, not a socket: open Window > mcp-bridge-auto.jsx in AE and leave 'Auto-run commands' enabled, or every tool call silently waits. For template-based AE rendering in the cloud without a local install, see plainly-videos in this directory."
   },
   {
@@ -320,6 +396,12 @@
     "links": { "repo": "https://github.com/video-creator/ffmpeg-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
     "verified": "2026-10-13",
+    "caveats": [
+      "macOS only per the README, and there is no published package, so the stdio command needs your own checkout path.",
+      "No commits since May 2026, and the last one was an argument-injection fix, so treat that as the floor of its hardening.",
+      "The play_video tool shells out to ffplay, which does nothing useful on a headless agent box.",
+      "Kinocut (slug mcp-video) is cross-platform and actively released; this is the minimal-surface fallback."
+    ],
     "notes": "153 stars, last pushed May 20 2026 — nearly five months without a commit as of 13 Oct 2026, and the last commit was a security fix (shlex-quoting paths against FFmpeg argument injection, CWE-88), so treat that as the floor of its hardening rather than a maintained baseline. Caveats: README states macOS only (ARM64 or x86_64), and install means cloning the repo and running `uv sync` — there is no published package, so the stdio command needs your own checkout path. The README also lists a play_video tool that shells out to ffplay, which does nothing useful on a headless agent box. The older egoist/ffmpeg-mcp has been dormant since Mar 2025. Alternatives: kevinwatt/ffmpeg-mcp-lite (27 stars, last pushed May 8 2026 — no more current than this one) and Kinocut (listed here under the mcp-video slug), which is cross-platform, actively released, and adds guardrails on top of FFmpeg. On current evidence Kinocut is the better default and this entry is the minimal-surface fallback."
   },
   {
@@ -343,6 +425,12 @@
     "links": { "repo": "https://github.com/KyaniteLabs/kinocut", "docs": "https://github.com/KyaniteLabs/kinocut#readme", "site": "https://kinocut.dev/" },
     "added": "2026-06-28",
     "verified": "2026-10-09",
+    "caveats": [
+      "The server needs the --mcp flag (kino --mcp); bare kino configs copied before 9 Oct 2026 will not start a server.",
+      "PyPI mcp-video is only a compatibility installer now, so install kinocut; legacy env vars and URIs are a compatibility window, not a plan.",
+      "Core editing needs FFmpeg on PATH, the AI extras (Whisper, stems, upscalers) add gigabytes, and Hyperframes tools want Node 22+.",
+      "The 203-tool count is self-reported, and C2PA signing, native bundles and the paid generative plans are gated or unshipped."
+    ],
     "notes": "Renamed: KyaniteLabs' mcp-video is now Kinocut. The slug here stays `mcp-video` so existing links keep resolving, but the project, package, CLI and docs have all moved. The old docs site kyanitelabs.github.io/mcp-video now 404s; product docs live at kinocut.dev. PyPI `mcp-video` is only a compatibility installer these days (1.6.16 pulls kinocut 1.16.1) — install `kinocut` and drive it with the `kino` CLI. The MCP server needs the `--mcp` flag (`kino --mcp`); this entry's install line omitted it before 9 Oct 2026, so bare `kino` configs copied from here will not start a server. Legacy `mcp_video` imports, MCP_VIDEO_* env vars, ~/.mcp-video data and mcp-video:// resource URIs are still honoured on the 1.14.x+ line, but that is a compatibility window, not a plan. Apache-2.0, 196 stars, Python >=3.11, v1.16.1 released Oct 5 2026, pushed Oct 9 2026, registered in the official MCP Registry as io.github.KyaniteLabs/kinocut; the README now names GitHub as canonical and the maintainer's Forgejo as a downstream mirror. Core editing needs FFmpeg on PATH and AI extras (Whisper, stems, upscalers, object matte) add gigabytes, so install only the extras you need; Hyperframes tools additionally want Node 22+. The 203-tool count is self-reported, and the README openly lists surfaces that are gated or unreleased — native desktop bundles are blocked on FFmpeg licensing, C2PA signing is development-tip only and off by default, and the trusted-execution kernel plus paid generative and dubbing plans are unshipped."
   },
   {
@@ -366,6 +454,12 @@
     "links": { "repo": "https://github.com/vericontext/vibeframe", "docs": "https://github.com/vericontext/vibeframe/blob/main/packages/mcp-server/README.md", "site": "https://vibeframe.ai" },
     "added": "2026-06-28",
     "verified": "2026-10-14",
+    "caveats": [
+      "Provider wiring is visibly in motion (0.115.x, with Oct 2026 commits reworking providers), so pin a version.",
+      "Requires Node 20+, FFmpeg and Chrome/Chromium; generation needs your own provider keys (FAL_API_KEY for video, OPENAI_API_KEY for images).",
+      "Use the cost gate: --max-cost refuses to start a build whose estimate exceeds your ceiling.",
+      "The project frames the CLI as the runtime, so shell-capable agents may prefer direct vibe commands for long builds."
+    ],
     "notes": "Correcting the last correction: the 31 Aug note said ElevenLabs wasn't involved, based on the root README alone. The MCP server's own README (packages/mcp-server) does list ELEVENLABS_API_KEY for TTS, voice-clone, dubbing and SFX, alongside OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_API_KEY, XAI_API_KEY, FAL_API_KEY, RUNWAY_API_SECRET, KLING_API_KEY and an IMGBB_API_KEY or S3 upload host for image-to-video. All of them are optional. The root README's main point still holds: default narration is local Kokoro, and FFmpeg edits, scene composition, detection, timeline work and rendering all run locally for $0. Docs now link to that MCP README because it holds the full tool table. Re-checked 14 Oct 2026: the silence is over. npm @vibeframe/mcp-server is at 0.115.6 (Node >=20, bin `vibeframe-mcp`), the v0.115.6 release landed Oct 4, and a run of commits on Oct 5 moved image, TTS and transcription providers onto shared contracts and reworked dubbing. MIT, 175 stars. Pin a version, because provider wiring is visibly in motion. Requires Node 20+, FFmpeg, and Chrome/Chromium. The cost gate is real and worth using: `--max-cost` refuses to start a build whose estimate exceeds your ceiling. Claude Desktop users can skip npx entirely — the repo ships a vibeframe.mcpb extension bundle on its latest release. The project still frames the CLI as the runtime and MCP as the host surface, so shell-capable agents may prefer direct `vibe` commands for long builds."
   },
   {
@@ -390,6 +484,12 @@
     "links": { "repo": "https://github.com/remotion-dev/remotion", "docs": "https://www.remotion.dev/docs/ai/mcp", "site": "https://www.remotion.dev" },
     "added": "2026-06-11",
     "verified": "2026-10-10",
+    "caveats": [
+      "Deprecated by Remotion, and the hosted MCP's shutdown window (no earlier than 31 Aug 2026) has passed, so it can go dark at any moment.",
+      "The replacement is npx remotion skills add plus the /remotion-docs skill, which is a skill, not an MCP server.",
+      "npm @remotion/mcp still publishes with every core release, but that is release automation, not maintenance.",
+      "Remotion itself requires a paid company license for teams over three people."
+    ],
     "notes": "Deprecated by Remotion, and the shutdown window is open. As of 10 Oct 2026 the docs page is still titled 'MCP (deprecated)' and still says the hosted MCP will shut down no earlier than Aug 31 2026 — that date has passed, so assume the hosted side can go dark at any moment and do not wire it into anything. Remotion's stated reasons are that it pays the token costs for MCP requests and that agents do not invoke MCP servers reliably. The replacement is `npx remotion skills add` plus the /remotion-docs skill — a skill, not an MCP server, so it falls outside this directory. The npm package @remotion/mcp is still published and still version-locked to Remotion core (4.0.534 on 7 Oct 2026, still moving with every core release), so the install command keeps resolving; that is release automation dragging the package along with the monorepo, not maintenance, and the package README says nothing about the deprecation at all. Remotion itself requires a paid company license for teams over three people. gyoridavid/short-video-maker (1.3k stars) is often cited as a Remotion-powered video MCP but has not been pushed since Jun 2025."
   },
   {
@@ -414,6 +514,10 @@
     "links": { "repo": "https://github.com/omergocmen/json2video-mcp-server", "docs": null, "site": "https://json2video.com" },
     "added": "2026-06-11",
     "verified": "2026-10-13",
+    "caveats": [
+      "Use json2video-cli instead: the vendor ships its own MCP with thirteen tools against this one's four.",
+      "Abandoned rather than broken: repo and npm untouched since May 2025, and the repo carries no LICENSE file despite npm claiming MIT."
+    ],
     "notes": "Use `json2video-cli` instead. Re-checked 13 Oct 2026 and nothing here has moved: still 26 stars, repo last pushed May 10 2025, npm @omerrgocmen/json2video-mcp still 1.3.1 from May 7 2025 — seventeen months untouched, and the GitHub repo carries no LICENSE file even though the npm manifest claims MIT. It still installs and json2video.com is still up, so it is not broken, merely abandoned. What changed is the alternative: JSON2Video published its own MCP inside the @json2video/cli package (Apr 2026), covering render, status, validation, templates, examples, account and full media-library management. Between an official server and a wrapper nobody has touched since the year before last, take the official one. Shotstack's official MCP, also in this directory, remains the other vendor-maintained route to cloud JSON video assembly."
   },
   {
@@ -437,6 +541,12 @@
     "links": { "repo": null, "docs": "https://json2video.com/docs/v2/help-for-ai-agents/mcp-server", "site": "https://json2video.com" },
     "added": "2026-08-31",
     "verified": "2026-10-13",
+    "caveats": [
+      "Do not run npx @json2video/mcp, which does not exist on npm; the working command is npx -y @json2video/cli mcp.",
+      "Closed source with no public repo, so the thirteen tools in the docs are the only description of the surface.",
+      "The free tier is 600 credits (about 10 minutes of render) and paid starts around $50 a month, so call validate_movie before render_video.",
+      "Stdio only, Node 20+, and it needs outbound HTTPS to api.json2video.com and cdn.json2video.com."
+    ],
     "notes": "Do not run `npx @json2video/mcp` — JSON2Video's own marketing page tells you to, and that package does not exist on npm (still 404 on 13 Oct 2026). The working command is the CLI's subcommand, `npx -y @json2video/cli mcp`, which is what the actual MCP docs specify. The server is not open source: npm @json2video/cli is MIT-licensed but has no repository field and no public repo exists, so the thirteen tools listed in the docs are the only description of the surface you get. Two versions ever, 1.0.0 and 1.0.1 (Apr 14 2026), and still nothing newer six months on — quiet rather than proven, though the API behind it is mature and the vendor advertises 99.9% uptime. Node >=20, stdio only, no hosted endpoint. Needs outbound HTTPS to api.json2video.com and cdn.json2video.com, which matters in locked-down CI. Free tier is 600 credits (~10 minutes of render); paid starts around $50/month, so make the agent call validate_movie before render_video — a malformed movie that fails late still costs you. `json2video auth` writes credentials to ~/.config/json2video/config.json instead of the env var; pick one and stay with it."
   },
   {
@@ -461,6 +571,10 @@
     "links": { "repo": "https://github.com/fancyboi999/capcut-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
     "verified": "2026-09-25",
+    "caveats": [
+      "The repo is archived and read-only, last pushed Aug 2025 with no license file; use vectcut instead.",
+      "A local HTTP service on port 9000 pinned to end-of-life Python 3.8.20, and draft folders must be copied into CapCut's drafts directory by hand."
+    ],
     "notes": "Use `vectcut` instead. Checked 25 Sep 2026: fancyboi999/capcut-mcp is archived (read-only) on GitHub, last pushed Aug 21 2025, 95 stars, no license file. Its README is headed 'CapCutAPI' and exposes the same create_draft/add_video/save_draft surface as sun-guannan's CapCutAPI, since renamed VectCutAPI — which is Apache-2.0, 2,000+ stars, pushed Sep 2026, and ships its own stdio MCP server. Kept listed so old configs resolve to an explanation. If you still run this one: it is a local HTTP service on port 9000, pinned to end-of-life Python 3.8.20, and generated draft folders must be copied into CapCut's drafts directory by hand."
   },
   {
@@ -484,6 +598,11 @@
     "links": { "repo": "https://github.com/sun-guannan/VectCutAPI", "docs": null, "site": "https://www.vectcut.com" },
     "added": "2026-09-25",
     "verified": "2026-09-25",
+    "caveats": [
+      "Clone-and-pip only; nothing is on PyPI, and the TypeScript wrapper's npm package is still marked once published.",
+      "Drafts still have to land in CapCut's or Jianying's drafts folder, and draft formats change with app updates, so test against your version.",
+      "ByteDance offers no official CapCut MCP, and the English README's MCP guide links are broken; read MCP_Documentation_English.md directly."
+    ],
     "notes": "Apache-2.0, 2,252 stars, pushed 23 Sep 2026 — the actively maintained successor to the CapCutAPI code that the archived capcut-mcp entry copied. The MCP server exposes 11 tools; the README's install is clone-and-pip, nothing is on PyPI. A separate TypeScript wrapper in the repo's mcp-server/ folder talks to the HTTP API on port 9001, but its npm package is marked 'once published', so use the Python stdio server. Drafts target CapCut International or Jianying and still have to land in the app's drafts folder; draft formats change with app updates, so test against your installed version. VectCut also runs a hosted cloud editor at vectcut.com with preview and cloud render — its pricing and any hosted MCP endpoint were not verified here. ByteDance offers no official CapCut MCP. Docs are English and Chinese; the English README's MCP guide links are broken Google redirects, read MCP_Documentation_English.md in the repo directly."
   },
   {
@@ -507,6 +626,12 @@
     "links": { "repo": "https://github.com/adobe/skills", "docs": "https://developer.adobe.com/adobe-for-creativity/", "site": "https://www.adobe.com" },
     "added": "2026-08-11",
     "verified": "2026-10-10",
+    "caveats": [
+      "Not an editorial tool: video_resize and video_create_quick_cut are the whole video surface, and nothing opens or edits a Premiere project.",
+      "Quick Cut returns a temporary presigned URL rather than a CC asset ID, so its output cannot chain into video_resize without re-uploading.",
+      "Guest access covers about 40 of the 50+ tools; video tools need sign-in, some return 403 off-plan, and Express results vanish after 12 hours.",
+      "Team and Enterprise admins must enable third-party connectors first, and connectors cannot be installed from the Claude mobile apps."
+    ],
     "notes": "GA Apr 28 2026 per Adobe's own blog. Re-checked 10 Oct 2026: the endpoint https://adobe-creativity.adobe.io/mcp and the http transport are still what Adobe ships in its own plugin manifest, now at github.com/adobe/skills → plugins/creative-cloud/adobe-for-creativity (plugin v3.2.0, repo pushed 10 Oct 2026). An unauthenticated tools/list probe returns 403, so tool names come from Adobe's skill definitions rather than a live handshake. The video limitation is still the thing to know: Adobe documents reformat/resize (video_resize) and sizzle-reel generation (video_create_quick_cut) and nothing that opens, reads or edits a Premiere Pro project — Quick Cut explicitly punts semantic speech trimming, frame-precise cuts and dialogue editing to Premiere Rush or Premiere Pro. Worse, Quick Cut returns a temporary presigned URL rather than a Creative Cloud asset ID, so you cannot chain its output into video_resize without downloading and re-uploading. Guest access covers roughly 40 of the 50+ tools; video tools and Gen Expand require signing in, and replace_image and animate_design return 403 if the feature is not on your plan. Express results are deleted after 12 hours unless saved. Adobe documents setup through Claude's connector directory, Cowork and Claude Desktop rather than a published mcp-add command; connectors cannot be browsed or installed from the Claude iOS/Android apps, and Team/Enterprise admins must enable third-party connectors first. Enterprise teams that want batch pipelines rather than one-off edits should look at adobe-run-workflow instead."
   },
   {
@@ -531,6 +656,12 @@
     "links": { "repo": "https://github.com/adobe/skills", "docs": "https://helpx.adobe.com/firefly/web/work-with-enterprise-features/creative-production/run-workflow-mcp-overview.html", "site": "https://business.adobe.com/products/firefly-business/firefly-creative-production.html" },
     "added": "2026-09-01",
     "verified": "2026-10-14",
+    "caveats": [
+      "Enterprise-gated: it needs a Firefly Services or Creative Production entitlement, with the IMS token and API key issued by your org admin.",
+      "IMS bearer tokens expire, and a 401 usually means exactly that, so expect to re-add the server rather than set it once.",
+      "Everything is async, and presigned asset URLs expire in about an hour.",
+      "Marketing production, not editorial: packshots, spin video and composites, with preset actions limited to remove background, crop and colour grade."
+    ],
     "notes": "Enterprise-gated and priced that way: the skill itself says it needs an enterprise Adobe account with a Firefly Services or Firefly Creative Production entitlement assigned in the Admin Console, and both credentials come from your org admin rather than a developer console, so an independent filmmaker cannot connect this. Bearer tokens are IMS access tokens and expire — Adobe's FAQ says a 401 usually means exactly that, so expect to re-add the server, not set it once. Everything is async: run_workflow_submit returns a batchId and you poll run_workflow_get_status until a terminal state; on failure the skill calls inspect_run and stops rather than retrying. Presigned asset URLs expire in about an hour and break if a single character is retyped. The framing is marketing production, not editorial — the shipped starter templates are standardized packshots, 360-degree spin video and composite imagery, and the broadly available preset actions are remove background, crop and colour grade. Re-verified 14 Oct 2026: the endpoint and http transport in the .mcp.json under github.com/adobe/skills (plugins/creative-cloud/run-workflow) are unchanged, and Adobe's helpx install page still gives the same command. A 21 Sep sync of the SKILL.md renamed save_workflow_to_acp to save_workflow and documents a much larger toolset (validate_workflow, download_output, create_preset, list_batches, generate_curl and more); tools_sample now uses the current names. The separate run-featured-workflow skill was dropped in that sync. helpx.adobe.com times out for automated fetchers, so Adobe's page content was read through search excerpts, and no live handshake was possible without an org token. For conversational single-asset work on a personal Adobe account, use adobe-creativity instead."
   },
   {
@@ -554,6 +685,12 @@
     "links": { "repo": null, "docs": "https://help.descript.com/hc/en-us/articles/46056322186509-Descript-MCP-overview", "site": "https://www.descript.com/api" },
     "added": "2026-08-15",
     "verified": "2026-09-18",
+    "caveats": [
+      "No rendered media download without publishing: output is a Descript web link or signed URL, with transcripts (text, Markdown, SRT) the exception.",
+      "Every import and Underlord edit burns your plan's media minutes and AI credits, and API/MCP access needs a paying subscription.",
+      "One connection sees one drive, YouTube URLs cannot be imported, and Claude's directory connector excludes the generative tools.",
+      "Tool names are not published."
+    ],
     "notes": "Re-verified 18 Sep 2026: the overview doc is unchanged and api.descript.com/v2/mcp answers 401 to an anonymous request, so the endpoint is live and auth-gated as listed. Official and hosted, so nothing to install, but the export story is still the catch: Descript documents no rendered media download without publishing — an agent can publish to a Descript web link or hand off a signed URL, and anything else you fetch by exporting from the app yourself. TRANSCRIPTS are the exception, and this run pinned down the formats: text, Markdown, HTML, RTF and SRT come back over MCP, DOCX does not. The docs also cover job tracking and cancellation, which matters because imports and Underlord runs are async. Other documented limits: YouTube URLs cannot be imported, job history is kept 30 days, one connection sees exactly one drive (switching drives means re-authenticating, and editing a project on another drive errors), and Claude's directory connector excludes the generative image/video tools. API and MCP access is included for paying subscribers at no extra cost but every import and Underlord edit burns your plan's media minutes and AI credits. Note the two auth stories: MCP is OAuth through your Descript login with no token, while the REST API uses drive-scoped tokens from Settings → API Tokens — descript.com/api blurs them together. Tool names are still not published, so this entry lists capabilities rather than inventing them."
   },
   {
@@ -577,6 +714,12 @@
     "links": { "repo": "https://github.com/TopazLabs/topaz-mcp", "docs": "https://developer.topazlabs.com/", "site": "https://www.topazlabs.com/api" },
     "added": "2026-06-11",
     "verified": "2026-09-18",
+    "caveats": [
+      "Image only: video enhancement is not supported via MCP, so for Topaz video upscaling use the Topaz models on fal through the fal MCP.",
+      "Stdio only with no HTTP transport, so it needs a filesystem-capable client rather than Claude's browser chat.",
+      "Dormant: npm 0.1.14 and the last commit both date to Feb 2026.",
+      "The API key is shown exactly once at creation."
+    ],
     "notes": "Official, MIT, TypeScript — and dormant: re-checked 18 Sep 2026 and nothing has moved. v0.1.14 on npm and the last repo commit both still date to 16 Feb 2026, seven months ago; the repo has gained one star in five weeks (6 total) and no commits. It installs and runs, but nobody is extending it. IMAGE ONLY — the README still says 'Image only -- video enhancement is not yet supported' via MCP even though Topaz's developer API covers Video AI, Photo AI, and Gigapixel, and it still lists HTTP streaming transport as 'not yet supported but may be added in a future release', so ChatGPT, remote agents and web/mobile clients are out. One tool, image-enhance, taking a local path or URL: a filesystem-capable client is required (Claude Code, Cursor, Windsurf, VS Code — not Claude's browser chat). The key_url here changed this run — Topaz's old how-do-i-get-my-api-key page now 404s and the live page is getting-started/api-key-setup, which warns the key is shown exactly once at creation. For Topaz VIDEO upscaling today, go around it to the Topaz models hosted on fal.ai via the fal MCP (fal-ai/topaz/upscale/video — re-confirmed 18 Sep 2026 at $0.01/second up to 720p, $0.02 to 1080p, $0.08 above 1080p, doubled for 60fps output and halved for Gaia 2)."
   },
   {
@@ -600,6 +743,11 @@
     "links": { "repo": null, "docs": "https://docs.magnific.com/modelcontextprotocol", "site": "https://www.magnific.com/api" },
     "added": "2026-06-29",
     "verified": "2026-09-21",
+    "caveats": [
+      "Remote only, with no local package and no source repo.",
+      "Tools draw from the same Magnific credit balance as the app, and the catalogue is grouped rather than enumerated, so live tools/list is the source of truth.",
+      "The surface is broader than upscaling, so use explicit prompts when you want faithful enhancement rather than creative reinterpretation."
+    ],
     "notes": "Re-checked 21 Sep 2026: endpoint, transport, OAuth and the `claude mcp add` command above are all unchanged, and a bare initialize returns the expected 401 with an OAuth protected-resource challenge. Remote streamable HTTP only; no local package or source repo is published for the official MCP, and a plain browser GET on the endpoint just redirects to the web app. The docs say tools draw from the same Magnific credit balance as the app/API, and live `tools/list` is the source of truth — the published catalogue is still grouped by domain (account, creations, image generation and editing, video, audio, 3D, custom references, folders and spaces, discovery) rather than enumerated tool by tool. The MCP surface is broader than pure upscaling — image/video generation, Soul references, TTS, 3D, folders, and prior-creation browsing — so use explicit prompts when you want faithful enhancement rather than creative reinterpretation."
   },
   {
@@ -623,6 +771,12 @@
     "links": { "repo": null, "docs": "https://docs.reap.video/api-reference/mcp", "site": "https://reap.video/mcp" },
     "added": "2026-08-12",
     "verified": "2026-10-24",
+    "caveats": [
+      "publish_clip, schedule_clips and update_publisher_post post publicly to connected accounts; treat them as irreversible and gate them yourself.",
+      "It works on every plan, but processing draws on plan credits, so free-tier agents hit the quota fast.",
+      "The billing tools return Stripe checkout links; nothing charges without a human clicking, but do not let an agent surface them unprompted.",
+      "Clipping quality depends on reap's moment detection, which you cannot tune, and there is no source repo."
+    ],
     "notes": "Endpoint, OAuth flow, the claude mcp add command and the 29-tool surface are unchanged on re-check (24 Oct 2026). The paywall has moved: the API reference no longer says the MCP needs a paid plan and now states it 'works on every Reap plan', with the Free plan including one MCP connection — processing still draws on plan credits, so free-tier agents hit the quota fast. The billing group includes top_up_media_credits and manage_subscription, which return Stripe checkout and billing-portal links; nothing charges without a human clicking, but do not let an agent surface them unprompted. Three of the 29 tools — publish_clip, schedule_clips, update_publisher_post — post publicly to connected social accounts, and the docs require the agent to confirm before running them; treat them as irreversible and gate them yourself. The marketing page at reap.video/mcp still contradicts the API reference, claiming '10 tools' in one place and '8 MCP Tools' in another, and listing export_video and translate_subtitles, which do not appear among the 29 documented tools; trust the API reference. That page also offers `npx add-mcp https://mcp.reap.video/mcp` as a shortcut, which is a third-party installer rather than reap's own — the claude mcp add form above is the direct route. There is no source repo, and clipping quality depends on reap's moment detection rather than anything you can tune."
   },
   {
@@ -646,6 +800,11 @@
     "links": { "repo": "https://github.com/Orkas-AI/Orkas-VideoStudio", "docs": "https://github.com/Orkas-AI/Orkas-VideoStudio#readme", "site": null },
     "added": "2026-08-12",
     "verified": "2026-10-24",
+    "caveats": [
+      "Do not copy the README's npm install line: the MCP package still 404s on npm, so clone, pnpm build and point at packages/mcp/dist/index.js.",
+      "Needs Node 22+ and ffmpeg/ffprobe on PATH; speech, image and video generation need your own provider keys.",
+      "Momentum has cooled: the last vendor commit landed 22 Sep 2026."
+    ],
     "notes": "Do not copy the README's install line. It advertises `npm i -g @orkas/video-studio` and `claude mcp add ovs -- npx -y @orkas/video-studio-mcp`, and the MCP package still 404s on npm as of 24 Oct 2026, more than two months after the README first called publication imminent. The source build above is still the only path that works: clone, Node 22+, pnpm install && pnpm build, then point the client at packages/mcp/dist/index.js (the package's own bin target). ffmpeg and ffprobe must be on PATH for editing and local media QA. Momentum has cooled since September: the daily pushes stopped, the last vendor commit landed 22 Sep 2026, and October's only activity is a merged community PR adding llms.txt (13 Oct); the repo shows 327 stars, down from the 485 we recorded. Not abandoned, but watch it. The MCP surface was 37 tools at last count covering composition scaffolding, ffmpeg edits, loudness, OCR, silence and scene detection, plan validation and skills. The vendor also ships a native skills path (`ovs skills --install --target claude`) if you would rather not run an MCP at all. Still MIT, still local stdio only, and generated media is written to caller-supplied filesystem paths. The compose/edit/transcribe trunk needs no provider key; speech, image, and video generation require your own OpenAI, Gemini, ElevenLabs or similar credentials."
   },
   {
@@ -669,6 +828,12 @@
     "links": { "repo": "https://github.com/avclabs/media-mcp", "docs": "https://www.avclabs.com/avclabs-mcp.html", "site": "https://mcp.avc.ai" },
     "added": "2026-08-12",
     "verified": "2026-10-23",
+    "caveats": [
+      "The entry plan buys about 100 seconds of enhanced footage a month at 1 credit per second, so this is a spot-fix tool, not a pass over a reel.",
+      "The ceiling is 1080p/2K, below Topaz, and enhance_video_sync blocks and truncates around 45s, so use create_task plus get_task_status.",
+      "SAM3 segmentation is image-only: a masking tool, not video roto.",
+      "The generic env var name API_KEY will collide if you set it globally, and uploads are capped at 100MB."
+    ],
     "notes": "The image tools finally shipped. npm @avclabs.ai/media-mcp 0.3.0, published 13 Oct 2026 after five months on 0.2.1, carries all nine tools — create_task, get_task_status and enhance_video_sync for video; enhance_image_sync, colorize_image_sync, denoise_image_sync and get_image_task_status for stills; sam3_predict and get_sam3_task_status for masks — so `npx @latest` now does what the README always said it did. On 17 Oct the repo was split into a monorepo of per-function servers (@avclabs.ai/video-mcp, image-mcp, sam3-mcp) so a client only loads the tool schemas it needs, and the all-in-one package was relabelled 'legacy'. Checked 23 Oct 2026: those three split packages are documented in the README but not on npm yet — the registry 404s all of them — so the command above is still the only one that installs. Expect to switch once they publish; the vendor says the legacy package stays configuration-compatible. The repo still sits at 0 stars. Pricing as rendered 10 Sep 2026: 1 credit per second of video and 1 credit per image mask, against Starter $9.95/mo for 100 credits, Pro $25.95 for 300, Advanced $39.95 for 500, or one-time packs from $19.95/50 — so the entry plan buys about 100 seconds of enhanced footage a month, which makes this a spot-fix tool, not a pass over a reel. MIT, Node 18+, 100MB upload cap, thin client over AVCLabs' HTTP backend at mcp.avc.ai; base URLs are overridable via HTTP_API_BASE_URL and SAM3_API_BASE_URL. Ceiling is 1080p/2K — below Topaz or the Topaz models on fal, so this is the cheap-and-cloud option, not the finishing one. enhance_video_sync blocks and truncates around 45s; use create_task plus get_task_status for anything real. SAM3 segmentation is image-only, so it is a masking tool, not video roto. The vendor documents a JSON mcpServers block rather than a CLI one-liner — the command above is the same command/args/env in claude mcp add form. The generic env var name API_KEY will collide if you set it globally."
   },
   {
@@ -724,6 +889,12 @@
     },
     "added": "2026-08-19",
     "verified": "2026-09-27",
+    "caveats": [
+      "Entitlement is not universal: Pro Beta and Max orgs get API access, so a free account may connect and find the write tools locked.",
+      "Quotas are real: 15 hours or 900 credits a month, a 10-credit floor per project, and 4 concurrent projects.",
+      "Exports are HD download URLs only, despite the marketing page advertising 4K and Premiere XML.",
+      "Virality ranking and vertical reframe are the product's opinion for short-form social, and it will impose it on narrative footage."
+    ],
     "notes": "Official and hosted. The docs still say Pro-tier API access is in beta, and the editing surface has already changed underneath early adopters: editing scripts were retired, and `opusclip_get_editing_script` / `opusclip_apply_editing_script` remain only as no-op signposts that redirect to `opusclip_edit_clip`, now the only editing route. An agent holding a cached tool list from August will be calling dead names. The docs now count 27 workflow tools, including those two signposts, plus 2 thumbnail tools, while the marketing page still says 27. Trust live `tools/list` over any published count. Rechecked 27 Sep 2026: https://mcp.opus.pro/mcp still serves OAuth protected-resource metadata pointing at a WorkOS AuthKit authorization server. The docs also contradict the marketing page on export: the page advertises 4K and Premiere XML, but `opusclip_export_clip` and `opusclip_export_collection` are documented as HD download URLs only. Entitlement is not universal: the docs say Pro Beta and Max organizations get API access automatically and business customers run under their contract, so a free account may connect and find the write tools locked. Quotas are per workspace and real — 15h / 900 credits a month, a 10-credit floor charged per project regardless of length, and 4 concurrent projects, resetting on the 1st UTC. Fourteen of the tools are writes that spend credits and prompt for approval per call. The public repo is a thin 6-star wrapper (MIT, pushed 20 Sep 2026) under an org with a GitHub IP allow list, so you cannot browse its source anonymously; the docs are the real reference. Scored for short-form social, not for narrative: virality ranking and vertical reframe are the product's opinion, and it will impose it."
   },
   {
@@ -751,6 +922,12 @@
     },
     "added": "2026-09-04",
     "verified": "2026-10-17",
+    "caveats": [
+      "Run open_edit init on the project directory first; the server refuses to start otherwise, and one registered server serves one project.",
+      "Install with the [mcp] extra: the mcp dependency is optional and a plain pip install skips it.",
+      "Rendering needs melt (MLT) and ffmpeg, and macOS is not a supported platform.",
+      "run_script executes free-form Python against the IR and is explicitly dev-only on Windows."
+    ],
     "notes": "Two steps come before the connect command: install, then `open_edit init <project-dir>` — the server refuses to start against a directory it has not initialised. Install is in flux. PyPI `open-edit` is still 1.3.1 (12 Aug 2026), and for that path you need `pip install \"open-edit[mcp]\"`, because the `mcp` dependency sits in an optional extra a plain install skips. But a 13 Oct 2026 refactor on main rewrote the README around Windows x64 / Linux x64 ZIP installers (install.ps1 / install.sh, Python 3.12 recommended) that write mcp.json, opencode.json and codex.toml for you, plus `open_edit mcp-config --project PATH` to generate a host entry — and as of 17 Oct no release carrying that refactor has been cut, so the newest tagged release is still v1.3.1. The stdio command, `open-edit-mcp --project`, is unchanged across both. MIT, 48 stars, repo pushed 13 Oct 2026, Python >=3.11. Six tools, not 28 — the 28 is the count of IR edit operations reachable through `edit_project`. Pinning to one project is a deliberate blast-radius limit, but it also means one registered server per cut. `run_script` executes free-form Python against the IR; it is bwrap-sandboxed on Linux and explicitly `dev`-only on Windows, so do not expose it on a Windows box you care about. Rendering needs melt (MLT) and ffmpeg; macOS is not a supported platform. Transcription is opt-in (`whisper` extra, or `--whisper` on the installer), as is a built-in chat agent (`--with-agent`); no model ships by default. The 1.3.1 wheel still pulls in the `anthropic` SDK unconditionally. Remotion is no longer installed by default — `open_edit setup legacy-remotion` adds it, with Remotion's separate licence terms. Single maintainer; the actively maintained alternative in this space is Kinocut."
   },
   {
@@ -778,6 +955,12 @@
     },
     "added": "2026-09-04",
     "verified": "2026-10-16",
+    "caveats": [
+      "Moving fast enough to break you: 0.5.0 renamed and merged tools, so tool lists cached from September call dead names.",
+      "npm declares Node 24.11.0 or newer, which bounces Node 22 LTS setups.",
+      "The npx path falls back to ffmpeg-static, which has no ffprobe, so put a system ffmpeg on PATH.",
+      "Set LECLAP_MCP_MEDIA_DIR deliberately: inputs must resolve inside it, and pointing it at your home directory hands every tool call the run of it."
+    ],
     "notes": "First-party to the LeClap project — the MCP package lives in its monorepo — but that project is one maintainer's open-source work, not a company, so it is listed as community. MIT, 34 stars on the monorepo, npm @leclap/mcp 0.6.0 (12 Oct 2026), commits landing daily as of 14 Oct. Moving fast enough to break you: 0.5.0 folded `patch_template` into `edit_template` and `list_samples`/`get_sample` into `get_samples`, and dropped `ping`, so tool lists cached from September call dead names. The official MCP registry entry (dev.leclap/video) still advertises 0.3.4 — trust npm, not the registry. The README now documents 14 always-on tools, among them `render_frames` for still checks, a `validate_template` that flags text fit, safe-zone and contrast problems without rendering, local whisper.cpp captions via `transcribe_media` (models are not auto-downloaded — run `leclap transcribe --download-model` once or set LECLAP_WHISPER_DOWNLOAD=1), and a 25-sample starter set. npm still declares Node >=24.11.0, an aggressive floor that bounces any Node 22 LTS setup. The npx path falls back to `ffmpeg-static`, which has no ffprobe — transitions, music, whole-video overlays and `probe_media` need one — so put a system ffmpeg on PATH. The media and output dirs now default to ~/.leclap/media and ~/.leclap/renders; set LECLAP_MCP_MEDIA_DIR deliberately anyway, since local inputs must resolve inside it and pointing it at your home directory hands every tool call the run of it. `render_remotion_clip` runs your project's own JavaScript under headless Chromium and is off unless you pass --allow-remotion with a trusted entry; Remotion's own licence applies. `open_in_builder` produces a leclap.dev link with the template carried in the URL fragment, not uploaded. Determinism is per platform, not across them — Node and browser encode with libx264, Android with libopenh264, iOS with h264_videotoolbox. Renders are 10-minute-capped by default."
   },
   {
@@ -805,6 +988,12 @@
     },
     "added": "2026-09-08",
     "verified": "2026-10-22",
+    "caveats": [
+      "MCP is an extra, not the default: install claude-real-video[mcp], or the claude mcp add line fails.",
+      "FFmpeg must be on PATH, and transcription needs the [whisper] or [fast] extra, which is a large download.",
+      "Frames come back as images, so a long video is expensive in tokens; use get_transcript when you only need the words.",
+      "The ~/.cache/crv-mcp directory grows without bound, and downloading from a URL is your legal problem, not the tool's."
+    ],
     "notes": "MIT, 2,250 stars and 202 forks off a repo created 2026-06-30, last pushed 2026-10-08; PyPI is at v0.10.7 (2026-09-26), and the server was registered as io.github.HUANGCHIHHUNGLeo/claude-real-video. The main trap: MCP is an extra, not the default. Plain `pip install claude-real-video` gives you the `crv` CLI with no server, and the `claude mcp add` line above only works after installing the `[mcp]` extra. The old branch confusion is fixed — `master` is now the default branch and its README documents the MCP mode, the five tools and `crv-mcp` directly; a stale `main` branch still exists, so ignore it if a link lands you there. The README says MCP mode is verified end-to-end on Claude Code only; Claude Desktop and Cursor speak the same stdio protocol but are untested. FFmpeg must be on PATH and is not pip-installable; Python >=3.10; transcription needs the `[whisper]` or `[fast]` extra, which is a large download (`[mlx]` and `[speakers]` extras also exist). Analyses cache under ~/.cache/crv-mcp, so repeat questions are cheap but the directory grows without bound. Frames come back as images, so a long video is expensive in tokens — reach for get_transcript when you only need the words. Free and local, but the upsell has grown: 'crv Pro' is now a one-time $29 (was $19) adding camera, sound and emotion analysis, sold via Capafy and Lemon Squeezy, plus a separate $9.90 'Real Video for Codex' add-on. Downloading from a URL is your legal problem, not the tool's."
   },
   {
@@ -859,6 +1048,12 @@
     },
     "added": "2026-09-15",
     "verified": "2026-10-26",
+    "caveats": [
+      "The bare npx line is an installer, not the server; start the server from the generated Python command or with --serve.",
+      "The live-tested matrix is macOS with Resolve Free 21.0.3.7 only; Windows and Linux are marked as still needing verification.",
+      "The new Fusion effect tools are tested only against a simulated comp, not a live Resolve, so check results with inspect_fusion.",
+      "One maintainer on a personal account, and the bridge must be started once per Resolve session from the Scripts menu."
+    ],
     "notes": "Re-checked 2026-10-26 against the repo and npm: MIT, v1.13.0 published 17 Oct 2026 (stackable bridge-owned Fusion effects, a render_status tool and Free-edition delivery checks via project_health), ~37 stars, one maintainer on a personal account created June 2026, repo created July 2026 — still young, and the original submission came from that maintainer. The README's tool table now names 46 tools. The new Fusion effect tools (blur, spotlight, colour fx) are tested only against a simulated Fusion comp, not a live Resolve, by the README's own admission — check results with inspect_fusion. The npx line is an installer, not the server: it creates ~/.resolve-ai-bridge with a private Python environment, adds the Resolve menu entries and merges MCP config into the clients it detects; the stdio server it registers is a local Python command, with `npx -y davinci-resolve-ai-bridge-mcp --serve` as the alternative. Weigh it against davinci-resolve (3.8k stars, 36 compound tools, also Free-capable since its own in-app bridge shipped) and against Resolve Studio 21.1, whose first-party AI-assistant integration is Studio-only. Read the fine print: the README's live-tested matrix is macOS / Resolve Free 21.0.3.7 / Python 3.14.6 only, Windows and Linux are marked as still needing verification, and Studio-only effects stay Studio-only. FFmpeg is an optional extra download for source-frame capture. Tool names above come from the README's tool table, not a live tools/list."
   },
   {
@@ -898,6 +1093,12 @@
     },
     "added": "2026-09-20",
     "verified": "2026-09-20",
+    "caveats": [
+      "Studio only: the free edition of 21.1 does not include it, and a paid licence is required.",
+      "Blackmagic publishes no setup page, endpoint or tool list; the menu path, client names and 88-tool figure come from trade coverage of the manual.",
+      "There is no live tools/list for this entry, so verify everything in your own copy of Resolve before relying on it.",
+      "If you are not on Studio 21.1, the community davinci-resolve server is far better documented."
+    ],
     "notes": "Listed 20 Sep 2026 after Blackmagic's own release text finally confirmed the feature: the download description for DaVinci Resolve Studio 21.1 (8 Sep 2026) says it 'adds new individual MultiMaster trims on the color page, integration with AI assistants and 20 new scripting APIs with built-in console support', while the free 21.1 description says nothing of the kind — which is the paywall, in the vendor's own words. Read the sourcing carefully before you trust the details. Blackmagic publishes no web setup page, no endpoint and no tool list; the only first-party documentation is the 183 MB Resolve 21.1 Reference Manual PDF linked above, which we confirmed exists but could not read in this environment. The File > Setup AI Assistants menu path, the named clients (Claude, Claude Code, ChatGPT Codex) and the widely repeated figure of 88 tools all come from that manual as reported consistently by trade coverage, not from a page we fetched — verify them in your own copy of Resolve before relying on them. Same caveat on the report that 21.1 moved Python scripting out of the free edition: if that holds, it also undercuts the free-edition workarounds the community servers rely on, so check your Resolve build before assuming those still work. We have no live tools/list, hence a null tools_sample. Practical comparison: davinci-resolve (samuelgursky) is far better documented, covers Resolve 18.5+ including older builds, and is the option if you are not on Studio 21.1; davinci-resolve-ai-bridge is the lighter Free-first alternative. This entry exists because first-party support changes the maintenance risk, not because it is the richer toolset."
   },
   {
@@ -955,6 +1156,12 @@
     },
     "added": "2026-10-26",
     "verified": "2026-10-26",
+    "caveats": [
+      "The intended route is the Claude Code plugin; a bare claude mcp add against the URL is untested.",
+      "Exports render in a signed-in browser tab that must stay open, and cloud video tops out at 1080p.",
+      "The free tier caps web export at 60 minutes total, and only the paid tiers ($38 to $141 a month) list all agent editing capabilities.",
+      "Installing ChatCut Desktop on the same machine disables the plugin, and the server itself is closed."
+    ],
     "notes": "Verified 2026-10-26 against the vendor's plugin repo and docs; we have no account, so no live tools/list — the tool names above come from the plugin's basics skill, not the server. The endpoint and OAuth resource are taken from claude/.claude-plugin/plugin.json (plugin v1.10.23). The intended route is the Claude Code plugin, which also sends ChatCut client headers and loads the skills; a bare claude mcp add against the URL is untested by us. The repo (ChatCut-Inc/agent-plugin, created June 2026, ~980 stars, pushed 26 Oct 2026) is GPL-3.0 per the manifests but carries no LICENSE file, and it holds only the plugin and skills — the server itself is closed. Known friction from the vendor's own docs: tools load only at session start, so open a new session after install or update, and the plugin does not update itself; exports render in a signed-in browser tab that must stay open, cloud video tops out at 1080p, local-only files need a supported import path, and installing ChatCut Desktop on the same machine disables the plugin. Money: free tier caps web export at 60 minutes total; paid plans run $38 to $141 a month (annual) for 200 to 800 credits, and only paid tiers list 'all AI agent editing capabilities' — which agent features work on the free plan is not spelled out. One caution: the vendor's install doc is written as instructions for agents, including proxy-hunting advice; read it before letting an agent run it. Not to be confused with OpenChatCut, an unrelated open-source project."
   }
 ]
