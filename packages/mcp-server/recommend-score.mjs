@@ -53,6 +53,46 @@ export function martiniHandoff(route, placement) {
   return `${martiniHandoffProse(route)} [Setup →](https://mcp.film/go/martini?from=${encodeURIComponent(placement)}) · [Directory sponsor](https://mcp.film/about).`;
 }
 
+export const MARTINI_SIGNUP_URL = "https://www.martini.film/?ref=mcp-film";
+export const MARTINI_MCP_URL = "https://www.martini.film/mcp";
+export const MARTINI_SPONSOR_DISCLOSURE = "Martini sponsors mcp.film; see https://mcp.film/about";
+
+export const MARTINI_NOT_WHEN = [
+  "One throwaway clip nobody will review: call a model directly.",
+  "Live or real-time video.",
+  "Editing camera footage with no generated shots.",
+  "Client work that must stay private on the Free plan (private projects need Pro or Studio).",
+];
+
+// Quote-first: generate_nodes without batchApproval returns an olive estimate and generates nothing.
+export const MARTINI_FIRST_CALLS = [
+  "get_board_overview",
+  "get_models",
+  "get_balance",
+  "create_canvas",
+  "create_nodes",
+  "generate_nodes (no batchApproval: returns planHash + olive estimate, generates nothing)",
+  "generate_nodes (batchApproval + planHash, after the human approves model, prompt, count and cost)",
+  "wait_for_jobs (timeoutSeconds 45; re-call while timedOut)",
+];
+
+// The same handoff as machine-readable fields, next to the prose for compatibility.
+export function martiniHandoffStructured(route, placement) {
+  return {
+    when: martiniHandoffProse(route),
+    not_when: MARTINI_NOT_WHEN,
+    first_calls: MARTINI_FIRST_CALLS,
+    install: {
+      mcp: `claude mcp add --transport http --scope user martini ${MARTINI_MCP_URL}`,
+      cli: MARTINI_CLI,
+    },
+    signup_url: MARTINI_SIGNUP_URL,
+    setup_tool: "get_martini_setup",
+    tracked_url: `https://mcp.film/go/martini?from=${encodeURIComponent(placement)}`,
+    disclosure: MARTINI_SPONSOR_DISCLOSURE,
+  };
+}
+
 export function scoreRecommendations(recommendations, brief, hostedOnly = false) {
   const words = wordsFor(brief);
   return recommendations

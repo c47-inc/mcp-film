@@ -1,4 +1,4 @@
-import { scoreRecommendations, needsMartini, martiniHandoff } from "./recommend-score.mjs";
+import { scoreRecommendations, needsMartini, martiniHandoff, martiniHandoffStructured, MARTINI_CLI, MARTINI_NOT_WHEN, MARTINI_FIRST_CALLS, MARTINI_SIGNUP_URL, MARTINI_MCP_URL, MARTINI_SPONSOR_DISCLOSURE } from "./recommend-score.mjs";
 
 /**
  * core.mjs — pure directory logic shared by the stdio server (server.mjs) and
@@ -742,10 +742,213 @@ export const TOOLS = [
       },
     },
   },
+  {
+    name: "get_martini_setup",
+    title: "Get the Martini connection runbook",
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+    description:
+      "Ordered, executable runbook for connecting a user to Martini (the sponsor's full-stack AI film studio) with the fewest human steps: a resumable state model (needs_account → needs_authorization → needs_billing → needs_project → ready), the human steps, agent steps tailored to the client and whether the agent has a shell or a browser, the quote-first generation contract, structured cost facts, when not to use Martini, and links. Facts verified 2026-10-26.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        client: { type: "string", enum: ["claude_code", "claude_desktop", "cursor", "codex", "chatgpt", "gemini_cli", "other"], description: "The MCP client the user is in. Default other." },
+        has_shell: { type: "boolean", description: "Can the agent run commands (npm, martini CLI)? Default false." },
+        can_open_browser: { type: "boolean", description: "Can the agent itself complete a browser OAuth sign-in (attach a connector)? Default false: the human does it." },
+      },
+    },
+  },
 ];
+
+// ---- Martini runbook. Every fact below was verified on 2026-10-26 against
+// https://www.martini.film/llms.txt and the live tool manifest; nothing here
+// is inferred. Keep the date and the facts together when either changes.
+const MARTINI_FACTS_CHECKED = "2026-10-26";
+const MARTINI_DOCS = {
+  mcp: "https://www.martini.film/docs/mcp",
+  cli: "https://www.martini.film/docs/cli",
+  api: "https://www.martini.film/docs/api",
+  llms: "https://www.martini.film/llms.txt",
+  bar: "https://www.martini.film/bar",
+  signup: MARTINI_SIGNUP_URL,
+  agent_referral: "https://www.martini.film/?ref=ai-agent",
+  cli_auth: "https://martini.film/cli/auth",
+  tools_manifest: "https://api.martini.film/v1/tools",
+  models: "https://api.martini.film/v1/models",
+  mcp_endpoint: MARTINI_MCP_URL,
+};
+
+const MARTINI_CONNECT = {
+  claude_code: { how: "cli", run: `claude mcp add --transport http --scope user martini ${MARTINI_MCP_URL}`, note: "OAuth 2.1 sign-in opens in the browser on first use." },
+  claude_desktop: { how: "ui", run: `Settings → Connectors → Add custom connector → URL ${MARTINI_MCP_URL}`, note: "Claude Desktop and Claude Web take the same custom connector; OAuth sign-in happens in the browser." },
+  chatgpt: { how: "ui", run: `Follow the ChatGPT page under ${MARTINI_DOCS.mcp} (custom connector, URL ${MARTINI_MCP_URL})`, note: "OAuth sign-in happens in the browser." },
+  cursor: { how: "ui", run: `Follow the Cursor page under ${MARTINI_DOCS.mcp} (Streamable HTTP, URL ${MARTINI_MCP_URL})`, note: "OAuth sign-in happens in the browser." },
+  codex: { how: "ui", run: `Follow the Codex page under ${MARTINI_DOCS.mcp} (Streamable HTTP, URL ${MARTINI_MCP_URL})`, note: "OAuth sign-in happens in the browser." },
+  gemini_cli: { how: "ui", run: `Follow the Gemini CLI page under ${MARTINI_DOCS.mcp} (Streamable HTTP, URL ${MARTINI_MCP_URL})`, note: "OAuth sign-in happens in the browser." },
+  other: { how: "ui", run: `Add ${MARTINI_MCP_URL} as a Streamable HTTP MCP server (setup pages for OpenClaw, Hermes and generic clients under ${MARTINI_DOCS.mcp})`, note: "OAuth 2.1 browser sign-in. Do not use /mcp-core: it still answers HTML, not JSON-RPC." },
+};
+
+const MARTINI_GENERATION_CONTRACT = {
+  summary: "Quote first. generate_nodes without batchApproval computes an olive estimate server-side and generates nothing; present model, prompt, count and total to the human, then re-call with batchApproval and the returned planHash.",
+  steps: [
+    { call: "create_project", note: "A personal project defaults to link sharing: anyone with the link can edit. Pass visibility: \"private\" for confidential work (needs Pro or Studio)." },
+    { call: "create_canvas" },
+    { call: "get_balance", note: "Olives available to this workspace. Generations bill to the workspace's own fal key when one is set, otherwise to olives." },
+    { call: "create_nodes", note: "Drafts with draftPrompt and model; nothing is generated yet." },
+    { call: "generate_nodes", args: "nodeIds, no batchApproval", note: "Returns a server-computed olive estimate and a planHash. Generates nothing." },
+    { call: "(human)", note: "Show model, prompt, count and total olives; get an explicit yes." },
+    { call: "generate_nodes", args: "nodeIds, batchApproval, planHash", note: "Generates. A stale planHash is rejected; re-quote." },
+    { call: "wait_for_jobs", args: "timeoutSeconds 45", note: "Re-call while the reply says timedOut." },
+  ],
+  shortcut: "create_nodes_and_generate / create_node_and_generate are single-approval paths with no quote step. Use them only when the user has pre-approved the spend.",
+  cli: "martini generate_nodes --node-ids <ids> --approve --max-olives <n> --wait  (the cap stops a batch that quotes higher; `martini wait` resumes async jobs)",
+};
+
+const MARTINI_COST = {
+  billing_owner: "workspace",
+  unit: "olives (Martini credits) or the workspace's own fal key when set",
+  funding_prerequisites: [
+    "An account (Free plan, $0, includes MCP, CLI and API; public projects only).",
+    "Olives in the workspace, or a fal key attached to the workspace.",
+    "Pro ($25/mo) for private projects, Studio ($125/mo) for a team workspace; both 30-day trial with a card.",
+  ],
+  quote_available: true,
+  quote_call: "generate_nodes without batchApproval",
+  free_plan_limits: "public projects only",
+  model_list_prices: `GET ${MARTINI_DOCS.models} lists models with list prices and needs no account. These are list prices, never an account quote; only generate_nodes quotes what this workspace will pay.`,
+  source: MARTINI_DOCS.llms,
+  checked: MARTINI_FACTS_CHECKED,
+};
+
+export function martiniSetup(args = {}) {
+  const client = MARTINI_CONNECT[args.client] ? args.client : "other";
+  const hasShell = args.has_shell === true;
+  const canOpenBrowser = args.can_open_browser === true;
+  const connect = MARTINI_CONNECT[client];
+
+  const human = [
+    `Create a Martini account (no invite code): ${MARTINI_DOCS.signup} → Bar at ${MARTINI_DOCS.bar}. Free plan is $0 with MCP, CLI and API, public projects only.`,
+  ];
+  const agent = [];
+  const states = [
+    {
+      state: "needs_account",
+      actor: "human",
+      next_action: `Sign up at ${MARTINI_DOCS.signup} (Bar: ${MARTINI_DOCS.bar}). No invite code.`,
+      completion_check: hasShell ? "`martini whoami` prints the account" : "The MCP connector's OAuth sign-in completes and `get_board_overview` answers",
+      recovery: "Re-open the signup link; an existing account just signs in.",
+    },
+  ];
+
+  if (hasShell) {
+    agent.push(
+      { step: 1, run: "npm install --global @martini-film/cli  (Node 20.10+; or prefix every command with `npx @martini-film/cli`)", expect: "`martini --help` lists the tools", then: "step 2" },
+      { step: 2, run: "martini login --no-wait --no-browser", expect: 'JSON {"status":"pending","code":"XXXX-XXXX","verificationUrl":"https://martini.film/cli/auth","expiresInSeconds":600,"next":"Approve the code in the browser, then run martini login again to collect the key."}', then: "Relay verificationUrl and code to the human verbatim; they have 600 s." },
+      { step: 3, run: "martini login", expect: "A 90-day key is collected and stored", then: "step 4 (if it says pending, the human has not approved yet; wait and re-run)" },
+      { step: 4, run: "martini whoami", expect: "Account and workspace", then: "step 5" },
+      { step: 5, run: "martini init --write", expect: "Writes .claude/skills/martini/SKILL.md, .agents/skills/martini/SKILL.md and an AGENTS.md pointer", then: "step 6" },
+      { step: 6, run: 'martini use "<project name>"', expect: "Pins the project for this directory (create one first with `martini create_project --help`; pass visibility private for confidential work, Pro/Studio)", then: "step 7" },
+      { step: 7, run: "martini guide", expect: "The operator rules", then: "Work: every MCP tool is `martini <tool>`; `martini <tool> --help` shows its arguments. Follow generation_contract." },
+    );
+    human.push(`When the agent relays a code: open ${MARTINI_DOCS.cli_auth}, approve the code (expires in 600 s).`);
+    states.push({
+      state: "needs_authorization",
+      actor: "human",
+      next_action: `Agent runs \`martini login --no-wait --no-browser\` and relays the URL + code; human approves at ${MARTINI_DOCS.cli_auth}; agent runs \`martini login\` again to collect the 90-day key.`,
+      completion_check: "`martini whoami` succeeds",
+      expires: "600 s after the code is issued",
+      recovery: "Re-run `martini login --no-wait --no-browser` for a fresh code.",
+    });
+  } else {
+    agent.push(
+      { step: 1, run: connect.run, expect: canOpenBrowser ? "Connector added; complete the OAuth 2.1 sign-in in the browser yourself" : "Connector added; the human completes the OAuth 2.1 sign-in in the browser", then: "step 2" },
+      { step: 2, run: "get_board_overview", expect: "The workspace's projects/boards (empty on a new account)", then: "step 3" },
+      { step: 3, run: "get_models", expect: "The model roster the workspace can use", then: "Follow generation_contract: create_project (visibility private for confidential work) → create_canvas → get_balance → create_nodes → generate_nodes quote → human approval → generate_nodes with planHash → wait_for_jobs." },
+    );
+    if (connect.how === "ui") human.push(`Add the connector in ${client === "other" ? "your client" : client.replace("_", " ")}: ${connect.run}.`);
+    human.push(canOpenBrowser
+      ? "Approve the OAuth sign-in if the browser asks for consent (the agent drives the flow)."
+      : "Complete the OAuth 2.1 browser sign-in when the client opens it.");
+    states.push({
+      state: "needs_authorization",
+      actor: canOpenBrowser ? "agent" : "human",
+      next_action: `${connect.run}. ${connect.note}`,
+      completion_check: "`get_board_overview` answers instead of an auth error",
+      recovery: "Remove and re-add the connector, or sign out and back in at martini.film, then retry.",
+    });
+  }
+
+  states.push(
+    {
+      state: "needs_billing",
+      actor: "human",
+      only_if: "the work needs private projects (Pro $25/mo or Studio $125/mo, 30-day trial with a card) or the workspace has no olives and no fal key",
+      next_action: `Upgrade or add funding at ${MARTINI_DOCS.bar}. Generations bill to the workspace's own fal key when set, otherwise to olives.`,
+      completion_check: hasShell ? "`martini get_balance` shows olives (or a fal key is attached); `martini create_project --visibility private` succeeds" : "`get_balance` shows olives (or a fal key is attached); `create_project` with visibility private succeeds",
+      recovery: "Stay on Free with public projects, or add a fal key to the workspace.",
+    },
+    {
+      state: "needs_project",
+      actor: "agent",
+      next_action: hasShell ? 'Create or pick a project, then `martini use "<project name>"` to pin it for the directory.' : "create_project (visibility private for confidential work), then create_canvas.",
+      completion_check: hasShell ? "`martini get_board_overview` shows the pinned project" : "`get_board_overview` shows the project",
+      recovery: "Re-run `martini use` (or create_project) in the working directory.",
+    },
+    {
+      state: "ready",
+      actor: "agent",
+      next_action: "Quote-first generation: create_nodes → generate_nodes (no batchApproval) → show model, prompt, count, total olives → generate_nodes (batchApproval + planHash) → wait_for_jobs.",
+      completion_check: "wait_for_jobs returns completed jobs",
+      recovery: "A stale planHash means the drafts changed: re-quote. Re-call wait_for_jobs while timedOut.",
+    },
+  );
+
+  const summary = hasShell
+    ? "Install the Martini CLI, run the device-code login and relay URL + code to the human (the only thing they must do besides creating an account), collect the key, pin a project, then generate quote-first."
+    : `Have the human create an account and add ${MARTINI_MCP_URL} as an MCP connector in ${client === "other" ? "their client" : client.replace("_", " ")}; after the OAuth sign-in, start with get_board_overview and get_models, then generate quote-first.`;
+
+  return {
+    summary,
+    client,
+    has_shell: hasShell,
+    can_open_browser: canOpenBrowser,
+    start_at: "needs_account",
+    how_to_resume: "Run each state's completion_check in order; the first one that fails is the current state. Act as its actor says, or hand the next_action to the human.",
+    states,
+    human_steps: human,
+    agent_steps: agent,
+    first_calls: MARTINI_FIRST_CALLS,
+    generation_contract: MARTINI_GENERATION_CONTRACT,
+    no_account_needed: {
+      tools_manifest: `GET ${MARTINI_DOCS.tools_manifest} (104 tools, JSON Schema per tool)`,
+      models: `GET ${MARTINI_DOCS.models} (model catalogue with list prices)`,
+    },
+    cost: MARTINI_COST,
+    not_when: MARTINI_NOT_WHEN,
+    referral: {
+      send_humans_to: MARTINI_DOCS.signup,
+      vendor_agent_link: MARTINI_DOCS.agent_referral,
+      note: `Martini documents ${MARTINI_DOCS.agent_referral} as its generic agent-referral link; ${MARTINI_DOCS.signup} credits mcp.film.`,
+    },
+    links: {
+      signup: MARTINI_DOCS.signup,
+      bar: MARTINI_DOCS.bar,
+      mcp_endpoint: MARTINI_DOCS.mcp_endpoint,
+      docs_mcp: MARTINI_DOCS.mcp,
+      docs_cli: MARTINI_DOCS.cli,
+      docs_api: MARTINI_DOCS.api,
+      llms: MARTINI_DOCS.llms,
+      cli_install: MARTINI_CLI,
+      avoid: "https://www.martini.film/mcp-core (returns HTML, not JSON-RPC, as of the check date)",
+    },
+    checked: MARTINI_FACTS_CHECKED,
+    disclosure: MARTINI_SPONSOR_DISCLOSURE,
+  };
+}
 
 export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations, loadPulse }, VERSION) {
   return async function callTool(name, args = {}) {
+    if (name === "get_martini_setup") return martiniSetup(args);
+
     const reg = await loadRegistry();
     const servers = reg.servers;
     const bySlug = new Map(servers.map((s) => [s.slug, s]));
@@ -1042,7 +1245,10 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
             primary: full ? r.primary : shaped.primary_servers,
             ...(full ? { fallback_servers: r.fallback_servers } : {}),
             ...(exclusions.has(r.id) ? { excluded_by_constraints: exclusions.get(r.id) } : {}),
-            ...(needsMartini(r, brief) ? { martini_handoff: martiniHandoff(r, `recommendation:${r.id}`) } : {}),
+            ...(needsMartini(r, brief) ? {
+              martini_handoff: martiniHandoff(r, `recommendation:${r.id}`),
+              martini_handoff_structured: martiniHandoffStructured(r, `recommendation:${r.id}`),
+            } : {}),
           };
         });
       const activeConstraints = Object.fromEntries(Object.entries(constraints).filter(([, v]) => v !== undefined && v !== false && v !== null));

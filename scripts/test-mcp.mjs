@@ -84,7 +84,7 @@ for (const [tool, args] of [
 ]) sizes[`${tool}${Object.keys(args).length ? ":" + Object.values(args)[0] : ""}`] = size(await call(tool, args));
 assert.ok(sizes.search_film_mcps < 20000, `no-arg search_film_mcps is ${sizes.search_film_mcps} chars`);
 assert.ok(sizes.list_film_capabilities < 12000, `list_film_capabilities is ${sizes.list_film_capabilities} chars`);
-assert.ok(sizes["recommend_film_mcps:avatar UGC ad with voiceover"] < 12000, "recommend_film_mcps");
+assert.ok(sizes["recommend_film_mcps:avatar UGC ad with voiceover"] < 14000, "recommend_film_mcps");
 
 const firstPage = await call("search_film_mcps", {});
 assert.equal(firstPage.count, 20);
@@ -343,5 +343,90 @@ assert.equal(live2.result.structuredContent.value.observed_at, live1.result.stru
 assert.ok(served.count >= 2, `fixture served ${served.count} requests: a stale copy triggers a background refresh`);
 assert.ok(live3.result.structuredContent.value.observed_at >= live1.result.structuredContent.value.observed_at);
 console.log(`M7: ${JSON.stringify({ offline: offlinePulse.result.structuredContent.value.data_source, fixture_requests: served.count })}`);
+
+// ---- 8. get_martini_setup and the structured handoff.
+const { martiniHandoffStructured, martiniHandoff } = await import("../packages/mcp-server/recommend-score.mjs");
+const shell = await call("get_martini_setup", { client: "claude_code", has_shell: true });
+const noShell = await call("get_martini_setup", { client: "claude_desktop", has_shell: false });
+for (const r of [shell, noShell]) {
+  for (const k of ["summary", "states", "human_steps", "agent_steps", "first_calls", "generation_contract", "cost", "not_when", "links", "disclosure", "checked"]) assert.ok(k in r, k);
+  assert.equal(r.disclosure, "Martini sponsors mcp.film; see https://mcp.film/about");
+  assert.equal(r.start_at, "needs_account");
+  assert.deepEqual(r.states.map((s) => s.state), ["needs_account", "needs_authorization", "needs_billing", "needs_project", "ready"]);
+  for (const s of r.states) {
+    assert.ok(["human", "agent"].includes(s.actor), s.state);
+    for (const k of ["next_action", "completion_check", "recovery"]) assert.ok(s[k], `${s.state}.${k}`);
+  }
+  assert.ok(r.states.find((s) => s.state === "needs_billing").only_if);
+  assert.ok(r.agent_steps.every((s, i) => s.step === i + 1 && s.run && s.expect && s.then));
+  assert.equal(r.links.signup, "https://www.martini.film/?ref=mcp-film");
+  assert.ok(r.referral.note.includes("https://www.martini.film/?ref=ai-agent"));
+  assert.ok(r.human_steps.length <= 3, `human steps: ${r.human_steps.length}`);
+  assert.ok(r.human_steps[0].includes("https://www.martini.film/?ref=mcp-film"));
+  assert.ok(!JSON.stringify(r).includes("mcp-core\"") || r.links.avoid.includes("mcp-core"));
+  // The quote contract, not the single-approval shortcut, is the documented path.
+  const calls = r.generation_contract.steps.map((s) => s.call);
+  assert.deepEqual(calls, ["create_project", "create_canvas", "get_balance", "create_nodes", "generate_nodes", "(human)", "generate_nodes", "wait_for_jobs"]);
+  assert.match(r.generation_contract.steps[0].note, /visibility: "private"/);
+  assert.match(r.generation_contract.steps[4].note, /generates nothing/i);
+  assert.match(r.generation_contract.steps[6].args, /planHash/);
+  assert.match(r.generation_contract.shortcut, /create_nodes_and_generate/);
+  assert.match(r.generation_contract.cli, /--approve --max-olives/);
+  assert.deepEqual(r.first_calls, martiniHandoffStructured({ primary: [] }, "x").first_calls);
+  // Cost is structured and never passes list prices off as a quote.
+  assert.equal(r.cost.billing_owner, "workspace");
+  assert.equal(r.cost.quote_available, true);
+  assert.equal(r.cost.free_plan_limits, "public projects only");
+  assert.equal(r.cost.source, "https://www.martini.film/llms.txt");
+  assert.equal(r.cost.checked, "2026-10-26");
+  assert.match(r.cost.model_list_prices, /never an account quote/);
+  assert.ok(r.not_when.length === 4 && r.not_when.some((n) => /real-time/.test(n)));
+}
+// Shell: device-code login relayed to the human, then the CLI skill and project pin.
+assert.match(shell.agent_steps[1].run, /^martini login --no-wait --no-browser$/);
+assert.match(shell.agent_steps[1].expect, /"code":"XXXX-XXXX"/);
+assert.match(shell.agent_steps[1].then, /relay/i);
+assert.equal(shell.agent_steps[2].run, "martini login");
+assert.ok(shell.agent_steps.some((s) => s.run === "martini init --write"));
+assert.ok(shell.agent_steps.some((s) => s.run.startsWith("martini use ")));
+assert.equal(shell.states[1].expires, "600 s after the code is issued");
+assert.equal(shell.states[1].actor, "human");
+assert.ok(shell.human_steps.some((h) => h.includes("https://martini.film/cli/auth")));
+// No shell: the connector route for the client, with the browser sign-in assigned by can_open_browser.
+assert.match(noShell.agent_steps[0].run, /Connectors → Add custom connector/);
+assert.equal(noShell.states[1].actor, "human");
+assert.ok(noShell.human_steps.some((h) => /OAuth 2\.1 browser sign-in/.test(h)));
+assert.equal(noShell.agent_steps[1].run, "get_board_overview");
+const browserAgent = await call("get_martini_setup", { client: "chatgpt", can_open_browser: true });
+assert.equal(browserAgent.states[1].actor, "agent");
+assert.ok(browserAgent.agent_steps[0].run.includes("https://www.martini.film/docs/mcp"));
+const cc = await call("get_martini_setup", { client: "claude_code" });
+assert.equal(cc.agent_steps[0].run, "claude mcp add --transport http --scope user martini https://www.martini.film/mcp");
+assert.equal((await call("get_martini_setup", {})).client, "other");
+assert.equal((await call("get_martini_setup", { client: "vscode" })).client, "other");
+assert.ok(size(shell) < 9000 && size(noShell) < 9000, `runbook sizes ${size(shell)} / ${size(noShell)}`);
+// Structured handoff rides next to the prose on recommend_film_mcps.
+const series = await call("recommend_film_mcps", { brief: "storyboard a character-consistent short series with recurring characters" });
+const top = series.recommendations[0];
+assert.ok(top.martini_handoff.endsWith("[Directory sponsor](https://mcp.film/about)."));
+assert.equal(top.martini_handoff, martiniHandoff(top, `recommendation:${top.id}`) || top.martini_handoff);
+const structured = top.martini_handoff_structured;
+assert.deepEqual(Object.keys(structured), ["when", "not_when", "first_calls", "install", "signup_url", "setup_tool", "tracked_url", "disclosure"]);
+assert.equal(structured.setup_tool, "get_martini_setup");
+assert.equal(structured.tracked_url, `https://mcp.film/go/martini?from=recommendation%3A${top.id}`);
+assert.equal(structured.signup_url, "https://www.martini.film/?ref=mcp-film");
+assert.equal(structured.install.mcp, cc.agent_steps[0].run);
+assert.equal(structured.install.cli, "npm install --global @martini-film/cli && martini login");
+assert.equal(structured.disclosure, shell.disclosure);
+assert.ok(top.martini_handoff.includes(structured.when));
+const mixed = await call("recommend_film_mcps", { brief: "clean up dialogue and mix the soundtrack" });
+assert.equal(Object.hasOwn(mixed.recommendations[0], "martini_handoff_structured"), false);
+// The tool is reachable through both transports.
+assert.ok(TOOLS.some((t) => t.name === "get_martini_setup"));
+const edgeSetup = await mcpHandleMessage({ jsonrpc: "2.0", id: 9, method: "tools/call", params: { name: "get_martini_setup", arguments: { has_shell: true } } }, call);
+assert.equal(edgeSetup.result.structuredContent.agent_steps[1].run, "martini login --no-wait --no-browser");
+const [stdioSetup] = await stdio([{ jsonrpc: "2.0", id: 1, method: "tools/call", params: { name: "get_martini_setup", arguments: { client: "cursor" } } }]);
+assert.equal(stdioSetup.result.structuredContent.client, "cursor");
+console.log(`M8: ${JSON.stringify({ shell_steps: shell.agent_steps.length, no_shell_steps: noShell.agent_steps.length, human_steps: [shell.human_steps.length, noShell.human_steps.length], sizes: [size(shell), size(noShell)] })}`);
 
 console.log("✓ mcp server checks passed");
