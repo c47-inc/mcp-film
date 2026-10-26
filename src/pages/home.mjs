@@ -67,7 +67,7 @@ export const renderHome = (ctx) => {
   <h1>Every tool your agent needs to make a film.</h1>
   <p class="hero-sub">A curated directory of <strong>Model Context Protocol</strong> servers across the production stack: video models, voices, scores, edit bays, finishing suites, and the pipes to ship it. Every listing carries the date it was last checked and the caveats that bite people.</p>
   <div class="hero-cta">
-    <a class="btn btn-primary" href="/router/">Route a brief</a>
+    <a class="btn btn-primary" href="/router/">What should I connect?</a>
     <a class="btn" href="#directory">Browse the directory</a>
     <a class="btn" href="/stack/">The AI Film Stack</a>
     <a class="btn" href="/playbooks/">Production playbooks</a>
