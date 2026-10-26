@@ -926,3 +926,21 @@ img.avatar { object-fit: cover; background: var(--paper); }
   .site-nav a { font-size: 12px; padding: 5px 7px; }
   .nav-gh { display: none; }
 }
+
+/* --- martini runbook (site-martini) --- */
+.martini-runbook { max-width: 52rem; }
+.runbook-steps li code { font-size: 12.5px; }
+.runbook-states { display: grid; gap: 0.8rem; grid-template-columns: 1fr; margin: 0.9rem 0 1rem; }
+@media (min-width: 760px) { .runbook-states { grid-template-columns: 1fr 1fr; } }
+.runbook-state { border: 1px solid var(--hairline); border-radius: var(--r); padding: 0.9rem 1rem; background: var(--paper-dim); min-width: 0; }
+.runbook-state h3 { margin: 0 0 0.6rem; font-size: 13px; font-weight: 600; letter-spacing: 0; }
+.runbook-state dl { margin: 0; display: grid; grid-template-columns: 6.2rem minmax(0, 1fr); gap: 0.35rem 0.6rem; font-size: 12.5px; line-height: 1.55; }
+.runbook-state dt { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-3); padding-top: 2px; }
+.runbook-state dd { margin: 0; color: var(--ink-2); overflow-wrap: anywhere; }
+.runbook-costs td:first-child { white-space: nowrap; }
+@media (max-width: 640px) {
+  .runbook-state dl { grid-template-columns: 1fr; gap: 0.1rem 0; }
+  .runbook-state dd { margin-bottom: 0.45rem; }
+  .runbook-costs td:first-child { white-space: normal; }
+  .martini-runbook .code-block pre { font-size: 11.5px; }
+}
