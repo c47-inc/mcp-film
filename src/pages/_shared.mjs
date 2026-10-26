@@ -27,13 +27,63 @@ export const truncate = (s, n) => {
   return cut + "…";
 };
 
+export const AUTH_LABEL = { api_key: "API key", oauth: "OAuth", none: "no auth", "local-app": "local app" };
+export const authLabel = (s) => AUTH_LABEL[s.auth?.type] ?? s.auth?.type ?? "unknown auth";
+
+// Lifecycle status. Absent means active; anything else is a listing kept for the explanation.
+// TODO(llms owner): src/pages/llms.mjs should mark inactive entries in llms.txt's server list
+// and llms-full.txt, e.g. `- [Name](url) (${statusLabel(s).toLowerCase()}): tagline`. The
+// server markdown twin already carries a **Status:** line.
+export const STATUS_LABEL = { dead: "Dead", archived: "Archived", deprecated: "Deprecated" };
+export const isInactive = (s) => Boolean(s?.status && STATUS_LABEL[s.status]);
+export const statusLabel = (s) => (isInactive(s) ? STATUS_LABEL[s.status] : "Active");
+export const statusBlurb = (s) => ({
+  dead: "This server is dead: the endpoint, package or upstream API it wrapped no longer exists. The listing stays so old links and configs resolve to an explanation.",
+  archived: "This server is archived: the repository is read-only and nobody is maintaining it. It may still run, but expect no fixes.",
+  deprecated: "This server is deprecated: the vendor has superseded it or scheduled its shutdown. Do not wire it into a new pipeline.",
+}[s?.status] ?? "");
+
+// Sort for browsing grids: active before inactive, official, hosted, then name.
+export const browseSort = (a, b) =>
+  Number(isInactive(a)) - Number(isInactive(b))
+  || Number(Boolean(b.official)) - Number(Boolean(a.official))
+  || Number(Boolean(b.install?.remote_url)) - Number(Boolean(a.install?.remote_url))
+  || a.name.localeCompare(b.name);
+
+// Meta description: tagline · Official/Community · hosted remote/local · auth · verified date.
+// Trailing facts drop first when the budget is tight; the tagline itself trims at a word boundary last.
+export const DESCRIPTION_MAX = 155;
 export const serverDescription = (s) => {
-  const firstSentence = s.description.match(/^.*?[.!?](?=\s|$)|^.+$/s)?.[0] ?? "";
-  const tagline = s.tagline.trim() || firstSentence; // an empty tagline must not yield an empty description
-  const full = `${tagline} ${firstSentence}`.trim();
-  // Tagline + first sentence when they fit, else the tagline alone (a full sentence), else a word boundary.
-  const text = full.length <= 155 ? full : tagline.length <= 155 ? tagline : tagline.slice(0, 156).replace(/\s+\S*$/, "");
+  const firstSentence = (s.description ?? "").match(/^.*?[.!?](?=\s|$)|^.+$/s)?.[0] ?? "";
+  const tagline = (s.tagline ?? "").trim() || firstSentence; // an empty tagline must not yield an empty description
+  const facts = [
+    s.official ? "Official" : "Community",
+    s.install?.remote_url ? "hosted remote" : "local",
+    authLabel(s),
+    s.verified ? `verified ${nice(s.verified)}` : null,
+  ].filter(Boolean);
+  let text = [tagline, ...facts].join(" · ");
+  while (text.length > DESCRIPTION_MAX && facts.length) {
+    facts.pop();
+    text = [tagline, ...facts].join(" · ");
+  }
+  if (text.length > DESCRIPTION_MAX) {
+    const cut = text.slice(0, DESCRIPTION_MAX + 1);
+    text = /\s/.test(cut) ? cut.replace(/\s+\S*$/, "") : cut.slice(0, DESCRIPTION_MAX);
+  }
   return text.replace(/[^\p{L}\p{N}.)]+$/u, "");
+};
+
+// Sentence split that leaves URLs, version numbers and "v4.10.4" alone: a break needs
+// terminal punctuation followed by whitespace and a capital, digit, quote or backtick.
+export const sentences = (text) =>
+  String(text ?? "").trim().split(/(?<=[.!?])\s+(?=[A-Z0-9"'`(])/).map((x) => x.trim()).filter(Boolean);
+
+// Verification-log sentences ("Re-checked 26 Oct 2026: ...") are history, not caveats.
+const LOG_SENTENCE = /^(re-?checked|checked|verified|as of|last (checked|verified)|on \d|\d{1,2} \w{3} \d{4})/i;
+export const caveatsFor = (s, max = 2) => {
+  if (Array.isArray(s.caveats) && s.caveats.length) return s.caveats.filter((c) => typeof c === "string" && c.trim());
+  return sentences(s.notes).filter((x) => !LOG_SENTENCE.test(x)).slice(0, max);
 };
 
 export const dataAttrs = (attrs = {}) =>
@@ -46,55 +96,97 @@ export const jsonForScript = (value) => JSON.stringify(value).replaceAll("</", "
 
 export const catById = (ctx, id) => ctx.categories.find((c) => c.id === id);
 export const capabilityLabel = (id) => id.split("-").join(" ");
-export const capabilityLink = (ctx, id) =>
-  ctx.capabilityPageIds?.has(id)
-    ? `<a href="/capabilities/${esc(id)}/"><code>${esc(id)}</code></a>`
+export const capabilityLink = (ctx, id) => {
+  const page = capabilityPageFor(ctx, id);
+  return page
+    ? `<a href="/capabilities/${esc(page)}/"><code>${esc(id)}</code></a>`
     : `<code>${esc(id)}</code>`;
-export const capabilityMdLink = (ctx, id) =>
-  ctx.capabilityPageIds?.has(id)
-    ? `[${id}](${ctx.site.url}/capabilities/${id}.md)`
+};
+export const capabilityMdLink = (ctx, id) => {
+  const page = capabilityPageFor(ctx, id);
+  return page
+    ? `[${id}](${ctx.site.url}/capabilities/${page}.md)`
     : `\`${id}\``;
+};
 
-// A command is copy-pastable only if it has no prose in it.
-export const cmdLike = (cmd) =>
-  typeof cmd === "string" && !cmd.includes("(") && !/\bafter\b|\bclone\b|\bthen\b/i.test(cmd);
+// Installer wizards masquerading as servers: `npx davinci-resolve-mcp setup` installs, it
+// does not speak MCP on stdio. The first bare argument after the package decides.
+export const INSTALLER_SUBCOMMANDS = new Set(["setup", "install", "init", "configure", "login"]);
+const RUNNERS = new Set(["npx", "uvx", "bunx", "pipx"]);
+const VALUE_FLAGS = new Set(["-p", "--package", "--from", "-e", "--env", "--header", "-h", "--scope", "-s", "--transport", "--with", "--python"]);
+
+export const installerSubcommand = (cmd) => {
+  // A `claude mcp add x -- <server command>` line is judged by the part after `--`.
+  const tail = String(cmd ?? "").split(/\s--\s/).at(-1);
+  const tokens = tail.trim().split(/\s+/).filter(Boolean);
+  const bare = [];
+  for (let i = 0; i < tokens.length; i++) {
+    const t = tokens[i];
+    if (t.startsWith("-")) {
+      if (VALUE_FLAGS.has(t)) i++; // skip the flag's value
+      continue;
+    }
+    if (!bare.length && RUNNERS.has(t)) continue; // the runner is not the package
+    bare.push(t);
+  }
+  // `pipx run pkg`, `uv run pkg`, `bithuman mcp`: bare[0] is the package or binary, bare[1] its first argument.
+  const arg = bare[0] === "run" ? bare[2] : bare[1];
+  return arg && INSTALLER_SUBCOMMANDS.has(arg.toLowerCase()) ? arg : null;
+};
+
+// A command is copy-pastable only if it has no prose in it and is not an installer step.
+// `install.generate === false` opts a listing out of every derived command.
+export const cmdLike = (cmd, install) =>
+  install?.generate !== false
+  && typeof cmd === "string"
+  && !cmd.includes("(")
+  && !/\bafter\b|\bclone\b|\bthen\b/i.test(cmd)
+  && !installerSubcommand(cmd);
 
 export const remoteHeaders = (s) =>
   Array.isArray(s.install?.remote_headers) ? s.install.remote_headers.filter(Boolean) : [];
 
 export const remoteNeedsHeaders = (s) => remoteHeaders(s).length > 0;
 
+export const canGenerate = (s) => s.install?.generate !== false;
+
 export const claudeCodeCmd = (s) => {
   if (s.install?.claude_code && cmdLike(s.install.claude_code)) return s.install.claude_code;
+  if (!canGenerate(s)) return null;
   if (s.install?.remote_url && !remoteNeedsHeaders(s)) return `claude mcp add --transport http ${s.slug} ${s.install.remote_url}`;
-  if (cmdLike(s.install?.stdio_command)) return `claude mcp add ${s.slug} -- ${s.install.stdio_command}`;
+  if (cmdLike(s.install?.stdio_command, s.install)) return `claude mcp add ${s.slug} -- ${s.install.stdio_command}`;
   return null;
 };
 
+const stdioConfig = (s) => {
+  const cmd = s.install?.stdio_command;
+  if (!cmdLike(cmd, s.install) || /["']/.test(cmd)) return null;
+  const parts = cmd.split(/\s+/);
+  const conf = { command: parts[0], args: parts.slice(1) };
+  if (s.auth?.env_var) conf.env = { [s.auth.env_var]: "YOUR_KEY_HERE" };
+  return conf;
+};
+
+// Claude Desktop reads hosted servers natively (Settings → Connectors); the mcp-remote JSON
+// is the config-file fallback for clients and accounts without that panel.
 export const desktopConfig = (s) => {
+  if (!canGenerate(s)) return null;
   if (s.install?.remote_url && !remoteNeedsHeaders(s)) {
     return JSON.stringify(
       { mcpServers: { [s.slug]: { command: "npx", args: ["-y", "mcp-remote", s.install.remote_url] } } },
       null, 2);
   }
-  const cmd = s.install?.stdio_command;
-  if (!cmdLike(cmd) || /["']/.test(cmd)) return null;
-  const parts = cmd.split(/\s+/);
-  const conf = { command: parts[0], args: parts.slice(1) };
-  if (s.auth?.env_var) conf.env = { [s.auth.env_var]: "YOUR_KEY_HERE" };
-  return JSON.stringify({ mcpServers: { [s.slug]: conf } }, null, 2);
+  const conf = stdioConfig(s);
+  return conf ? JSON.stringify({ mcpServers: { [s.slug]: conf } }, null, 2) : null;
 };
 
 export const cursorConfig = (s) => {
+  if (!canGenerate(s)) return null;
   if (s.install?.remote_url && !remoteNeedsHeaders(s)) {
     return JSON.stringify({ mcpServers: { [s.slug]: { url: s.install.remote_url } } }, null, 2);
   }
-  const cmd = s.install?.stdio_command;
-  if (!cmdLike(cmd) || /["']/.test(cmd)) return null;
-  const parts = cmd.split(/\s+/);
-  const conf = { command: parts[0], args: parts.slice(1) };
-  if (s.auth?.env_var) conf.env = { [s.auth.env_var]: "YOUR_KEY_HERE" };
-  return JSON.stringify({ mcpServers: { [s.slug]: conf } }, null, 2);
+  const conf = stdioConfig(s);
+  return conf ? JSON.stringify({ mcpServers: { [s.slug]: conf } }, null, 2) : null;
 };
 
 export const clientProfilesFor = (ctx) => {
@@ -103,6 +195,7 @@ export const clientProfilesFor = (ctx) => {
   const installExample = (s) => ({
     slug: s.slug,
     name: s.name,
+    status: s.status ?? "active",
     official: Boolean(s.official),
     remote: Boolean(s.install?.remote_url),
     auth_type: s.auth?.type ?? null,
@@ -174,7 +267,7 @@ export const clientProfilesFor = (ctx) => {
     ],
     starter_examples: sampleSlugs
       .map((slug) => ctx.servers.find((s) => s.slug === slug))
-      .filter(Boolean)
+      .filter((s) => s && !isInactive(s))
       .map(installExample),
   };
 };
@@ -187,6 +280,8 @@ export const daysSince = (ctx, iso) => {
 
 export const verificationStatus = (ctx, s) => {
   const days = daysSince(ctx, s.verified);
+  // A dead listing is not "freshly checked" however recently the obituary was confirmed.
+  if (isInactive(s)) return { days, tone: "inactive", label: statusLabel(s), age: `${days} days old` };
   if (days >= 60) return { days, tone: "due", label: "Verification due", age: `${days} days old` };
   if (days >= 30) return { days, tone: "watch", label: "Review soon", age: `${days} days old` };
   return { days, tone: "fresh", label: "Freshly checked", age: days === 0 ? "checked today" : `${days} days old` };
@@ -286,7 +381,10 @@ export const sponsorLink = (ctx, placement, label = ctx.site.sponsor.name) =>
     "sponsor-destination": ctx.site.sponsor.url,
   })}>${esc(label)}</a>`;
 
-export const martiniLine = (ctx, route, placement) => needsMartini(route)
+// A route with no martini_handoff text renders no handoff, even when Martini is in the stack.
+export const hasMartiniHandoff = (route) => typeof route?.martini_handoff === "string" && route.martini_handoff.trim() !== "" && needsMartini(route);
+
+export const martiniLine = (ctx, route, placement) => hasMartiniHandoff(route)
   ? `<p class="recommendation-handoff">${esc(martiniHandoffProse(route))} ${sponsorLink(ctx, placement, "Setup →")} · <a href="/about">Directory sponsor</a>.</p>`
   : "";
 
@@ -311,7 +409,34 @@ posthog.init('${key}',{api_host:'${site.analytics.posthog_host}',person_profiles
 </script>`;
 };
 
-export const layout = (ctx, { title, description, path: pagePath, body, jsonLd = [], page = "", md = null }) => {
+// The publisher node every page's structured data can point at: the directory, its repo,
+// and the sponsor named in site.json as the parent organisation.
+export const organizationLd = (ctx) => {
+  const { site } = ctx;
+  return {
+    "@type": "Organization",
+    "@id": `${site.url}/#organization`,
+    name: "mcp.film",
+    url: site.url,
+    sameAs: [`https://github.com/${site.github_repo}`],
+    ...(site.sponsor?.name ? { parentOrganization: { "@type": "Organization", name: site.sponsor.name, url: site.sponsor.url } } : {}),
+  };
+};
+
+export const breadcrumbLd = (ctx, trail) => ({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [{ name: "mcp.film", item: ctx.site.url + "/" }, ...trail].map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    ...(c.item ? { item: c.item } : {}),
+  })),
+});
+
+// robots: "index,follow" (default) or "noindex,follow". canonical: false drops the canonical
+// link (the 404 page is served at any path, so it has no canonical URL to claim).
+export const layout = (ctx, { title, description, path: pagePath, body, jsonLd = [], page = "", md = null, robots = "index,follow", canonical = true }) => {
   const { site } = ctx;
   const url = site.url + pagePath;
   const ld = jsonLd.map((o) => `<script type="application/ld+json">${JSON.stringify(o)}</script>`).join("\n");
@@ -322,8 +447,8 @@ export const layout = (ctx, { title, description, path: pagePath, body, jsonLd =
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
-<meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1">
-<link rel="canonical" href="${url}">
+<meta name="robots" content="${esc(robots)},max-snippet:-1,max-image-preview:large,max-video-preview:-1">
+${canonical ? `<link rel="canonical" href="${url}">` : ""}
 ${md ? `<link rel="alternate" type="text/markdown" href="${site.url}${md}" title="Markdown version of this page">` : ""}
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="mcp.film">
@@ -332,6 +457,9 @@ ${md ? `<link rel="alternate" type="text/markdown" href="${site.url}${md}" title
 <meta property="og:url" content="${url}">
 <meta property="og:image" content="${site.url}/assets/og.png">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${esc(title)}">
+<meta name="twitter:description" content="${esc(description)}">
+<meta name="twitter:image" content="${site.url}/assets/og.png">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <link rel="alternate" type="application/atom+xml" title="New MCP servers" href="/feed.xml">
@@ -404,10 +532,17 @@ ${body}
 };
 
 // -------------------------------------------------------------------- cards
+// Official keeps its green dot only while the listing is alive.
 export const badge = (s) =>
-  s.official
-    ? `<span class="tag tag-official" title="Maintained by the platform vendor">Official</span>`
-    : `<span class="tag" title="Community-maintained">Community</span>`;
+  (s.official
+    ? `<span class="tag${isInactive(s) ? "" : " tag-official"}" title="Maintained by the platform vendor">Official</span>`
+    : `<span class="tag" title="Community-maintained">Community</span>`)
+  + statusBadge(s);
+
+export const statusBadge = (s) =>
+  isInactive(s)
+    ? `<span class="tag tag-status tag-status-${esc(s.status)}" title="${esc(statusBlurb(s))}">${esc(statusLabel(s))}</span>`
+    : "";
 
 export const remoteBadge = (s) =>
   s.install?.remote_url ? `<span class="tag" title="Hosted remote MCP — no local install">Remote</span>` : "";
@@ -424,15 +559,22 @@ export const vendorShort = (v) => {
   return m ? m[1] : v.replace(/\s*\(.*\)$/, "");
 };
 
-export const card = (ctx, s) => {
+// Display tags stay as written; the search haystack also carries their canonical forms so a
+// query for "tts" finds a server tagged text-to-speech.
+export const canonicalCaps = (ctx, s) =>
+  [...new Set((s.capabilities ?? []).map((c) => ctx.canonicalCapability?.(c) ?? c))];
+
+export const card = (ctx, s, { highlight = "" } = {}) => {
   const caps = (s.capabilities ?? []).slice(0, 2).join(" · ");
   const extra = [s.install?.remote_url ? "remote" : null, PRICING_LABEL[s.pricing] ?? s.pricing]
     .filter(Boolean).join(" · ");
-  return `<a class="card" href="/mcps/${s.slug}/" data-search="${esc([s.slug, s.name, s.vendor, s.tagline, s.category, ...(s.capabilities ?? []), ...(s.capabilities ?? []).map((c) => c.replace(/-/g, " "))].join(" ").toLowerCase())}" data-cat="${s.category}" data-official="${s.official ? "true" : "false"}" data-remote="${s.install?.remote_url ? "true" : "false"}">
+  const tags = [...new Set([...(s.capabilities ?? []), ...canonicalCaps(ctx, s)])];
+  return `<a class="card${highlight ? ` ${highlight}` : ""}" href="/mcps/${s.slug}/" data-search="${esc([s.slug, s.name, s.vendor, s.tagline, s.category, ...tags, ...tags.map((c) => c.replace(/-/g, " "))].join(" ").toLowerCase())}" data-cat="${s.category}" data-official="${s.official ? "true" : "false"}" data-remote="${s.install?.remote_url ? "true" : "false"}"${isInactive(s) ? ` data-status="${esc(s.status)}"` : ""}>
   <div class="card-head">
     ${avatar(ctx, s)}
     <span class="card-id"><span class="card-name">${esc(s.name)}</span><span class="card-vendor">${esc(vendorShort(s.vendor))}</span></span>
-    ${s.official ? `<span class="tag tag-official">Official</span>` : ""}
+    ${s.official ? `<span class="tag${isInactive(s) ? "" : " tag-official"}">Official</span>` : ""}
+    ${statusBadge(s)}
     ${s.featured ? `<span class="tag tag-featured" title="Featured listing — ${esc(ctx.site.sponsor?.name ?? "sponsor")} sponsors mcp.film. See /about.">Featured</span>` : ""}
   </div>
   <p class="card-tag">${esc(s.tagline)}</p>
@@ -440,9 +582,16 @@ export const card = (ctx, s) => {
 </a>`;
 };
 
+// Hosted remotes worth connecting: a dead endpoint is not a remote, it is an obituary.
 export const remoteServersFor = (ctx) =>
-  [...(ctx.remoteServers ?? ctx.servers.filter((s) => s.install?.remote_url))]
+  [...(ctx.remoteServers ?? ctx.servers.filter((s) => s.install?.remote_url && !isInactive(s)))]
     .sort((a, b) =>
       Number(Boolean(b.official)) - Number(Boolean(a.official))
       || a.name.localeCompare(b.name)
     );
+
+// Capability links resolve through the alias table so text-to-speech lands on /capabilities/tts/.
+export const capabilityPageFor = (ctx, id) => {
+  const canonical = ctx.canonicalCapability?.(id) ?? id;
+  return ctx.capabilityPageIds?.has(canonical) ? canonical : null;
+};

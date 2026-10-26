@@ -1,4 +1,4 @@
-import { capabilityLabel, card, esc, layout, sponsorHandoffUrl, sponsorLink } from "./_shared.mjs";
+import { capabilityLabel, card, esc, isInactive, layout, sponsorHandoffUrl, sponsorLink, statusLabel } from "./_shared.mjs";
 
 // -------------------------------------------------------------- capability
 export const renderCapabilities = (ctx) => {
@@ -76,7 +76,7 @@ export const renderCapability = (ctx, capability) => {
 <section class="page-head">
   <p class="crumbs"><a href="/">mcp.film</a> / <a href="/capabilities/">Capabilities</a> / <span>${esc(capability.capability)}</span></p>
   <h1>${esc(capabilityLabel(capability.capability))}</h1>
-  <p class="hero-sub">${capability.count} MCP server${capability.count === 1 ? "" : "s"} tagged <span class="mono">${esc(capability.capability)}</span>: ${capability.official} official, ${capability.remote} hosted remote. <span class="mono">(machine version: <a href="/api/capabilities/${esc(capability.capability)}.json">JSON</a> · <a href="/capabilities/${esc(capability.capability)}.md">markdown</a>)</span></p>
+  <p class="hero-sub">${capability.count} MCP server${capability.count === 1 ? "" : "s"} tagged <span class="mono">${esc(capability.capability)}</span>${capability.aliases?.length ? ` (also ${capability.aliases.map((a) => `<span class="mono">${esc(a)}</span>`).join(", ")})` : ""}: ${capability.official} official, ${capability.remote} hosted remote. <span class="mono">(machine version: <a href="/api/capabilities/${esc(capability.capability)}.json">JSON</a> · <a href="/capabilities/${esc(capability.capability)}.md">markdown</a>)</span></p>
 </section>
 
 <section class="cat-section" data-track-section="capability:${esc(capability.capability)}"><div class="grid">${list.map((s) => card(ctx, s)).join("")}</div></section>
@@ -86,7 +86,7 @@ ${martini ? `<section class="recommendation-handoff capability-handoff"><span cl
 ${related.length ? `<section class="server-main agents-doc capability-related">
   <h2>Related recommendation routes</h2>
   <ul class="agents-list">
-    ${related.map((r) => `<li><a href="/recommendations/#${esc(r.id)}">${esc(r.title)}</a> — ${esc(r.summary)}</li>`).join("")}
+    ${related.map((r) => `<li><a href="/recommendations/${esc(r.id)}/">${esc(r.title)}</a> — ${esc(r.summary)}</li>`).join("")}
   </ul>
 </section>` : ""}
 
@@ -132,6 +132,7 @@ export const renderCapabilityMd = (ctx, capability) => {
     `- Official: ${capability.official}`,
     `- Hosted remote: ${capability.remote}`,
     `- Categories: ${capability.categories.join(", ")}`,
+    ...(capability.aliases?.length ? [`- Also tagged: ${capability.aliases.join(", ")}`] : []),
     "",
   ];
   const full = capability.servers
@@ -143,7 +144,7 @@ export const renderCapabilityMd = (ctx, capability) => {
   }
   lines.push("## Servers", "");
   for (const s of full) {
-    lines.push(`- [${s.name}](${ctx.site.url}/mcps/${s.slug}.md)${s.official ? " (official)" : ""}${s.install?.remote_url ? " (remote)" : ""}: ${s.tagline}`);
+    lines.push(`- [${s.name}](${ctx.site.url}/mcps/${s.slug}.md)${s.official ? " (official)" : ""}${s.install?.remote_url ? " (remote)" : ""}${isInactive(s) ? ` (${statusLabel(s).toLowerCase()})` : ""}: ${s.tagline}`);
   }
   lines.push("", "---", "", `Capability index: ${ctx.site.url}/capabilities/ · Full registry: ${ctx.site.url}/api/registry.json`);
   return lines.join("\n") + "\n";
