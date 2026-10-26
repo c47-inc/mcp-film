@@ -20,6 +20,12 @@
     "links": { "repo": "https://github.com/ahujasid/mcp-for-blender", "docs": null, "site": null },
     "added": "2026-06-11",
     "verified": "2026-10-10",
+    "caveats": [
+      "execute_blender_code runs arbitrary Python, so save your work first.",
+      "Anonymous tool telemetry is on by default; disable it in Blender preferences or with DISABLE_TELEMETRY=true.",
+      "GUI-launched clients often fail with spawn uvx ENOENT, so use uvx's absolute path or wrap it in cmd /c on Windows.",
+      "Renamed to mcp-for-blender in September; new installs should run uvx mcp-for-blender setup, then start the socket server from Blender's sidebar."
+    ],
     "notes": "30.4k stars, MIT, pushed 6 Oct 2026, Python 3.10+. Renamed in September: the repo is now ahujasid/mcp-for-blender and the PyPI package is mcp-for-blender (2.1.9, 6 Oct 2026); the old blender-mcp package stopped at 2.0.0 (16 Sep 2026). `uvx blender-mcp` still runs the server and existing configs keep working per the README, but new installs should use `uvx mcp-for-blender setup`, which also installs the addon; you still start the socket server from Blender's sidebar. execute_blender_code runs arbitrary Python — save your work first. Anonymous tool telemetry is on by default (disable in Blender preferences or with DISABLE_TELEMETRY=true). Asset integrations have grown to Poly Haven (free), Sketchfab, Poly Pizza, Hyper3D Rodin and Hunyuan3D; the last two are text/image-to-3D generators with their own keys and quotas. GUI-launched clients often fail with 'spawn uvx ENOENT' because they don't inherit your shell PATH — use uvx's absolute path, or wrap in `cmd /c` on Windows. The Blender Foundation ships its own server (see blender-lab-mcp): official, but Blender 5.1+ and a harder install. This one is the pragmatic choice on 3.x/4.x."
   },
   {
@@ -43,6 +49,12 @@
     "links": { "repo": "https://projects.blender.org/lab/blender_mcp", "docs": "https://www.blender.org/lab/mcp-server/", "site": "https://www.blender.org/lab/" },
     "added": "2026-08-11",
     "verified": "2026-10-10",
+    "caveats": [
+      "Blender's own docs warn it executes LLM-generated code with no guards, and recommend a VM or a machine with no sensitive data.",
+      "Blender 5.1+ only, explicitly experimental and outside the current roadmap.",
+      "Three components must be downloaded and run manually; there is no one-line install.",
+      "The community blender server is far easier to set up, works on 3.0+, and adds asset-library integrations this one lacks."
+    ],
     "notes": "Official but experimental — a Blender Lab project, explicitly outside the current Blender roadmap. Blender's own docs carry a blunt security warning: the server 'will execute LLM generated code in Blender without any guards in place to protect your data from removal or being sent to a remote location', and they recommend running it in a virtual machine or on a system with no sensitive data. Three components must be downloaded and run manually (add-on, LLM client, MCP server); there is no one-line install. Blender 5.1+ only, per the add-on's own blender_manifest.toml. v1.0.3 shipped 11 Sep 2026 (v1.0.2 three days earlier), 27 stars on projects.blender.org, last commit 29 Sep 2026 as of 10 Oct 2026, and half the 26 tools are duplicated as `*_for_cli` variants for headless use. Checked 10 Oct 2026 via the Forgejo API; both blender.org and the repo's web UI return 403 to automated fetchers, so the tool list comes from readme_tools.rst in the repo and the security quote is carried over from the last read of the docs page. The community ahujasid/blender-mcp is far easier to set up, works on 3.0+, and adds asset-library integrations this one has no equivalent for."
   },
   {
@@ -66,6 +78,11 @@
     "links": { "repo": null, "docs": "https://dev.epicgames.com/documentation/unreal-engine/unreal-mcp-in-unreal-editor", "site": "https://www.unrealengine.com" },
     "added": "2026-08-11",
     "verified": "2026-10-15",
+    "caveats": [
+      "UE 5.8 only and marked Experimental by Epic, with APIs and data formats subject to change.",
+      "HTTP and SSE only on loopback with no authentication layer; Epic calls it not safe to expose beyond the local machine.",
+      "No stdio or WebSocket transport, so remote-agent setups need their own tunnel."
+    ],
     "notes": "Re-checked 15 Oct 2026: still documented for UE 5.8 and still marked Experimental by Epic: 'use caution when shipping with it', APIs and data formats subject to change. HTTP and Server-Sent Events only — stdio and WebSocket transports are not supported, so remote-agent setups need their own tunnel. It binds loopback at http://127.0.0.1:8000/mcp (port and path configurable in Editor Preferences, or ModelContextProtocol.StartServer <port>) and rejects non-loopback Origin headers, but has no authentication layer and Epic calls it not safe to expose beyond the local machine — anything that reaches that port drives your editor. GenerateClientConfig also writes configs for Cursor, VSCode, Gemini and Codex (or All). ModelContextProtocol.StopServer and .RefreshTools complete the console surface. UE 5.8 only; on 5.5-5.7 or for hosted use, see the unreal-engine entry."
   },
   {
@@ -89,6 +106,12 @@
     "links": { "repo": "https://github.com/flopperam/unreal-engine-mcp", "docs": null, "site": "https://www.tryaura.dev" },
     "added": "2026-06-11",
     "verified": "2026-10-14",
+    "caveats": [
+      "The open-source half is parked: no code commit since Jun 2026, and the repo has no LICENCE file despite the README's MIT line.",
+      "Flopperam was acquired by Aura, whose product page does not mention MCP or this endpoint.",
+      "Local mode requires compiling the bundled C++ plugin, and hosted mode is key-gated.",
+      "ChiR24/Unreal_mcp is the most actively maintained community option if you need current commits."
+    ],
     "notes": "Ownership changed: the repo's README and description state Flopperam has been acquired by Aura and point ongoing development at tryaura.dev. Re-checked 14 Oct 2026: 1.1k stars, last commit still Jun 26 2026 (the one that moved the Aura banner to the top of the README) — three and a half months without code, so treat the open-source half as parked. The README's licence line says MIT but the repo still contains no LICENCE file and GitHub's licence API returns 404, so the grant is unconfirmed. The hosted endpoint still answers 401 unauthenticated, so it is alive and key-gated. Aura's product page now markets an agent for Unreal 5.4+ and Unity 5/6, working in the editor, Claude Code, Codex and IDEs, with a two-week free trial — still without mentioning MCP or this endpoint, which is the direction the funding is going. Landscape: Epic ships a first-party server for UE 5.8 (unreal-mcp-epic); chongdashu/unreal-mcp is still the most-starred at 2.1k but has not been pushed since Apr 2025; ChiR24/Unreal_mcp (928 stars, MIT, pushed Oct 13 2026, TypeScript + a C++ Automation Bridge plugin) is the most actively maintained community option."
   },
   {
@@ -112,6 +135,11 @@
     "links": { "repo": "https://github.com/healkeiser/fxhoudinimcp", "docs": null, "site": null },
     "added": "2026-06-11",
     "verified": "2026-10-10",
+    "caveats": [
+      "Neither server is from SideFX, and SideFX's APEX Script MCP is a preview, so do not plan a pipeline around it yet.",
+      "fxhoudinimcp needs Houdini 20.5+ and a Python 3.10+ outside Houdini; capoomgit/houdini-mcp is manual to install.",
+      "Tool names are not listed here, so read tools/list."
+    ],
     "notes": "healkeiser/fxhoudinimcp: 318 stars, MIT, PyPI 2.25.0 (5 Oct 2026, repo pushed the same day), tested through Houdini 22.0.368 — fewer stars than the original but far broader coverage and the better-maintained of the two; it is the one to try first. capoomgit/houdini-mcp: 285 stars, MIT, last push Jun 11 2026, still early-stage and manual to install. SideFX itself has no shipping MCP: the H22 'APEX Script comfort package' (AI-assisted rigging-code authoring, autocomplete, validation) was shown at the Houdini 22 keynote and SideFX's own page calls it 'a preview for a tool which will be released later on' — trade coverage from SIGGRAPH 2026 describes an APEX Script MCP server headed to SideFX Labs, but as of Sep 2026 SideFX has not documented one and it is not in the core product. Do not plan a pipeline around it yet. For Cinema 4D, Maxon now ships an official server inside C4D 2026.4 (see cinema4d); on older versions the community ttiimmaacc/cinema4d-mcp (129 stars, last push Mar 2026, C4D 2024+, MoGraph/Redshift tools) is the equivalent."
   },
   {
@@ -135,6 +163,11 @@
     "links": { "repo": null, "docs": "https://documentation.borisfx.com/wiki/sfx/index.php?title=MCP", "site": "https://borisfx.com/products/silhouette/" },
     "added": "2026-08-11",
     "verified": "2026-10-15",
+    "caveats": [
+      "Needs a licensed Silhouette 2026 ($545 a year or $103 a month when last quoted), and it is closed source.",
+      "Codex has no Configure Client option, and offline mode needs a hand edit of SFX_MCP_MODE because Configure Client always writes online.",
+      "execute_script is an unguarded escape hatch that runs arbitrary fx Python."
+    ],
     "notes": "Shipped with Silhouette 2026 on May 28 2026; re-checked 15 Oct 2026 — the MCP wiki page is unchanged since 22 May and Boris FX still sells 2026 as current, with MCP control by AI assistants on the product page. Codex has no Configure Client option; paste the generated snippet by hand. Two modes via SFX_MCP_MODE: 'online' (default) drives a running instance over its RPC socket with live UI updates and grouped undo blocks; 'offline' runs Silhouette headless per tool call for batch, CI, and farm work — Configure Client always writes online, so offline needs a hand edit. Configure Client for Claude Code shells out to `claude mcp remove silhouette --scope user` then `claude mcp add`, so re-running it is safe. execute_script is an unguarded escape hatch that runs arbitrary fx Python. Not cheap and not standalone-free: $545/yr or $103/mo when last quoted in Aug 2026 — the Boris FX store renders prices client-side and could not be re-read here, so treat the figures as indicative. Included in the Boris FX Suite; runs standalone or as a plugin inside After Effects, Premiere, Nuke, Resolve/Fusion, and Flame. Closed source — no repo to audit."
   },
   {
@@ -158,6 +191,12 @@
     "links": { "repo": "https://github.com/artokun/comfyui-mcp", "docs": "https://comfyui-mcp.artokun.io/docs", "site": "https://registry.comfy.org/nodes/comfyui-agent-panel" },
     "added": "2026-06-11",
     "verified": "2026-10-15",
+    "caveats": [
+      "Maintenance is limited per the README, so pin an exact version and do not count on new model-family support landing quickly.",
+      "The nine generation modes collapsed into one action-parameterised tool at 0.50.0, so configs that call generate_video will break.",
+      "--tunnel exposes it publicly over cloudflared, which is a decision, not a convenience.",
+      "Requires ComfyUI running, and COMFYUI_API_KEY switches the target to Comfy Cloud."
+    ],
     "notes": "Re-checked 15 Oct 2026: npm comfyui-mcp 0.52.206, repo pushed 14 Oct, MIT, 825 stars (715 in Sep). The release cadence has slowed — the README now says 'limited maintenance has resumed', with releases focused on verified critical fixes and no broad feature roadmap — so pin an exact version and don't count on new model-family support landing quickly. The README contradicts itself on counts (38 tools in the body, 178 in the intro). The tool surface was consolidated, not grown: the README now claims 38 tools, 42 AI skills and 56 installer packs, against 178 tools in August, because the nine generation modes (image, audio, video, 3d, controlnet, ip_adapter, regenerate, upscale, remove_background) collapsed into one action-parameterised tool at 0.50.0. Prompts and configs that called generate_audio or generate_video will break. The vendor's own docs disagree on its name — the tool page says generate_image, the llms.txt index says generate — so probe the live tool list before scripting against it. Backends beyond Claude: ChatGPT and Gemini on subscription, Ollama fully offline, DeepSeek/GLM/Kimi via OpenRouter. COMFYUI_API_KEY switches the target to Comfy Cloud instead of a local instance. --http binds a token-authed HTTP server (COMFYUI_MCP_HTTP_TOKEN); --tunnel exposes it publicly over cloudflared, which is a decision, not a convenience. Heavier than shawnrushefsky/comfyui-mcp but far more filmmaker-useful for local video/audio workflows."
   },
   {
@@ -181,6 +220,11 @@
     "links": { "repo": "https://github.com/VAST-AI-Research/tripo-mcp", "docs": null, "site": "https://www.tripo3d.ai" },
     "added": "2026-06-11",
     "verified": "2026-10-16",
+    "caveats": [
+      "Abandoned in practice: PyPI 0.1.2 and the repo have not moved since Apr 2025, and the README still says alpha.",
+      "Requires the separate Tripo AI Blender Addon plus a running Blender.",
+      "Meshy's server is the better-maintained official option in this niche."
+    ],
     "notes": "Official and now 214 stars, but abandoned in practice: re-checked 16 Oct 2026 and nothing has moved — README still says alpha, PyPI tripo-mcp is still 0.1.2 from Apr 12 2025, and the repo has had no push since Apr 14 2025, eighteen months, with 8 open issues unanswered. Not archived, so it still reads as live; treat the stars as history, not health. Still scoped to Blender-addon integration and requires the separate Tripo AI Blender Addon plus a running Blender. The multi-provider alternative mordor-forge/trident-mcp (Tripo + Meshy + Rodin) was last pushed Jul 9 2026 and is fresher, but tiny at 5 stars and itself quiet for three months — evaluate before you depend on it. Meshy's server is the better-maintained official option in this niche."
   },
   {
@@ -204,6 +248,11 @@
     "links": { "repo": "https://github.com/meshy-dev/meshy-mcp-server", "docs": null, "site": "https://www.meshy.ai" },
     "added": "2026-06-11",
     "verified": "2026-10-17",
+    "caveats": [
+      "API access requires a Meshy Pro plan or above, and every call spends credits, so budget before you loop an agent over it.",
+      "The model map moved: latest resolves to meshy-7.1 and meshy-5 is retired, so pin ai_model explicitly in any saved workflow.",
+      "There is no Meshy-hosted endpoint; stdio or self-hosted HTTP only."
+    ],
     "notes": "Official (meshy-dev org), MIT, TypeScript, stdio and self-hosted HTTP transports (`TRANSPORT=http`, `POST /mcp`); there is no Meshy-hosted endpoint. Checked 17 Oct 2026: npm @meshy-ai/meshy-mcp-server is 0.6.4 (13 Oct 2026), repo pushed 14 Oct 2026 after five releases in nine days, 61 stars — vendor-maintained rather than community-loved, and the cadence is now brisk. The README's preferred install is `npx add-mcp @meshy-ai/meshy-mcp-server --env MESHY_API_KEY=msy_...`, which auto-configures detected clients; the Claude Code add-json command above is still documented. The model map moved under everyone's feet: `latest` now resolves to **meshy-7.1** on most 3D endpoints, plain `meshy-7` survives only on retexture and as a deprecated id on generation, `meshy-5` is retired and `meshy-t1` deprecated — pin `ai_model` explicitly in any saved agent workflow. v0.6.x also added meshy-6-lite, meshy-t2.5 Smart Topology, Text to Motion, Auto Split, a usage tool, and stopped duplicate task creation on retries; a bad MESHY_API_KEY no longer crash-loops the server. API access requires a Meshy Pro plan or above, and every call spends credits: 3D generation is 20 mesh / 30 textured / 35 at 8K on meshy-7.1 or meshy-6, while meshy-6-lite and the Smart Topology models (`model_type: \"smart-topology\"`, part-separated triangle meshes) drop to 5 / 15 — the cheapest useful path for previz props. Retexture 10, Creative Lab 36 (keycap 62), remesh 5, rig 5, animate 3 per action, text-to-motion 10 (prime) or 3 (swift), convert 1, UV unwrap 5, images 3–12. Budget before you loop an agent over it."
   },
   {
@@ -227,6 +276,11 @@
     "links": { "repo": "https://github.com/chadrik/maya-mcp-server", "docs": null, "site": null },
     "added": "2026-08-20",
     "verified": "2026-09-29",
+    "caveats": [
+      "execute_code is arbitrary Python inside your Maya session, so do not point it at a scene you cannot afford to lose.",
+      "The command port is unauthenticated on localhost.",
+      "PyPI 0.1.0 dates from Jan 2026, so uvx gets January's code; clone for current, and the repo has not been pushed since Jul 2026."
+    ],
     "notes": "Maya is still the last major DCC in this directory without a first-party MCP — Autodesk's public MCP servers target Revit, Fusion and its data APIs, not the M&E line — and the community field is fragmented rather than deep. Checked 29 Sep 2026: this repo is MIT, 42 stars, but has not been pushed since 15 Jul 2026, so it is a quiet project rather than a maintained product. The gap between repo and release persists: PyPI maya-mcp-server is still 0.1.0 from 5 Jan 2026, so `uvx maya-mcp-server` gets you January's code; clone and `uv run --directory` if you want current. The design trade is the whole story — `execute_code` is arbitrary Python inside your Maya session, which is why the tool count is four instead of three hundred, and also why you should not point it at a scene you cannot afford to lose. The command port is unauthenticated on localhost. Alternatives if you want typed tools instead: dcc-mcp/dcc-mcp-maya is now the most active (MIT, 57 stars, pushed 29 Sep 2026, Maya 2020+, ~79 typed tools) but is a different shape — `mayapy -m pip install dcc-mcp-maya` plus a Maya plug-in that fronts a Rust HTTP sidecar, rather than a zero-install command-port client; GimbalGoats/GG_MayaMCP (MIT, 23 stars, last pushed 14 Aug 2026, Maya 2024+); and PatrickPalmer/MayaMCP (MIT, 104 stars but frozen since May 2025 — the one Griptape's docs still point at)."
   },
   {
@@ -250,6 +304,12 @@
     "links": { "repo": null, "docs": "https://www.maxon.net/en/cinema-4d/features/mcp-server", "site": "https://www.maxon.net/en/cinema-4d" },
     "added": "2026-10-01",
     "verified": "2026-10-01",
+    "caveats": [
+      "Cinema 4D is subscription-only ($109 a month or $839 a year), so this is paid in practice, and the server is off by default.",
+      "Remote connections are unencrypted, so whitelist IPs; two separate toggles gate arbitrary Python and leave both off unless needed.",
+      "Claude Desktop and ChatGPT Desktop are the supported clients, and no Claude Code command is documented, so copy the generated entry.",
+      "Not available in Lite, Commandline, Team Render, c4dpy or Cineware, and it slows on scenes with hundreds of objects."
+    ],
     "notes": "One day old at listing: released with Cinema 4D 2026.4.0 on 30 Sep 2026, per Maxon's FAQ page and coverage in CG Channel and AEC Magazine. The server costs nothing extra, but Cinema 4D is subscription-only ($109/month or $839/year per CG Channel), so this is a paid entry in practice. Off by default; connections are local-only unless you tick Allow Remote Connections, and Maxon warns remote traffic is unencrypted, so whitelist IPs and keep it on a trusted network. Not available in Cinema 4D Lite, Commandline, Team Render, c4dpy or Cineware. Claude Desktop and ChatGPT Desktop are the officially supported clients; other MCP clients and local models via LM Studio may work but are unsupported, and a local model will fight C4D and your renderer for the same GPU. Maxon also notes it slows down on scenes with hundreds of separate objects. Two separate toggles — Allow exec_python Command and Allow Python-Bearing Operations — decide whether the agent can run arbitrary Python or author Python-containing objects; leave both off unless you need them. Fifteen tool groups can be switched individually, but Maxon has not published tool names in a form this directory could read (the help pages render client-side), and no Claude Code command is documented — Cinema 4D writes client configs itself, so Claude Code users should copy the generated entry. For C4D 2024–2026.3 the community ttiimmaacc/cinema4d-mcp remains the fallback."
   }
 ]

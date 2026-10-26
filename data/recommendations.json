@@ -2,9 +2,9 @@
   {
     "id": "fast-commercial",
     "title": "Make a polished commercial fast",
-    "summary": "A short path from brief to a finished 30-60 second product or brand film, with generation, voice, finishing, and publishing covered.",
-    "best_for": "Launch videos, UGC-style ads, app promos, product drops, and quick brand films.",
-    "tags": ["commercial", "ugc", "product-video", "hosted", "short-form", "publish"],
+    "summary": "A fast route from brief to a finished 30-60 second commercial, product spot or brand ad, with generation, voice, finishing, and publishing covered.",
+    "best_for": "Launch videos, UGC-style ads, app promos, product drops, and quick brand spots for a campaign.",
+    "tags": ["commercial", "ad", "advert", "ugc", "product-video", "hosted", "campaign", "publish"],
     "martini_handoff": "Use Martini as the production workspace when the agent and the team need to work the same shots — generation across models, client comments, approvals, and spend per shot — instead of juggling one-off tools.",
     "primary": [
       { "slug": "martini", "role": "studio", "why": "Keeps shots, takes, approvals, and spend on one canvas and timeline that the team and the agent share, over MCP, CLI, or API." },
@@ -160,5 +160,151 @@
     ],
     "fallback_slugs": ["unreal-engine", "ffmpeg", "audiogen", "replicate", "tripo", "meshy"],
     "playbook_id": "open-lab"
+  },
+  {
+    "id": "transcribe-and-caption",
+    "title": "Transcribe dailies and caption the cut",
+    "summary": "Transcription with speaker diarization, then add subtitles and captions as SRT or VTT files or burn them in, from hosted speech-to-text and local caption tools.",
+    "best_for": "Interview and documentary transcripts, dialogue logging, subtitles for festival deliverables, closed captions, SRT and VTT export, and burned-in captions for social cuts.",
+    "tags": ["transcription", "transcribe", "captions", "captioning", "subtitles", "srt", "vtt", "diarization", "speech-to-text", "stt", "accessibility"],
+    "martini_handoff": "Martini is not needed for transcription or captions; use it only if the captioned cut is one the team is already generating and reviewing on a shared Martini timeline.",
+    "primary": [
+      { "slug": "deepgram", "role": "transcription", "why": "Official Nova transcription with speaker diarization and audio intelligence, the strongest official cloud speech-to-text MCP." },
+      { "slug": "multivoice", "role": "subtitles", "why": "Speaker-labelled and plain SRT/VTT subtitles across roughly a hundred source languages, with an exact quote a human approves first." },
+      { "slug": "audiopod", "role": "diarized-transcript", "why": "Hosted diarized transcription with word-level timestamps, plus speaker separation and denoise for messy location audio." },
+      { "slug": "mcp-video", "role": "burn-in-captions", "why": "Local Kinocut video_subtitles burns captions into the file with FFmpeg, no upload and no credits." }
+    ],
+    "fallback_slugs": ["descript", "claude-real-video", "sanzaru", "elevenlabs", "reap", "orkas-videostudio", "google-genmedia"]
+  },
+  {
+    "id": "dub-and-localize",
+    "title": "Dub, translate and lip-sync for other languages",
+    "summary": "Dubbing and translation of a finished cut: clone the original voice, translate the dialogue, dub the track and lip-sync the performer so the localized version keeps the take.",
+    "best_for": "Localisation of a finished film or spot, AI dubbing into other languages, voice cloning for dubbed dialogue, lip sync on footage you shot, and translated subtitles alongside the dub.",
+    "tags": ["dubbing", "dub", "translate", "translation", "localization", "localisation", "lip-sync", "lipsync", "voice-cloning", "languages"],
+    "martini_handoff": "Martini is not needed for dubbing or localisation; use it only if the dubbed versions belong to a cut the team is already reviewing on a shared Martini timeline.",
+    "primary": [
+      { "slug": "heygen", "role": "video-translation", "why": "Hosted video translation with lip-sync in 175+ languages, batches of up to 100, and voice cloning on the same OAuth connection." },
+      { "slug": "sync-labs", "role": "lip-sync-on-footage", "why": "Regenerates the performer's mouth on footage you already shot, with cost estimation before the render; the ADR and dub-pass tool." },
+      { "slug": "elevenlabs", "role": "voice-cloning-and-dubbing", "why": "Voice cloning, speech-to-speech and dubbing on the hosted endpoint, with Scribe transcription across 99 languages." },
+      { "slug": "cartesia", "role": "voice-localization", "why": "localize_voice and pronunciation dictionaries keep a character's invented names consistent across every language version." }
+    ],
+    "fallback_slugs": ["allvoicelab", "reap", "multivoice", "sonilo", "magic-hour", "fish-audio", "wistia"]
+  },
+  {
+    "id": "finish-and-upscale",
+    "title": "Finish the master: upscale, grade, denoise and loudness",
+    "summary": "The finishing pass on delivery masters: upscale to 4K, colour grade, denoise soft plates, and check loudness and true peak against broadcast and streaming specs.",
+    "best_for": "Upscaling keeper frames and clips to 4K, color grading in Resolve, denoising generated footage that came out soft, and loudness normalization before delivery.",
+    "tags": ["upscale", "upscaling", "4k", "enhance", "enhancement", "color", "colour", "grade", "grading", "denoise", "loudness", "finishing", "mastering", "delivery"],
+    "martini_handoff": "Martini is not needed for finishing; use it only if the shots being upscaled already live on a Martini timeline and the team reviews them there, where upscale_assets quotes before it spends.",
+    "primary": [
+      { "slug": "topaz", "role": "image-upscaling", "why": "Topaz Labs' own enhance and upscale models for stills, plates and frames; image only, so pair it with fal for video." },
+      { "slug": "fal", "role": "video-upscaling", "why": "The practical MCP route to Topaz video upscaling (fal-ai/topaz/upscale/video) and other upscalers with no first-party server." },
+      { "slug": "magnific", "role": "creative-upscale", "why": "Official remote upscaler with relight and crop for plates; use explicit prompts for faithful enhancement rather than reinterpretation." },
+      { "slug": "davinci-resolve", "role": "color-grading", "why": "Resolve's colour page and render queue under agent control for the grade and the final export." },
+      { "slug": "audiolab", "role": "loudness-qc", "why": "Integrated LUFS, true-peak and delivery-spec grading (EBU R128, streaming platforms) with the ffmpeg loudnorm fix returned." },
+      { "slug": "avclabs", "role": "cloud-video-denoise", "why": "Cloud upscale and denoise to 1080p/2K without a local GPU, billed by the second; a spot-fix tool for short clips." }
+    ],
+    "fallback_slugs": ["auphonic-zapier", "budgetpixel", "replicate", "reaper-mcp", "davinci-resolve-studio", "runway", "popcraft"]
+  },
+  {
+    "id": "music-video",
+    "title": "Make a music video from a generated song",
+    "summary": "Song generation first, then video shots generated to the track and cut to the beat: music video, lyric video and visualizer work where the audio drives the edit.",
+    "best_for": "Music videos for a generated or licensed song, lyric videos, visualizers, artist promos, and cuts timed to the beat.",
+    "tags": ["music-video", "music", "song", "song-generation", "lyrics", "beat", "visualizer", "artist", "track", "soundtrack"],
+    "martini_handoff": "Use Martini only when the video needs generated shots cut to the track on a shared timeline the artist or label reviews; the song itself comes from the music servers, not Martini.",
+    "primary": [
+      { "slug": "mureka", "role": "song-generation", "why": "Official server for lyrics, full songs and instrumentals; a first-party alternative to Suno resellers with no licensing cloud." },
+      { "slug": "words-into-music", "role": "vocal-song", "why": "Prompt or your own lyrics to a 60-180 second recording with vocals in eleven languages, one credit per take." },
+      { "slug": "runway", "role": "video-generation", "why": "Hosted Gen-4.5, Seedance, Kling and Veo for performance and visual shots, with per-model ratios and durations from listModels." },
+      { "slug": "higgsfield", "role": "character-consistent-shots", "why": "Hosted roster with consistent-character training, so the same performer survives across every shot of the video." },
+      { "slug": "mcp-video", "role": "assembly", "why": "Local Kinocut trim, merge, normalize and release checks to cut the shots to the track without a cloud render." }
+    ],
+    "fallback_slugs": ["epidemic-sound", "artyfile", "sonilo", "suno-acedata", "kling-official", "fal", "davinci-resolve", "palmier-pro", "martini"]
+  },
+  {
+    "id": "storyboard-previz",
+    "title": "Break down the script and build storyboards and previz",
+    "summary": "Script breakdown into scenes and a shot list, concept frames and storyboards, reference stills, and 3D previz before any generation credits are spent.",
+    "best_for": "Screenplay breakdowns, shot lists, storyboard boards, concept art and keyframes, lookbooks and mood boards, location reference, and previs or 3D blocking of a scene.",
+    "tags": ["storyboard", "storyboards", "previz", "previs", "shot-list", "script", "screenplay", "breakdown", "concept", "frames", "lookbook", "moodboard", "3d"],
+    "martini_handoff": "Martini is not needed for breakdowns, boards or previz; use it only when the boards are about to become generated shots the team reviews on one canvas.",
+    "primary": [
+      { "slug": "penshot", "role": "script-breakdown", "why": "Parses a screenplay into a shot-by-shot breakdown and emits video-model prompts with cross-shot character consistency." },
+      { "slug": "flux-bfl", "role": "concept-frames", "why": "Official FLUX.2 stills and multi-reference composition for concept art, keyframes and start frames." },
+      { "slug": "miro", "role": "storyboard-wall", "why": "Official Miro MCP writes storyboard layouts and shot-planning walls as SVG boards the whole team can see." },
+      { "slug": "framethrower", "role": "reference-stills", "why": "Searches 5,489 films frame by frame by lighting, lens, shot size, colour and mood for lookbooks and shot references." },
+      { "slug": "blender", "role": "3d-previz", "why": "The most-adopted Blender MCP: build sets, place cameras and pull viewport screenshots for previz." }
+    ],
+    "fallback_slugs": ["framesail", "cinegenta", "filmlab", "kleo", "unreal-mcp-epic", "meshy", "recraft", "filmmap", "studio-state", "ideogram"]
+  },
+  {
+    "id": "animation-stylized",
+    "title": "Animate stylised and anime characters from reference frames",
+    "summary": "Stylised and animated characters: anime, illustration and cartoon looks held across shots with style references, character references and image-to-video from drawn keyframes.",
+    "best_for": "Anime and cartoon shorts, illustrated or painterly looks, animated characters that must stay on-model, motion transfer onto drawn frames, and open-model LoRA pipelines.",
+    "tags": ["anime", "animation", "animated", "stylized", "stylised", "cartoon", "illustration", "character", "style-reference", "image-to-video", "keyframes", "lora"],
+    "martini_handoff": "Martini is not needed for stylised animation; use it only if the animated shots are part of a cut the team reviews on a shared Martini timeline.",
+    "primary": [
+      { "slug": "luma-official", "role": "style-and-character-references", "why": "create_image takes style, character and modify references and create_video pins frame0 and frame1, so a drawn look carries into motion." },
+      { "slug": "pika", "role": "character-studio", "why": "Hosted Character Studio, Motion Transfer and Extend Video steps alongside Pika 2.5, Wan and Kling for stylised motion." },
+      { "slug": "kling-official", "role": "image-to-video", "why": "Kling's own hosted image-to-video on current models, the shortest route from an on-model still to a moving shot." },
+      { "slug": "flux-bfl", "role": "keyframe-animation", "why": "FLUX 3 keyframe animation and clip continuation from a FLUX.2 still, with a draft render before the full-quality pass." },
+      { "slug": "comfy-mcp", "role": "open-model-lora", "why": "Comfy Org's own server runs AnimateDiff, LTX and custom LoRA workflows on your GPU for looks hosted models cannot hold." }
+    ],
+    "fallback_slugs": ["higgsfield", "pixverse", "magic-hour", "mage", "runway", "comfyui-artokun", "fal", "apatero"]
+  },
+  {
+    "id": "publish-and-distribute",
+    "title": "Publish, schedule and send out review links",
+    "summary": "The last mile: YouTube upload, social cutdowns and scheduling across platforms, review and approval links for the client, hosting with analytics, and thumbnails.",
+    "best_for": "YouTube and Vimeo publishing, scheduling shorts and social posts, client review links with timecoded comments, festival and press-kit hosting, and channel analytics after release.",
+    "tags": ["publish", "publishing", "youtube", "vimeo", "upload", "schedule", "scheduling", "social", "shorts", "review", "approval", "distribution", "thumbnails", "analytics"],
+    "martini_handoff": "Martini is not needed for publishing; use it only to render or export the MP4 at the end of a Martini production, then hand that file to these servers.",
+    "primary": [
+      { "slug": "youtube-yutu", "role": "youtube-upload", "why": "Still the only well-maintained MCP that does real YouTube uploads via OAuth, with metadata, playlists, captions and thumbnails." },
+      { "slug": "autoposting", "role": "scheduling", "why": "Schedules and publishes to YouTube, Instagram, X, LinkedIn and Threads, with clip jobs that cut long footage into shorts." },
+      { "slug": "frameio-official", "role": "review-links", "why": "Adobe's hosted Frame.io MCP: version stacks, review comments, share links and reviewers for client approval." },
+      { "slug": "reap", "role": "social-cutdowns", "why": "Pulls short clips from a long cut, captions and reframes them, then publishes or schedules to connected accounts." },
+      { "slug": "vimeo", "role": "hosting-and-analytics", "why": "Official Vimeo MCP for showcases, metadata, privacy, retention and geographic analytics after release." },
+      { "slug": "canva", "role": "thumbnails-and-collateral", "why": "Official Canva MCP for YouTube thumbnails, posters and social variants exported in delivery formats." }
+    ],
+    "fallback_slugs": ["opusclip", "wistia", "mux", "youtube-data", "descript", "frameio", "revid"]
+  },
+  {
+    "id": "podcast-to-video",
+    "title": "Turn a podcast or long talking recording into clips",
+    "summary": "Repurpose long talking footage: pick the best moments into ranked clips, remove filler words, caption them, reframe to vertical shorts, and publish or schedule them.",
+    "best_for": "Podcast episodes, interviews, webinars, panels and lectures that need highlight clips, shorts, captions and a publishing schedule without a manual edit.",
+    "tags": ["podcast", "clips", "shorts", "highlights", "repurpose", "repurposing", "interview", "talking-head", "captions", "vertical", "clipping"],
+    "martini_handoff": "Martini is not needed for podcast repurposing; it is built for generated shots, and a clip pass over recorded talking footage has none.",
+    "primary": [
+      { "slug": "opusclip", "role": "ranked-clips", "why": "Ranks clips from a long file by virality score, pulls the word-timed transcript, fixes clips with named edit operations, then schedules them." },
+      { "slug": "reap", "role": "clip-caption-publish", "why": "Prompt-driven moment detection, captions in 100+ languages, face-tracked 9:16 reframe and publishing to connected accounts." },
+      { "slug": "descript", "role": "transcript-edit", "why": "Transcript-based editing with filler-word removal, Studio Sound, captions and highlight reels, published to a Descript link." },
+      { "slug": "mcp-video", "role": "local-repurpose", "why": "Kinocut's video_repurpose, caption burn-in and audio normalize run locally with receipts when the footage cannot leave the machine." }
+    ],
+    "fallback_slugs": ["autoposting", "valossa", "heygen", "deepgram", "audiopod", "auphonic-zapier", "youtube-yutu", "twelvelabs"]
+  },
+  {
+    "id": "short-film",
+    "title": "Make a short film with generated shots",
+    "summary": "A narrative short from script to finished cut: a studio to hold the shots, video generation for coverage, directed dialogue and score, and an edit bay for the finish.",
+    "best_for": "Narrative shorts, proof-of-concept scenes, festival pieces and pilots built from generated shots with recurring characters, dialogue, score and a real edit.",
+    "tags": ["short-film", "short", "narrative", "scene", "story", "director", "cinematic", "dialogue", "score", "festival", "pilot"],
+    "martini_handoff": "Use Martini when the film is a sequence of generated shots the director reviews and cuts with the agent: Library continuity, provenance and spend per shot, and XML out to Resolve or Premiere for the finish. One generated clip does not need it.",
+    "primary": [
+      { "slug": "martini", "role": "studio", "why": "Shots, takes, Library characters and the multi-track timeline on one canvas the director and agent share, with XML export to Premiere, Resolve or Final Cut." },
+      { "slug": "framesail", "role": "alternative-studio", "why": "Hosted alternative that carries a script through storyboard, locked references, voiceover and shots to a cut MP4, aimed at long-form output." },
+      { "slug": "runway", "role": "video-generation", "why": "Hosted first-party access to Gen-4.5, Seedance, Kling and Veo for coverage, with model-specific ratios and durations." },
+      { "slug": "google-genmedia", "role": "veo-generation", "why": "The most direct official route to Veo 3.1, with extension, first/last-frame and reference-to-video tools." },
+      { "slug": "hume", "role": "directed-dialogue", "why": "Octave performs lines with prompt-directed emotion and delivery, which is what narrative dialogue needs." },
+      { "slug": "elevenlabs", "role": "voice-sfx-music", "why": "Voice cloning, sound effects, music and dialogue isolation from one official audio server." },
+      { "slug": "sonilo", "role": "score-to-picture", "why": "video_to_music composes to the cut's pacing and cut points from a catalogue trained on licensed music." },
+      { "slug": "davinci-resolve", "role": "edit-and-grade", "why": "Conform the timeline, grade and render in Resolve, the most actively maintained NLE MCP in the directory." }
+    ],
+    "fallback_slugs": ["clip-studio", "kleo", "filmlab", "nomi", "kling-official", "higgsfield", "cartesia", "mcp-video", "palmier-pro", "penshot"]
   }
 ]

@@ -20,6 +20,12 @@
     "links": { "repo": "https://github.com/neopen/story-shot-agent", "docs": "https://pengline.cn/2026/02/b027d930c0b84ba6abd24bbef7d78afc/", "site": "https://shot.helpenx.com" },
     "added": "2026-06-11",
     "verified": "2026-09-18",
+    "caveats": [
+      "The stdio server advertises every tool with an empty parameter schema, so you have to spell the arguments out in the prompt.",
+      "Setup needs an LLM endpoint, an embedding model and PENSHOT_REDIS_URL in .env first, or the published docker compose image.",
+      "Optimized in depth for Chinese scripts; other languages are in continuous iteration.",
+      "Use async: breakdown_script, poll get_task_status, then get_task_result, and note that success reports as success, not completed."
+    ],
     "notes": "Still growing and genuinely active: 203 stars (up from 139 in five weeks), last commit 17 Sep 2026, PyPI 0.3.7 shipped 2 Sep 2026, MIT. Seven tools, read from the server source rather than the README — breakdown_script, get_task_status, get_task_result, cancel_task, list_tasks, get_queue_status, get_stats — and the install line now carries the --max-concurrent/--queue-size flags the project's own example config uses. THE CATCH THAT BITES: the stdio server advertises every tool with an empty JSON-Schema parameter block, so your client sees no argument names and you have to spell the arguments out in the prompt; the FastAPI surface in mcp_http_server.py has full parameter descriptions but it is a plain REST façade on :8000, not MCP over HTTP, so do not expect a remote_url. Setup is heavier than the one-line install suggests — an LLM endpoint, an embedding model and PENSHOT_REDIS_URL all have to be in .env first, or use the published ghcr.io/neopen/penshot image with docker compose. The maintainers still say it is optimized in depth for Chinese scripts with other languages 'in continuous iteration'. Async is the sane mode: submit with breakdown_script, poll get_task_status, collect get_task_result — and note task success reports as 'success', not 'completed'. Directory finding, still true: no dedicated MCP exists for Final Draft, Celtx, WriterDuet, or Fountain — script writing itself is best done with your agent directly (Fountain is plain text), stored via the Notion or Google Drive MCPs."
   },
   {
@@ -43,6 +49,11 @@
     "links": { "repo": "https://github.com/dkf2studios/studio-state-public", "docs": "https://github.com/dkf2studios/studio-state-public/blob/main/INSTALL.md", "site": "https://dkf2studios.gumroad.com/l/flplx" },
     "added": "2026-06-28",
     "verified": "2026-09-20",
+    "caveats": [
+      "One studio's shim, published rather than maintained: no commit since Jun 2026.",
+      "Needs Python 3.9+, the mcp[cli] package, and a project root containing _pipeline/STATE.json and episodes/.",
+      "A state shim, not a generator, and the paid Studio Method pack is upsold in the README."
+    ],
     "notes": "MIT, still live but frozen: re-checked 20 Sep 2026 and the last push is unchanged at 16 Jun 2026 — three months without a commit — with still 0 stars, so treat it as one studio's shim published rather than a maintained project. The repo is not archived and INSTALL.md is still in place, so nothing has broken; nothing has moved either. Prerequisites the README front-loads: Python 3.9+ and `pip install \"mcp[cli]\"`, plus a project root containing _pipeline/STATE.json and episodes/ — run tests/test_acceptance.py against the bundled demo project first (expect 4/4). It is a state shim, not a generator, and the paid Studio Method pack is upsold in the README. The useful bit is safe by design — only `update_shot` writes, and only to a per-scene `shot_status.json` sidecar."
   },
   {
@@ -66,6 +77,11 @@
     "links": { "repo": "https://github.com/miroapp/miro-ai", "docs": "https://developers.miro.com/docs/miro-mcp", "site": "https://miro.com/ai/mcp/" },
     "added": "2026-06-11",
     "verified": "2026-09-20",
+    "caveats": [
+      "The tool surface was rebuilt around an SVG canvas model, so cached configs and prompts that placed items one by one will break.",
+      "Still public beta, and an Enterprise admin must enable MCP before anyone on an Enterprise plan can authorize.",
+      "The Claude Code plugin ships engineering-facing skills, not film-facing ones."
+    ],
     "notes": "The tool surface was rebuilt since we last checked, so cached configs and prompts will break. Miro's tools page now documents an SVG canvas model — canvas_create_from_svg, canvas_read_as_svg, canvas_update_from_svg and a canvas_get_canvas_composer_skill helper — and states that board_list_items and the whole context_*, layout_*, diagram_* and doc_* families were removed; table_create, table_list_rows and table_sync_rows are marked deprecating soon. Practical effect for storyboards: you no longer place sticky notes and frames item by item, you hand the server SVG. Still public beta more than seven months after the 2 Feb 2026 launch — the Claude Code marketplace listing still says 'MCP is in Public Beta', even though developers.miro.com now leads with 'works for all Miro plans, even free teams'. Enterprise remains the catch: that listing says an Enterprise admin must enable MCP before anyone can authorize. Endpoint re-confirmed 20 Sep 2026 as https://mcp.miro.com (Miro's connect docs write it with a trailing slash; both forms are in Miro's own material). The Claude Code plugin route needs two commands, not one — /plugin marketplace add miroapp/miro-ai then /plugin install miro@miro-ai — and it ships three skills (miro-code-review, miro-code-spec, miro-code-explain-on-board) that are engineering-facing rather than film-facing. miroapp/miro-ai is alive: 154 stars, last push 17 Sep 2026. Tool names above are from developers.miro.com/docs/miro-mcp-tools — the server's own tools/list is the source of truth."
   },
   {
@@ -109,6 +125,11 @@
     },
     "added": "2026-08-12",
     "verified": "2026-10-26",
+    "caveats": [
+      "Every tool call costs 2 credits at $1 per 1,000 credits; $2 is free on signup, then $20 packs.",
+      "Frames are reduced-resolution references: rights stay with their owners, and the server never returns image bytes.",
+      "A one-vendor operation: the repo is a README pointing at the hosted endpoint, so there is no code to audit."
+    ],
     "notes": "Endpoint, four tools, OAuth 2.1, credit pricing and the 5,489-film index all unchanged on re-check 2026-10-26. Remote and hosted, so nothing to install or keep running. Free tier is $2 of credits on signup with no card; each tool call costs 2 credits at $1 = 1,000 credits, so $1 covers 500 calls, and credits do not expire; top-ups come in $20 packs. No rate limits \u2014 when credits run out the tool returns the balance rather than failing silently. Frames are shown at reduced resolution as references for commentary and study \u2014 rights remain with their owners, and the server never returns image bytes. One-vendor operation: the repo (framethrower-ai/framethrower-mcp) is a README pointing at the hosted endpoint and has not been touched since 12 Aug 2026, so there is no code to audit and no second maintainer if the service lapses. Submitted by the vendor."
   },
   {
@@ -156,6 +177,12 @@
     },
     "added": "2026-08-22",
     "verified": "2026-10-01",
+    "caveats": [
+      "The official MCP registry still lists the old thefilmmap.com address, so registry-driven clients will be pointed there until it is republished.",
+      "Films and series carry real filming locations; games, anime and manga carry narrative settings and were filmed nowhere.",
+      "A place is not a scene: there is no shot-level granularity, so it narrows a recce list rather than replacing one.",
+      "Wikipedia-derived fields are CC BY-SA 4.0 and must be cited as per Wikipedia."
+    ],
     "notes": "Renamed: FilmMap became Movie Scene Map on 1 September 2026, and thefilmmap.com now 301s to moviescenemap.com. The repo README (re-checked 2026-10-01; pushed 2026-09-08, MIT, still 0 stars, one personal account) names https://moviescenemap.com/mcp as the endpoint and says the old https://thefilmmap.com/mcp keeps answering for clients configured before the rename \u2014 but the official MCP registry still lists com.thefilmmap/filming-locations v1.1.0 at the old address, so registry-driven clients will be pointed there until it is republished. Stateless streamable HTTP, POST-only; a GET returning 405 is correct. The docs publish a JSON client config rather than a per-client command; the claude mcp add line above is that endpoint in Claude Code form. The atlas roughly doubled with the rename (31,115 locations, 177 countries, per the data page) and counts move with every deploy \u2014 trust get_statistics over any figure quoted here. Read the medium distinction before quoting anything: films and series carry real filming locations (Wikidata P915), while games, anime and manga carry narrative settings (P840) and were filmed nowhere, and the server labels each record so an agent does not conflate them. Some links now come from a production's English Wikipedia Filming section rather than Wikidata; those arrive in separate fields under CC BY-SA 4.0 and must be cited as 'per Wikipedia'. Coverage is uneven \u2014 some productions are placed at country level only, and the unplaceable ones are listed at moviescenemap.com/gaps/. A place is not a scene: there is no shot-level granularity, so this narrows a recce list, it does not replace one. The factual dataset is CC0; Commons photographs and some city permit datasets keep their own attribution terms."
   },
   {
@@ -203,6 +230,12 @@
     },
     "added": "2026-10-26",
     "verified": "2026-10-26",
+    "caveats": [
+      "Protocol 2026-07-28 is rejected with HTTP 400, so clients that only speak the new stateless protocol cannot connect yet.",
+      "A free front door to a commercial studio: four tools upload files or submit briefs for human review, so keep them behind explicit confirmation.",
+      "estimate_production returns directional ranges in roubles, and thin briefs get thin answers.",
+      "The repo sits on a personal account with no licence and holds manifests and marketing docs, not server source."
+    ],
     "notes": "Checked live 26 Oct 2026: initialize answers on protocol 2025-11-25 and 2025-06-18 as objekts-production-desk 0.1.0, stateless and without auth, and tools/list returns the seven tools above. A diagnose_production call with a minimal brief returned a BRIEFABLE verdict. Protocol 2026-07-28 is rejected with HTTP 400, so clients that only speak the new stateless protocol cannot connect until objekts ships its announced upgrade. The vendor documents only Claude's Connectors UI, so no Claude Code command is listed; the generic remote URL works. It is a free front door to a commercial studio: estimate_production returns directional ranges in roubles, and four tools upload files or submit, update or delete a brief for human review by objekts — keep those behind explicit confirmation. Diagnosis needs heavy structured input (a 12-flag readiness object, assets with lock domains) and gives back a terse verdict, so thin briefs get thin answers. The registry entry ai.objekts.mcp/production-desk confirms the publisher's domain, but the GitHub repo sits on a personal account, carries no licence, and holds manifests and marketing docs rather than server source. Version numbers disagree: the live server reports 0.1.0, the registry's latest is 0.1.3, and the repo's server.json says 0.1.4."
   }
 ]

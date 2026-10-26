@@ -83,12 +83,15 @@ EOF
   });
 };
 
+// Served at every unknown path, so it claims no canonical URL and asks not to be indexed.
 export const render404 = (ctx) =>
   layout(ctx, {
     title: "Not found | mcp.film",
     description: "This frame is missing.",
     path: "/404.html",
     page: "404",
+    robots: "noindex,follow",
+    canonical: false,
     body: `
 <section class="hero">
   <p class="hero-eyebrow">404</p>
@@ -98,28 +101,32 @@ export const render404 = (ctx) =>
   });
 
 // ------------------------------------------------------------ feeds/crawler
-export const renderSitemap = (ctx) => {
+// HTML pages only. The .md twins, JSON API and llms.txt are advertised from every page's
+// <link rel="alternate">, from /llms.txt and from /for-agents/ — a sitemap full of
+// duplicate-content URLs only dilutes crawl budget. The deploy workflow reads this file
+// to build the IndexNow url list.
+// TODO(edge-worker owner): direct GET /mcps/<slug>.md responses should carry
+// `Link: <https://mcp.film/mcps/<slug>/>; rel="canonical"` like the Accept-negotiated path does.
+export const sitemapEntries = (ctx) => {
   const today = ctx.built.slice(0, 10);
-  const urls = [
-    ...["/", "/router/", "/stack/", "/clients/", "/playbooks/", "/recommendations/", "/capabilities/", "/remotes/", "/for-agents/", "/pulse/", "/about/", "/submit/", "/llms.txt", "/llms-full.txt", "/api/registry.json", "/api/remotes.json", "/api/client-profiles.json", "/api/client-profiles.schema.json", "/api/mcp-registry.json", "/v0.1/servers", "/api/pulse.json", "/api/playbooks.json", "/api/recommendations.json", "/api/capabilities.json", "/router.md", "/stack.md", "/clients.md", "/remotes.md", "/playbooks.md", "/recommendations.md", "/pulse.md", "/index.md"]
+  const newest = (list) => list.map((s) => s.verified).sort().at(-1) ?? today;
+  const bySlug = (slugs) => slugs.map((slug) => ctx.servers.find((s) => s.slug === slug)).filter(Boolean);
+  return [
+    ...["/", "/router/", "/stack/", "/clients/", "/playbooks/", "/recommendations/", "/capabilities/", "/remotes/", "/for-agents/", "/pulse/", "/about/", "/submit/", "/martini/connect/"]
       .map((u) => ({ loc: u, lastmod: today })),
-    ...ctx.categories.map((c) => ({ loc: `/categories/${c.id}/`, lastmod: ctx.servers.filter((s) => s.category === c.id).map((s) => s.verified).sort().at(-1) })),
-    ...ctx.capabilityPages.flatMap((c) => [
-      { loc: `/capabilities/${c.capability}/`, lastmod: c.servers.map((s) => s.verified).sort().at(-1) },
-      { loc: `/capabilities/${c.capability}.md`, lastmod: c.servers.map((s) => s.verified).sort().at(-1) },
-    ]),
-    ...ctx.capabilityDoc.capabilities.map((c) => ({ loc: `/api/capabilities/${c.capability}.json`, lastmod: c.servers.map((s) => s.verified).sort().at(-1) })),
-    ...ctx.servers.flatMap((s) => [
-      { loc: `/mcps/${s.slug}/`, lastmod: s.verified },
-      { loc: `/mcps/${s.slug}.md`, lastmod: s.verified },
-    ]),
+    ...ctx.categories.map((c) => ({ loc: `/categories/${c.id}/`, lastmod: newest(ctx.servers.filter((s) => s.category === c.id)) })),
+    ...ctx.capabilityPages.map((c) => ({ loc: `/capabilities/${c.capability}/`, lastmod: newest(c.servers) })),
+    ...ctx.playbooks.map((p) => ({ loc: `/playbooks/${p.id}/`, lastmod: newest(bySlug([...(p.primary_slugs ?? []), ...(p.steps ?? []).flatMap((st) => st.slugs ?? [])])) })),
+    ...ctx.recommendations.map((r) => ({ loc: `/recommendations/${r.id}/`, lastmod: newest(bySlug(r.primary.map((p) => p.slug))) })),
+    ...ctx.servers.map((s) => ({ loc: `/mcps/${s.slug}/`, lastmod: s.verified })),
   ];
-  return `<?xml version="1.0" encoding="UTF-8"?>
+};
+
+export const renderSitemap = (ctx) => `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((u) => `  <url><loc>${ctx.site.url}${u.loc}</loc><lastmod>${u.lastmod}</lastmod></url>`).join("\n")}
+${sitemapEntries(ctx).map((u) => `  <url><loc>${ctx.site.url}${u.loc}</loc><lastmod>${u.lastmod}</lastmod></url>`).join("\n")}
 </urlset>
 `;
-};
 
 export const renderRobots = (ctx) => {
   const aiCrawlers = [

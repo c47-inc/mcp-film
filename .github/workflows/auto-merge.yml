@@ -57,15 +57,9 @@ jobs:
           else
             echo "ok=true" >> "$GITHUB_OUTPUT"
           fi
-      - name: Validate data
+      - name: Validate, build and test
         if: steps.paths.outputs.ok == 'true'
-        run: node build.mjs --validate-only
-      - name: Full build smoke test
-        if: steps.paths.outputs.ok == 'true'
-        run: node build.mjs
-      - name: Build contract checks
-        if: steps.paths.outputs.ok == 'true'
-        run: node scripts/check-build.mjs
+        run: npm test
       - name: Merge
         if: steps.paths.outputs.ok == 'true'
         env:
