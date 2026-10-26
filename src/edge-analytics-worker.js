@@ -9,7 +9,9 @@ const DEFAULT_SPONSOR_CONNECT_URL = "__MCPFILM_SPONSOR_CONNECT_URL__";
 
 // Placements that represent "I have decided which tool to use and want to connect it".
 // Those land on the sponsor's connect docs; everything else lands on the homepage.
-const CONNECT_INTENT_PLACEMENT = /^(capability|playbook|recommendation|router|server-links):|^agents-fast-path$/;
+// `martini-connect:` placements come from the /martini/connect runbook: already past the
+// decision, except `martini-connect:signup`, which is account creation and lands on the home page.
+const CONNECT_INTENT_PLACEMENT = /^(capability|playbook|recommendation|router|server-links):|^martini-connect:(?!signup$)|^agents-fast-path$/;
 
 // Exported for scripts/check-build.mjs. Cloudflare only reads the default export.
 export const isConnectIntent = (placement) => CONNECT_INTENT_PLACEMENT.test(String(placement || ""));
@@ -42,6 +44,7 @@ const agentReadableSurfaces = new Set([
   "llms",
   "listing-json",
   "listing-markdown",
+  "martini-runbook",
   "mcp-discovery",
   "mcp-endpoint",
   "mcp-registry",
@@ -615,7 +618,8 @@ function surfaceFor(pathname) {
   return routePropertiesFor(pathname).surface;
 }
 
-function routePropertiesFor(pathname) {
+// Exported for scripts/test-edge.mjs.
+export function routePropertiesFor(pathname) {
   const listingJson = /^\/api\/mcps\/([a-z0-9][a-z0-9-]*)\.json$/.exec(pathname);
   if (listingJson) return route("listing-json", "server", { slug: listingJson[1] });
 
@@ -638,6 +642,9 @@ function routePropertiesFor(pathname) {
   if (categoryPage) return route("category-page", "category", { category: categoryPage[1] });
 
   if (pathname === "/go/martini" || pathname === "/go/martini/") return route("martini-handoff", "martini", { slug: "martini" });
+  // The Martini connect runbook: the markdown twin is an agent surface, the page is for people.
+  if (pathname === "/martini/connect.md") return route("martini-runbook", "martini", { slug: "martini" });
+  if (pathname === "/martini/connect" || pathname === "/martini/connect/") return route("martini-runbook-page", "martini", { slug: "martini" });
 
   if (pathname.startsWith("/v0.1/")) return route("mcp-registry", "registry");
   if (pathname.startsWith("/api/mcp-registry")) return route("mcp-registry", "registry");
@@ -691,7 +698,8 @@ function route(surface, group, extras = {}) {
   };
 }
 
-function classifyTraffic(pathname, userAgent, headers) {
+// Exported for scripts/test-edge.mjs.
+export function classifyTraffic(pathname, userAgent, headers) {
   const surface = surfaceFor(pathname);
   for (const [family, pattern] of agentMatchers) {
     if (pattern.test(userAgent)) return { kind: "agent", family };

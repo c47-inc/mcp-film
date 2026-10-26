@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { TOOLS } from "../packages/mcp-server/core.mjs";
-import worker, { markdownTwinPath, prefersMarkdown, mcpGetResponse, SCANNER_PROBE, registryApiResponse, canonicalPageFor, sponsorDestinationFor } from "../dist/_worker.js";
+import worker, { markdownTwinPath, prefersMarkdown, mcpGetResponse, SCANNER_PROBE, registryApiResponse, canonicalPageFor, sponsorDestinationFor, isConnectIntent, routePropertiesFor, classifyTraffic } from "../dist/_worker.js";
 
 const read = (file) => fs.readFileSync(new URL(`../${file}`, import.meta.url), "utf8");
 
@@ -125,6 +125,25 @@ const location = new URL(redirect.headers.get("location"));
 assert.equal(location.searchParams.get("ref"), "mcp-film");
 assert.equal(location.searchParams.get("utm_content"), "playbook:commercial-sprint");
 console.log(`E3: ${location}`);
+
+// The /martini/connect runbook: its placements are connect intent (signup goes home), its
+// markdown twin is an agent surface in the martini route group with a canonical Link.
+for (const p of ["martini-connect:cli", "martini-connect:mcp", "martini-connect:claude-code"]) assert.ok(isConnectIntent(p), p);
+assert.ok(!isConnectIntent("martini-connect:signup"), "signup is account creation, not connect docs");
+assert.ok(!isConnectIntent("martini-connect"), "bare prefix is not connect intent");
+assert.equal(handoff("martini-connect:cli").pathname, "/docs/mcp");
+assert.equal(handoff("martini-connect:signup").pathname, "/");
+assert.equal(handoff("martini-connect:signup").searchParams.get("ref"), "mcp-film");
+assert.deepEqual(routePropertiesFor("/martini/connect.md"), { surface: "martini-runbook", group: "martini", slug: "martini", category: null, capability: null });
+assert.equal(routePropertiesFor("/martini/connect/").group, "martini");
+assert.equal(routePropertiesFor("/martini/connect/").surface, "martini-runbook-page");
+assert.equal(classifyTraffic("/martini/connect.md", "Mozilla/5.0", new Headers()).kind, "agent");
+assert.equal(markdownTwinPath("/martini/connect/"), "/martini/connect.md");
+assert.equal(canonicalPageFor("/martini/connect.md"), "/martini/connect/");
+const runbookMd = await worker.fetch(new Request("https://mcp.film/martini/connect.md"), siteEnv, ctx);
+assert.equal(runbookMd.status, 200);
+assert.equal(runbookMd.headers.get("link"), "<https://mcp.film/martini/connect/>; rel=\"canonical\"");
+console.log("E4: martini-connect placements and runbook surface");
 
 // /v0.1/servers?search= filters by name/description substring, case-insensitively, before paging.
 const builtRegistry = JSON.parse(read("dist/api/mcp-registry.json"));
