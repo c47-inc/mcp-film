@@ -544,7 +544,7 @@
     "official": true,
     "category": "video-generation",
     "featured": false,
-    "tagline": "Magic Hour's hosted MCP: 44 tools across video, image and voice generation on one connection.",
+    "tagline": "Magic Hour's hosted MCP: its whole public API — video, image and voice generation — as tools on one connection.",
     "description": "Magic Hour's first-party remote server is generated from its OpenAPI spec with FastMCP, so every public endpoint arrives as a tool: text-, image- and video-to-video, lip sync, talking photos, face and character replacement, auto subtitles, image generation, editing, upscaling and background removal, plus voice generation and cloning. Creation tools return a project id and the credits charged immediately, and matching wait_for_*_project tools poll to completion and hand back exact signed download URLs. For a filmmaker-agent it is a broad single-vendor toolbox with the async plumbing already worked out.",
     "capabilities": [
       "text-to-video",
@@ -587,7 +587,7 @@
     "auth": {
       "type": "api_key",
       "env_var": null,
-      "key_url": "https://magichour.ai/developer?tab=api-keys — Claude Code and Codex send it as a bearer header; Claude desktop connectors run an OAuth flow (client ID magic-hour-mcp) whose authorization page asks you to paste the same key."
+      "key_url": "https://magichour.ai/developer?tab=api-keys — Claude Code and Codex send it as a bearer header; hosted Claude and ChatGPT connectors run an OAuth sign-in to the Magic Hour web app, which creates a key when you select Allow."
     },
     "pricing": "credits",
     "links": {
@@ -596,14 +596,13 @@
       "site": "https://magichour.ai"
     },
     "added": "2026-09-15",
-    "verified": "2026-09-15",
+    "verified": "2026-10-27",
     "caveats": [
-      "The OAuth is a shim: the flow validates your API key and uses it as the token, so the agent holds a full-account credential either way.",
+      "The OAuth sign-in mints an API key on Allow, so treat the connector as holding an account-wide credential either way.",
       "API access is listed as a paid-plan feature, so do not assume a free account can mint a working key.",
-      "A thin generated layer over the REST API with long operationId-style tool names; the vendor names only Claude, Claude Code and Codex as supported.",
-      "The repo has no licence file."
+      "A thin generated layer over the REST API with long operationId-style tool names; the tool set tracks the OpenAPI spec, so read tools/list."
     ],
-    "notes": "Verified live 2026-09-15: initialize answered protocol 2025-06-18 as magic-hour 0.1.0, and an unauthenticated tools/list returned all 44 tools — discovery is public, calls need the key. The connect line is copied from magichour.ai/mcp. The OAuth is a shim, not delegated auth: mcp.magichour.ai names itself as both protected resource and authorization server, and the flow validates an API key and uses it as the access token, so the agent holds a full-account credential either way. Money: the same credits as the web app, $1 buys 400 in packs or 144k to 840k a year on the $12 to $66 monthly plans, and the pricing page lists API access as a paid-plan feature — we did not confirm that a free account can mint a working key. The server is a thin generated layer over the REST API, so tool names are long operationId-style strings and quality is whatever Magic Hour's underlying models deliver; the vendor's own setup page says only Claude, Claude Code and Codex are verified clients. The repo has no licence file and 6 stars, but the GitHub org dates from 2023 and the submitter's account states Magic Hour employment."
+    "notes": "Re-checked 2026-10-27: magichour.ai/mcp and the repo README still give https://mcp.magichour.ai/ with an Authorization: Bearer API key for Claude Code and Codex; the connect line above follows that documented endpoint and header (the page no longer prints a ready-made command). Drift since first listing: the repo now carries an Apache-2.0 licence, the README adds ChatGPT to Claude, Claude Code and Codex CLI as supported clients (Cursor still unverified per the vendor page), and the hosted OAuth flow now has you sign in to the web app and select Allow, which creates a key, rather than paste one. The repo is active — commits through 27 Oct 2026 including an OpenAPI spec sync — at 9 stars. Tools are generated from the OpenAPI spec at startup; on 2026-09-15 an unauthenticated tools/list returned 44, and the count will move as the spec does, so read tools/list. Discovery is public, calls need the key. First verification found the OAuth to be a shim — mcp.magichour.ai names itself as both protected resource and authorization server and uses an API key as the access token — and the new sign-in that mints a key on Allow reads the same way, so the agent holds a full-account credential either way. Money: the same credits as the web app, $1 buys 400 in packs or 144k to 840k a year on the $12 to $66 monthly plans, and the pricing page lists API access as a paid-plan feature — we did not confirm that a free account can mint a working key. Quality is whatever Magic Hour's underlying models deliver."
   },
   {
     "slug": "byteplus-ark",

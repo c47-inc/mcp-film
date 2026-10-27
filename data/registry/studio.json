@@ -264,14 +264,14 @@
       "site": "https://cinegenta.com"
     },
     "added": "2026-09-15",
-    "verified": "2026-09-15",
+    "verified": "2026-10-27",
     "caveats": [
       "Beta from a domain registered May 2026 with no public repo or named team, and cap enforcement and refunds remain vendor claims.",
-      "Credits are $0.10 each in packs bought only on the website, and a generated minute is quoted anywhere from under a dollar to over twenty.",
+      "Packs run $5 to $500 on the website only; the pricing page no longer states a per-credit price or per-minute range, just a pre-batch estimate.",
       "A key without spend scope cannot bill, so mint scoped keys; the key is shown once.",
       "Stateless POST-only transport with no SSE."
     ],
-    "notes": "Verified 2026-09-15 from primary sources: an unauthenticated JSON-RPC POST returns 401 with a proper WWW-Authenticate challenge, while GET returns 405 as expected. The server card at cinegenta.com/.well-known/mcp/server-card.json and the official MCP registry entry (com.cinegenta/studio v1.1.0, published 13 Sep 2026) publish the same endpoint; the registry's 13-tool count is publisher-provided metadata, not an independent tools/list check. The tool list above is copied from the vendor's agent reference at cinegenta.com/mcp/reference.md, which says it is regenerated from tools/list. What we could not check without a scoped key and a spend: whether cap enforcement, failed-render refunds and regenerate's idempotency protection behave as described — those remain vendor claims. Know what you are buying into: the domain was registered in May 2026, the product is labelled Beta, and no public repo or named team was found in the vendor docs or registry at verification time. Credits are $0.10 each in $5 to $500 packs bought only on the website, with a generated minute quoted anywhere from under a dollar to over twenty depending on the models. Transport is stateless POST-only, no SSE. Submission #47 was discovery input, not a verification source."
+    "notes": "Re-checked 2026-10-27 against cinegenta.com/mcp: endpoint, connect line, Bearer cg_sk_ auth, key minting at cinegenta.com/connect and the 13 tools (4 read, 6 write, 3 billed: greenlight, run_control, regenerate) are unchanged; transport is streamable HTTP with JSON responses, specs 2025-03-26 and 2025-06-18, stateless with no SSE and no sessions. Pricing drifted in presentation: the pricing page now lists only one-time $5, $25, $100 and $500 packs whose credits do not expire, says rates vary by generation options, and shows an estimate per batch instead of the $0.10-per-credit figure and under-a-dollar-to-over-twenty-per-minute range quoted at first listing — so read the quote, not a rate card. Originally verified 2026-09-15: an unauthenticated JSON-RPC POST returns 401 with a proper WWW-Authenticate challenge, GET returns 405, and the server card at cinegenta.com/.well-known/mcp/server-card.json and the official MCP registry entry (com.cinegenta/studio v1.1.0) publish the same endpoint. What we could not check without a scoped key and a spend: whether cap enforcement, failed-render refunds and regenerate's idempotency protection behave as described — those remain vendor claims. Know what you are buying into: the domain was registered in May 2026, the site header still says Beta, and no public repo or named team appears on the site or in the docs. Submission #47 was discovery input, not a verification source."
   },
   {
     "slug": "framesail",
