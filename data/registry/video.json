@@ -482,34 +482,6 @@
     "notes": "Read the tool list before you connect it: besides generation, the MCP exposes `purchase_credits`, `subscribe_to_plan`, `setup_payment_method` and `set_auto_topup`, and its OAuth metadata advertises `motion:credits:purchase` and `motion:account:manage` scopes. The docs say a purchase completes immediately if a payment method is on file, so decline those scopes or keep a card off the account unless you want the agent spending on its own. Pricing is $5 per 200 credits, which the docs equate to only one or two videos; longer videos, premium models, voiceover and follow-up edits all cost more, and no free allotment is documented. The docs also contradict themselves: the API overview says purchasing and top-ups are web-app only, while the MCP and credits guides list tools for both. It is a brand and marketing product at heart — launch videos, product demos, logo animations — so expect a house look tuned for SaaS promos, not grade-matched titles for a feature. Output is MP4 at a resolution the docs don't state, with no project-file or layered export documented. Checked 27 Sep 2026: https://mcp.motion.so/mcp serves live OAuth protected-resource metadata naming Claude Code among its expected clients, but this pass did not complete a tools/list call, so the tool names come from the vendor guide. No public source repo. The name collides with Motion (usemotion.com), the unrelated calendar app that also has MCP servers, so check the domain before you install."
   },
   {
-    "slug": "invideo",
-    "name": "invideo MCP Server",
-    "vendor": "invideo",
-    "official": true,
-    "category": "video-generation",
-    "featured": false,
-    "tagline": "Official remote MCP that turns a prompt into a scripted, narrated, subtitled cut.",
-    "description": "invideo's official hosted MCP hands an agent the whole assembly-line version of video: write the script from a prompt, pull clips from a stock library, lay in AI voiceover, and burn subtitles in 50+ languages, returning a full-length edit rather than a single shot. The entire surface is one tool — send a script plus topic, vibe, audience and platform, get a video URL back — so it is a blocking tool, not a finishing one: animatics, pitch reels, explainer inserts, and social cutdowns where speed beats frame-level control. Unlike almost every other server here it needs no key or account to connect, which makes it the cheapest thing to try and the hardest to reason about at scale.",
-    "capabilities": ["text-to-video", "script-generation", "stock-footage", "voiceover", "subtitles", "localization"],
-    "tools_sample": ["generate-video-from-script"],
-    "install": {
-      "claude_code": "claude mcp add --transport http invideo https://mcp.invideo.io/mcp",
-      "remote_url": "https://mcp.invideo.io/mcp",
-      "stdio_command": "npx mcp-remote https://mcp.invideo.io/mcp"
-    },
-    "auth": { "type": "none", "env_var": null, "key_url": "None — an unauthenticated initialize and tools/list both succeed against the endpoint" },
-    "pricing": "freemium",
-    "links": { "repo": null, "docs": null, "site": "https://invideo.io/ai/mcp/" },
-    "added": "2026-08-17",
-    "verified": "2026-09-23",
-    "caveats": [
-      "Exactly one tool, generate-video-from-script: no status, no shot control, no asset upload and no way to feed it your own footage.",
-      "No auth means no account linkage, so expect anonymous rate limits, watermarking and hosted output URLs you do not own.",
-      "invideo pulled its MCP documentation, so there is no published quota or credit model."
-    ],
-    "notes": "invideo pulled its MCP documentation some time between 17 Aug and 23 Sep 2026: help centre article 11316042 now 404s, the landing page at invideo.io/ai/mcp/ still links to it, and no replacement exists — the help centre's agent collections now cover the invideo Editor and its model line-up instead, with no MCP article among them. So `docs` is null: there is no published quota, credit model or transport guidance left to point at. The server outlived its docs and is in better shape than in August: on 23 Sep 2026 an unauthenticated POST to https://mcp.invideo.io/mcp completed a full handshake — Streamable HTTP, protocol 2024-11-05, serverInfo `invideo-ai` 0.0.2 — and returned tools/list, so the fields above now point there rather than at the deprecated /sse form, which still answers 200 if your client insists on SSE. That tools/list is the headline caveat: exactly one tool, `generate-video-from-script`, taking five required strings (script, topic, vibe, targetAudience, platform) and returning a video URL. No status tool, no shot control, no asset upload, no way to feed it your own footage. No auth also means no account linkage — expect anonymous rate limits, watermarking, or invideo-hosted output URLs whose lifecycle you do not own. Output is a templated stock-and-voiceover assembly; for shot-level generative control stay with the model servers in this category."
-  },
-  {
     "slug": "makeaivideo",
     "name": "MakeAIVideo MCP",
     "vendor": "MakeAIVideo",

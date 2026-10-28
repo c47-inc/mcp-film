@@ -355,5 +355,62 @@
       "The marketing leans toward UGC ads and social video, so expect templates tuned for that; closed source and hosted only."
     ],
     "notes": "Checked 10 Oct 2026: the endpoint answers initialize with a proper OAuth 2.1 challenge, the official MCP Registry lists ai.frameo/frameo, and the tool reference at mcp.frameo.ai/docs is generated from the live tool list (58 tools). No tools were run because there is no anonymous path. Every paid generation needs an estimate_cost quote first and the quote is single-use for 15 minutes; analyze_media is the one paid tool without a quote. Pricing is credits from a Frameo workspace plan and per-generation costs are not published outside the app. The company behind it is Dashverse; the marketing leans toward UGC ads and social video, so expect templates tuned for that. Closed source, hosted only."
+  },
+  {
+    "slug": "invideo",
+    "name": "invideo MCP Server",
+    "vendor": "invideo",
+    "official": true,
+    "category": "studio",
+    "featured": false,
+    "tagline": "Official hosted MCP for invideo's cloud editor: agents edit real NLE timelines with branches while you watch.",
+    "description": "invideo rebuilt its MCP around its browser editor: an agent opens a project by URL, brings media in, edits a real NLE timeline with color, audio and 3D tools, generates with the image, video, voice and music models invideo hosts, and exports, while the user watches each edit land in the editor and can take over by hand. Projects carry a main timeline, branches and a full edit history, so changes can be proposed for review before they reach main. The same surface ships as an Apache-2.0 CLI for shells and coding agents that want files on disk. The old anonymous one-tool script-to-video server is gone: everything now runs in the user's own invideo account and credits.",
+    "capabilities": [
+      "timeline-editing",
+      "video-editing",
+      "version-stacks",
+      "text-to-video",
+      "image-to-video",
+      "image-generation",
+      "voiceover",
+      "music-generation",
+      "color-grading",
+      "mixing",
+      "captions",
+      "stock-search",
+      "project-management",
+      "cli",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "get_help",
+      "list_projects"
+    ],
+    "install": {
+      "claude_code": "claude mcp add --transport http invideo https://mcp.invideo.io/mcp",
+      "remote_url": "https://mcp.invideo.io/mcp",
+      "stdio_command": "npx mcp-remote https://mcp.invideo.io/mcp",
+      "cli": "curl -fsSL https://agents.invideo.io | sh && invideo auth login",
+      "cli_docs": "https://github.com/invideoio/cli"
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "https://mcp.invideo.io/mcp/agents.md#no-browser"
+    },
+    "pricing": "credits",
+    "links": {
+      "repo": null,
+      "docs": "https://mcp.invideo.io/mcp/agents.md",
+      "site": "https://invideo.io/ai/mcp/"
+    },
+    "added": "2026-08-17",
+    "verified": "2026-10-27",
+    "caveats": [
+      "Needs the user's invideo account: every request but ping answers a sign-in challenge, and work bills that account's credits.",
+      "Plans start at Starter, $20 a month for 400 credits per seat; the pricing page lists no free plan, and Seedance 2.5 needs a higher tier.",
+      "Tools are not listed without sign-in, so the public sample is the two the vendor guide names; call get_help once connected."
+    ],
+    "notes": "Changed under the listing between September and October 2026. On 23 Sep an unauthenticated POST to https://mcp.invideo.io/mcp completed a handshake and listed one tool, generate-video-from-script. On 27 Oct the same POST returns 401 with `WWW-Authenticate: Bearer resource_metadata=…`, the protected-resource document names pro-api-auth.invideo.io as the authorization server, and the error text points agents at a device sign-in flow. mcp.film's daily endpoint check caught the change. The vendor's agent guide (mcp.invideo.io/mcp/agents.md) now describes a cloud video editor ('Figma and GitHub for video'): projects with a main timeline, branches and edit history, opened by URL, with the user watching edits land live. Connect: Claude Code, Codex, Cursor, VS Code, claude.ai custom connectors and ChatGPT developer-mode connectors are documented; in Claude Code the sign-in is `/mcp` → invideo → Authenticate after a restart. Agents with no browser use RFC 8628 device sign-in (user approves a code on their own device; tokens last about a day and refresh tokens rotate). The CLI (github.com/invideoio/cli, Apache-2.0, one native binary also on npm and PyPI as `invideo`, 0.1.1 on 27 Oct) covers projects, notebook pages, edits and branches, assets, `gen run` with `--dry-run` pricing and `--max-credits`, stock library search and exports; its README says the CLI and MCP are the same invideo. Pricing (invideo.io/pricing, 27 Oct): Starter $20/seat/month for 400 credits, Plus $60 for 2,000, higher tiers above; Starter has Lite-only agent access and no Seedance 2.0/2.5. Not checked: the signed-in tool list, which needs an account; tools_sample lists only get_help and list_projects, the two the guide names. Re-categorised from Video Generation to Full-Stack AI Studios because the server now holds the project, timeline, generation and review in one place."
   }
 ]
