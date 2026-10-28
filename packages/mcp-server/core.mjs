@@ -109,6 +109,8 @@ const compact = (s) => withStatus({
   tagline: s.tagline,
   pricing: s.pricing,
   remote: Boolean(s.install?.remote_url),
+  // Strongest machine check that passed recently (endpoint_answered > package_resolves > docs_checked).
+  ...(s.evidence ? { evidence: s.evidence } : {}),
   capabilities: s.capabilities,
 }, s);
 
@@ -544,6 +546,7 @@ export const TOOLS = [
         capability: { type: "string", description: "Exact capability tag, e.g. 'image-to-video'" },
         official_only: { type: "boolean", description: "Only vendor-maintained servers" },
         remote_only: { type: "boolean", description: "Only hosted remote MCPs (no local install)" },
+        answering_only: { type: "boolean", description: "Only listings whose hosted endpoint answered mcp.film's anonymous MCP check in the last 7 days (evidence: endpoint_answered; a sign-in challenge counts as answering)." },
         include_inactive: { type: "boolean", description: "Also return listings whose status is dead, archived or deprecated. Default false." },
         limit: { type: "number", description: "Page size, 1-100. Default 20." },
         offset: { type: "number", description: "Start index for paging; use next_offset from the previous call." },
@@ -555,7 +558,7 @@ export const TOOLS = [
     title: "Get one film MCP server",
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
-      "Get the full mcp.film entry for one server by slug: description, install commands, auth requirements, sample tools, links, and field notes (caveats).",
+      "Get the full mcp.film entry for one server by slug: description, install commands, auth requirements, sample tools, links, field notes (caveats), and machine-checked evidence (evidence level, last_probe of the hosted endpoint, package_check).",
     inputSchema: {
       type: "object",
       properties: { slug: { type: "string", description: "Server slug, e.g. 'martini' or 'elevenlabs'" } },
@@ -1004,6 +1007,7 @@ export function makeCallTool({ loadRegistry, loadPlaybooks, loadRecommendations,
         if (capability && !canonicalTags(s, reg).includes(capability)) return false;
         if (args.official_only && !s.official) return false;
         if (args.remote_only && !s.install?.remote_url) return false;
+        if (args.answering_only && s.evidence !== "endpoint_answered") return false;
         if (qTokens.length) return matchesAll(qTokens, serverHaystack(s, reg, catName.get(s.category)));
         return true;
       });
