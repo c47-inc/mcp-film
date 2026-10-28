@@ -12,6 +12,8 @@ import { fileURLToPath } from "node:url";
 import * as T from "./src/templates.mjs";
 import { renderMartiniConnect, renderMartiniConnectMd } from "./src/pages/martini.mjs";
 import { martiniHandoff, MARTINI_CLI } from "./packages/mcp-server/recommend-score.mjs";
+import { ANSWERED, EVIDENCE_LEVELS, FAILURE_AGENDA_THRESHOLD, deriveEvidence, failingChecks, packageRef, validateHealth } from "./src/health.mjs";
+import { RESERVED_BADGE_SLUGS, renderBadgeSvg } from "./src/badge.mjs";
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const DATA = path.join(ROOT, "data");
@@ -38,6 +40,10 @@ const servers = fs
 // capability index, pages and search haystack are built on the canonical form.
 const aliasesPath = path.join(DATA, "capability-aliases.json");
 const capabilityAliasDoc = fs.existsSync(aliasesPath) ? readJson(aliasesPath) : {};
+
+// Optional: machine-checked endpoint/package health from scripts/probe-endpoints.mjs.
+const healthPath = path.join(DATA, "health.json");
+const health = fs.existsSync(healthPath) ? readJson(healthPath) : null;
 
 // ------------------------------------------------------------------ validate
 const errors = [];
@@ -88,6 +94,7 @@ for (const s of servers) {
   if (s.slug) {
     if (!/^[a-z0-9][a-z0-9-]*$/.test(s.slug)) errors.push(`${where}: bad slug format`);
     if (slugs.has(s.slug)) errors.push(`${where}: duplicate slug`);
+    if (RESERVED_BADGE_SLUGS.has(s.slug)) errors.push(`${where}: slug "${s.slug}" is reserved (/badge/${s.slug}.svg is the generic badge)`);
     slugs.add(s.slug);
   }
   if (s.category && !catIds.has(s.category)) errors.push(`${where}: unknown category "${s.category}"`);
@@ -230,6 +237,13 @@ for (const c of comparisons) {
   for (const k of Object.keys(c.choose_if ?? {})) if (!c.slugs.includes(k)) errors.push(`${where}: choose_if.${k} is not one of the compared slugs`);
 }
 
+if (health) {
+  // Probe results never change a listing's status; unknown slugs are stale, not fatal.
+  const checked = validateHealth(health, slugs);
+  errors.push(...checked.errors);
+  warnings.push(...checked.warnings);
+}
+
 if (errors.length) {
   console.error(`✗ data validation failed (${errors.length} problem${errors.length > 1 ? "s" : ""}):\n`);
   for (const e of errors) console.error("  - " + e);
@@ -263,6 +277,11 @@ const ctx = {
   capabilityAliases,
   canonicalCapability,
 };
+// Evidence levels and probe facts (src/health.mjs), derived per listing at build time.
+ctx.health = health;
+ctx.evidence = deriveEvidence(servers, health, ctx.built);
+ctx.evidenceLevels = EVIDENCE_LEVELS;
+const withEvidence = (s) => ({ ...s, ...ctx.evidence.get(s.slug) });
 
 const categoryById = new Map(categories.map((c) => [c.id, c]));
 const isActive = (s) => !T.isInactive(s);
@@ -321,6 +340,8 @@ const remoteSummary = (s) => {
     listing_url: `${site.url}/mcps/${s.slug}/`,
     markdown_url: `${site.url}/mcps/${s.slug}.md`,
     notes: s.notes,
+    evidence: ctx.evidence.get(s.slug).evidence,
+    last_probe: ctx.evidence.get(s.slug).last_probe,
   };
 };
 ctx.remoteServers = remoteServers;
@@ -330,6 +351,8 @@ ctx.remoteDoc = {
   updated: ctx.built,
   count: remoteServers.length,
   official: remoteServers.filter((s) => s.official).length,
+  answered: health ? remoteServers.filter((s) => ANSWERED.has(ctx.evidence.get(s.slug).last_probe?.result)).length : null,
+  checked_at: health?.checked_at ?? null,
   featured: remoteServers.filter((s) => s.featured).map((s) => s.slug),
   remotes: remoteServers.map(remoteSummary),
 };
@@ -538,6 +561,7 @@ ctx.pulse = {
     categories: categories.length,
     newest_added: servers.reduce((m, s) => (s.added > m ? s.added : m), "0000-00-00"),
     oldest_verified: servers.reduce((m, s) => (s.verified < m ? s.verified : m), "9999-99-99"),
+    endpoint_health: health ? { checked_at: health.checked_at, ...health.summary } : null,
   },
   newest: [...servers]
     .sort((a, b) => b.added.localeCompare(a.added) || a.name.localeCompare(b.name))
@@ -554,6 +578,12 @@ ctx.pulse = {
     .map(([capability, servers]) => ({ capability, servers })),
   demand_signals: demandSignals,
   curator_agenda: [
+    ...(health ? [{
+      id: "recheck-failing-checks",
+      priority: "daily",
+      evidence: failingChecks(servers, health),
+      action: `These listings failed ${FAILURE_AGENDA_THRESHOLD} or more daily machine checks in a row (hosted endpoint did not answer, or the package is gone from npm/PyPI; data/health.json). Re-verify them against primary sources first. The probe never changes a status: dead, archived or deprecated is the curator's call after checking.`,
+    }] : []),
     {
       id: "verify-stale-officials",
       priority: "daily",
@@ -600,6 +630,8 @@ ctx.pulse = {
     { label: "playbooks.md", url: `${site.url}/playbooks.md`, kind: "stack-recipes" },
     { label: "router.md", url: `${site.url}/router.md`, kind: "brief-router" },
     { label: "feed.xml", url: `${site.url}/feed.xml`, kind: "new-additions-feed" },
+    { label: "changes.md", url: `${site.url}/changes.md`, kind: "changelog-markdown" },
+    { label: "changes.xml", url: `${site.url}/changes.xml`, kind: "changelog-feed" },
     { label: "server-card", url: `${site.url}/.well-known/mcp/server-card`, kind: "mcp-discovery" },
     { label: "hosted MCP endpoint", url: `${site.url}/mcp`, kind: "hosted-mcp" },
     { label: "MCP Registry API", url: `${site.url}/v0.1/servers`, kind: "mcp-registry-api" },
@@ -721,8 +753,16 @@ for (const capability of capabilityEntries) {
 for (const s of servers) {
   write(`mcps/${s.slug}/index.html`, T.renderServer(ctx, s));
   write(`mcps/${s.slug}.md`, T.renderServerMd(ctx, s));
-  write(`api/mcps/${s.slug}.json`, JSON.stringify(s, null, 2));
+  write(`api/mcps/${s.slug}.json`, JSON.stringify(withEvidence(s), null, 2));
 }
+
+// "Listed on mcp.film" badges (one per listing, inactive ones state their status) and the
+// data-derived changelog.
+for (const s of servers) write(`badge/${s.slug}.svg`, renderBadgeSvg(s));
+write("badge/listed.svg", renderBadgeSvg());
+write("changes/index.html", T.renderChanges(ctx));
+write("changes.md", T.renderChangesMd(ctx));
+write("changes.xml", T.renderChangesFeed(ctx));
 
 // agent-readable surfaces
 write("llms.txt", T.renderLlmsTxt(ctx));
@@ -770,7 +810,11 @@ const registryDoc = {
   // canonical capability → aliases, so clients (and the npm mcp-film server) normalise
   // queries the same way the build does.
   capability_aliases: Object.fromEntries(Object.entries(capabilityAliasDoc).filter(([k]) => !k.startsWith("_"))),
-  servers,
+  // Derived per server: evidence (strongest machine check that passed recently), last_probe,
+  // package_check. Definitions travel with the data.
+  evidence_levels: EVIDENCE_LEVELS,
+  health_checked_at: health?.checked_at ?? null,
+  servers: servers.map(withEvidence),
 };
 write("api/registry.json", JSON.stringify(registryDoc, null, 2));
 write("api/registry.min.json", JSON.stringify(registryDoc));
@@ -866,6 +910,17 @@ write("_headers", `# Cloudflare Pages response headers for extensionless machine
 
 /.well-known/mcp-registry-auth
   Content-Type: text/plain; charset=utf-8
+
+# README badges are embedded cross-site (GitHub proxies them through camo): cache for hours,
+# not forever, so a re-verified month or a status change shows up within the day.
+/badge/*
+  Content-Type: image/svg+xml; charset=utf-8
+  Cache-Control: public, max-age=14400, stale-while-revalidate=86400
+  Access-Control-Allow-Origin: *
+  Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'
+
+/changes.xml
+  Content-Type: application/atom+xml; charset=utf-8
 `);
 
 // Cloudflare Pages glue. When deployed to Cloudflare Pages, _worker.js runs in
@@ -973,6 +1028,7 @@ function mcpRegistryResponse(s) {
       added: s.added,
       verified: s.verified,
       verificationAgeDays: daysSince(s.verified),
+      evidence: ctx.evidence.get(s.slug).evidence,
     },
   };
   return {
@@ -1006,40 +1062,17 @@ function repositoryFor(url) {
 }
 
 function packageFor(s) {
-  const cmd = s.install?.stdio_command;
   // Same policy as the install snippets: prose, installer wizards (`npx x setup`) and
-  // listings with install.generate:false export no runnable package.
-  if (!T.cmdLike(cmd, s.install)) return [];
-  const npxPackage = /(?:^|\s)--package=([^\s]+)|^npx\s+(?:-y\s+)?([@a-zA-Z0-9._/-]+)/.exec(cmd);
-  if (npxPackage) {
-    return [{
-      registryType: "npm",
-      registryBaseUrl: "https://registry.npmjs.org",
-      identifier: cleanupPackageId(npxPackage[1] || npxPackage[2]),
-      transport: { type: "stdio" },
-      ...(s.auth?.env_var ? { environmentVariables: [secretEnv(s.auth.env_var)] } : {}),
-    }];
-  }
-  const uvxFrom = /^uvx\s+--from\s+([^\s]+)\s+/.exec(cmd);
-  const uvxPackage = /^uvx\s+(.+)$/.exec(cmd);
-  const pyPackage = uvxFrom?.[1] || uvxPackage?.[1];
-  if (pyPackage) {
-    return [{
-      registryType: "pypi",
-      registryBaseUrl: "https://pypi.org",
-      identifier: cleanupPackageId(pyPackage.split(/\s+/)[0]),
-      transport: { type: "stdio" },
-      ...(s.auth?.env_var ? { environmentVariables: [secretEnv(s.auth.env_var)] } : {}),
-    }];
-  }
-  return [];
-}
-
-function cleanupPackageId(value) {
-  return String(value)
-    .replace(/^["']|["']$/g, "")
-    .replace(/\[.*\]$/, "")
-    .replace(/@latest$/, "");
+  // listings with install.generate:false export no runnable package (src/health.mjs).
+  const ref = packageRef(s);
+  if (!ref) return [];
+  return [{
+    registryType: ref.registry,
+    registryBaseUrl: ref.registry === "npm" ? "https://registry.npmjs.org" : "https://pypi.org",
+    identifier: ref.name,
+    transport: { type: "stdio" },
+    ...(s.auth?.env_var ? { environmentVariables: [secretEnv(s.auth.env_var)] } : {}),
+  }];
 }
 
 function secretEnv(name) {

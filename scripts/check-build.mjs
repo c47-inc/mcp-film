@@ -130,6 +130,18 @@ check("server summaries carry status", summaryStatuses ? null : "playbook server
 check("remotes carry status", remotesDoc.remotes.every((r) => typeof r.status === "string") ? null : "remote summaries lack status");
 check("mcp-registry never exports the installer wizard", /davinci-resolve-mcp"/.test(read("dist/api/mcp-registry.json")) && read("dist/api/mcp-registry.json").includes('"identifier": "davinci-resolve-mcp"') ? "davinci-resolve-mcp exported as a runnable package" : null);
 
+// 8b. Evidence levels are derived for every listing, and probe facts reach the surfaces that
+//     show them. A probe result never rewrites a status (that is checked in data, not here).
+const EVIDENCE = new Set(["endpoint_answered", "package_resolves", "docs_checked"]);
+check("every server has an evidence level", registry.servers.every((s) => EVIDENCE.has(s.evidence) && "last_probe" in s && "package_check" in s) ? null : "registry.json server without evidence/last_probe/package_check");
+check("evidence levels are defined", registry.evidence_levels?.map((l) => l.id).join() === [...EVIDENCE].join() ? null : "registry.json evidence_levels missing or out of order");
+if (fs.existsSync(path.join(ROOT, "data/health.json"))) {
+  check("remotes headline", /class="probe-headline"/.test(read("dist/remotes/index.html")) ? null : "/remotes/ lacks the endpoint-check headline");
+  const probedServer = registry.servers.find((s) => s.last_probe);
+  check("server page endpoint check", probedServer && read(`dist/mcps/${probedServer.slug}/index.html`).includes("Endpoint check,") ? null : "server page lacks the endpoint-check line");
+  check("pulse agenda carries failing checks", JSON.parse(read("dist/api/pulse.json")).curator_agenda.some((a) => a.id === "recheck-failing-checks") ? null : "pulse.json has no recheck-failing-checks agenda item");
+}
+
 // 9. Sitemap lists HTML pages only; the 404 is unindexed and claims no canonical.
 const sitemap = read("dist/sitemap.xml");
 check("sitemap is HTML only", /<loc>[^<]*\.(md|json|txt)<\/loc>/.test(sitemap) ? "sitemap lists a machine twin" : null);
@@ -166,6 +178,53 @@ const sponsorPrimary = [...routerHtml.matchAll(/<a\b[^>]*>/g)].some(([a]) =>
   /class="[^"]*\bbtn-primary\b/.test(a) && /href="[^"]*martini/i.test(a));
 check("router primary action is the top pick", sponsorPrimary ? "sponsor link has btn-primary" : null);
 console.log(`Metadata checks: ${registry.servers.length} server pages; last verified ${latestVerified}`);
+
+// 10. README badges: one per listing, well-formed and accessible, and honest. An inactive
+//     listing's badge states its status and never says "verified"; only active listings
+//     offer the snippet on their page.
+const exists = (p) => fs.existsSync(path.join(ROOT, p));
+const svgProblem = (svg) => {
+  if (!/^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg"[^>]* role="img" aria-label="[^"]+"/.test(svg)) return "missing xmlns, role=img or aria-label";
+  if (!/<title>[^<]+<\/title>/.test(svg)) return "missing <title>";
+  if (!svg.trimEnd().endsWith("</svg>")) return "unterminated";
+  if (/<script|on\w+=/i.test(svg)) return "contains script";
+  const open = (svg.match(/<g\b/g) ?? []).length, close = (svg.match(/<\/g>/g) ?? []).length;
+  return open === close ? null : `unbalanced <g> (${open}/${close})`;
+};
+check("generic badge", exists("dist/badge/listed.svg") ? svgProblem(read("dist/badge/listed.svg")) : "dist/badge/listed.svg missing");
+for (const s of registry.servers) {
+  const file = `dist/badge/${s.slug}.svg`;
+  if (!exists(file)) { check(`${s.slug} badge`, "missing"); continue; }
+  const svg = read(file);
+  check(`${s.slug} badge`, svgProblem(svg));
+  const html = read(`dist/mcps/${s.slug}/index.html`);
+  if (s.status) {
+    check(`${s.slug} badge is honest`, /verified/i.test(svg) || !svg.includes(`>${s.status}</text>`) ? `${s.status} listing badge does not state its status` : null);
+    check(`${s.slug} page offers no badge`, html.includes('id="badge"') ? "inactive listing offers a README badge" : null);
+  } else {
+    check(`${s.slug} badge date`, svg.includes(`>verified ${new Date(`${s.verified}T00:00:00Z`).toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" })}</text>`) ? null : "badge does not show the verified month");
+    check(`${s.slug} badge snippet`, html.includes('id="badge"') && html.includes(`src="/badge/${s.slug}.svg"`) && html.includes(`(https://mcp.film/mcps/${s.slug}/)`) ? null : "server page lacks the badge section");
+  }
+}
+const headers = read("dist/_headers");
+check("badges served as SVG", /\/badge\/\*\n(?:  .+\n)*  Content-Type: image\/svg\+xml/.test(headers) ? null : "_headers has no /badge/* image/svg+xml rule");
+check("badges cached briefly", /\/badge\/\*\n(?:  .+\n)*  Cache-Control: public, max-age=\d+/.test(headers) ? null : "_headers has no /badge/* Cache-Control");
+
+// 11. /changes/ renders from data, has its twin and feed, and is discoverable.
+const changesHtml = exists("dist/changes/index.html") ? read("dist/changes/index.html") : "";
+check("changes page", /<h1>Changes<\/h1>/.test(changesHtml) ? null : "dist/changes/index.html missing or has no h1");
+check("changes page twin", changesHtml.includes('type="text/markdown" href="https://mcp.film/changes.md"') && exists("dist/changes.md") ? null : "missing .md twin");
+check("changes feed discoverable", changesHtml.includes('type="application/atom+xml" title="mcp.film changes" href="/changes.xml"') ? null : "no feed autodiscovery link");
+check("changes in sitemap", sitemap.includes("<loc>https://mcp.film/changes/</loc>") ? null : "sitemap lacks /changes/");
+check("changes in llms.txt", read("dist/llms.txt").includes("/changes.md") ? null : "llms.txt lacks /changes.md");
+check("changes in footer", read("dist/index.html").includes('<a href="/changes/">') ? null : "footer lacks /changes/");
+const newestAdded = [...registry.servers].sort((a, b) => b.added.localeCompare(a.added))[0];
+check("changes lists the newest listing", changesHtml.includes(`href="/mcps/${newestAdded.slug}/"`) ? null : `${newestAdded.slug} (added ${newestAdded.added}) missing`);
+for (const s of inactive) check(`changes lists ${s.slug} as inactive`, changesHtml.includes(`tag-status-${s.status}">`) && changesHtml.includes(`href="/mcps/${s.slug}/"`) ? null : "missing from Not recommended");
+const changesFeed = exists("dist/changes.xml") ? read("dist/changes.xml") : "";
+const feedEntries = changesFeed.match(/<entry>/g)?.length ?? 0;
+const feedIds = new Set([...changesFeed.matchAll(/<id>(tag:[^<]+)<\/id>/g)].map((m) => m[1]));
+check("changes feed", changesFeed.startsWith('<?xml') && feedEntries > 0 && feedIds.size === feedEntries ? null : `missing, empty, or duplicate entry ids (${feedIds.size}/${feedEntries})`);
 
 // Header search is rendered once on every page and hidden on home, which has #search.
 function checkHeaderSearch(dir) {

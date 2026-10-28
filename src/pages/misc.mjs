@@ -1,5 +1,6 @@
 import { esc, layout, sponsorLink } from "./_shared.mjs";
 import { codeBlock } from "./server.mjs";
+import { changeLog } from "./changes.mjs";
 
 // ------------------------------------------------------------- about/submit
 export const renderAbout = (ctx) => {
@@ -52,6 +53,7 @@ export const renderSubmit = (ctx) => {
     <li><strong>It's relevant to filmmaking</strong> — generation, sound, edit, finish, ship, or the production office around them.</li>
     <li><strong>It's maintained</strong> — or it's the only option for an important platform (we'll say so in the notes).</li>
   </ul>
+  <p>Once listed, maintainers can link back with a badge: every server page has the Markdown and HTML under <em>Badge for your README</em>, and it shows the listing's last verified month.</p>
 
   <h2>Fastest path</h2>
   <p><a class="btn btn-primary" href="${issueUrl}" rel="noopener">Open the submission form on GitHub →</a></p>
@@ -114,6 +116,7 @@ export const sitemapEntries = (ctx) => {
   return [
     ...["/", "/router/", "/stack/", "/clients/", "/playbooks/", "/recommendations/", "/capabilities/", "/remotes/", "/for-agents/", "/pulse/", "/about/", "/submit/", "/martini/connect/"]
       .map((u) => ({ loc: u, lastmod: today })),
+    { loc: "/changes/", lastmod: changeLog(ctx).newest },
     ...ctx.categories.map((c) => ({ loc: `/categories/${c.id}/`, lastmod: newest(ctx.servers.filter((s) => s.category === c.id)) })),
     ...ctx.capabilityPages.map((c) => ({ loc: `/capabilities/${c.capability}/`, lastmod: newest(c.servers) })),
     ...ctx.playbooks.map((p) => ({ loc: `/playbooks/${p.id}/`, lastmod: newest(bySlug([...(p.primary_slugs ?? []), ...(p.steps ?? []).flatMap((st) => st.slugs ?? [])])) })),

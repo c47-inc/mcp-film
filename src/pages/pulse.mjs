@@ -6,14 +6,14 @@ export const eventTags = (events) =>
   (events ?? []).map((event) => `<code class="mono">${esc(event)}</code>`).join(" ");
 export const pulseEvidenceHtml = (item) =>
   (item.evidence ?? []).slice(0, 6).map((e) => {
-    if (e.slug) return `<a href="/mcps/${e.slug}/">${esc(e.name)}</a>${e.age_days !== undefined ? ` (${e.age_days}d)` : ""}`;
+    if (e.slug) return `<a href="/mcps/${e.slug}/">${esc(e.name)}</a>${e.age_days !== undefined ? ` (${e.age_days}d)` : ""}${e.consecutive_failures !== undefined ? ` (${e.consecutive_failures} failed checks)` : ""}`;
     if (e.title) return `<a href="/recommendations/#${esc(e.id)}">${esc(e.title)}</a>${e.primary ? " (primary)" : ""}`;
     if (e.id && e.name) return `<a href="/categories/${e.id}/">${esc(e.name)}</a> (${e.servers} servers, ${e.remote} remote)`;
     return esc(e.name ?? e.id ?? "");
   }).filter(Boolean).join("; ");
 export const pulseEvidenceMd = (ctx, item) =>
   (item.evidence ?? []).slice(0, 6).map((e) => {
-    if (e.slug) return `[${e.name}](${ctx.site.url}/mcps/${e.slug}.md)${e.age_days !== undefined ? ` (${e.age_days}d)` : ""}`;
+    if (e.slug) return `[${e.name}](${ctx.site.url}/mcps/${e.slug}.md)${e.age_days !== undefined ? ` (${e.age_days}d)` : ""}${e.consecutive_failures !== undefined ? ` (${e.consecutive_failures} failed checks)` : ""}`;
     if (e.title) return `[${e.title}](${ctx.site.url}/recommendations.md#${e.id})${e.primary ? " (primary)" : ""}`;
     if (e.id && e.name) return `${e.name} (${e.servers} servers, ${e.remote} remote)`;
     return e.name ?? e.id ?? "";
@@ -25,7 +25,7 @@ export const renderPulse = (ctx) => {
 <section class="page-head">
   <p class="crumbs"><a href="/">mcp.film</a> / <span>Pulse</span></p>
   <h1>Catalog pulse</h1>
-  <p class="hero-sub">The directory's current operating picture: newest additions, verification queue, category coverage, and machine surfaces. <span class="mono">(machine version: <a href="/pulse.md">/pulse.md</a> · <a href="/api/pulse.json">/api/pulse.json</a>)</span></p>
+  <p class="hero-sub">The directory's current operating picture: newest additions, verification queue, category coverage, and machine surfaces. Looking for what changed? See <a href="/changes/">Changes</a>. <span class="mono">(machine version: <a href="/pulse.md">/pulse.md</a> · <a href="/api/pulse.json">/api/pulse.json</a>)</span></p>
 </section>
 
 <section class="pulse-grid" aria-label="Catalog summary">
@@ -49,7 +49,7 @@ export const renderPulse = (ctx) => {
   <table class="pulse-table">
     <thead><tr><th>Priority</th><th>Evidence</th><th>Action</th></tr></thead>
     <tbody>
-      ${pulse.curator_agenda.map((item) => `<tr><td><code class="mono">${esc(item.priority)}</code><br>${esc(item.id)}</td><td>${pulseEvidenceHtml(item)}</td><td>${esc(item.action)}</td></tr>`).join("")}
+      ${pulse.curator_agenda.map((item) => `<tr><td><code class="mono">${esc(item.priority)}</code><br>${esc(item.id)}</td><td>${pulseEvidenceHtml(item) || "None right now."}</td><td>${esc(item.action)}</td></tr>`).join("")}
     </tbody>
   </table>
 
@@ -155,7 +155,7 @@ export const renderPulseMd = (ctx) => {
       `### ${item.id}`,
       "",
       `- Priority: ${item.priority}`,
-      `- Evidence: ${pulseEvidenceMd(ctx, item)}`,
+      `- Evidence: ${pulseEvidenceMd(ctx, item) || "none right now"}`,
       `- Action: ${item.action}`,
       "",
     ]),

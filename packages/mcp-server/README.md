@@ -23,8 +23,8 @@ gets the latest). `initialize` returns short `instructions`: start with
 | Tool | What it does |
 | --- | --- |
 | `recommend_film_mcps` | Match a free-text brief to the best routes and first servers to connect. Hard constraints first (`constraints` object or phrases in the brief), then relevance; `confidence` says how well the brief matched |
-| `search_film_mcps` | Tokenised, alias-aware search (`lipsync` = `lip-sync` = `lip sync`; `tts` = `text to speech`; `4k` = `upscale`); filter by category, capability, official, remote; paged |
-| `get_film_mcp` | Full entry for one server: install, auth, tools, caveats, status |
+| `search_film_mcps` | Tokenised, alias-aware search (`lipsync` = `lip-sync` = `lip sync`; `tts` = `text to speech`; `4k` = `upscale`); filter by category, capability, official, remote, `answering_only` (hosted endpoint answered the daily check); paged |
+| `get_film_mcp` | Full entry for one server: install, auth, tools, caveats, status, evidence level and last endpoint/package check |
 | `list_film_categories` | All categories with pipeline stages and agent hints |
 | `list_film_capabilities` | Capability tags (aliases folded in) ranked by server count; `min_count` 2 by default; paged |
 | `get_film_capability` | Ranked server cluster for one tag; aliases resolve (`lipsync` → `lip-sync`, says `resolved_from`); paged |
@@ -52,7 +52,7 @@ Default `limit` is 20 (50 for capabilities), maximum 100.
 
 **Compact server** (search results, capability clusters, stack picks):
 `slug, url, verified, caveat, name, vendor, official, category, tagline,
-pricing, remote, capabilities` plus `status` when the listing carries one.
+pricing, remote, evidence, capabilities` plus `status` when the listing carries one.
 `caveat` is the entry's `caveats[0]`, else the first sentence of its notes
 that is not a verification log line. `get_film_mcp` is always the full entry.
 
@@ -83,6 +83,19 @@ name, reason, listing`). Primary and workflow servers only, never fallbacks.
 Retired listings, listings with `install.generate: false`, and listings with no
 mechanical install for that client are skipped with the reason, never guessed
 at. It is the same block shown on `mcp.film/playbooks/{id}/` and in its `.md`.
+
+**Evidence.** Every server carries `evidence`, derived at build time from a
+daily anonymous check (no LLM, no credentials, tools are never called):
+`endpoint_answered` (the hosted endpoint completed an MCP `initialize`, or
+answered with a 401/403 sign-in challenge, within the last 7 days) >
+`package_resolves` (its npm/PyPI package exists, checked within 7 days) >
+`docs_checked` (only the curator's `verified` date). `get_film_mcp` adds
+`last_probe: {date, result, protocol_version, tool_count,
+anonymous_tools_list, auth_required, oauth_metadata, consecutive_failures,
+last_ok}` (`result`: `ok` | `auth_required` | `handshake_only` | `error` |
+`unreachable`) and `package_check: {date, registry, name, found,
+latest_version, last_ok}`, each `null` when not applicable. A failing check
+never changes `status`; a curator does that after re-verifying.
 
 **Status.** Listings with `status` `dead`, `archived` or `deprecated` are hidden
 from search, recommendations and stack plans unless `include_inactive: true`.

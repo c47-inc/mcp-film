@@ -38,6 +38,8 @@ const agentReadableSurfaces = new Set([
   "agent-docs-markdown",
   "capability-json",
   "capability-markdown",
+  "changes-feed",
+  "changes-markdown",
   "client-profiles-json",
   "clients-markdown",
   "feed",
@@ -675,6 +677,9 @@ export function routePropertiesFor(pathname) {
   if (pathname === "/for-agents.md") return route("agent-docs-markdown", "agent-docs");
   if (pathname === "/pulse/" || pathname === "/pulse") return route("pulse-page", "pulse");
   if (pathname === "/pulse.md") return route("pulse-markdown", "pulse");
+  if (pathname === "/changes/" || pathname === "/changes") return route("changes-page", "changes");
+  if (pathname === "/changes.md") return route("changes-markdown", "changes");
+  if (pathname === "/changes.xml") return route("changes-feed", "changes");
   if (pathname === "/about/" || pathname === "/about") return route("about-page", "about");
   if (pathname === "/submit/" || pathname === "/submit") return route("submit-page", "submit");
 

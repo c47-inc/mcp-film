@@ -439,7 +439,8 @@ export const breadcrumbLd = (ctx, trail) => ({
 
 // robots: "index,follow" (default) or "noindex,follow". canonical: false drops the canonical
 // link (the 404 page is served at any path, so it has no canonical URL to claim).
-export const layout = (ctx, { title, description, path: pagePath, body, jsonLd = [], page = "", md = null, robots = "index,follow", canonical = true }) => {
+// feeds: extra Atom feeds for autodiscovery on this page ([{ title, href }]).
+export const layout = (ctx, { title, description, path: pagePath, body, jsonLd = [], page = "", md = null, robots = "index,follow", canonical = true, feeds = [] }) => {
   const { site } = ctx;
   const url = site.url + pagePath;
   const ld = jsonLd.map((o) => `<script type="application/ld+json">${JSON.stringify(o)}</script>`).join("\n");
@@ -480,7 +481,7 @@ ${md ? `<link rel="alternate" type="text/markdown" href="${site.url}${md}" title
 <meta name="theme-color" content="#0c0c0e" media="(prefers-color-scheme: dark)">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <link rel="alternate" type="application/atom+xml" title="New MCP servers" href="/feed.xml">
-<link rel="preload" href="/assets/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
+${feeds.map((f) => `<link rel="alternate" type="application/atom+xml" title="${esc(f.title)}" href="${esc(f.href)}">\n`).join("")}<link rel="preload" href="/assets/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/geist-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/styles.css">
 ${ld}
@@ -521,6 +522,7 @@ ${body}
       <a href="/compare/">Compare servers</a>
       <a href="/glossary/">Glossary</a>
       <a href="/remotes/">Hosted remotes</a>
+      <a href="/changes/">Changes</a>
       <a href="/submit/">Submit a server</a>
       <a href="/about/">About</a>
       <a href="https://github.com/${site.github_repo}" rel="noopener">Source on GitHub</a>

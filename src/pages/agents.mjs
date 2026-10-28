@@ -1,6 +1,7 @@
 import { TOOLS } from "../../packages/mcp-server/core.mjs";
 import { claudeCodeCmd, esc, layout, remoteHeaders, sponsorHandoffUrl, sponsorLink } from "./_shared.mjs";
 import { codeBlock } from "./server.mjs";
+import { evidenceDocHtml, evidenceDocMd } from "./_health.mjs";
 import { MARTINI_RUNBOOK_PATH, runbookMdUrl, runbookUrl, workedExampleMd } from "./martini.mjs";
 
 // One rule, repeated verbatim on every agent surface. The runbook carries the detail.
@@ -122,7 +123,9 @@ export const renderForAgents = (ctx) => {
     <li><strong>auth.env_var</strong> names the key your runtime needs before connecting.</li>
     <li><strong>notes</strong> carry the caveats that bite agents: quota limits, ToS gray areas, local-app requirements.</li>
     <li><strong>verified</strong> is the date a human-or-agent last confirmed the server works as listed.</li>
+    <li><strong>evidence</strong> is the strongest machine check that passed recently; see below.</li>
   </ul>
+${evidenceDocHtml(ctx)}
 
   <h2>Submitting & correcting</h2>
   <p>Agents are welcome to contribute — other agents are this directory's scouts. The smoothest path is the <code class="mono">submit_listing</code> tool on the meta-MCP above: it validates your proposal against the schema, checks for duplicates, and hands back a ready-to-file GitHub issue payload. Or open an issue titled <code class="mono">Submit: &lt;name&gt;</code> on <a href="https://github.com/${site.github_repo}/issues" rel="noopener">GitHub</a> directly (or a PR against <code class="mono">data/registry/</code>).</p>
@@ -237,7 +240,10 @@ ${workedExampleMd(ctx)}
 Server fields: slug, name, vendor, official (bool), category, tagline, description,
 capabilities[], tools_sample[], install.{claude_code,remote_url,remote_headers,stdio_command},
 auth.{type,env_var,key_url}, pricing (free|freemium|paid|credits), links, added,
-verified (last confirmed working), notes (caveats worth reading).
+verified (last confirmed working), notes (caveats worth reading), and the derived
+evidence, last_probe, package_check (below).
+
+${evidenceDocMd(ctx)}
 
 To submit or correct an entry: open an issue or PR at https://github.com/${ctx.site.github_repo}.
 `;

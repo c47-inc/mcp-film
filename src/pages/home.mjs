@@ -134,9 +134,9 @@ export const renderHome = (ctx) => {
 
 <section class="cat-section recent-section" data-cat-section="recent" data-track-section="home-newest">
   <div class="cat-head">
-    <h2><a href="/pulse/">New to the catalog</a></h2>
+    <h2><a href="/changes/">New to the catalog</a></h2>
     <span class="cat-count">${newest.length}</span>
-    <p class="cat-blurb">Freshly verified additions from the latest curator passes. <a href="/pulse/">Open the catalog pulse</a>.</p>
+    <p class="cat-blurb">Freshly verified additions from the latest curator passes. <a href="/changes/">See every change</a>.</p>
   </div>
   <div class="grid recent-scroller">${newest.map((s) => card(ctx, s)).join("")}</div>
 </section>

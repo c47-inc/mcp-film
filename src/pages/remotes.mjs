@@ -1,4 +1,5 @@
 import { PRICING_LABEL, avatar, badge, catById, claudeCodeCmd, esc, layout, nice, remoteBadge, remoteHeaders, remoteServersFor } from "./_shared.mjs";
+import { remoteHeadlineHtml, remoteHeadlineMd, remoteProbeHtml, probeSummary, factsFor } from "./_health.mjs";
 
 // --------------------------------------------------------------- remotes
 export const renderRemotes = (ctx) => {
@@ -24,6 +25,7 @@ export const renderRemotes = (ctx) => {
     <div class="remote-connect">
       <span class="label">Endpoint</span>
       <code class="mono">${esc(s.install.remote_url)}</code>
+      ${remoteProbeHtml(ctx, s)}
       ${headers.length ? `<p class="remote-auth">Headers: ${headers.map((h) => `<code class="mono">${esc(h)}</code>`).join(" ")}</p>` : ""}
     </div>
     <div class="remote-connect">
@@ -39,6 +41,7 @@ export const renderRemotes = (ctx) => {
   <p class="crumbs"><a href="/">mcp.film</a> / <span>Remotes</span></p>
   <h1>Hosted MCP remotes</h1>
   <p class="hero-sub">Remote MCP endpoints for filmmaking agents: no local stdio process, no package install, usually OAuth or a platform key. This is the fastest path for web agents, Claude, ChatGPT-style connectors, and production automations.</p>
+  ${remoteHeadlineHtml(ctx, remotes)}
 </section>
 
 <section class="pulse-grid remote-stats" aria-label="Hosted remote summary">
@@ -94,6 +97,7 @@ export const renderRemotesMd = (ctx) => {
     `Structured data: ${ctx.site.url}/api/remotes.json`,
     `Full registry: ${ctx.site.url}/api/registry.json`,
     "",
+    ...remoteHeadlineMd(ctx, remotes),
   ];
   for (const s of remotes) {
     const cat = catById(ctx, s.category);
@@ -110,6 +114,7 @@ export const renderRemotesMd = (ctx) => {
       `- Pricing: ${PRICING_LABEL[s.pricing] ?? s.pricing}`,
       `- Auth: ${s.auth?.type ?? "unknown"}${s.auth?.env_var ? ` (${s.auth.env_var})` : ""}`,
       `- Verified: ${s.verified}`,
+      ...(factsFor(ctx, s)?.last_probe ? [`- Endpoint check, ${factsFor(ctx, s).last_probe.date}: ${probeSummary(factsFor(ctx, s).last_probe).text}`] : []),
       "",
       "Endpoint:",
       "",
