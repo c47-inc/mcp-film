@@ -414,7 +414,7 @@
     "tagline": "Guardrailed local video editing MCP — FFmpeg, receipts, quality gates, and repurposing.",
     "description": "Kinocut, formerly mcp-video, wraps FFmpeg and adjacent media tools behind typed, preflighted MCP operations, with a `kino` CLI and Python client over the same engine. For filmmaker agents it is the safer local post bench: inspect clips, trim and merge, burn captions, normalize audio, render variants, run release checkpoints, and fail early when an edit would produce bad media. Every operation writes a Video Receipt with input and output hashes so another agent or a human can verify what actually happened.",
     "capabilities": ["transcode", "trim-concat", "captioning", "audio-normalization", "quality-check", "repurposing", "hyperframes", "local-post"],
-    "tools_sample": ["search_tools", "video_info", "video_trim", "video_merge", "video_subtitles", "video_normalize_audio", "video_release_checkpoint", "video_repurpose", "video_workflow_render", "video_review_run", "hyperframes_render"],
+    "tools_sample": ["search_tools", "video_info", "video_trim", "video_merge", "video_add_text", "video_add_audio", "video_convert", "video_quality_check", "video_shorts", "video_review_package", "video_rescue_inspect", "video_doctor"],
     "install": {
       "claude_code": "claude mcp add kinocut -- uvx --from kinocut kino --mcp",
       "remote_url": null,
@@ -424,14 +424,42 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/KyaniteLabs/kinocut", "docs": "https://github.com/KyaniteLabs/kinocut#readme", "site": "https://kinocut.dev/" },
     "added": "2026-06-28",
-    "verified": "2026-10-09",
+    "verified": "2026-10-27",
     "caveats": [
+      "Since 1.16.5 a default install exposes a 20-tool core; captions, loudness, release checkpoints and Hyperframes need KINOCUT_TOOLS=all or a profile.",
       "The server needs the --mcp flag (kino --mcp); bare kino configs copied before 9 Oct 2026 will not start a server.",
-      "PyPI mcp-video is only a compatibility installer now, so install kinocut; legacy env vars and URIs are a compatibility window, not a plan.",
-      "Core editing needs FFmpeg on PATH, the AI extras (Whisper, stems, upscalers) add gigabytes, and Hyperframes tools want Node 22+.",
-      "The 203-tool count is self-reported, and C2PA signing, native bundles and the paid generative plans are gated or unshipped."
+      "Since 1.16.3 it refuses to overwrite an existing output unless the call passes overwrite=true, so agents retrying a render must ask for it.",
+      "Core editing needs FFmpeg on PATH, the AI extras (Whisper, stems, upscalers) add gigabytes, and Hyperframes tools want Node 22+."
     ],
-    "notes": "Renamed: KyaniteLabs' mcp-video is now Kinocut. The slug here stays `mcp-video` so existing links keep resolving, but the project, package, CLI and docs have all moved. The old docs site kyanitelabs.github.io/mcp-video now 404s; product docs live at kinocut.dev. PyPI `mcp-video` is only a compatibility installer these days (1.6.16 pulls kinocut 1.16.1) — install `kinocut` and drive it with the `kino` CLI. The MCP server needs the `--mcp` flag (`kino --mcp`); this entry's install line omitted it before 9 Oct 2026, so bare `kino` configs copied from here will not start a server. Legacy `mcp_video` imports, MCP_VIDEO_* env vars, ~/.mcp-video data and mcp-video:// resource URIs are still honoured on the 1.14.x+ line, but that is a compatibility window, not a plan. Apache-2.0, 196 stars, Python >=3.11, v1.16.1 released Oct 5 2026, pushed Oct 9 2026, registered in the official MCP Registry as io.github.KyaniteLabs/kinocut; the README now names GitHub as canonical and the maintainer's Forgejo as a downstream mirror. Core editing needs FFmpeg on PATH and AI extras (Whisper, stems, upscalers, object matte) add gigabytes, so install only the extras you need; Hyperframes tools additionally want Node 22+. The 203-tool count is self-reported, and the README openly lists surfaces that are gated or unreleased — native desktop bundles are blocked on FFmpeg licensing, C2PA signing is development-tip only and off by default, and the trusted-execution kernel plus paid generative and dubbing plans are unshipped."
+    "notes": "Renamed: KyaniteLabs' mcp-video is now Kinocut. The slug here stays `mcp-video` so existing links keep resolving, but the project, package, CLI and docs have all moved. The old docs site kyanitelabs.github.io/mcp-video now 404s; product docs live at kinocut.dev. Re-checked 27 Oct 2026 with a live run: `uvx --from kinocut==1.16.5 kino --mcp` answered initialize as kinocut 1.16.5 and listed 20 tools; with KINOCUT_TOOLS=all it listed 205, matching the README. That 20-tool default is new in 1.16.5 (27 Oct 2026). video_subtitles, video_normalize_audio, video_release_checkpoint, video_repurpose, video_workflow_render and hyperframes_render still exist but are hidden by default: set KINOCUT_TOOLS=all, or a profile such as KINOCUT_TOOLS=profile:editor, in the server's env. search_tools finds hidden operations but does not enable them. 1.16.3 (23 Oct) made the server refuse to overwrite existing outputs without an explicit overwrite=true, and 1.16.4 turned optional vision-provider calls and Revideo/Hyperframes telemetry off by default. PyPI `mcp-video` is only a compatibility installer (1.6.20 pulls kinocut 1.16.5), so install `kinocut` and drive it with the `kino` CLI. The MCP server needs the `--mcp` flag (`kino --mcp`); this entry's install line omitted it before 9 Oct 2026, so bare `kino` configs copied from here will not start a server. Legacy `mcp_video` imports, MCP_VIDEO_* env vars, ~/.mcp-video data and mcp-video:// resource URIs are still honoured, but that is a compatibility window, not a plan. Apache-2.0, 223 stars, Python >=3.11, four releases between Oct 21 and Oct 27 2026. The official MCP Registry entry is now tech.kyanitelabs/kinocut (1.16.5, the local uvx package); the older io.github.KyaniteLabs/kinocut name stops at 1.16.1. Core editing needs FFmpeg on PATH and AI extras (Whisper, stems, upscalers, object matte) add gigabytes, so install only the extras you need; Hyperframes tools additionally want Node 22+. The README openly lists surfaces that are gated or unreleased: native desktop bundles are blocked on FFmpeg licensing, C2PA signing is development-tip only and off by default, and the trusted-execution kernel plus paid generative and dubbing plans are unshipped."
+  },
+  {
+    "slug": "filmcraft",
+    "name": "FilmCraft",
+    "vendor": "ArtCraft (storytold)",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Open-source Rust NLE whose built-in MCP runs 700+ editing commands, headless or in the running app.",
+    "description": "FilmCraft is the ArtCraft team's open-source non-linear editor, with its own H.264, HEVC, ProRes and AAC codecs, linear-light 32-bit grading with live scopes, a sample-accurate audio mixer and FCPXML, AAF and OMF interchange, and every menu item, slider and drag in it is a typed command its MCP server can run. Headless, an agent cuts, grades, mixes and exports in an in-process session with no window; in bridge mode it drives the running desktop app, clicking, typing and taking screenshots like an editor at the desk. For a filmmaker-agent that is rare: a real timeline it can operate end to end, not a wrapper around FFmpeg.",
+    "capabilities": ["nle-control", "timeline-editing", "color-grading", "mixing", "captioning", "fcpxml", "export", "frame-extraction"],
+    "tools_sample": ["command_list", "command_run", "command_batch", "doc_inspect", "project_inspect", "sequence_inspect", "media_import", "render_frame", "ui_elements", "ui_click", "ui_screenshot"],
+    "install": {
+      "claude_code": "claude mcp add filmcraft -- filmcraft-cli mcp",
+      "remote_url": null,
+      "stdio_command": "filmcraft-cli mcp"
+    },
+    "auth": { "type": "none", "env_var": null, "key_url": null },
+    "pricing": "free",
+    "links": { "repo": "https://github.com/storytold/filmcraft", "docs": "https://github.com/storytold/filmcraft/blob/main/docs/agents.md", "site": "https://getartcraft.com/apps/filmcraft" },
+    "added": "2026-10-27",
+    "verified": "2026-10-27",
+    "caveats": [
+      "Alpha by its own README and a month old; H.264 is the only software delivery export, and Windows and Linux get far less testing than macOS.",
+      "The MCP server has no folder confinement: it reads and writes anywhere your user account can.",
+      "filmcraft-cli must be on PATH: macOS needs the separate CLI zip, and the Windows MSI installs it off PATH, so register the absolute path."
+    ],
+    "notes": "Checked 27 Oct 2026 with a live run: the signed, notarized filmcraft-cli 0.13.0 macOS build (released 25 Oct 2026) answered `filmcraft-cli mcp --demo` as filmcraft 0.13.0, listed 17 tools, returned the demo project from doc_inspect and 710 engine commands from command_list. There are two modes. Headless (`filmcraft-cli mcp`, optionally `--demo` or `--project p.fcproj`; neither opens an empty project) runs an in-process engine with no window. Bridge (`filmcraft-cli mcp --bridge 127.0.0.1:9876`) drives the desktop app started with `filmcraft --control 9876`, and both processes must share a FILMCRAFT_CONTROL_TOKEN you generate. The eight ui_* tools work only in bridge mode. Install: the Linux deb and rpm put filmcraft-cli in /usr/bin; on macOS unzip the separate filmcraft-cli release asset onto PATH, because the .app holds only the desktop app; on Windows the MSI puts it under %LOCALAPPDATA%\\Programs\\ArtCraft\\FilmCraft, not on PATH, so the docs register the full path. The server rejects any option other than the mode flags and --data-dir, so there is no folder confinement and it can read and write wherever the user can. Each tool carries MCP read-only and destructive hints, unknown arguments return an error rather than being ignored, and long exports report MCP progress and honour cancellation. Dual MIT/Apache-2.0, created 30 Sep 2026, about 16.6k stars by 27 Oct and pushed daily. The README calls it alpha: H.264 is the only software delivery codec, HEVC export needs NVIDIA or VideoToolbox hardware, there is no AV1 export, and camera and phone files in the wild are less tested than conformance streams. The getartcraft.com product page still advertises v0.6.0; GitHub releases are current."
   },
   {
     "slug": "vibeframe",

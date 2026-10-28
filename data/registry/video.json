@@ -93,9 +93,9 @@
     "official": true,
     "category": "video-generation",
     "featured": false,
-    "tagline": "Hosted connector to 30+ models: Seedance 2.5, Kling 3, Soul 2.0, Nano Banana Pro.",
-    "description": "Higgsfield's official hosted MCP exposes its platform — advertised as 30+ models — through one OAuth endpoint. The models named on its own MCP page as of October 2026 are Seedance 2.5, Seedance 2.0, Kling 3, Soul 2.0, Nano Banana Pro, Google Omni Flash, Seedream 5.0 Lite and GPT Image 2.5, with Cinema Studio, Flux, MiniMax Hailuo and Veo listed in the wider roster. Agents can generate 4K images, videos up to 15s, train consistent characters and browse creation history on existing Higgsfield plan credits.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "character-consistency", "history-browsing"],
+    "tagline": "Official hosted OAuth connector to Higgsfield's 30+ image and video models, plus preset creative workflows.",
+    "description": "Higgsfield's official hosted MCP puts its generation platform — advertised as 30+ image and video models, no API key required — behind one OAuth endpoint for Claude, OpenClaw, Hermes Agent and any remote-capable MCP client, with a separate ChatGPT plugin. For a filmmaker-agent it is one connection to the model shelf Higgsfield aggregates, billed to an existing Higgsfield account. Around it Higgsfield now sells slash-command workflows: ads and faceless explainers, plus production presets that steer a desktop agent through Blender, After Effects, Premiere Pro, DaVinci Resolve Studio and TouchDesigner on the same machine.",
+    "capabilities": ["text-to-video", "image-to-video", "text-to-image"],
     "tools_sample": null,
     "install": {
       "claude_code": "claude mcp add --transport http higgsfield https://mcp.higgsfield.ai/mcp",
@@ -106,13 +106,42 @@
     "pricing": "credits",
     "links": { "repo": null, "docs": "https://higgsfield.ai/mcp", "site": "https://higgsfield.ai" },
     "added": "2026-06-11",
-    "verified": "2026-10-18",
+    "verified": "2026-10-27",
     "caveats": [
-      "No published tool list and the endpoint requires auth, so call tools/list after connecting.",
-      "The slash-command workflows on the MCP page are Higgsfield presets, not tool names.",
-      "It spends existing Higgsfield plan credits, and the page gives no Claude Code command, so the one here is the standard HTTP add."
+      "No published tool list and the endpoint requires OAuth, so call tools/list after connecting; the slash commands are presets, not tool names.",
+      "The MCP page no longer names models, limits or pricing, only 30+ models; it spends your Higgsfield plan, so check higgsfield.ai/pricing.",
+      "Production presets (/color-grading, /scene-builder) need the desktop app on the same machine, and the page does not say what drives it."
     ],
-    "notes": "Re-checked 18 Oct 2026: endpoint still answers 401 unauthenticated, so it is alive and OAuth-gated; the MCP page now names GPT Image 2.5 where it said GPT Image 2, otherwise the roster is unchanged. The page also advertises slash-command workflows (/katana, /ugc-flow, /marketing-adapt-video, /illustration-animation) — those are Higgsfield presets, not MCP tool names. Sora is no longer in the roster — OpenAI shut it down on 24 Sep 2026, see `sora`. tools_sample stays null because the endpoint requires auth and Higgsfield publishes no tool list; call tools/list after connecting. The page gives no Claude Code command; the one here is the standard HTTP add for the published endpoint. Works with Claude and any MCP client; also ships a CLI and agent skills."
+    "notes": "Re-checked 27 Oct 2026: an anonymous initialize still gets 401 with a Bearer challenge pointing at OAuth metadata (authorization server clerk.higgsfield.ai, scopes openid email offline_access), so the endpoint is alive and OAuth-gated. The MCP page has been rebuilt since the 18 Oct check and now says only '30+ models for image and video generation, no API key required': the model roster, the 4K and 15-second limits and creation-history browsing are gone from it, so this entry dropped them, along with the history-browsing and character-consistency tags, rather than carry stale claims. Connect steps on the page: in Claude, Customize → Connectors → add a custom connector named Higgsfield with https://mcp.higgsfield.ai/mcp and sign in; in ChatGPT, install the Higgsfield plugin; in any other agent, add a remote server with the same URL and complete sign-in. The page gives no Claude Code command; the one here is the standard HTTP add for the published endpoint, and the server's OAuth metadata lists claude-code among its expected clients. The page also sells slash-command presets (/katana, /ugc-flow, the marketing set) and a production bundle (/color-grading in DaVinci Resolve Studio, /scene-builder and /destruction-studio in Blender, plus After Effects, Premiere Pro and TouchDesigner workflows) that tells you to run Claude Desktop, Claude Code or Codex on the same computer as the app. It does not document how the agent reaches the app, so expect a separate local integration. A parallel route that is not MCP: the Higgsfield CLI (npm @higgsfield/cli 1.2.2, `higgsfield auth login`) with the higgsfield-ai/skills agent skills, which drive the CLI. tools_sample stays null because Higgsfield publishes no MCP tool names anywhere, and the skills repo documents CLI commands only."
+  },
+  {
+    "slug": "everygen",
+    "name": "Everygen MCP",
+    "vendor": "Everygen (Viewmax LLC)",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Hosted OAuth connector to Everygen's model shelf: Seedance 2.5, Kling 3.0, MiniMax H3, Nano Banana Pro.",
+    "description": "Everygen, formerly Viewmax, is a credit-based studio fronting Seedance 2.5, Kling 3.0 Turbo and Pro, MiniMax H3 Max, Grok Imagine, Gemini Omni 1.1 Flash, Nano Banana Pro and GPT Image 2. Its hosted MCP lets an agent make videos and images, animate a still, or hand a scene to Everygen Director for a cinematic shot with sound. For a filmmaker-agent it is one connector to a short-form-leaning shelf of UGC ads, faceless stories and cinematic shots, billed to an Everygen plan rather than to per-provider keys.",
+    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "multi-model-generation", "voiceover"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http everygen https://everygen.ai/api/mcp",
+      "remote_url": "https://everygen.ai/api/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Sign in with your Everygen account at everygen.ai during connector setup — no API key" },
+    "pricing": "paid",
+    "pricing_note": "Plans from $24/mo, or $9/mo billed annually, for 200 credits; the pricing page lists no free plan.",
+    "links": { "repo": null, "docs": "https://everygen.ai/mcp", "site": "https://everygen.ai" },
+    "added": "2026-10-27",
+    "verified": "2026-10-27",
+    "caveats": [
+      "Lookalike: everygen-ai.com and its io.github.bytevirts/everygen registry entry are not this Everygen; everygen.ai says it is unaffiliated.",
+      "No published tool list and the endpoint requires OAuth, so call tools/list after connecting.",
+      "No free plan, and the page gives no Claude Code command, so the one here is the standard HTTP add for the published endpoint."
+    ],
+    "notes": "Checked 27 Oct 2026: https://everygen.ai/api/mcp answers an anonymous initialize with 401 and a Bearer challenge. Its OAuth metadata names www.viewmax.io as the authorization server and requests scopes media:upload, image:generate, video:generate, voiceover:generate, audio:generate, voice:change and generation:read, which is the only public hint at the tool surface, because Everygen publishes no tool names. The MCP page covers Claude (an Add button that opens the custom-connector dialog with the URL prefilled), ChatGPT (a plugin) and Cursor. It gives no Claude Code command; the one here is the standard HTTP add for the published endpoint. Everygen is the renamed Viewmax: the site is copyright Viewmax LLC and viewmax.io redirects to everygen.ai. Mind the name. everygen-ai.com (operated by 'EveryGen LLC') runs its own MCP at everygen-ai.com/mcp and publishes it to the official MCP Registry as io.github.bytevirts/everygen, calling it the official Everygen connection package. everygen.ai's own FAQ says it is not affiliated with everygen-ai.com or everygenai.app, and says to connect Claude, ChatGPT or Cursor only at everygen.ai. Pricing: Starter is $24/mo, or $9/mo billed annually, for 200 credits (about 18 Seedance 2 Fast videos, per the pricing page), and 4K video and Kling 4.0 are not in Starter. The shelf leans consumer short-form: UGC ads, faceless explainers and thumbnails, with Everygen Director for film-look scenes. For direct per-model control, use a model hub."
   },
   {
     "slug": "pika",

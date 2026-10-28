@@ -279,6 +279,9 @@ export function mcpGetResponse(method, accept, tools) {
   const headers = mcpHeaders();
   headers.set("allow", "POST, OPTIONS");
   headers.set("vary", "Accept"); // the same URL answers 200 markdown or 405 JSON by Accept
+  // An API endpoint, not a page: Bing listed it as a crawl warning (405 on a probe). The
+  // agent-facing description lives at /for-agents/, which is indexed.
+  headers.set("x-robots-tag", "noindex");
   if (!/^(GET|HEAD)$/.test(method) || /text\/event-stream/i.test(accept || "")) {
     const json = JSON.stringify({ error: "Use POST with JSON-RPC 2.0", docs: "https://mcp.film/for-agents.md" }, null, 2);
     return new Response(method === "HEAD" ? null : json, { status: 405, headers });
