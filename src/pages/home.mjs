@@ -112,6 +112,7 @@ export const renderHome = (ctx) => {
       }).join("")}
     </select>
   </form>
+  ${(ctx.apps ?? []).length ? `<p class="hero-apps" data-track-section="home-apps"><span class="label">By app</span> ${ctx.apps.slice(0, 10).map((a) => `<a href="/apps/${esc(a.id)}/">${esc(a.name)}</a>`).join(" ")} <a class="hero-apps-all" href="/apps/">All ${ctx.apps.length} apps</a></p>` : ""}
   <p class="hero-stats"><span><b>${ctx.servers.length}</b> servers</span><span><b>${ctx.officialCount}</b> official</span><span><b>${ctx.remoteCount}</b> hosted remote</span><span><b>${categories.length}</b> categories</span><span><b>${nice(servers.map((s) => s.verified).sort().at(-1))}</b> last verified</span></p>
   <p class="hero-ticker" data-ticker='${esc(JSON.stringify([
     `registry rebuilt ${nice(ctx.built.slice(0, 10))} · ${ctx.servers.length} servers`,

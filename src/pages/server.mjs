@@ -1,6 +1,7 @@
 import { PRICING_LABEL, authLabel, avatar, badge, breadcrumbLd, capabilityLink, capabilityMdLink, card, catById, caveatsFor, claudeCodeCmd, cmdLike, cursorConfig, dataAttrs, desktopConfig, esc, isInactive, keyUrlHtml, keyUrlMd, layout, nice, organizationLd, remoteHeaders, remoteNeedsHeaders, serverDescription, sourceLinks, sponsorAttrs, statusBlurb, statusLabel, verificationStatus } from "./_shared.mjs";
 import { playbookSlugs } from "./playbooks.mjs";
 import { comparisonsFor } from "./compare.mjs";
+import { appHubLinksHtml, appHubLinksMd } from "./apps.mjs";
 import { serverFaq, serverFaqHtml, serverFaqLd, serverMetaDescription, serverTitle } from "./server-faq.mjs";
 import { evidenceRowsHtml, probeLinesHtml, probeLinesMd } from "./_health.mjs";
 import { badgeSnippets, badgeState } from "../badge.mjs";
@@ -197,6 +198,7 @@ export const renderServer = (ctx, s) => {
   </div>
   <p class="server-tag">${esc(s.tagline)}</p>
   <p class="server-meta-line server-facts">${badge(s)}<span>${hostedLabel(s)}</span><span>${esc(authLabel(s))}</span><span>${PRICING_LABEL[s.pricing] ?? esc(s.pricing)}</span><span>verified <time datetime="${s.verified}">${nice(s.verified)}</time></span>${factLinks}</p>
+  ${appHubLinksHtml(ctx, s)}
   ${!inactive && s.install?.remote_url ? `<div class="server-url">${codeBlock("MCP server URL", s.install.remote_url, "text", { "copy-kind": "connect", "copy-method": "remote-url", "copy-slug": s.slug })}</div>` : ""}
   ${inactive ? `<p class="status-notice status-${esc(s.status)}" role="note"><strong>${esc(statusLabel(s))}.</strong> ${esc(statusBlurb(s))} <a href="#notes">See the curator notes.</a></p>` : ""}
 </section>
@@ -328,6 +330,7 @@ export const renderServerMd = (ctx, s, { faq: withFaq = true } = {}) => {
     `- **Auth:** ${authLabel(s)}${s.auth?.env_var ? ` (env \`${s.auth.env_var}\`)` : ""}`,
     `- **Pricing:** ${s.pricing}`,
     `- **Verified:** ${s.verified}`,
+    ...appHubLinksMd(ctx, s),
     "",
   );
   if (caveats.length) lines.push("## Caveats", "", ...caveats.map((c) => `- ${c}`), "");

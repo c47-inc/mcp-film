@@ -1352,3 +1352,40 @@ img.avatar { object-fit: cover; background: var(--paper); }
 .server-faq dt { font-weight: 600; margin-top: 1rem; color: var(--ink); }
 .server-faq dd { margin: 0.25rem 0 0; color: var(--ink-2); max-width: 48rem; line-height: 1.6; overflow-wrap: anywhere; }
 .server-faq dd a { text-decoration: underline; text-decoration-color: var(--hairline-2); text-underline-offset: 3px; }
+
+/* --- creative-app hubs (/apps/, src/pages/apps.mjs) --- */
+.app-doc { max-width: 62rem; }
+.app-answer {
+  max-width: 48rem; margin: 0.2rem 0 1rem; padding: 0.9rem 1rem;
+  border: 1px solid var(--hairline); border-left: 2px solid var(--ink); border-radius: var(--r-sm);
+  font-size: 14px; line-height: 1.65; color: var(--ink-2);
+}
+.app-answer p { margin: 0; }
+.app-answer strong { color: var(--ink); font-weight: 600; }
+.app-answer a { color: var(--ink); }
+.app-answer .compare-choose { margin: 0.5rem 0 0; }
+.app-table th[scope="row"], .apps-index-table th[scope="row"] {
+  font-family: inherit; font-size: 13px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--ink);
+}
+.app-table th[scope="row"] .tag { margin-left: 6px; font-weight: 500; }
+.app-role { display: block; margin-top: 0.25rem; font-size: 12px; font-weight: 400; color: var(--ink-2); line-height: 1.5; }
+.app-table .probe-line { margin: 0; font-size: 12px; }
+.app-table tr.is-inactive th[scope="row"] a { color: var(--ink-2); }
+.app-cards { margin: 0.4rem 0; }
+.agents-doc .app-cards .card { text-decoration: none; }
+.tag-pick { color: var(--ink); }
+@media (min-width: 720px) {
+  .app-table th[scope="row"] { width: 15rem; }
+}
+.app-hub-links { margin: 0.7rem 0 0; font-size: 13px; display: flex; flex-wrap: wrap; gap: 0.2rem 1.2rem; }
+.app-hub-links a { color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--hairline-2); text-underline-offset: 3px; }
+.app-hub-links a:hover { color: var(--ink); }
+.hero-apps { margin: 1.1rem 0 0; max-width: 40rem; font-size: 12.5px; line-height: 1.9; color: var(--ink-2); }
+.hero-apps .label { margin-right: 0.5rem; }
+.hero-apps a { color: var(--ink-2); margin-right: 0.75rem; text-decoration: underline; text-decoration-color: var(--hairline-2); text-underline-offset: 3px; white-space: nowrap; }
+.hero-apps a:hover { color: var(--ink); }
+.hero-apps .hero-apps-all { color: var(--ink); }
+@media (max-width: 999px), (pointer: coarse) {
+  .app-hub-links a, .app-answer a, .app-table a, .apps-index-table a { display: inline-block; padding: 6px 0; }
+  .hero-apps a { display: inline-block; padding: 4px 0; }
+}

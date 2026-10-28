@@ -520,6 +520,7 @@ ${body}
       <a href="/recommendations/">Agent recommendations</a>
       <a href="/capabilities/">Capability index</a>
       <a href="/compare/">Compare servers</a>
+      <a href="/apps/">MCP by creative app</a>
       <a href="/glossary/">Glossary</a>
       <a href="/remotes/">Hosted remotes</a>
       <a href="/changes/">Changes</a>
@@ -535,6 +536,7 @@ ${body}
       <a href="/api/playbooks.json">playbooks.json</a>
       <a href="/api/recommendations.json">recommendations.json</a>
       <a href="/api/capabilities.json">capabilities.json</a>
+      <a href="/api/apps.json">apps.json</a>
       <a href="/api/client-profiles.json">client-profiles.json</a>
       <a href="/pulse/">Catalog pulse</a>
       <a href="/for-agents/">Agent docs</a>
@@ -586,7 +588,9 @@ export const card = (ctx, s, { highlight = "" } = {}) => {
   const extra = [s.install?.remote_url ? "remote" : null, PRICING_LABEL[s.pricing] ?? s.pricing]
     .filter(Boolean).join(" · ");
   const tags = [...new Set([...(s.capabilities ?? []), ...canonicalCaps(ctx, s)])];
-  return `<a class="card${highlight ? ` ${highlight}` : ""}" href="/mcps/${s.slug}/" data-search="${esc([s.slug, s.name, s.vendor, s.tagline, s.category, ...tags, ...tags.map((c) => c.replace(/-/g, " "))].join(" ").toLowerCase())}" data-cat="${s.category}" data-official="${s.official ? "true" : "false"}" data-remote="${s.install?.remote_url ? "true" : "false"}"${isInactive(s) ? ` data-status="${esc(s.status)}"` : ""}>
+  // Creative apps this listing drives (data/apps.json), so "c4d" or "resolve" finds it.
+  const appTerms = (ctx.apps ?? []).filter((a) => a.slugs.includes(s.slug)).flatMap((a) => [a.name, ...(a.aliases ?? [])]);
+  return `<a class="card${highlight ? ` ${highlight}` : ""}" href="/mcps/${s.slug}/" data-search="${esc([s.slug, s.name, s.vendor, s.tagline, s.category, ...tags, ...tags.map((c) => c.replace(/-/g, " ")), ...appTerms].join(" ").toLowerCase())}" data-cat="${s.category}" data-official="${s.official ? "true" : "false"}" data-remote="${s.install?.remote_url ? "true" : "false"}"${isInactive(s) ? ` data-status="${esc(s.status)}"` : ""}>
   <div class="card-head">
     ${avatar(ctx, s)}
     <span class="card-id"><span class="card-name">${esc(s.name)}</span><span class="card-vendor">${esc(vendorShort(s.vendor))}</span></span>

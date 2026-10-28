@@ -209,6 +209,16 @@ assert.deepEqual(await slugs({ query: "video upscale" }), await slugs({ query: "
 assert.ok((await slugs({ query: "oauth elevenlabs" })).includes("elevenlabs"), "auth type and name are searchable");
 assert.ok((await slugs({ query: "freemium elevenlabs" })).includes("elevenlabs"), "pricing is searchable");
 assert.ok((await slugs({ query: "voice-speech" })).length > 0, "category id is searchable");
+// Creative-app names and aliases (data/apps.json via registry.apps) find the servers that drive the app.
+assert.ok(Array.isArray(registry.apps) && registry.apps.length > 0, "registry.json carries apps");
+assert.ok((await slugs({ query: "c4d" })).includes("cinema4d"), "'c4d' finds Maxon's Cinema 4D server");
+assert.deepEqual(await slugs({ query: "cinema4d" }), await slugs({ query: "c4d" }));
+const resolveHits = await slugs({ query: "resolve" });
+for (const slug of ["davinci-resolve-studio", "davinci-resolve", "davinci-resolve-ai-bridge"]) assert.ok(resolveHits.includes(slug), `'resolve' finds ${slug}`);
+assert.ok((await slugs({ query: "fcp" })).includes("fcpxml-mcp"), "'fcp' finds the FCPXML server");
+assert.ok((await slugs({ query: "ae" })).includes("after-effects"), "'ae' finds After Effects");
+assert.ok((await slugs({ query: "ue5" })).includes("unreal-mcp-epic"), "'ue5' finds Epic's Unreal server");
+assert.ok(!(await slugs({ query: "c4d" })).includes("blender"), "an alias does not leak to other apps' servers");
 const tokensOut = await call("search_film_mcps", { query: "the lip sync for a video" });
 assert.deepEqual(tokensOut.query_tokens, ["lipsync", "video"]);
 // Zero results: did_you_mean and a hint; unknown category and capability are errors with valid values.
