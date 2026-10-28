@@ -36,6 +36,7 @@ for (const accept of ["text/html", "*/*", "text/markdown", null]) {
   const res = mcpGetResponse("GET", accept, TOOLS);
   assert.equal(res.status, 200, accept);
   assert.equal(res.headers.get("content-type"), "text/markdown; charset=utf-8");
+  assert.equal(res.headers.get("x-robots-tag"), "noindex", "the endpoint is not a page to index");
   const body = await res.text();
   for (const t of TOOLS) assert.ok(body.includes(`\`${t.name}\` — ${t.title}`), t.name);
   for (const s of ["claude mcp add --transport http mcp-film https://mcp.film/mcp", "/for-agents.md", "/llms.txt"]) assert.ok(body.includes(s), s);
