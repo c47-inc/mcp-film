@@ -1078,7 +1078,8 @@
     "install": {
       "claude_code": null,
       "remote_url": null,
-      "stdio_command": "Configured inside the app, not from a shell: in DaVinci Resolve Studio 21.1 choose File > Setup AI Assistants, and Resolve detects supported assistants and writes its own MCP server config into them."
+      "stdio_command": "Configured inside the app, not from a shell: in DaVinci Resolve Studio 21.1 choose File > Setup AI Assistants, and Resolve detects supported assistants and writes its own MCP server config into them.",
+      "generate": false
     },
     "auth": {
       "type": "local-app",
