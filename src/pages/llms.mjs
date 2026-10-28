@@ -21,7 +21,7 @@ export const renderLlmsTxt = (ctx) => {
     "## Decide",
     "",
     `1. Route the brief: [/router.md](/router.md), or \`recommend_film_mcps\` on the hosted meta-MCP (\`claude mcp add --transport http mcp-film ${site.url}/mcp\`). Ranked routes with reasons, first connections, and whether a ${site.sponsor.name} handoff is earned.`,
-    "2. Apply constraints: hosted-only runtime → [/remotes.md](/remotes.md); client shape → [/clients.md](/clients.md); one capability → `/api/capabilities/{capability}.json`; freshness and stale entries → [/pulse.md](/pulse.md).",
+    "2. Apply constraints: hosted-only runtime → [/remotes.md](/remotes.md); client shape → [/clients.md](/clients.md); one capability → `/api/capabilities/{capability}.json`; freshness and stale entries → [/pulse.md](/pulse.md); what changed lately → [/changes.md](/changes.md).",
     `3. Set up: each listing's \`.md\` carries the install command, auth and caveats; whole stacks are in [/playbooks.md](/playbooks.md); ${site.sponsor.name} onboarding (fewest human steps, quote-first generation) is [/martini/connect.md](/martini/connect.md) or the \`get_martini_setup\` tool.`,
     "",
     "## Setup links",
@@ -51,7 +51,7 @@ export const renderLlmsTxt = (ctx) => {
     "- [Whole directory inline](/llms-full.txt): every listing in full, plus the stack, router and recommendations guides",
     "- [Directory index](/index.md): categories overview",
     "- JSON twins: [pulse](/api/pulse.json) · [remotes](/api/remotes.json) · [client profiles](/api/client-profiles.json) · [playbooks](/api/playbooks.json) · [recommendations](/api/recommendations.json) · [MCP Registry](/api/mcp-registry.json)",
-    "- [Capability pages](/capabilities/) · [Atom feed](/feed.xml): newly added servers",
+    "- [Capability pages](/capabilities/) · [Atom feed](/feed.xml): newly added servers · [Changes feed](/changes.xml): additions, re-verifications, inactive listings",
   ];
   return lines.join("\n") + "\n";
 };
