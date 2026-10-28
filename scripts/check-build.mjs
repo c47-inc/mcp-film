@@ -6,6 +6,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { isConnectIntent } from "../src/edge-analytics-worker.js";
+import { hostedDescriptionLead } from "../src/pages/server-faq.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (p) => fs.readFileSync(path.join(ROOT, p), "utf8");
@@ -83,6 +84,13 @@ for (const server of registry.servers) {
   for (const key of ['name="description"', 'property="og:description"', 'name="twitter:description"']) {
     const match = html.match(new RegExp(`<meta ${key} content="([^"]*)"`));
     const description = decode(match?.[1] ?? "");
+    // Active hosted listings lead with the endpoint instead ("X MCP server URL: https://…").
+    if (!server.status && server.install?.remote_url) {
+      check(`${server.slug} ${key}`, description.length <= 155 && /[\p{L}\p{N}.)]$/u.test(description)
+        && description.startsWith(hostedDescriptionLead(server))
+        ? null : `hosted description must open with the server URL lead, stay within 155 characters and end cleanly (${JSON.stringify(description)})`);
+      continue;
+    }
     const tagline = server.tagline.trim();
     const head = description.split(" · ")[0];
     const boundary = tagline[head.length];

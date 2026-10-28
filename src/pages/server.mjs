@@ -1,6 +1,7 @@
 import { PRICING_LABEL, authLabel, avatar, badge, breadcrumbLd, capabilityLink, capabilityMdLink, card, catById, caveatsFor, claudeCodeCmd, cmdLike, cursorConfig, dataAttrs, desktopConfig, esc, isInactive, keyUrlHtml, keyUrlMd, layout, nice, organizationLd, remoteHeaders, remoteNeedsHeaders, serverDescription, sourceLinks, sponsorAttrs, statusBlurb, statusLabel, verificationStatus } from "./_shared.mjs";
 import { playbookSlugs } from "./playbooks.mjs";
 import { comparisonsFor } from "./compare.mjs";
+import { serverFaq, serverFaqHtml, serverFaqLd, serverMetaDescription, serverTitle } from "./server-faq.mjs";
 import { evidenceRowsHtml, probeLinesHtml, probeLinesMd } from "./_health.mjs";
 import { badgeSnippets, badgeState } from "../badge.mjs";
 
@@ -156,6 +157,8 @@ export const renderServer = (ctx, s) => {
   const caveats = caveatsFor(s);
   const connect = connectSections(ctx, s);
   const inactive = isInactive(s);
+  const faq = serverFaq(ctx, s);
+  const faqLd = serverFaqLd(faq);
 
   const factLinks = links
     .map(([l, u, dest]) => `<a href="${esc(u)}" rel="noopener"${sponsorAttrs(ctx, dest, `server-links:${s.slug}:${l.toLowerCase()}`)}>${l} ↗</a>`)
@@ -194,6 +197,7 @@ export const renderServer = (ctx, s) => {
   </div>
   <p class="server-tag">${esc(s.tagline)}</p>
   <p class="server-meta-line server-facts">${badge(s)}<span>${hostedLabel(s)}</span><span>${esc(authLabel(s))}</span><span>${PRICING_LABEL[s.pricing] ?? esc(s.pricing)}</span><span>verified <time datetime="${s.verified}">${nice(s.verified)}</time></span>${factLinks}</p>
+  ${!inactive && s.install?.remote_url ? `<div class="server-url">${codeBlock("MCP server URL", s.install.remote_url, "text", { "copy-kind": "connect", "copy-method": "remote-url", "copy-slug": s.slug })}</div>` : ""}
   ${inactive ? `<p class="status-notice status-${esc(s.status)}" role="note"><strong>${esc(statusLabel(s))}.</strong> ${esc(statusBlurb(s))} <a href="#notes">See the curator notes.</a></p>` : ""}
 </section>
 
@@ -223,6 +227,8 @@ export const renderServer = (ctx, s) => {
 
     ${alts.length ? `<h2 id="also-in">Also in ${esc(cat?.name ?? s.category)}</h2>
     <div class="grid grid-pairs" data-track-section="server-also-in">${alts.map((a) => card(ctx, a)).join("")}</div>` : ""}
+
+    ${serverFaqHtml(faq)}
 
     ${compared.length ? `<h2 id="compared">Compared with</h2>
     <p class="compared-links" data-track-section="server-compared">${compared.map((c) => `<a href="/compare/${esc(c.id)}/">${esc(c.title)}</a>`).join(" · ")}</p>` : ""}
@@ -279,14 +285,15 @@ export const renderServer = (ctx, s) => {
 <script type="application/json" id="server-data">${JSON.stringify(s)}</script>`;
 
   return layout(ctx, {
-    title: `${s.name}${/MCP/i.test(s.name) ? "" : " MCP"} — ${cat?.name ?? s.category} | mcp.film`,
-    description: serverDescription(s),
+    title: serverTitle(ctx, s),
+    description: serverMetaDescription(s),
     path: `/mcps/${s.slug}/`,
     page: "server",
     md: `/mcps/${s.slug}.md`,
     body,
     jsonLd: [
       ld,
+      ...(faqLd ? [faqLd] : []),
       breadcrumbLd(ctx, [
         { name: cat?.name ?? s.category, item: `${site.url}/categories/${s.category}/` },
         { name: s.name },
@@ -296,7 +303,7 @@ export const renderServer = (ctx, s) => {
 };
 
 // ----------------------------------------------------------- markdown twins
-export const renderServerMd = (ctx, s) => {
+export const renderServerMd = (ctx, s, { faq: withFaq = true } = {}) => {
   const cat = catById(ctx, s.category);
   const cc = claudeCodeCmd(s);
   const desktop = desktopConfig(s);
@@ -312,6 +319,7 @@ export const renderServerMd = (ctx, s) => {
     "",
   ];
   if (isInactive(s)) lines.push(`**Status: ${statusLabel(s).toLowerCase()}.** ${statusBlurb(s)}`, "");
+  else if (s.install?.remote_url) lines.push(`**MCP server URL:** \`${s.install.remote_url}\``, "");
   lines.push(
     `- **Category:** ${cat?.name ?? s.category}`,
     `- **Vendor:** ${s.vendor} (${s.official ? "official" : "community"})`,
@@ -369,6 +377,8 @@ export const renderServerMd = (ctx, s) => {
     "",
   );
   if (links.length) lines.push("## Links", "", ...links.map(([l, u]) => `- ${l}: ${u}`), "");
+  const faq = withFaq ? serverFaq(ctx, s) : [];
+  if (faq.length) lines.push("## Common questions", "", ...faq.flatMap((i) => [`**${i.q}**`, i.text, ""]));
   lines.push("---", "", `Structured data: ${ctx.site.url}/api/mcps/${s.slug}.json · Directory: ${ctx.site.url}`,
     `Canonical: ${ctx.site.url}/mcps/${s.slug}/`,
     `Hosted directory MCP: ${ctx.site.url}/mcp`);
