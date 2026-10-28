@@ -33,7 +33,7 @@ gets the latest). `initialize` returns short `instructions`: start with
 | `get_martini_setup` | Executable runbook for connecting a user to Martini (the sponsor): resumable state model, human steps, agent steps per client / shell / browser, quote-first generation contract, structured cost, when not to |
 | `get_catalog_pulse` | Operating pulse: freshness, verification queue, curator agenda, machine surfaces. `demand_signals` and `martini_growth_checks` are curator/ops sections served only by name |
 | `list_film_playbooks` | Curated production stack recipes for common AI filmmaking jobs; paged |
-| `get_film_playbook` | Full playbook with primary servers, setup order, auth requirements, steps, constraints, fallbacks |
+| `get_film_playbook` | Full playbook with primary servers, setup order, auth requirements, steps, constraints, fallbacks. Pass `client` (`claude_code`, `claude_desktop`, `cursor`) for only a copy-paste install of the whole stack |
 | `list_film_recommendations` | Intent-routed MCP shortlists for common filmmaking jobs; paged |
 | `get_film_recommendation` | Full recommendation with roles, reasons, fallbacks, and Martini handoff guidance |
 | `plan_film_stack` | Recommended servers for every pipeline stage, biased by your brief (capabilities, taglines, descriptions) |
@@ -72,6 +72,17 @@ hosted_only, has_shell, free_only, os}`, also inferred from phrases such as
 tools", "no local install". Violating picks are removed before scoring and
 named in `excluded_by_constraints`; if nothing survives, the reply is
 `no_match` with `unsatisfied_constraints` and `relevant_routes`.
+
+**Whole-stack install** (`get_film_playbook` with `client`): `{id, title, url,
+install_script, note}`. `install_script` is `{client, servers, script}` for
+`claude_code` (one commented `claude mcp add` line per server) or `{client,
+servers, file, config, note}` for `claude_desktop` / `cursor` (one merged
+`mcpServers` object), plus `checklist[]` (`slug, name, auth, env_var?, where?`:
+the keys, OAuth sign-ins and local apps the stack needs) and `skipped[]` (`slug,
+name, reason, listing`). Primary and workflow servers only, never fallbacks.
+Retired listings, listings with `install.generate: false`, and listings with no
+mechanical install for that client are skipped with the reason, never guessed
+at. It is the same block shown on `mcp.film/playbooks/{id}/` and in its `.md`.
 
 **Status.** Listings with `status` `dead`, `archived` or `deprecated` are hidden
 from search, recommendations and stack plans unless `include_inactive: true`.

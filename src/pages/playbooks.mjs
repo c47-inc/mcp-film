@@ -1,5 +1,6 @@
 import { martiniHandoff } from "../../packages/mcp-server/recommend-score.mjs";
 import { breadcrumbLd, card, esc, hasMartiniHandoff, isInactive, layout, martiniLine, organizationLd } from "./_shared.mjs";
+import { stackScriptHtml, stackScriptMd } from "./stack-script.mjs";
 
 // -------------------------------------------------------------- playbooks
 export const serverForSlug = (ctx, slug) => ctx.servers.find((s) => s.slug === slug);
@@ -59,6 +60,7 @@ const playbookArticle = (ctx, p, { standalone = false } = {}) => {
     <ul class="agents-list" data-playbook-section="auth">
       ${auth.map((s) => `<li><a href="/mcps/${s.slug}/">${esc(s.name)}</a>: ${esc(s.auth.type)}${s.auth.env_var ? ` · <code class="mono">${esc(s.auth.env_var)}</code>` : ""}${s.install?.remote_url ? " · hosted remote" : " · local/client setup"}</li>`).join("")}
     </ul>` : ""}
+    ${standalone ? stackScriptHtml(ctx, p) : ""}
 
     <h3>Workflow</h3>
     <ol class="playbook-steps">
@@ -216,6 +218,7 @@ export const renderPlaybooksMd = (ctx) => {
 
 export const renderPlaybookMd = (ctx, p) => {
   const lines = playbookMdLines(ctx, p, { heading: "#" });
+  lines.push(...stackScriptMd(ctx, p));
   lines.push("---", "", `Canonical: ${ctx.site.url}/playbooks/${p.id}/`, `All playbooks: ${ctx.site.url}/playbooks.md · Structured data: ${ctx.site.url}/api/playbooks.json`);
   return lines.join("\n") + "\n";
 };
