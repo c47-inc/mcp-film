@@ -98,6 +98,7 @@ export const renderForAgents = (ctx) => {
     <li><code class="mono">/recommendations.md</code> — agent recommendations as markdown</li>
     <li><code class="mono">/capabilities/{capability}.md</code> — repeated capability clusters as markdown</li>
     <li><code class="mono">/compare.md</code> and <code class="mono">/compare/{id}.md</code> — curated head-to-heads as markdown</li>
+    <li><code class="mono">/apps.md</code>, <code class="mono">/apps/{id}.md</code> and <a href="/api/apps.json"><code class="mono">/api/apps.json</code></a> — every option per creative app (Resolve, Blender, Cinema 4D…); app names and aliases such as <code class="mono">c4d</code> also work as <code class="mono">search_film_mcps</code> queries</li>
     <li><code class="mono">/glossary.md</code> — MCP and AI filmmaking terms as markdown (<code class="mono">DefinedTermSet</code> JSON-LD on <a href="/glossary/">/glossary/</a>)</li>
     <li><code class="mono">/pulse.md</code> — catalog operations pulse as markdown</li>
     <li><code class="mono">/api/stats.json</code> — counts and freshness</li>
@@ -212,6 +213,10 @@ Fast paths:
   for the whole stack, as does get_film_playbook with client.
 - Choosing between two servers? ${ctx.site.url}/compare.md lists curated
   head-to-heads; terms are defined at ${ctx.site.url}/glossary.md.
+- Working in one creative app (DaVinci Resolve, Blender, Cinema 4D…)?
+  ${ctx.site.url}/apps.md lists every option per app; /api/apps.json is the
+  JSON form, and app names or aliases ("c4d", "resolve") work as
+  search_film_mcps queries.
 - Need to route a plain-English brief? Use /router/ for the browser tool,
   /router.md for a markdown guide, or recommend_film_mcps in the meta-MCP
   server.

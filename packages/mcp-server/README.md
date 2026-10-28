@@ -23,7 +23,7 @@ gets the latest). `initialize` returns short `instructions`: start with
 | Tool | What it does |
 | --- | --- |
 | `recommend_film_mcps` | Match a free-text brief to the best routes and first servers to connect. Hard constraints first (`constraints` object or phrases in the brief), then relevance; `confidence` says how well the brief matched |
-| `search_film_mcps` | Tokenised, alias-aware search (`lipsync` = `lip-sync` = `lip sync`; `tts` = `text to speech`; `4k` = `upscale`); filter by category, capability, official, remote, `answering_only` (hosted endpoint answered the daily check); paged |
+| `search_film_mcps` | Tokenised, alias-aware search (`lipsync` = `lip-sync` = `lip sync`; `tts` = `text to speech`; `4k` = `upscale`; creative-app names and aliases such as `c4d`, `resolve` or `fcp` find the servers that drive that app); filter by category, capability, official, remote, `answering_only` (hosted endpoint answered the daily check); paged |
 | `get_film_mcp` | Full entry for one server: install, auth, tools, caveats, status, evidence level and last endpoint/package check |
 | `list_film_categories` | All categories with pipeline stages and agent hints |
 | `list_film_capabilities` | Capability tags (aliases folded in) ranked by server count; `min_count` 2 by default; paged |

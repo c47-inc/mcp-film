@@ -174,6 +174,43 @@ check("glossary links resolve", [...read("dist/glossary/index.html").matchAll(/<
 check("sitemap lists compare and glossary", sitemap.includes("/compare/</loc>") && sitemap.includes("/glossary/</loc>") ? null : "missing /compare/ or /glossary/");
 check("llms.txt links compare and glossary", /\(\/compare\.md\)/.test(read("dist/llms.txt")) && /\(\/glossary\.md\)/.test(read("dist/llms.txt")) ? null : "llms.txt lacks /compare.md or /glossary.md");
 
+// 10b. Creative-app hubs: page + twin + sitemap, a title and description fit for the navigational
+//      query, FAQPage data, and every listed server linking back to its hub.
+const has = (p) => fs.existsSync(path.join(ROOT, p));
+const appsData = has("data/apps.json") ? JSON.parse(read("data/apps.json")) : [];
+if (appsData.length) {
+  const appsIndex = read("dist/apps/index.html");
+  check("apps index", /<h1>MCP support by creative app<\/h1>/.test(appsIndex) && has("dist/apps.md") ? null : "missing /apps/, its h1 or /apps.md");
+  check("apps index lists every app", appsData.every((a) => appsIndex.includes(`href="/apps/${a.id}/"`)) ? null : "an app is missing from /apps/");
+  check("sitemap lists /apps/", sitemap.includes("/apps/</loc>") ? null : "missing /apps/");
+  check("apps in footer", read("dist/index.html").includes('<a href="/apps/">') ? null : "footer lacks /apps/");
+  check("apps in llms.txt", /\(\/apps\.md\)/.test(read("dist/llms.txt")) ? null : "llms.txt lacks /apps.md");
+  const appsJson = JSON.parse(read("dist/api/apps.json"));
+  check("api/apps.json", appsJson.count === appsData.length && appsJson.apps.every((a) => a.servers.length) ? null : "count mismatch or an app without servers");
+  check("registry.json carries apps", registry.apps?.length === appsData.length && registry.apps.every((a) => Array.isArray(a.aliases) && a.slugs.length) ? null : "registry.json apps missing or malformed");
+  for (const a of appsData) {
+    const file = `dist/apps/${a.id}/index.html`;
+    if (!has(file)) { check(`app page ${a.id}`, "missing"); continue; }
+    const html = read(file);
+    check(`app page ${a.id} twin`, has(`dist/apps/${a.id}.md`) ? null : "missing .md twin");
+    check(`sitemap lists app ${a.id}`, sitemap.includes(`/apps/${a.id}/</loc>`) ? null : "missing from sitemap");
+    const title = decode(html.match(/<title>(.*?)<\/title>/)?.[1] ?? "");
+    check(`app ${a.id} title`, title.startsWith(`${a.name} MCP server`) && title.length <= 80 ? null : `title ${JSON.stringify(title)} (${title.length} chars)`);
+    for (const key of ['name="description"', 'property="og:description"', 'name="twitter:description"']) {
+      const description = decode(html.match(new RegExp(`<meta ${key} content="([^"]*)"`))?.[1] ?? "");
+      check(`app ${a.id} ${key}`, description.length > 0 && description.length <= 155 && /[\p{L}\p{N}.)]$/u.test(description) && description.includes(a.name)
+        ? null : `description missing, over 155 characters, cut off, or not naming the app (${JSON.stringify(description)})`);
+    }
+    check(`app ${a.id} structured data`, html.includes('"@type":"FAQPage"') && html.includes('"@type":"CollectionPage"') && html.includes('"@type":"BreadcrumbList"') ? null : "missing FAQPage, CollectionPage or BreadcrumbList");
+    check(`app ${a.id} table scrolls`, /<table class="pulse-table app-table" tabindex="0">/.test(html) ? null : "facts table lacks the scrolling table pattern");
+    for (const slug of a.slugs) {
+      check(`app ${a.id} lists ${slug}`, html.includes(`href="/mcps/${slug}/"`) ? null : "option missing from the page");
+      check(`${slug} links app ${a.id}`, read(`dist/mcps/${slug}/index.html`).includes(`href="/apps/${a.id}/"`) && read(`dist/mcps/${slug}.md`).includes(`/apps/${a.id}.md`) ? null : "server page or twin lacks the app hub link");
+    }
+    if (a.pick) check(`app ${a.id} pick`, html.includes(`Start with <a href="/mcps/${a.pick}/">`) ? null : "pick not stated up top");
+  }
+}
+
 const latestVerified = registry.servers.map((s) => s.verified).sort().at(-1);
 const verifiedLabel = new Date(`${latestVerified}T00:00:00Z`).toLocaleDateString("en-US", {
   year: "numeric", month: "short", day: "numeric", timeZone: "UTC",

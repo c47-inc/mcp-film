@@ -14,6 +14,7 @@ import { renderMartiniConnect, renderMartiniConnectMd } from "./src/pages/martin
 import { martiniHandoff, MARTINI_CLI } from "./packages/mcp-server/recommend-score.mjs";
 import { ANSWERED, EVIDENCE_LEVELS, FAILURE_AGENDA_THRESHOLD, deriveEvidence, failingChecks, packageRef, validateHealth } from "./src/health.mjs";
 import { RESERVED_BADGE_SLUGS, renderBadgeSvg } from "./src/badge.mjs";
+import { appSummary, validateApps } from "./src/apps.mjs";
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const DATA = path.join(ROOT, "data");
@@ -29,6 +30,9 @@ const recommendations = readJson(path.join(DATA, "recommendations.json"));
 // Curated head-to-heads (/compare/{id}/). Optional file; validated below.
 const comparisonsPath = path.join(DATA, "comparisons.json");
 const comparisons = fs.existsSync(comparisonsPath) ? readJson(comparisonsPath) : [];
+// Creative-app hubs (/apps/{id}/): which listings drive or plug into each app. Optional file.
+const appsPath = path.join(DATA, "apps.json");
+const apps = fs.existsSync(appsPath) ? readJson(appsPath) : [];
 
 const servers = fs
   .readdirSync(path.join(DATA, "registry"))
@@ -237,6 +241,12 @@ for (const c of comparisons) {
   for (const k of Object.keys(c.choose_if ?? {})) if (!c.slugs.includes(k)) errors.push(`${where}: choose_if.${k} is not one of the compared slugs`);
 }
 
+{
+  const checked = validateApps(apps, { servers, comparisons });
+  errors.push(...checked.errors);
+  warnings.push(...checked.warnings);
+}
+
 if (health) {
   // Probe results never change a listing's status; unknown slugs are stale, not fatal.
   const checked = validateHealth(health, slugs);
@@ -269,6 +279,7 @@ const ctx = {
   playbooks,
   recommendations,
   comparisons,
+  apps,
   servers,
   logos,
   built: new Date().toISOString(),
@@ -625,6 +636,7 @@ ctx.pulse = {
     { label: "playbooks.json", url: `${site.url}/api/playbooks.json`, kind: "production-playbooks" },
     { label: "recommendations.json", url: `${site.url}/api/recommendations.json`, kind: "intent-recommendations" },
     { label: "capabilities.json", url: `${site.url}/api/capabilities.json`, kind: "capability-index" },
+    { label: "apps.json", url: `${site.url}/api/apps.json`, kind: "creative-app-index" },
     { label: "stack.md", url: `${site.url}/stack.md`, kind: "pipeline-guide" },
     { label: "remotes.md", url: `${site.url}/remotes.md`, kind: "hosted-remotes-markdown" },
     { label: "playbooks.md", url: `${site.url}/playbooks.md`, kind: "stack-recipes" },
@@ -730,6 +742,12 @@ for (const c of comparisons) {
 }
 write("glossary/index.html", T.renderGlossary(ctx));
 write("glossary.md", T.renderGlossaryMd(ctx));
+write("apps/index.html", T.renderAppsIndex(ctx));
+write("apps.md", T.renderAppsIndexMd(ctx));
+for (const a of apps) {
+  write(`apps/${a.id}/index.html`, T.renderApp(ctx, a));
+  write(`apps/${a.id}.md`, T.renderAppMd(ctx, a));
+}
 
 for (const cat of categories) {
   write(`categories/${cat.id}/index.html`, T.renderCategory(ctx, cat));
@@ -810,6 +828,9 @@ const registryDoc = {
   // canonical capability → aliases, so clients (and the npm mcp-film server) normalise
   // queries the same way the build does.
   capability_aliases: Object.fromEntries(Object.entries(capabilityAliasDoc).filter(([k]) => !k.startsWith("_"))),
+  // Creative apps → the listings that drive them, with the names and aliases people search by
+  // ("c4d", "resolve"). search_film_mcps folds these into each listed server's haystack.
+  apps: apps.map((a) => appSummary(site.url, a)),
   // Derived per server: evidence (strongest machine check that passed recently), last_probe,
   // package_check. Definitions travel with the data.
   evidence_levels: EVIDENCE_LEVELS,
@@ -823,6 +844,7 @@ write("api/pulse.json", JSON.stringify(ctx.pulse, null, 2));
 write("api/playbooks.json", JSON.stringify(ctx.playbookDoc, null, 2));
 write("api/recommendations.json", JSON.stringify(ctx.recommendationDoc, null, 2));
 write("api/capabilities.json", JSON.stringify(ctx.capabilityDoc, null, 2));
+write("api/apps.json", JSON.stringify(T.appsDoc(ctx), null, 2));
 write("api/remotes.json", JSON.stringify(ctx.remoteDoc, null, 2));
 write("api/client-profiles.json", JSON.stringify(ctx.clientProfiles, null, 2));
 write("api/client-profiles.schema.json", JSON.stringify(ctx.clientProfilesSchema, null, 2));
@@ -976,7 +998,7 @@ fs.writeFileSync(
   JSON.stringify(ctx.pulse),
 );
 
-const pages = servers.length + categories.length + ctx.capabilityPages.length + playbooks.length + recommendations.length + comparisons.length + 13;
+const pages = servers.length + categories.length + ctx.capabilityPages.length + playbooks.length + recommendations.length + comparisons.length + apps.length + 14;
 console.log(`✓ built ${pages} pages + API + agent surfaces → dist/`);
 
 function mcpRegistryResponse(s) {

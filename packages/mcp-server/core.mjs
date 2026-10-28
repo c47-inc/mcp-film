@@ -293,11 +293,27 @@ const tokenIndex = (texts, reg) => {
   return { list, set: new Set(list) };
 };
 
+// Creative apps (registry `apps`, from data/apps.json): each listing's haystack also carries
+// the names and aliases of the apps it drives, so "c4d" or "resolve" finds the right servers.
+const appTermCache = new WeakMap();
+function appTerms(reg) {
+  if (!reg || typeof reg !== "object") return new Map();
+  if (appTermCache.has(reg)) return appTermCache.get(reg);
+  const map = new Map();
+  for (const a of Array.isArray(reg.apps) ? reg.apps : []) {
+    const terms = [a?.name, ...(Array.isArray(a?.aliases) ? a.aliases : [])].filter((t) => typeof t === "string");
+    for (const slug of Array.isArray(a?.slugs) ? a.slugs : []) map.set(slug, [...(map.get(slug) ?? []), ...terms]);
+  }
+  appTermCache.set(reg, map);
+  return map;
+}
+
 function serverHaystack(s, reg, categoryName) {
   return tokenIndex([
     s.name, s.vendor, s.tagline, s.description,
     ...(s.capabilities ?? []), ...(s.tools_sample ?? []),
     s.category, categoryName, s.pricing, s.auth?.type,
+    ...(appTerms(reg).get(s.slug) ?? []),
   ], reg);
 }
 
@@ -622,7 +638,7 @@ export const TOOLS = [
     title: "Search film MCP servers",
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     description:
-      "Search the mcp.film directory of MCP servers for AI filmmaking. Filter by free-text query (matches name, vendor, tagline, description, capabilities, tools, category, pricing, auth), category id, or capability. Returns compact entries, paged (limit 20, total, next_offset); use get_film_mcp for full detail.",
+      "Search the mcp.film directory of MCP servers for AI filmmaking. Filter by free-text query (matches name, vendor, tagline, description, capabilities, tools, category, pricing, auth, and the creative apps a server drives by name or alias, e.g. 'c4d' or 'resolve'), category id, or capability. Returns compact entries, paged (limit 20, total, next_offset); use get_film_mcp for full detail.",
     inputSchema: {
       type: "object",
       properties: {

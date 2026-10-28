@@ -1,0 +1,232 @@
+[
+  {
+    "id": "davinci-resolve",
+    "name": "DaVinci Resolve",
+    "aliases": ["resolve", "davinci"],
+    "maker": "Blackmagic Design",
+    "slugs": ["davinci-resolve-studio", "davinci-resolve", "davinci-resolve-ai-bridge"],
+    "first_party": ["davinci-resolve-studio"],
+    "versions": {
+      "davinci-resolve-studio": "Resolve Studio 21.1 or later. Not in the free edition.",
+      "davinci-resolve": "Resolve 18.5 or later: Studio through external scripting, the free edition through the project's in-app bridge on 21.0.x.",
+      "davinci-resolve-ai-bridge": "Free or Studio. Live-tested only on macOS with Resolve Free 21.0.3."
+    },
+    "intro": "Blackmagic built an MCP server into DaVinci Resolve Studio 21.1; two community bridges cover older builds and, on 21.0.x, the free edition. None of the three has a one-line install."
+  },
+  {
+    "id": "blender",
+    "name": "Blender",
+    "aliases": [],
+    "maker": "Blender Foundation",
+    "slugs": ["blender", "blender-lab-mcp", "tripo"],
+    "first_party": ["blender-lab-mcp"],
+    "pick": "blender",
+    "pick_why": "The pragmatic default: one uvx command, Blender 3.0 and later, and asset integrations (Poly Haven, Sketchfab, Poly Pizza, Hyper3D Rodin, Hunyuan3D) for building previz sets by prompt. On Blender 5.1 or later, to audit or repair a production .blend, Blender Lab's official server is the alternative.",
+    "versions": {
+      "blender": "Blender 3.0 or later.",
+      "blender-lab-mcp": "Blender 5.1 or later."
+    },
+    "roles": {
+      "tripo": "Generates 3D assets through the Tripo API and imports them into a running Blender through the Tripo Blender addon. No release since April 2025."
+    },
+    "intro": "Blender has a first-party server from the Blender Foundation's Blender Lab and a community server with the install base; Tripo's official server imports generated models into a running Blender. All three run locally next to Blender."
+  },
+  {
+    "id": "after-effects",
+    "name": "After Effects",
+    "aliases": ["ae", "aftereffects"],
+    "maker": "Adobe",
+    "slugs": ["after-effects", "plainly-videos"],
+    "versions": {
+      "after-effects": "After Effects 2022 or later, with the bridge panel open."
+    },
+    "roles": {
+      "plainly-videos": "Renders After Effects-backed templates in Plainly's cloud, with no local After Effects; the templates must already exist in a paid Plainly account."
+    },
+    "intro": "None of the Adobe servers listed here drives After Effects. The community bridge remote-controls a running copy through a polling ExtendScript panel and has had no commit since April 2026; Plainly renders After Effects templates in its cloud instead."
+  },
+  {
+    "id": "premiere-pro",
+    "name": "Premiere Pro",
+    "aliases": ["premiere", "ppro"],
+    "maker": "Adobe",
+    "slugs": ["premiere-pro", "adobe-creativity"],
+    "first_party": ["adobe-creativity"],
+    "versions": {
+      "premiere-pro": "Premiere Pro 2020 or later, on macOS or Windows, through its CEP bridge."
+    },
+    "roles": {
+      "adobe-creativity": "Adobe's hosted Creative Cloud connector. Its video tools reformat and quick-cut clips; none opens, reads or edits a Premiere Pro project."
+    },
+    "official_note": "Not one that edits a project. Adobe for Creativity, Adobe's hosted connector, lists Premiere among its apps, but its video tools only reformat and quick-cut clips, and nothing in it opens, reads or edits a Premiere Pro project. For timeline work the option is the community bridge.",
+    "intro": "The community bridge drives Premiere Pro through a CEP extension: 283 tools by its own count, reached through a five-tool search gateway by default. Adobe's own connector touches Premiere only to reformat and quick-cut clips."
+  },
+  {
+    "id": "houdini",
+    "name": "Houdini",
+    "aliases": ["sidefx"],
+    "maker": "SideFX",
+    "slugs": ["houdini"],
+    "versions": {
+      "houdini": "fxhoudinimcp needs Houdini 20.5 or later and is tested through Houdini 22.0.368."
+    },
+    "official_note": "No. SideFX has no shipping MCP. Trade coverage from SIGGRAPH 2026 describes an APEX Script MCP server headed to SideFX Labs, but as of September 2026 SideFX had not documented one.",
+    "intro": "One listing covers two community servers: healkeiser/fxhoudinimcp, with 188 tools and a one-command installer, which the listing says to try first, and the original capoomgit/houdini-mcp."
+  },
+  {
+    "id": "cinema-4d",
+    "name": "Cinema 4D",
+    "aliases": ["c4d", "cinema4d"],
+    "maker": "Maxon",
+    "slugs": ["cinema4d"],
+    "first_party": ["cinema4d"],
+    "versions": {
+      "cinema4d": "Cinema 4D 2026.4 or later, on Windows or macOS. Not in Cinema 4D Lite, Commandline, Team Render, c4dpy or Cineware."
+    },
+    "intro": "Maxon built an MCP server into Cinema 4D 2026.4, released 30 September 2026. It is off by default and enabled under Preferences → MCP. For Cinema 4D 2024 to 2026.3 the listing names the community ttiimmaacc/cinema4d-mcp as the fallback; it is not listed separately."
+  },
+  {
+    "id": "maya",
+    "name": "Maya",
+    "aliases": ["autodesk-maya"],
+    "maker": "Autodesk",
+    "slugs": ["maya-mcp"],
+    "official_note": "No. Per the listing, Autodesk's public MCP servers target Revit, Fusion and its data APIs, not the media and entertainment line, so Maya has no first-party MCP.",
+    "intro": "One community server is listed. It drives running Maya sessions over Maya's Python command port with no plug-in, through execute_code rather than typed tools. Its listing names typed-tool alternatives, of which dcc-mcp/dcc-mcp-maya (Maya 2020 and later) was the most active at the last check."
+  },
+  {
+    "id": "final-cut-pro",
+    "name": "Final Cut Pro",
+    "aliases": ["fcp", "fcpx", "finalcut"],
+    "maker": "Apple",
+    "slugs": ["fcpxml-mcp", "fcp-mcp"],
+    "versions": {
+      "fcpxml-mcp": "Final Cut Pro 10.4 to 12.x (live-verified on 12.2). Reads FCPXML 1.8 to 1.14.",
+      "fcp-mcp": "Live control needs macOS 15.6 or later with Final Cut Pro; the FCPXML tools work without it."
+    },
+    "intro": "Two community servers with nearly identical names. FCPXML MCP (DareDev256) is the deeper XML workbench, with a Live Mode that pushes XML into Final Cut; fcp-mcp (dreliq9) adds AppleScript live control and Compressor dispatch."
+  },
+  {
+    "id": "unreal-engine",
+    "name": "Unreal Engine",
+    "aliases": ["unreal", "ue5", "ue"],
+    "maker": "Epic Games",
+    "slugs": ["unreal-mcp-epic", "unreal-engine"],
+    "first_party": ["unreal-mcp-epic"],
+    "versions": {
+      "unreal-mcp-epic": "Unreal Engine 5.8 only, as an Experimental plugin.",
+      "unreal-engine": "Unreal Engine 5.5 to 5.7."
+    },
+    "intro": "Engine version decides it: Epic's Experimental in-editor server ships with UE 5.8, and the Flopperam / Aura server covers UE 5.5 to 5.7 and adds a hosted, key-gated endpoint."
+  },
+  {
+    "id": "comfyui",
+    "name": "ComfyUI",
+    "aliases": ["comfy"],
+    "maker": "Comfy Org",
+    "slugs": ["comfy-mcp", "comfyui-artokun", "comfyui"],
+    "first_party": ["comfy-mcp"],
+    "pick": "comfy-mcp",
+    "pick_why": "Comfy Org's own server supersedes the community one: it drives a local ComfyUI through comfy-cli or connects to Comfy Cloud, and reads your installed models and GPU so an agent can tell you a model will not fit before it downloads. Read its licence first: AGPL-3.0-or-later or Commercial.",
+    "versions": {
+      "comfy-mcp": "Local: Python 3.10+, comfy-cli 1.14.0+ and a ComfyUI workspace. Comfy Cloud: running generations needs a subscription.",
+      "comfyui-artokun": "A local, LAN, VPS or Comfy Cloud ComfyUI.",
+      "comfyui": "Your own ComfyUI: port 8000 for the Desktop app, 8188 for a manual install."
+    },
+    "roles": {
+      "comfyui-artokun": "Claude Code plugin plus MCP server, with an Agent Panel inside ComfyUI. Its README says limited maintenance has resumed."
+    }
+  },
+  {
+    "id": "capcut",
+    "name": "CapCut",
+    "aliases": ["jianying"],
+    "maker": "ByteDance",
+    "slugs": ["vectcut", "capcut"],
+    "versions": {
+      "vectcut": "CapCut International or Jianying. Draft formats change with app updates, so test against your installed version."
+    },
+    "official_note": "No. Per the VectCut listing, ByteDance offers no official CapCut MCP.",
+    "intro": "Both options write draft projects that open in CapCut for finishing. The archived capcut-mcp is kept so old configs resolve to an explanation; VectCutAPI is the maintained successor to the same code."
+  },
+  {
+    "id": "frame-io",
+    "name": "Frame.io",
+    "aliases": ["frameio"],
+    "maker": "Adobe",
+    "slugs": ["frameio-official", "frameio"],
+    "first_party": ["frameio-official"],
+    "pick": "frameio-official",
+    "pick_why": "Adobe's hosted server supersedes the community one for every account except Frame.io Legacy: a documented endpoint with Adobe ID OAuth, in public beta since 7 October 2026. Approve each write; delete_resources deletes permanently.",
+    "versions": {
+      "frameio-official": "Every Frame.io account except Legacy.",
+      "frameio": "Built on the V4 API, so not shown to work for Legacy accounts either. Python 3.13 or later."
+    }
+  },
+  {
+    "id": "photoshop",
+    "name": "Photoshop",
+    "aliases": [],
+    "maker": "Adobe",
+    "slugs": ["adobe-creativity"],
+    "first_party": ["adobe-creativity"],
+    "versions": {
+      "adobe-creativity": "A free or paid Adobe account; a guest tier works without one at reduced capability."
+    },
+    "roles": {
+      "adobe-creativity": "Adobe's hosted Creative Cloud connector: retouch, auto-tone, reframe and batch-edit stills, alongside Lightroom, Firefly, Express and Stock tools."
+    },
+    "intro": "The one listed option is Adobe's own hosted connector, which spans Photoshop, Lightroom, Illustrator, Firefly, Premiere, Express, InDesign and Adobe Stock rather than Photoshop alone."
+  },
+  {
+    "id": "reaper",
+    "name": "REAPER",
+    "aliases": [],
+    "maker": "Cockos",
+    "slugs": ["reaper-mcp"],
+    "intro": "One community server drives a live REAPER session, 58 tools through python-reapy. Install it from source: the PyPI release predates the MCP SDK 2.x port."
+  },
+  {
+    "id": "ableton-live",
+    "name": "Ableton Live",
+    "aliases": ["ableton"],
+    "maker": "Ableton",
+    "slugs": ["ableton-mcp"],
+    "versions": {
+      "ableton-mcp": "Ableton Live 10 or later."
+    }
+  },
+  {
+    "id": "canva",
+    "name": "Canva",
+    "aliases": [],
+    "maker": "Canva",
+    "slugs": ["canva"],
+    "first_party": ["canva"],
+    "versions": {
+      "canva": "Most tools on every plan; autofill, resize and brand-template tools need Pro or above."
+    }
+  },
+  {
+    "id": "descript",
+    "name": "Descript",
+    "aliases": [],
+    "maker": "Descript",
+    "slugs": ["descript"],
+    "first_party": ["descript"],
+    "versions": {
+      "descript": "Included for paying subscribers; imports and Underlord edits spend the plan's media minutes and AI credits."
+    }
+  },
+  {
+    "id": "silhouette",
+    "name": "Silhouette",
+    "aliases": ["boris-fx"],
+    "maker": "Boris FX",
+    "slugs": ["silhouette"],
+    "first_party": ["silhouette"],
+    "versions": {
+      "silhouette": "A licensed Silhouette 2026; online mode needs it running."
+    }
+  }
+]

@@ -124,6 +124,8 @@ export const sitemapEntries = (ctx) => {
     { loc: "/glossary/", lastmod: today },
     ...((ctx.comparisons ?? []).length ? [{ loc: "/compare/", lastmod: today }] : []),
     ...(ctx.comparisons ?? []).map((c) => ({ loc: `/compare/${c.id}/`, lastmod: [c.reviewed, newest(bySlug(c.slugs))].sort().at(-1) })),
+    ...((ctx.apps ?? []).length ? [{ loc: "/apps/", lastmod: newest(bySlug(ctx.apps.flatMap((a) => a.slugs))) }] : []),
+    ...(ctx.apps ?? []).map((a) => ({ loc: `/apps/${a.id}/`, lastmod: newest(bySlug(a.slugs)) })),
     ...ctx.servers.map((s) => ({ loc: `/mcps/${s.slug}/`, lastmod: s.verified })),
   ];
 };

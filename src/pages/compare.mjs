@@ -127,7 +127,7 @@ export const renderCompare = (ctx, c) => {
   });
 };
 
-const lowerFirst = (text) => {
+export const lowerFirst = (text) => {
   const t = String(text ?? "");
   // Keep acronyms and names ("UE 5.8", "MIT") as written; only a plain capitalised word drops case.
   return /^[A-Z][a-z]/.test(t) ? t[0].toLowerCase() + t.slice(1) : t;
