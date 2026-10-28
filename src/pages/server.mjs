@@ -1,5 +1,6 @@
 import { PRICING_LABEL, authLabel, avatar, badge, breadcrumbLd, capabilityLink, capabilityMdLink, card, catById, caveatsFor, claudeCodeCmd, cmdLike, cursorConfig, dataAttrs, desktopConfig, esc, isInactive, keyUrlHtml, keyUrlMd, layout, nice, organizationLd, remoteHeaders, remoteNeedsHeaders, serverDescription, sourceLinks, sponsorAttrs, statusBlurb, statusLabel, verificationStatus } from "./_shared.mjs";
 import { playbookSlugs } from "./playbooks.mjs";
+import { badgeSnippets, badgeState } from "../badge.mjs";
 
 // ------------------------------------------------------------ server detail
 export const pairings = (ctx, s) => {
@@ -126,6 +127,21 @@ export const connectSections = (ctx, s) => {
   return sections;
 };
 
+// For the listing's maintainers, below everything a reader came for. Inactive listings keep
+// their badge file (so existing embeds show the status) but are not offered one here.
+export const badgeSection = (ctx, s) => {
+  if (isInactive(s)) return "";
+  const b = badgeSnippets(ctx.site.url, s);
+  const copy = (method) => ({ "copy-kind": "badge", "copy-method": method, "copy-slug": s.slug });
+  return `<details class="notes-details badge-details" id="badge">
+      <summary>Badge for your README</summary>
+      <p class="connect-note">Maintain ${esc(s.name)}? Link back to this listing. The badge shows the month it was last verified and updates when the curator re-checks it.</p>
+      <p class="badge-preview"><img src="/badge/${esc(s.slug)}.svg" alt="${esc(badgeState(s).title)}" height="20" loading="lazy" decoding="async"></p>
+      ${codeBlock("Markdown", b.markdown, "md", copy("markdown"))}
+      ${codeBlock("HTML", b.html, "html", copy("html"))}
+    </details>`;
+};
+
 export const renderServer = (ctx, s) => {
   const { site } = ctx;
   const cat = catById(ctx, s.category);
@@ -210,6 +226,8 @@ export const renderServer = (ctx, s) => {
 
     <h2 id="pairs">Pairs well with</h2>
     <div class="grid grid-pairs" data-track-section="server-pairs">${pairs.map((p) => card(ctx, p)).join("")}</div>
+
+    ${badgeSection(ctx, s)}
   </div>
 
   <aside class="server-side">
@@ -222,7 +240,7 @@ export const renderServer = (ctx, s) => {
         <div><dt>First listed</dt><dd><time datetime="${s.added}">${nice(s.added)}</time></dd></div>
         <div><dt>Sources</dt><dd>${links.length}</dd></div>
       </dl>
-      <a href="/pulse/">Open catalog pulse</a>
+      <a href="/changes/">Recent changes</a>
     </div>
     <div class="side-box">
       <p class="foot-h">Capabilities</p>
