@@ -722,6 +722,35 @@
     "notes": "Re-verified 18 Sep 2026: the overview doc is unchanged and api.descript.com/v2/mcp answers 401 to an anonymous request, so the endpoint is live and auth-gated as listed. Official and hosted, so nothing to install, but the export story is still the catch: Descript documents no rendered media download without publishing — an agent can publish to a Descript web link or hand off a signed URL, and anything else you fetch by exporting from the app yourself. TRANSCRIPTS are the exception, and this run pinned down the formats: text, Markdown, HTML, RTF and SRT come back over MCP, DOCX does not. The docs also cover job tracking and cancellation, which matters because imports and Underlord runs are async. Other documented limits: YouTube URLs cannot be imported, job history is kept 30 days, one connection sees exactly one drive (switching drives means re-authenticating, and editing a project on another drive errors), and Claude's directory connector excludes the generative image/video tools. API and MCP access is included for paying subscribers at no extra cost but every import and Underlord edit burns your plan's media minutes and AI credits. Note the two auth stories: MCP is OAuth through your Descript login with no token, while the REST API uses drive-scoped tokens from Settings → API Tokens — descript.com/api blurs them together. Tool names are still not published, so this entry lists capabilities rather than inventing them."
   },
   {
+    "slug": "kapwing",
+    "name": "Kapwing MCP",
+    "vendor": "Kapwing",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Kapwing's hosted MCP: upload footage, caption, translate, dub and export from a Kapwing workspace.",
+    "description": "Kapwing's official hosted MCP connects an agent to the user's Kapwing workspace over OAuth: it uploads footage, adds burned-in subtitles, translates them, dubs a video into another language, and pulls the finished MP4 export, with each edit landing as an editable Kapwing project URL a human can open and fix. Version 1.1.0 adds generative image and video calls, multi-asset projects and transcript-based editing through Kapwing's Kai chat. For a filmmaker-agent it is the shortest route from a locked cut to subtitled, localized deliverables without leaving the chat.",
+    "capabilities": ["captioning", "subtitle-translation", "dubbing", "transcription", "transcript-editing", "asset-upload", "export", "text-to-video", "text-to-image", "remote-mcp"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http kapwing https://www.kapwing.com/mcp",
+      "remote_url": "https://www.kapwing.com/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Sign in with your Kapwing account when the client opens the OAuth flow; no API key" },
+    "pricing": "freemium",
+    "pricing_note": "Connects on every plan including free; AI edits draw on the workspace's AI credits at website rates, and free accounts hit export paywalls.",
+    "links": { "repo": null, "docs": "https://www.kapwing.com/help/about-the-kapwing-mcp/", "site": "https://www.kapwing.com/mcp" },
+    "added": "2026-10-28",
+    "verified": "2026-10-28",
+    "caveats": [
+      "Free accounts can connect but cannot export via MCP for videos over 4 minutes, pasted-link imports, auto-removed backgrounds or premium stock.",
+      "Kapwing publishes capabilities, not tool names, so check the tool list once connected; recent-project scans see only the 5 newest projects.",
+      "The agent gets the signing-in user's full access, across all their workspaces."
+    ],
+    "notes": "Checked 28 Oct 2026 against Kapwing's own pages; not run here, and the endpoint has not yet been through mcp.film's daily check. Timeline from the release notes: 0.0.0 on 28 Sep 2026 for trusted testers, 1.0.0 on 12 Oct opening it to all Kapwing users and adding MCP export, 1.1.0 on 27 Oct adding generative image and video calls with reference media, multi-asset projects, transcript editing and natural-language layer positioning, each of which opens a Kai chat linked to an editable project. Kapwing's docs disagree about who can use it: kapwing.com/mcp and the 1.0.0 notes say all plans including free, while the About article's FAQ (updated 12 Oct) still says Pro, Business and Enterprise; its limitations list (no generation, single-asset projects) also predates 1.1.0. Release 1.0.0 states the free-tier export blocks. Kapwing documents only the URL and a custom-connector flow (Claude, ChatGPT and Codex are what it tested); the Claude Code command above is the generic HTTP add for that URL, not a vendor-published command. Uploads cap at 5GB through the embedded uploader and 500MB from a URL, and count against the workspace storage pool. AI dubbing, subtitles and translation cost the same workspace AI credits as on the website. There is also a ChatGPT plugin (15 Oct). Ignore third-party 'Kapwing MCP' wrappers that ask for a Kapwing API key; they are not Kapwing's."
+  },
+  {
     "slug": "topaz",
     "name": "Topaz Labs MCP",
     "vendor": "Topaz Labs",
