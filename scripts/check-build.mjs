@@ -153,6 +153,19 @@ for (const p of playbooksDoc.playbooks) check(`playbook page ${p.id}`, fs.exists
 for (const r of recommendationsDoc.recommendations) check(`recommendation page ${r.id}`, fs.existsSync(path.join(ROOT, `dist/recommendations/${r.id}/index.html`)) ? null : "missing page");
 for (const c of registry.categories) check(`category twin ${c.id}`, fs.existsSync(path.join(ROOT, `dist/categories/${c.id}.md`)) ? null : "missing .md twin");
 
+// 10. Compare pages and the glossary: page + twin + sitemap, and every compared server links back.
+const comparisons = JSON.parse(read("data/comparisons.json"));
+for (const c of comparisons) {
+  check(`compare page ${c.id}`, fs.existsSync(path.join(ROOT, `dist/compare/${c.id}/index.html`)) && fs.existsSync(path.join(ROOT, `dist/compare/${c.id}.md`)) ? null : "missing page or twin");
+  check(`sitemap lists compare ${c.id}`, sitemap.includes(`/compare/${c.id}/</loc>`) ? null : "missing from sitemap");
+  for (const slug of c.slugs) check(`${slug} links compare ${c.id}`, read(`dist/mcps/${slug}/index.html`).includes(`href="/compare/${c.id}/"`) ? null : "server page lacks Compared with link");
+}
+check("glossary page", /"@type":"DefinedTermSet"/.test(read("dist/glossary/index.html")) && fs.existsSync(path.join(ROOT, "dist/glossary.md")) ? null : "missing glossary, its twin, or DefinedTermSet JSON-LD");
+check("glossary links resolve", [...read("dist/glossary/index.html").matchAll(/<p class="glossary-see">([\s\S]*?)<\/p>/g)].flatMap(([, html]) => [...html.matchAll(/href="(\/[^"#]*)/g)].map(([, href]) => href))
+  .filter((href) => !fs.existsSync(path.join(ROOT, "dist", href, "index.html")) && href !== "/").join(", ") || null);
+check("sitemap lists compare and glossary", sitemap.includes("/compare/</loc>") && sitemap.includes("/glossary/</loc>") ? null : "missing /compare/ or /glossary/");
+check("llms.txt links compare and glossary", /\(\/compare\.md\)/.test(read("dist/llms.txt")) && /\(\/glossary\.md\)/.test(read("dist/llms.txt")) ? null : "llms.txt lacks /compare.md or /glossary.md");
+
 const latestVerified = registry.servers.map((s) => s.verified).sort().at(-1);
 const verifiedLabel = new Date(`${latestVerified}T00:00:00Z`).toLocaleDateString("en-US", {
   year: "numeric", month: "short", day: "numeric", timeZone: "UTC",

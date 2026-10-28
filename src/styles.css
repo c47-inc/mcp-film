@@ -1243,6 +1243,57 @@ img.avatar { object-fit: cover; background: var(--paper); }
 .cat-tools .search-wrap { flex: 1 1 260px; }
 .cat-tools .quick-filters { flex-direction: row; flex-wrap: wrap; border: 0; padding: 0; background: none; }
 .cat-tools button.quick-filter { border: 1px solid var(--line-strong); border-radius: 999px; padding: 4px 12px; }
+
+/* ------------------------------------------- compare, glossary, stack install */
+.compare-doc { max-width: 62rem; }
+.compare-cards { margin: 0.2rem 0 0.4rem; }
+.agents-doc .compare-cards .card { text-decoration: none; }
+.compare-table thead th:not(:first-child) {
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  letter-spacing: 0; text-transform: none; color: var(--ink);
+}
+.compare-table code { font-size: 11.5px; overflow-wrap: anywhere; }
+.compare-caveats { margin: 0; padding-left: 1rem; }
+.compare-caveats li { margin: 0 0 0.35rem; }
+@media (min-width: 720px) {
+  .compare-table { table-layout: fixed; }
+  .compare-table thead th:first-child { width: 8.5rem; }
+}
+.compare-index { list-style: none; margin: 0; padding: 0; }
+.compare-index li { padding: 1.1rem 0; border-top: 1px solid var(--hairline); }
+.compare-index li:first-child { border-top: 0; padding-top: 0.2rem; }
+.agents-doc .compare-index h2 { margin: 0 0 0.3rem; padding: 0; border: 0; font-size: 15px; }
+.compare-index p { margin: 0.2rem 0; color: var(--ink-2); font-size: 13.5px; line-height: 1.6; }
+.compare-index .compare-options { font-size: 13px; }
+
+.glossary-jump { display: flex; flex-wrap: wrap; gap: 6px; margin: 0.4rem 0 1.6rem; }
+.glossary-jump a {
+  display: inline-flex; align-items: center; padding: 5px 10px;
+  border: 1px solid var(--hairline); border-radius: var(--r-sm);
+  color: var(--ink-2); font-size: 12.5px; text-decoration: none;
+}
+.glossary-jump a:hover { color: var(--ink); border-color: var(--ink-3); }
+.glossary { margin: 0; }
+.glossary-entry { padding: 1rem 0; border-top: 1px solid var(--hairline); scroll-margin-top: 6rem; }
+.glossary dt { font-size: 14px; font-weight: 600; color: var(--ink); }
+.glossary dfn { font-style: normal; }
+.glossary dd { margin: 0.35rem 0 0; }
+.glossary dd p { margin: 0 0 0.35rem; max-width: 44rem; color: var(--ink-2); font-size: 13.5px; line-height: 1.7; }
+.glossary .glossary-see { font-size: 13px; }
+.glossary-see .label { margin-right: 0.4rem; }
+
+.stack-script { max-width: 56rem; }
+.stack-script > .label { display: block; margin: 0.8rem 0 0.2rem; }
+.stack-script > summary { list-style: none; color: var(--ink); font-weight: 500; }
+.stack-script > summary::-webkit-details-marker { display: none; }
+.stack-script > summary::before { content: "▸"; margin-right: 0.45rem; color: var(--ink-2); }
+.stack-script[open] > summary::before { content: "▾"; }
+@media (max-width: 999px), (pointer: coarse) {
+  .glossary-jump a { min-height: 40px; padding: 0 12px; }
+  .glossary-see a, .compare-options a, .compare-choose a, .compare-table a, .compared-links a,
+  .stack-checklist a, .stack-script .connect-note a { display: inline-block; padding: 8px 0; }
+  .compare-index h2 a { display: inline-flex; align-items: center; min-height: 44px; margin: -11px 0; }
+}
 /* --- endpoint checks (data/health.json, src/pages/_health.mjs) --- */
 .probe-line { margin: 0.35rem 0 0; font-size: 12px; line-height: 1.5; color: var(--ink-2); overflow-wrap: anywhere; }
 .probe-line > span {

@@ -26,6 +26,9 @@ const site = readJson(path.join(DATA, "site.json"));
 const categories = readJson(path.join(DATA, "categories.json"));
 const playbooks = readJson(path.join(DATA, "playbooks.json"));
 const recommendations = readJson(path.join(DATA, "recommendations.json"));
+// Curated head-to-heads (/compare/{id}/). Optional file; validated below.
+const comparisonsPath = path.join(DATA, "comparisons.json");
+const comparisons = fs.existsSync(comparisonsPath) ? readJson(comparisonsPath) : [];
 
 const servers = fs
   .readdirSync(path.join(DATA, "registry"))
@@ -205,6 +208,35 @@ for (const r of recommendations) {
   if (r.playbook_id && !playbookIds.has(r.playbook_id)) errors.push(`${where}: unknown playbook_id "${r.playbook_id}"`);
 }
 
+// Comparisons: every option must be a live listing, and every option gets a choose_if line.
+const comparisonIds = new Set();
+for (const c of comparisons) {
+  const where = `comparison "${c.id ?? c.title ?? "?"}"`;
+  for (const k of ["id", "title", "summary", "slugs", "verdict", "choose_if", "reviewed"]) {
+    if (c[k] === undefined) errors.push(`${where}: missing field "${k}"`);
+  }
+  if (c.id) {
+    if (!/^[a-z0-9][a-z0-9-]*$/.test(c.id)) errors.push(`${where}: bad id format`);
+    if (comparisonIds.has(c.id)) errors.push(`${where}: duplicate id`);
+    comparisonIds.add(c.id);
+  }
+  for (const k of ["title", "summary", "verdict"]) if (c[k] !== undefined && !isText(c[k])) errors.push(`${where}: ${k} must be a non-empty string`);
+  if (isText(c.summary) && c.summary.length > 155) errors.push(`${where}: summary over 155 chars (it is the meta description)`);
+  if (c.reviewed !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(c.reviewed)) errors.push(`${where}: reviewed must be YYYY-MM-DD`);
+  if (!Array.isArray(c.slugs) || c.slugs.length < 2 || new Set(c.slugs).size !== c.slugs.length) {
+    errors.push(`${where}: slugs must list at least 2 distinct servers`);
+    continue;
+  }
+  for (const slug of c.slugs) {
+    const s = servers.find((x) => x.slug === slug);
+    if (!s) errors.push(`${where}: unknown server slug "${slug}"`);
+    else if (s.status) errors.push(`${where}: "${slug}" is ${s.status}; drop it from the comparison or retire the comparison`);
+    else if (c.reviewed && s.verified > c.reviewed) warnings.push(`${where}: "${slug}" was re-verified ${s.verified}, after the verdict was reviewed (${c.reviewed}); re-read the verdict`);
+    if (!isText(c.choose_if?.[slug])) errors.push(`${where}: choose_if.${slug} is required`);
+  }
+  for (const k of Object.keys(c.choose_if ?? {})) if (!c.slugs.includes(k)) errors.push(`${where}: choose_if.${k} is not one of the compared slugs`);
+}
+
 if (health) {
   // Probe results never change a listing's status; unknown slugs are stale, not fatal.
   const checked = validateHealth(health, slugs);
@@ -236,6 +268,7 @@ const ctx = {
   categories,
   playbooks,
   recommendations,
+  comparisons,
   servers,
   logos,
   built: new Date().toISOString(),
@@ -689,6 +722,14 @@ write("submit/index.html", T.renderSubmit(ctx));
 write("404.html", T.render404(ctx));
 write("martini/connect/index.html", renderMartiniConnect(ctx));
 write("martini/connect.md", renderMartiniConnectMd(ctx));
+write("compare/index.html", T.renderCompareIndex(ctx));
+write("compare.md", T.renderCompareIndexMd(ctx));
+for (const c of comparisons) {
+  write(`compare/${c.id}/index.html`, T.renderCompare(ctx, c));
+  write(`compare/${c.id}.md`, T.renderCompareMd(ctx, c));
+}
+write("glossary/index.html", T.renderGlossary(ctx));
+write("glossary.md", T.renderGlossaryMd(ctx));
 
 for (const cat of categories) {
   write(`categories/${cat.id}/index.html`, T.renderCategory(ctx, cat));
@@ -935,7 +976,7 @@ fs.writeFileSync(
   JSON.stringify(ctx.pulse),
 );
 
-const pages = servers.length + categories.length + ctx.capabilityPages.length + playbooks.length + recommendations.length + 11;
+const pages = servers.length + categories.length + ctx.capabilityPages.length + playbooks.length + recommendations.length + comparisons.length + 13;
 console.log(`✓ built ${pages} pages + API + agent surfaces → dist/`);
 
 function mcpRegistryResponse(s) {

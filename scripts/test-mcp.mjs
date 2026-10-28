@@ -463,4 +463,40 @@ const [stdioSetup] = await stdio([{ jsonrpc: "2.0", id: 1, method: "tools/call",
 assert.equal(stdioSetup.result.structuredContent.client, "cursor");
 console.log(`M8: ${JSON.stringify({ shell_steps: shell.agent_steps.length, no_shell_steps: noShell.agent_steps.length, human_steps: [shell.human_steps.length, noShell.human_steps.length], sizes: [size(shell), size(noShell)] })}`);
 
+// ---- 9. Whole-stack install scripts: get_film_playbook(client) returns exactly the block on
+//         the playbook's page, compactly, and the meta-MCP's per-server generator agrees with
+//         the site's for every listing (the page uses the site's, the tool uses core's).
+const { stackInstallScript, STACK_CLIENTS } = await import("../packages/mcp-server/core.mjs");
+const { siteConfigFor } = await import("../src/pages/stack-script.mjs");
+for (const s of registry.servers) {
+  for (const client of STACK_CLIENTS) {
+    assert.deepEqual(stackInstallScript([s], client), stackInstallScript([s], client, { configFor: siteConfigFor }), `${s.slug} ${client}: core and site generators agree`);
+  }
+}
+const playbookIds = json("dist/api/playbooks.json").playbooks.map((p) => p.id);
+for (const id of playbookIds) {
+  const res = await call("get_film_playbook", { id, client: "claude_code" });
+  assert.ok(res.install_script.script.startsWith("# "), id);
+  assert.ok(read(`dist/playbooks/${id}.md`).includes("```sh\n" + res.install_script.script + "\n```"), `${id}: tool script matches the playbook .md`);
+  assert.ok(!("steps" in res) && !("failure_modes" in res), "client mode returns the script, not the playbook again");
+  assert.ok(size(res) < 8000, `${id} claude_code script is ${size(res)} chars`);
+  const desktop = await call("get_film_playbook", { id, client: "claude_desktop" });
+  assert.ok(read(`dist/playbooks/${id}.md`).includes("```json\n" + JSON.stringify(desktop.install_script.config, null, 2) + "\n```"), `${id}: desktop config matches the .md`);
+}
+const commercialScript = (await call("get_film_playbook", { id: "commercial-sprint", client: "claude_code" })).install_script;
+assert.ok(commercialScript.servers >= 5);
+assert.ok(commercialScript.script.includes("claude mcp add --transport http runway https://mcp.runwayml.com/mcp"));
+// Retired and opted-out listings in a playbook are skipped with a reason, not installed.
+const retiredRunway = makeCallTool({ ...loaders, loadRegistry: async () => ({ ...registry, servers: registry.servers.map((s) => (s.slug === "runway" ? { ...s, status: "dead" } : s.slug === "elevenlabs" ? { ...s, install: { ...s.install, claude_code: null, generate: false } } : s)) }) }, "test");
+const retiredScript = (await retiredRunway("get_film_playbook", { id: "commercial-sprint", client: "claude_code" })).install_script;
+assert.ok(!/mcp add[^\n]* runway /.test(retiredScript.script) && /# skipped runway: listing is dead/.test(retiredScript.script), "dead listing skipped with a comment");
+assert.ok(!/mcp add[^\n]* elevenlabs /.test(retiredScript.script) && /# skipped elevenlabs: listing opts out/.test(retiredScript.script), "generate:false listing skipped with a comment");
+const badStackClient = await call("get_film_playbook", { id: "commercial-sprint", client: "hosted_remote" });
+assert.deepEqual(badStackClient.valid_clients, ["claude_code", "claude_desktop", "cursor"]);
+assert.ok((await call("get_film_playbook", { id: "commercial-sprint" })).steps, "without client the full playbook is unchanged");
+assert.ok(/client/.test(toolByName.get_film_playbook.description) && toolByName.get_film_playbook.inputSchema.properties.client);
+const [stdioStack] = await stdio([{ jsonrpc: "2.0", id: 1, method: "tools/call", params: { name: "get_film_playbook", arguments: { id: "local-edit-bay", client: "cursor" } } }]);
+assert.equal(stdioStack.result.structuredContent.install_script.file, ".cursor/mcp.json");
+console.log(`M9: ${JSON.stringify({ playbooks: playbookIds.length, commercial_servers: commercialScript.servers, skipped: commercialScript.skipped.map((x) => x.slug) })}`);
+
 console.log("✓ mcp server checks passed");

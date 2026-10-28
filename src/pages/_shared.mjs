@@ -519,6 +519,8 @@ ${body}
       <a href="/playbooks/">Production playbooks</a>
       <a href="/recommendations/">Agent recommendations</a>
       <a href="/capabilities/">Capability index</a>
+      <a href="/compare/">Compare servers</a>
+      <a href="/glossary/">Glossary</a>
       <a href="/remotes/">Hosted remotes</a>
       <a href="/changes/">Changes</a>
       <a href="/submit/">Submit a server</a>

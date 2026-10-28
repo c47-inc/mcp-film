@@ -6,6 +6,8 @@ import {
   caveatsFor, claudeCodeCmd, cmdLike, cursorConfig, desktopConfig, installerSubcommand,
   isInactive, sentences, serverDescription, statusLabel, verificationStatus,
 } from "../src/pages/_shared.mjs";
+import { STACK_CLIENTS, stackInstallScript } from "../packages/mcp-server/core.mjs";
+import { siteConfigFor } from "../src/pages/stack-script.mjs";
 
 const base = (over = {}) => ({
   slug: "fixture",
@@ -128,6 +130,54 @@ assert.deepEqual(
 );
 assert.deepEqual(caveatsFor(base({ caveats: ["Quota is 10 renders a day.", " "], notes: "Ignored when caveats exist." })), ["Quota is 10 renders a day."]);
 assert.deepEqual(caveatsFor(base({ notes: null })), []);
+
+// ------------------------------------------------ whole-stack install scripts
+// A playbook's stack is one paste. Inactive listings and listings that opt out of generated
+// installs are skipped with a comment, never guessed at; the key checklist follows the route.
+{
+  const remote = base({ slug: "hosted", name: "Hosted", install: { claude_code: null, remote_url: "https://mcp.example.com/mcp", stdio_command: null }, auth: { type: "oauth", env_var: "HOSTED_KEY", key_url: "https://example.com/keys" } });
+  const local = base({ slug: "local", name: "Local", install: { claude_code: null, remote_url: null, stdio_command: "npx -y local-mcp" }, auth: { type: "api_key", env_var: "LOCAL_KEY", key_url: "https://local.example.com/keys — make one" } });
+  const headers = base({ slug: "headers", name: "Headers", install: { claude_code: "claude mcp add --transport http headers https://h.example.com/mcp --header \"Authorization: Bearer YOUR_KEY\"", remote_url: "https://h.example.com/mcp", remote_headers: ["Authorization"], stdio_command: null }, auth: { type: "api_key", env_var: "H_KEY", key_url: null } });
+  const dead = base({ slug: "gone", name: "Gone", status: "dead", install: { claude_code: null, remote_url: null, stdio_command: "npx -y gone-mcp" } });
+  const optOut = base({ slug: "optout", name: "Opt Out", install: { claude_code: null, remote_url: "https://o.example.com/mcp", stdio_command: "npx -y optout-mcp", generate: false } });
+  const prose = base({ slug: "prose", name: "Prose", install: { claude_code: null, remote_url: null, stdio_command: "Clone the repo, then run setup.sh" }, auth: { type: "local-app", env_var: null, key_url: "Needs the app open" } });
+  const stack = [remote, local, headers, dead, optOut, prose];
+  const opts = { title: "Fixture Stack", url: "https://mcp.film/playbooks/fixture/", configFor: siteConfigFor };
+
+  const cc = stackInstallScript(stack, "claude_code", opts);
+  assert.equal(cc.servers, 3);
+  const commands = cc.script.split("\n").filter((l) => l && !l.startsWith("#"));
+  assert.deepEqual(commands, [
+    "claude mcp add --transport http hosted https://mcp.example.com/mcp",
+    "claude mcp add local -- npx -y local-mcp",
+    headers.install.claude_code,
+  ], "one line per installable server, in stack order, from the per-listing generators");
+  assert.match(cc.script, /^# skipped gone: listing is dead/m, "inactive listings are skipped with a comment");
+  assert.match(cc.script, /^# skipped optout: listing opts out of generated installs/m, "install.generate:false is skipped with a comment");
+  assert.match(cc.script, /^# skipped prose: no copy-paste install/m, "prose installs are skipped, not run");
+  assert.ok(!/gone-mcp|optout-mcp|setup\.sh/.test(commands.join("\n")), "no command for a skipped listing");
+  assert.match(cc.script, /^# Local — needs LOCAL_KEY \(https:\/\/local\.example\.com\/keys\)$/m, "env var and the leading key URL ride above the line");
+  assert.match(cc.script, /^# Hosted — OAuth: sign in when the client first connects$/m);
+  assert.deepEqual(cc.skipped.map((x) => x.slug), ["gone", "optout", "prose"]);
+  assert.deepEqual(cc.checklist.map((x) => [x.slug, x.env_var ?? null]), [["hosted", null], ["local", "LOCAL_KEY"], ["headers", "H_KEY"]],
+    "a hosted OAuth route needs no env var; a key route names it");
+
+  const desktop = stackInstallScript(stack, "claude_desktop", opts);
+  assert.deepEqual(Object.keys(desktop.config.mcpServers), ["hosted", "local"], "merged config; a header-only remote cannot be expressed");
+  assert.deepEqual(desktop.config.mcpServers.local, { command: "npx", args: ["-y", "local-mcp"], env: { LOCAL_KEY: "YOUR_KEY_HERE" } });
+  assert.deepEqual(desktop.config.mcpServers.hosted.args, ["-y", "mcp-remote", "https://mcp.example.com/mcp"]);
+  assert.match(desktop.skipped.find((x) => x.slug === "headers").reason, /custom headers \(Authorization\)/);
+  assert.equal(desktop.file, "claude_desktop_config.json");
+  const cursor = stackInstallScript(stack, "cursor", opts);
+  assert.deepEqual(cursor.config.mcpServers.hosted, { url: "https://mcp.example.com/mcp" });
+  assert.equal(cursor.file, ".cursor/mcp.json");
+  assert.deepEqual(STACK_CLIENTS, ["claude_code", "claude_desktop", "cursor"]);
+
+  // The meta-MCP assembles with its own installConfig; on these fixtures it must agree with the site.
+  for (const client of STACK_CLIENTS) {
+    assert.deepEqual(stackInstallScript(stack, client, { ...opts, configFor: undefined }), stackInstallScript(stack, client, opts), `core and site agree for ${client}`);
+  }
+}
 
 // ------------------------------------------------------------ status
 const ctx = { built: "2026-10-26T12:00:00.000Z" };
