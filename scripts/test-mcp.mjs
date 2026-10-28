@@ -98,6 +98,18 @@ const firstPage = await call("search_film_mcps", {});
 assert.equal(firstPage.count, 20);
 assert.equal(firstPage.total, activeServers.length);
 assert.equal((await call("search_film_mcps", { include_inactive: true })).total, registry.servers.length);
+// Evidence (data/health.json, derived at build): compact results carry it, get_film_mcp carries
+// the probe facts, answering_only keeps hosted endpoints that answered the daily check.
+assert.ok(firstPage.servers.every((s) => ["endpoint_answered", "package_resolves", "docs_checked"].includes(s.evidence)));
+const answering = await call("search_film_mcps", { answering_only: true, limit: 100 });
+assert.equal(answering.total, registry.servers.filter((s) => s.evidence === "endpoint_answered" && !s.status).length);
+assert.ok(answering.servers.every((s) => s.evidence === "endpoint_answered" && s.remote));
+const probed = registry.servers.find((s) => s.last_probe);
+if (probed) {
+  const full = await call("get_film_mcp", { slug: probed.slug });
+  assert.deepEqual(full.last_probe, probed.last_probe);
+  assert.ok(["ok", "auth_required", "handshake_only", "error", "unreachable"].includes(full.last_probe.result));
+}
 assert.equal(firstPage.offset, 0);
 assert.equal(firstPage.next_offset, 20);
 assert.equal(Object.hasOwn(firstPage.servers[0], "markdown_url"), false);

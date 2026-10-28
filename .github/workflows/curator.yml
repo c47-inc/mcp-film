@@ -88,8 +88,12 @@ jobs:
             for AI filmmaking. Read AGENTS.md first — it is your operating manual.
 
             Your job this run (sized for a daily cadence — be efficient):
-            1. VERIFY: pick the 3 registry entries with the oldest "verified"
-               dates (data/registry/*.json). For each, confirm via web search /
+            1. VERIFY: pick 3 registry entries: first any slug in
+               data/health.json whose endpoint or package has
+               consecutive_failures >= 3 (the daily probe could not reach it;
+               see "Endpoint health" in AGENTS.md), then the oldest "verified"
+               dates (data/registry/*.json). Never edit data/health.json, and
+               never mark a listing dead on the probe's word alone. For each, confirm via web search /
                fetching the repo or docs that it still exists, is maintained, and
                that install commands and remote URLs are still correct. Update
                fields that drifted, refresh "verified" to today, and rewrite

@@ -31,6 +31,9 @@ before anything is listed.
   - `curator.yml` (daily) re-verifies the stalest entries + discovers new servers
   - `auto-merge.yml` merges agent PRs **only if every changed file is under
     `data/`** and validation passes, then triggers deploy
+  - `health.yml` (daily) runs `scripts/probe-endpoints.mjs` and lands a PR that
+    changes only `data/health.json` (it merges its own PR after `npm test`,
+    because GITHUB_TOKEN PRs do not trigger `auto-merge.yml`)
   - `deploy.yml` builds and publishes to Cloudflare Pages when its token secret
     exists, and to GitHub Pages as the fallback
 
@@ -115,6 +118,27 @@ Optional field semantics:
   whose first bare argument after the package is `setup`, `install`, `init`,
   `configure` or `login` is shown as prose, not as a command. Write the real server
   command, or the prose, in `stdio_command`.
+
+### Endpoint health and evidence levels
+
+`data/health.json` is machine-written by `scripts/probe-endpoints.mjs` (no LLM, no
+secrets) — never hand-edit it. Daily, it sends an anonymous MCP `initialize` to every
+`install.remote_url` and, if that succeeds, `tools/list` (tools are never called), and it
+checks that every npx/uvx package exists on npm/PyPI. Endpoint `result` is `ok`,
+`auth_required` (401/403: alive, needs credentials — healthy), `handshake_only`, `error` or
+`unreachable`; `consecutive_failures` and `last_ok` carry over between runs. The build
+derives each listing's `evidence` (`src/health.mjs`), strongest first:
+
+- `endpoint_answered` — the hosted endpoint answered (`ok`, `auth_required` or
+  `handshake_only`) within the last 7 days.
+- `package_resolves` — its npm/PyPI package existed at a check within the last 7 days
+  (generic bridges such as `mcp-remote` do not count).
+- `docs_checked` — neither; the curator's `verified` date is the only evidence.
+
+The probe **never changes `status`**. Listings with 3+ consecutive failed checks appear
+under `recheck-failing-checks` in the pulse curator agenda; re-verify them against primary
+sources and decide dead/archived/deprecated yourself. A probe result is a lead, not proof:
+an endpoint can move, and a 401 from a gateway is not a working server.
 
 `data/categories.json` optional fields: `intro` (plain paragraphs separated by blank
 lines, rendered above the grid), `start_here` (a slug in that category) and

@@ -130,6 +130,18 @@ check("server summaries carry status", summaryStatuses ? null : "playbook server
 check("remotes carry status", remotesDoc.remotes.every((r) => typeof r.status === "string") ? null : "remote summaries lack status");
 check("mcp-registry never exports the installer wizard", /davinci-resolve-mcp"/.test(read("dist/api/mcp-registry.json")) && read("dist/api/mcp-registry.json").includes('"identifier": "davinci-resolve-mcp"') ? "davinci-resolve-mcp exported as a runnable package" : null);
 
+// 8b. Evidence levels are derived for every listing, and probe facts reach the surfaces that
+//     show them. A probe result never rewrites a status (that is checked in data, not here).
+const EVIDENCE = new Set(["endpoint_answered", "package_resolves", "docs_checked"]);
+check("every server has an evidence level", registry.servers.every((s) => EVIDENCE.has(s.evidence) && "last_probe" in s && "package_check" in s) ? null : "registry.json server without evidence/last_probe/package_check");
+check("evidence levels are defined", registry.evidence_levels?.map((l) => l.id).join() === [...EVIDENCE].join() ? null : "registry.json evidence_levels missing or out of order");
+if (fs.existsSync(path.join(ROOT, "data/health.json"))) {
+  check("remotes headline", /class="probe-headline"/.test(read("dist/remotes/index.html")) ? null : "/remotes/ lacks the endpoint-check headline");
+  const probedServer = registry.servers.find((s) => s.last_probe);
+  check("server page endpoint check", probedServer && read(`dist/mcps/${probedServer.slug}/index.html`).includes("Endpoint check,") ? null : "server page lacks the endpoint-check line");
+  check("pulse agenda carries failing checks", JSON.parse(read("dist/api/pulse.json")).curator_agenda.some((a) => a.id === "recheck-failing-checks") ? null : "pulse.json has no recheck-failing-checks agenda item");
+}
+
 // 9. Sitemap lists HTML pages only; the 404 is unindexed and claims no canonical.
 const sitemap = read("dist/sitemap.xml");
 check("sitemap is HTML only", /<loc>[^<]*\.(md|json|txt)<\/loc>/.test(sitemap) ? "sitemap lists a machine twin" : null);

@@ -1243,3 +1243,16 @@ img.avatar { object-fit: cover; background: var(--paper); }
 .cat-tools .search-wrap { flex: 1 1 260px; }
 .cat-tools .quick-filters { flex-direction: row; flex-wrap: wrap; border: 0; padding: 0; background: none; }
 .cat-tools button.quick-filter { border: 1px solid var(--line-strong); border-radius: 999px; padding: 4px 12px; }
+/* --- endpoint checks (data/health.json, src/pages/_health.mjs) --- */
+.probe-line { margin: 0.35rem 0 0; font-size: 12px; line-height: 1.5; color: var(--ink-2); overflow-wrap: anywhere; }
+.probe-line > span {
+  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green); margin-right: 6px; vertical-align: 1.5px;
+}
+.probe-warn > span { background: var(--amber); }
+.probe-fail > span { background: var(--red); }
+.probe-line code { font-size: 11.5px; color: var(--ink-2); }
+.verify-box .probe-line + .probe-line { margin-top: 0.2rem; }
+.remote-connect .probe-line { margin: 0; }
+.probe-headline { color: var(--ink-2); font-size: 13.5px; line-height: 1.6; max-width: 44rem; margin: 0.7rem 0 0; }
+.probe-headline strong { color: var(--ink); font-weight: 600; }

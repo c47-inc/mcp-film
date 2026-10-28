@@ -1,5 +1,6 @@
 import { PRICING_LABEL, authLabel, avatar, badge, breadcrumbLd, capabilityLink, capabilityMdLink, card, catById, caveatsFor, claudeCodeCmd, cmdLike, cursorConfig, dataAttrs, desktopConfig, esc, isInactive, keyUrlHtml, keyUrlMd, layout, nice, organizationLd, remoteHeaders, remoteNeedsHeaders, serverDescription, sourceLinks, sponsorAttrs, statusBlurb, statusLabel, verificationStatus } from "./_shared.mjs";
 import { playbookSlugs } from "./playbooks.mjs";
+import { evidenceRowsHtml, probeLinesHtml, probeLinesMd } from "./_health.mjs";
 
 // ------------------------------------------------------------ server detail
 export const pairings = (ctx, s) => {
@@ -221,7 +222,9 @@ export const renderServer = (ctx, s) => {
         <div><dt>Age</dt><dd>${esc(verify.age)}</dd></div>
         <div><dt>First listed</dt><dd><time datetime="${s.added}">${nice(s.added)}</time></dd></div>
         <div><dt>Sources</dt><dd>${links.length}</dd></div>
+        ${evidenceRowsHtml(ctx, s)}
       </dl>
+      ${probeLinesHtml(ctx, s)}
       <a href="/pulse/">Open catalog pulse</a>
     </div>
     <div class="side-box">
@@ -336,6 +339,7 @@ export const renderServerMd = (ctx, s) => {
     `- Status: ${verify.label} (${verify.age})`,
     `- Added: ${s.added}`,
     `- Last verified: ${s.verified}`,
+    ...probeLinesMd(ctx, s),
     `- Machine JSON: ${ctx.site.url}/api/mcps/${s.slug}.json`,
     "",
   );
