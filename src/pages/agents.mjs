@@ -61,7 +61,8 @@ export const renderForAgents = (ctx) => {
     <li><strong>Need everything for one capability?</strong> Use <code class="mono">/api/capabilities.json</code>, then open <code class="mono">/api/capabilities/{capability}.json</code>. Repeated high-signal clusters also have <code class="mono">/capabilities/{capability}.md</code>.</li>
     <li><strong>Need hosted tools only?</strong> Use <code class="mono">/api/remotes.json</code>. It is the fastest path for agents running in cloud sandboxes that cannot spawn local apps.</li>
     <li><strong>Need to connect from a specific client?</strong> Use <a href="/clients/">client setup profiles</a>, <code class="mono">/clients.md</code>, or <code class="mono">/api/client-profiles.json</code> to choose Claude Code, Claude Desktop, Cursor, hosted remote, or meta-MCP install shapes.</li>
-    <li><strong>Need a whole production stack?</strong> Use <code class="mono">/api/playbooks.json</code> or the <code class="mono">plan_film_stack</code> tool in the meta-MCP server. Playbooks encode which services belong together, not just which services exist.</li>
+    <li><strong>Need a whole production stack?</strong> Use <code class="mono">/api/playbooks.json</code> or the <code class="mono">plan_film_stack</code> tool in the meta-MCP server. Playbooks encode which services belong together, not just which services exist. Each playbook page and <code class="mono">/playbooks/{id}.md</code> carries a copy-paste install for the whole stack; on the meta-MCP, call <code class="mono">get_film_playbook</code> with <code class="mono">client</code>.</li>
+    <li><strong>Choosing between two servers?</strong> <a href="/compare/">Comparisons</a> (<code class="mono">/compare/{id}.md</code>) put the facts side by side, with a verdict written from the listing data. New to the vocabulary? The <a href="/glossary/">glossary</a> (<code class="mono">/glossary.md</code>) defines the terms.</li>
     <li><strong>Need to route a plain-English brief?</strong> Use <a href="/router/">the brief router</a>, <code class="mono">/router.md</code>, or the <code class="mono">recommend_film_mcps</code> tool. It maps an intent to recommendations, hosted-only options, and Martini handoff guidance.</li>
     <li><strong>Need a ranked shortlist?</strong> Use <code class="mono">/api/recommendations.json</code> or <a href="/recommendations/">agent recommendations</a>. Recommendations route common filmmaking intents to the first servers an agent should connect.</li>
     <li><strong>Need to get a user onto Martini?</strong> Follow the <a href="${esc(MARTINI_RUNBOOK_PATH)}">connect runbook</a> (or call <code class="mono">get_martini_setup</code>): it lists the human steps, both agent tracks, the onboarding states and the quote-first generation contract. ${sponsorLink(ctx, "agents-fast-path", "Martini's own agent page")} is the vendor side of the same story.</li>
@@ -95,6 +96,8 @@ export const renderForAgents = (ctx) => {
     <li><code class="mono">/playbooks.md</code> — concrete production playbooks as markdown</li>
     <li><code class="mono">/recommendations.md</code> — agent recommendations as markdown</li>
     <li><code class="mono">/capabilities/{capability}.md</code> — repeated capability clusters as markdown</li>
+    <li><code class="mono">/compare.md</code> and <code class="mono">/compare/{id}.md</code> — curated head-to-heads as markdown</li>
+    <li><code class="mono">/glossary.md</code> — MCP and AI filmmaking terms as markdown (<code class="mono">DefinedTermSet</code> JSON-LD on <a href="/glossary/">/glossary/</a>)</li>
     <li><code class="mono">/pulse.md</code> — catalog operations pulse as markdown</li>
     <li><code class="mono">/api/stats.json</code> — counts and freshness</li>
     <li><code class="mono">/feed.xml</code> — Atom feed of newly added servers</li>
@@ -202,7 +205,10 @@ Fast paths:
 - Need hosted tools only? Use /api/remotes.json.
 - Need client-specific setup? Use /api/client-profiles.json or /clients.md.
 - Need a whole production stack? Use /api/playbooks.json or the plan_film_stack
-  tool in the meta-MCP server.
+  tool in the meta-MCP server. /playbooks/{id}.md carries a copy-paste install
+  for the whole stack, as does get_film_playbook with client.
+- Choosing between two servers? ${ctx.site.url}/compare.md lists curated
+  head-to-heads; terms are defined at ${ctx.site.url}/glossary.md.
 - Need to route a plain-English brief? Use /router/ for the browser tool,
   /router.md for a markdown guide, or recommend_film_mcps in the meta-MCP
   server.

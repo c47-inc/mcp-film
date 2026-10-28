@@ -1,0 +1,124 @@
+[
+  {
+    "id": "runway-vs-kling",
+    "title": "Runway MCP vs Kling MCP",
+    "summary": "Two official hosted video-generation MCPs on OAuth and credits: Runway's multi-model endpoint against Kling's own narrower server.",
+    "slugs": ["runway", "kling-official"],
+    "verdict": "Both are vendor-run, hosted, OAuth-only and bill the vendor's own credits, so setup is a wash and the choice is about reach. Runway's endpoint routes several model families by plan — Gen-4.5 alongside Seedance, Kling and Veo, per its marketing page — and adds upscale, edit and TTS tools. Kling's server is the direct line to Kling models without a hub in between, but it is narrower: eight tools, no documented model list, closed source. Runway's hosted endpoint is a black box too, so on either one let the client enumerate the tools before you plan a pipeline around them.",
+    "choose_if": {
+      "runway": "You want several model families plus upscale, edit and TTS tools behind one Runway login and one credit balance.",
+      "kling-official": "You want Kling models straight from the vendor on your Kling credits. For effects, virtual try-on or KOLORS, the community kling server still has tools this one lacks."
+    },
+    "reviewed": "2026-10-27"
+  },
+  {
+    "id": "luma-official-vs-community",
+    "title": "Luma MCP: official vs community",
+    "summary": "Luma's own two-tool server against the wider community server — both frozen since April 2025, both on the legacy Dream Machine API.",
+    "slugs": ["luma-official", "luma"],
+    "verdict": "Neither reaches Luma's current models: both speak only the Dream Machine API, and no MCP supports the Agents API (ray-3.2, uni-1). Between the two, the official server is narrower — create_video with first- and last-frame references, create_image with style and character references — and its documented install only writes Claude Desktop's config. The community server has the wider surface (extension, interpolation, upscaling, credit checks) but no licence file. Both have been frozen since April 2025. For ray-3.2 today, both listings point to the fal, Replicate or Runway hub MCPs instead.",
+    "choose_if": {
+      "luma-official": "You want vendor-published, MIT-licensed code and need keyframe, style or character references on Dream Machine.",
+      "luma": "You need extension, interpolation, upscaling or credit checks on Dream Machine and can live with an unlicensed, unmaintained repo run from a clone."
+    },
+    "reviewed": "2026-10-27"
+  },
+  {
+    "id": "elevenlabs-vs-cartesia",
+    "title": "ElevenLabs MCP vs Cartesia MCP",
+    "summary": "Two official hosted voice MCPs over OAuth: ElevenLabs' one-stop audio platform against Cartesia's Sonic voice stack.",
+    "slugs": ["elevenlabs", "cartesia"],
+    "verdict": "Both are first-party, hosted over OAuth, freemium, and both clone voices. ElevenLabs is the broader connection — speech, sound effects, music (including scoring an existing cut with video_to_music) and audio isolation — but its local server is archived, the hosted tool set is still rolling out, and hosted output lands in an ElevenCreative workspace rather than local files. Cartesia is narrower and more specific: voice changing, localizing a voice into other languages, and pronunciation dictionaries that keep invented names consistent, with a maintained local uvx route as well. Cartesia has no audio infill tool, so do not plan ADR patches around it.",
+    "choose_if": {
+      "elevenlabs": "One connection should cover dialogue, sound effects and score, and output landing in an ElevenCreative workspace suits your pipeline.",
+      "cartesia": "You need voice changing, localized versions of a character's voice, or pronunciations held consistent across lines and languages."
+    },
+    "reviewed": "2026-10-27"
+  },
+  {
+    "id": "fal-vs-replicate",
+    "title": "fal MCP vs Replicate MCP",
+    "summary": "Two official hosted model hubs: fal's stateless, key-in-header endpoint against Replicate's OAuth remote.",
+    "slugs": ["fal", "replicate"],
+    "verdict": "Both put many video, image and audio models behind one connection. fal is hosted and stateless with eleven published tools — model search, schemas, pricing, runs, async jobs, uploads — and for Claude the documented route is Claude Code with your FAL_KEY in an Authorization header; every model call bills at fal's per-run pricing. Replicate's remote runs an OAuth flow and stores the token for you, but its tool names are generated from the HTTP API rather than published, and the npm package's latest tag is a year-old build, so prefer the remote. fal's listing names audio models (Stable Audio, CassetteAI, Beatoven); Replicate's points to upscalers such as Real-ESRGAN.",
+    "choose_if": {
+      "fal": "Your client can send an Authorization header (Claude Code, Cursor) and you want pricing and schema lookups before you spend, or audio models alongside video.",
+      "replicate": "You want browser OAuth instead of pasting a key, or the model you need lives on Replicate, and you can work from generated tool names."
+    },
+    "reviewed": "2026-10-27"
+  },
+  {
+    "id": "topaz-vs-magnific-vs-avclabs",
+    "title": "Topaz vs Magnific vs AVCLabs: upscaling MCPs",
+    "summary": "Three official upscaling MCPs: Topaz for stills, AVCLabs for short video clips, Magnific as a hosted generate-and-polish bench.",
+    "slugs": ["topaz", "magnific", "avclabs"],
+    "verdict": "They split by medium. Topaz is image-only over MCP — one image-enhance tool across eight Topaz models, local stdio, dormant since February 2026 — and for Topaz video upscaling its listing points to the Topaz models on fal. AVCLabs is the one built for video, but its ceiling is 1080p/2K and the entry plan buys about 100 seconds a month, so it is a spot-fix tool. Magnific is hosted over OAuth and does far more than upscale — generation, references, TTS, 3D — which is why its listing advises explicit prompts when you want faithful enhancement rather than creative reinterpretation.",
+    "choose_if": {
+      "topaz": "You are enhancing stills, plates or frames from a filesystem-capable client and want Topaz models specifically.",
+      "magnific": "You work in a client with no local install and want upscaling next to generation and creation history on one credit balance.",
+      "avclabs": "You need to lift a short clip, or colorize, denoise or mask a still, in the cloud without a local GPU."
+    },
+    "reviewed": "2026-10-27"
+  },
+  {
+    "id": "davinci-resolve-mcp-options",
+    "title": "DaVinci Resolve MCP: Blackmagic's built-in server vs the community bridges",
+    "summary": "Blackmagic's server built into Resolve Studio 21.1 against two community bridges, both of which have reached the free edition.",
+    "slugs": ["davinci-resolve-studio", "davinci-resolve", "davinci-resolve-ai-bridge"],
+    "verdict": "Your Resolve edition decides most of this. On Studio 21.1, Blackmagic's built-in server is set up from inside the app and its lifecycle follows Resolve releases, but Blackmagic publishes no setup page, endpoint or tool list, so verify it in your own copy. The community davinci-resolve server is the most actively maintained NLE MCP in the directory, covers Resolve 18.5 and later, and reaches the free edition through an in-app bridge on 21.0.x. The AI Bridge is the lighter Free-first alternative with some forty-five tools, live-tested only on macOS with Resolve Free 21.0.3. Reports that 21.1 moved Python scripting out of the free edition would affect both free-edition paths, so check your build. None of the three has a one-line install.",
+    "choose_if": {
+      "davinci-resolve-studio": "You already run Resolve Studio 21.1 or later and want the first-party path, accepting that its tools are documented only in the reference manual.",
+      "davinci-resolve": "You want the widest documented tool coverage, on macOS, Windows or Linux, or you are on a Resolve build older than 21.1.",
+      "davinci-resolve-ai-bridge": "You are on the free edition on macOS and want a smaller toolset that reviews edits on a duplicate timeline."
+    },
+    "reviewed": "2026-10-27"
+  },
+  {
+    "id": "blender-vs-blender-lab",
+    "title": "Blender MCP vs Blender Lab MCP",
+    "summary": "The community Blender server with the install base against the Blender Foundation's experimental first-party one.",
+    "slugs": ["blender", "blender-lab-mcp"],
+    "verdict": "The community server is the pragmatic default: one uvx command, Blender 3.0 and later, and asset integrations (Poly Haven, Sketchfab, Poly Pizza, Hyper3D Rodin, Hunyuan3D) for building previz sets by prompt. The Blender Lab server is official but experimental, needs Blender 5.1 or later, installs in three manual parts, and leans toward interrogating an existing file — datablock inventories, missing-file and linked-library reports, search over the Python API and manual. Both run arbitrary Python inside Blender; Blender's own docs recommend running theirs in a VM or on a machine with no sensitive data.",
+    "choose_if": {
+      "blender": "You are on Blender 3.x or 4.x, want a one-command install, or need to source and generate assets for a scene. Its anonymous telemetry is on by default.",
+      "blender-lab-mcp": "You are on Blender 5.1 or later, want vendor-maintained code, and need to audit or repair a production .blend rather than build one."
+    },
+    "reviewed": "2026-10-27"
+  },
+  {
+    "id": "unreal-epic-vs-community",
+    "title": "Unreal MCP: Epic's server vs Unreal Engine MCP (Flopperam / Aura)",
+    "summary": "Epic's in-editor server for UE 5.8 against the third-party server that covers UE 5.5 to 5.7 and offers a hosted endpoint.",
+    "slugs": ["unreal-mcp-epic", "unreal-engine"],
+    "verdict": "Engine version decides it. Epic's server ships inside UE 5.8 as an Experimental plugin, binds to loopback only with no authentication layer, and discovers toolsets at runtime through three meta-tools, so studios can register their own. The Flopperam server covers UE 5.5 through 5.7 and has a hosted, key-gated endpoint with 50+ tools including Blueprint authoring, plus a local mode that needs its C++ plugin compiled. Its open-source half has had no code commit since June 2026, and the company now belongs to Aura, whose product page does not mention MCP.",
+    "choose_if": {
+      "unreal-mcp-epic": "You are on UE 5.8 and want the server that moves with the engine, on one machine.",
+      "unreal-engine": "You are on UE 5.5 to 5.7, need a hosted endpoint, or need Blueprint authoring depth, and accept a parked open-source repo."
+    },
+    "reviewed": "2026-10-27"
+  },
+  {
+    "id": "frameio-official-vs-community",
+    "title": "Frame.io MCP: Adobe's official server vs the community server",
+    "summary": "Adobe's hosted Frame.io server, in public beta, against the self-credentialed community stdio server.",
+    "slugs": ["frameio-official", "frameio"],
+    "verdict": "Adobe's hosted server supersedes the community one for every account except Frame.io Legacy: a documented endpoint with Adobe ID OAuth, in public beta since 7 October 2026. Its write tools are real — delete_resources deletes permanently — so approve each write in front of a client's review project. The community server is a working snapshot rather than a project: one PyPI release, Python 3.13 or later, and your own Adobe OAuth credential. It is built on the V4 API, so it has not been shown to work for Legacy accounts either.",
+    "choose_if": {
+      "frameio-official": "You are on any Frame.io account except Legacy and want a hosted endpoint with Adobe ID sign-in.",
+      "frameio": "You specifically need a self-hosted, self-credentialed stdio server and accept that it is effectively unmaintained."
+    },
+    "reviewed": "2026-10-27"
+  },
+  {
+    "id": "comfy-mcp-vs-comfyui",
+    "title": "Comfy MCP (official) vs ComfyUI MCP (community)",
+    "summary": "Comfy Org's own server, local or on Comfy Cloud, against the older community server with a Docker install and bundled workflows.",
+    "slugs": ["comfy-mcp", "comfyui"],
+    "verdict": "Comfy Org's server supersedes the community one. It drives a local ComfyUI through comfy-cli or connects to Comfy Cloud (OAuth in Claude Code), reads your installed models and GPU so an agent can tell you a model will not fit before it downloads, and the repo is busy — though PyPI still serves August's 0.10.0. Read its licence first: AGPL-3.0-or-later or Commercial. The community server is MIT, installs as one Docker command and bundles 70+ example workflows, but has not moved since January 2026, so newer node packs may outrun it.",
+    "choose_if": {
+      "comfy-mcp": "You want vendor maintenance, hardware-aware model checks, or a hosted option for machines without a GPU (running generations there needs a Comfy Cloud subscription).",
+      "comfyui": "You want an MIT-licensed Docker install against your own ComfyUI, or a head start from its bundled workflows."
+    },
+    "reviewed": "2026-10-27"
+  }
+]

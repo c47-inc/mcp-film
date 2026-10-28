@@ -14,3 +14,6 @@ export * from "./pages/agents.mjs";
 export * from "./pages/llms.mjs";
 export * from "./pages/pulse.mjs";
 export * from "./pages/misc.mjs";
+export * from "./pages/compare.mjs";
+export * from "./pages/glossary.mjs";
+export * from "./pages/stack-script.mjs";

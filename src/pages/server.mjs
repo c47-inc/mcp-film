@@ -1,5 +1,6 @@
 import { PRICING_LABEL, authLabel, avatar, badge, breadcrumbLd, capabilityLink, capabilityMdLink, card, catById, caveatsFor, claudeCodeCmd, cmdLike, cursorConfig, dataAttrs, desktopConfig, esc, isInactive, keyUrlHtml, keyUrlMd, layout, nice, organizationLd, remoteHeaders, remoteNeedsHeaders, serverDescription, sourceLinks, sponsorAttrs, statusBlurb, statusLabel, verificationStatus } from "./_shared.mjs";
 import { playbookSlugs } from "./playbooks.mjs";
+import { comparisonsFor } from "./compare.mjs";
 
 // ------------------------------------------------------------ server detail
 export const pairings = (ctx, s) => {
@@ -132,6 +133,7 @@ export const renderServer = (ctx, s) => {
   const pairs = pairings(ctx, s);
   const alts = siblings(ctx, s);
   const uses = usedIn(ctx, s);
+  const compared = comparisonsFor(ctx, s.slug);
   const verify = verificationStatus(ctx, s);
   const links = sourceLinks(ctx, s);
   const caveats = caveatsFor(s);
@@ -204,6 +206,9 @@ export const renderServer = (ctx, s) => {
 
     ${alts.length ? `<h2 id="also-in">Also in ${esc(cat?.name ?? s.category)}</h2>
     <div class="grid grid-pairs" data-track-section="server-also-in">${alts.map((a) => card(ctx, a)).join("")}</div>` : ""}
+
+    ${compared.length ? `<h2 id="compared">Compared with</h2>
+    <p class="compared-links" data-track-section="server-compared">${compared.map((c) => `<a href="/compare/${esc(c.id)}/">${esc(c.title)}</a>`).join(" · ")}</p>` : ""}
 
     ${uses.length ? `<h2 id="used-in">Used in</h2>
     <p>${uses.map(([kind, u]) => `<a href="/${kind}/${esc(u.id)}/">${esc(u.title)}</a>`).join(" · ")}</p>` : ""}
@@ -328,6 +333,8 @@ export const renderServerMd = (ctx, s) => {
   if (s.notes) lines.push(`## Field notes (verified ${s.verified})`, "", s.notes, "");
   const alts = siblings(ctx, s);
   if (alts.length) lines.push("## Alternatives", "", ...alts.map((a) => `- [${a.name}](${ctx.site.url}/mcps/${a.slug}.md) — ${a.tagline}`), "");
+  const compared = comparisonsFor(ctx, s.slug);
+  if (compared.length) lines.push("## Compared with", "", ...compared.map((c) => `- [${c.title}](${ctx.site.url}/compare/${c.id}.md)`), "");
   const uses = usedIn(ctx, s);
   if (uses.length) lines.push("## Used in", "", ...uses.map(([kind, u]) => `- [${u.title}](${ctx.site.url}/${kind}/${u.id}.md)`), "");
   lines.push(
