@@ -80,7 +80,7 @@ export const renderLlmsFull = (ctx) => {
     "---",
     "",
   ].join("\n");
-  const body = ctx.servers.map((s) => renderServerMd(ctx, s)).join("\n---\n\n");
+  const body = ctx.servers.map((s) => renderServerMd(ctx, s, { faq: false })).join("\n---\n\n");
   return head + body + "\n---\n\n" + renderStackMd(ctx) + "\n---\n\n" + renderRouterMd(ctx) + "\n---\n\n" + renderRecommendationsMd(ctx);
 };
 
