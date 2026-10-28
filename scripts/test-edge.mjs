@@ -145,6 +145,18 @@ assert.equal(runbookMd.status, 200);
 assert.equal(runbookMd.headers.get("link"), "<https://mcp.film/martini/connect/>; rel=\"canonical\"");
 console.log("E4: martini-connect placements and runbook surface");
 
+// /changes/: page, markdown twin and feed are their own surfaces; the twin is an agent
+// surface with a canonical. README badges are static assets the worker passes through.
+assert.equal(routePropertiesFor("/changes/").surface, "changes-page");
+assert.equal(routePropertiesFor("/changes.md").surface, "changes-markdown");
+assert.equal(routePropertiesFor("/changes.xml").surface, "changes-feed");
+assert.equal(classifyTraffic("/changes.md", "Mozilla/5.0", new Headers()).kind, "agent");
+assert.equal(markdownTwinPath("/changes/"), "/changes.md");
+assert.equal(canonicalPageFor("/changes.md"), "/changes/");
+assert.equal(markdownTwinPath("/badge/runway.svg"), null);
+assert.equal(canonicalPageFor("/badge/runway.svg"), null);
+console.log("E5: changes surfaces and badge pass-through");
+
 // /v0.1/servers?search= filters by name/description substring, case-insensitively, before paging.
 const builtRegistry = JSON.parse(read("dist/api/mcp-registry.json"));
 const registryEnv = { ASSETS: { fetch: async () => Response.json(builtRegistry) } };

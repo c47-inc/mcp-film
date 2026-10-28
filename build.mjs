@@ -13,6 +13,7 @@ import * as T from "./src/templates.mjs";
 import { renderMartiniConnect, renderMartiniConnectMd } from "./src/pages/martini.mjs";
 import { martiniHandoff, MARTINI_CLI } from "./packages/mcp-server/recommend-score.mjs";
 import { ANSWERED, EVIDENCE_LEVELS, FAILURE_AGENDA_THRESHOLD, deriveEvidence, failingChecks, packageRef, validateHealth } from "./src/health.mjs";
+import { RESERVED_BADGE_SLUGS, renderBadgeSvg } from "./src/badge.mjs";
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const DATA = path.join(ROOT, "data");
@@ -90,6 +91,7 @@ for (const s of servers) {
   if (s.slug) {
     if (!/^[a-z0-9][a-z0-9-]*$/.test(s.slug)) errors.push(`${where}: bad slug format`);
     if (slugs.has(s.slug)) errors.push(`${where}: duplicate slug`);
+    if (RESERVED_BADGE_SLUGS.has(s.slug)) errors.push(`${where}: slug "${s.slug}" is reserved (/badge/${s.slug}.svg is the generic badge)`);
     slugs.add(s.slug);
   }
   if (s.category && !catIds.has(s.category)) errors.push(`${where}: unknown category "${s.category}"`);
@@ -595,6 +597,8 @@ ctx.pulse = {
     { label: "playbooks.md", url: `${site.url}/playbooks.md`, kind: "stack-recipes" },
     { label: "router.md", url: `${site.url}/router.md`, kind: "brief-router" },
     { label: "feed.xml", url: `${site.url}/feed.xml`, kind: "new-additions-feed" },
+    { label: "changes.md", url: `${site.url}/changes.md`, kind: "changelog-markdown" },
+    { label: "changes.xml", url: `${site.url}/changes.xml`, kind: "changelog-feed" },
     { label: "server-card", url: `${site.url}/.well-known/mcp/server-card`, kind: "mcp-discovery" },
     { label: "hosted MCP endpoint", url: `${site.url}/mcp`, kind: "hosted-mcp" },
     { label: "MCP Registry API", url: `${site.url}/v0.1/servers`, kind: "mcp-registry-api" },
@@ -710,6 +714,14 @@ for (const s of servers) {
   write(`mcps/${s.slug}.md`, T.renderServerMd(ctx, s));
   write(`api/mcps/${s.slug}.json`, JSON.stringify(withEvidence(s), null, 2));
 }
+
+// "Listed on mcp.film" badges (one per listing, inactive ones state their status) and the
+// data-derived changelog.
+for (const s of servers) write(`badge/${s.slug}.svg`, renderBadgeSvg(s));
+write("badge/listed.svg", renderBadgeSvg());
+write("changes/index.html", T.renderChanges(ctx));
+write("changes.md", T.renderChangesMd(ctx));
+write("changes.xml", T.renderChangesFeed(ctx));
 
 // agent-readable surfaces
 write("llms.txt", T.renderLlmsTxt(ctx));
@@ -857,6 +869,17 @@ write("_headers", `# Cloudflare Pages response headers for extensionless machine
 
 /.well-known/mcp-registry-auth
   Content-Type: text/plain; charset=utf-8
+
+# README badges are embedded cross-site (GitHub proxies them through camo): cache for hours,
+# not forever, so a re-verified month or a status change shows up within the day.
+/badge/*
+  Content-Type: image/svg+xml; charset=utf-8
+  Cache-Control: public, max-age=14400, stale-while-revalidate=86400
+  Access-Control-Allow-Origin: *
+  Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'
+
+/changes.xml
+  Content-Type: application/atom+xml; charset=utf-8
 `);
 
 // Cloudflare Pages glue. When deployed to Cloudflare Pages, _worker.js runs in

@@ -25,7 +25,7 @@ export const renderPulse = (ctx) => {
 <section class="page-head">
   <p class="crumbs"><a href="/">mcp.film</a> / <span>Pulse</span></p>
   <h1>Catalog pulse</h1>
-  <p class="hero-sub">The directory's current operating picture: newest additions, verification queue, category coverage, and machine surfaces. <span class="mono">(machine version: <a href="/pulse.md">/pulse.md</a> · <a href="/api/pulse.json">/api/pulse.json</a>)</span></p>
+  <p class="hero-sub">The directory's current operating picture: newest additions, verification queue, category coverage, and machine surfaces. Looking for what changed? See <a href="/changes/">Changes</a>. <span class="mono">(machine version: <a href="/pulse.md">/pulse.md</a> · <a href="/api/pulse.json">/api/pulse.json</a>)</span></p>
 </section>
 
 <section class="pulse-grid" aria-label="Catalog summary">
