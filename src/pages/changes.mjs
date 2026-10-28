@@ -64,6 +64,17 @@ const eventHtml = (ctx, e) => {
   return `<li class="change change-${e.kind}"><span class="change-kind${kindClass}">${esc(kindLabel(e))}</span><span class="change-body"><a href="/mcps/${s.slug}/">${esc(s.name)}</a>${e.kind === "added" ? statusBadge(s) : ""}<span class="change-note">${note}</span></span></li>`;
 };
 
+// New listings and status changes get a row each; a day's re-verifications share one row,
+// so a busy curator day stays a line or two instead of a screenful on a phone.
+const dayItemsHtml = (ctx, events) => {
+  const rows = events.filter((e) => e.kind !== "verified").map((e) => eventHtml(ctx, e));
+  const verified = events.filter((e) => e.kind === "verified");
+  if (verified.length) {
+    rows.push(`<li class="change change-verified"><span class="change-kind">${esc(KIND_LABEL.verified)}</span><span class="change-body change-inline">${verified.map((e) => `<a href="/mcps/${e.server.slug}/">${esc(e.server.name)}</a>`).join(", ")}</span></li>`);
+  }
+  return rows.join("\n    ");
+};
+
 export const renderChanges = (ctx) => {
   const { site } = ctx;
   const log = changeLog(ctx);
@@ -91,7 +102,7 @@ export const renderChanges = (ctx) => {
   </ul>` : ""}
   ${log.byDay.map((d) => `<h2 id="${dayId(d.date)}"><time datetime="${d.date}">${nice(d.date)}</time> <span class="changes-count">${d.events.length}</span></h2>
   <ul class="changes-list">
-    ${d.events.map((e) => eventHtml(ctx, e)).join("\n    ")}
+    ${dayItemsHtml(ctx, d.events)}
   </ul>`).join("\n  ")}
   <p class="changes-method">Older than ${nice(log.since)}: every listing's dates are in <a href="/api/registry.json">registry.json</a>.</p>
 </section>`;

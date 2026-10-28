@@ -52,7 +52,7 @@
     });
   });
   const search = document.getElementById("search");
-  const cards = [...document.querySelectorAll(".card[data-search]")];
+  const cards = [...document.querySelectorAll(".card[data-search], .remote-row[data-search]")];
   const sections = [...document.querySelectorAll("[data-cat-section]")];
   const noResults = document.getElementById("no-results");
   const filters = [...document.querySelectorAll(".chip-filter")];

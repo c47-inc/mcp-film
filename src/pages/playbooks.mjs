@@ -88,6 +88,17 @@ const playbookArticle = (ctx, p, { standalone = false } = {}) => {
   </article>`;
 };
 
+// The index is a chooser: what each playbook is for and which servers it starts with.
+// Setup order, auth gates, the install block and failure modes live on each playbook's page.
+const playbookSummaryCard = (ctx, p) => `
+  <article class="playbook playbook-summary" id="${esc(p.id)}" data-playbook="${esc(p.id)}" data-track-section="playbook:${esc(p.id)}">
+    <p class="label">${esc(p.best_for)}</p>
+    <h2><a href="/playbooks/${esc(p.id)}/">${esc(p.title)}</a></h2>
+    <p>${esc(p.summary)}</p>
+    <p class="playbook-links" data-playbook-section="primary"><span class="label">Starts with</span> ${serverLinks(ctx, p.primary_slugs)}</p>
+    <p class="summary-more"><a href="/playbooks/${esc(p.id)}/">Setup order, auth, install block and failure modes →</a></p>
+  </article>`;
+
 export const renderPlaybooks = (ctx) => {
   const { site, playbooks } = ctx;
   const body = `
@@ -98,7 +109,7 @@ export const renderPlaybooks = (ctx) => {
 </section>
 
 <section class="server-main playbook-doc">
-  ${playbooks.map((p) => playbookArticle(ctx, p)).join("")}
+  ${playbooks.map((p) => playbookSummaryCard(ctx, p)).join("")}
 </section>`;
 
   return layout(ctx, {

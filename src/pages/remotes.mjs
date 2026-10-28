@@ -13,7 +13,7 @@ export const renderRemotes = (ctx) => {
     const cc = claudeCodeCmd(s);
     const headers = remoteHeaders(s);
     return `
-  <article class="remote-row">
+  <article class="remote-row" data-search="${esc([s.slug, s.name, s.vendor, s.tagline, cat?.name ?? s.category, s.auth?.type ?? "", ...(s.capabilities ?? [])].join(" ").toLowerCase())}" data-official="${s.official ? "true" : "false"}" data-remote="true">
     <div class="remote-ident">
       ${avatar(ctx, s, 36)}
       <div>
@@ -53,6 +53,16 @@ export const renderRemotes = (ctx) => {
 
 <section class="remote-doc">
   <div class="agent-hint"><strong>Agent path:</strong> use <a href="/api/remotes.json">/api/remotes.json</a> for structured endpoint data, or <a href="/remotes.md">/remotes.md</a> for a clean markdown copy. The full registry remains at <a href="/api/registry.json">/api/registry.json</a>.</div>
+  <div class="cat-tools">
+    <div class="search-wrap">
+      <input id="search" type="search" placeholder="Filter ${remotes.length} hosted remotes" autocomplete="off" aria-label="Filter hosted remotes">
+      <kbd>/</kbd>
+    </div>
+    <div class="quick-filters" aria-label="Quick filters">
+      <button class="quick-filter" data-quick-filter="official" aria-pressed="false">Official <span class="count">${official}</span></button>
+    </div>
+  </div>
+  <p class="no-results" id="no-results" hidden><span id="no-results-msg">No hosted remote matches that.</span> <button type="button" class="btn" id="clear-filters" hidden>Clear filters</button> <a href="/submit/" id="no-results-submit">Know a hosted MCP we're missing? Submit it.</a></p>
   <div class="remote-list" aria-label="Hosted remote MCP servers">
     ${rows}
   </div>

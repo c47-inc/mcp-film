@@ -38,7 +38,7 @@ export const renderPulse = (ctx) => {
 <section class="server-main agents-doc pulse-doc">
   <h2>Demand signals</h2>
   <p>These are the telemetry loops the pulse and curator should treat as product input. They explain what to query in PostHog, what action to take, and how to keep Martini useful without making the directory less trustworthy.</p>
-  <table class="pulse-table">
+  <table class="pulse-table" tabindex="0">
     <thead><tr><th>Signal</th><th>Events</th><th>Action</th><th>Martini read</th></tr></thead>
     <tbody>
       ${pulse.demand_signals.map((s) => `<tr><td>${esc(s.question)}</td><td>${eventTags(s.events)}</td><td>${esc(s.action)}</td><td>${esc(s.martini_use)}</td></tr>`).join("")}
@@ -46,7 +46,7 @@ export const renderPulse = (ctx) => {
   </table>
 
   <h2>Curator agenda</h2>
-  <table class="pulse-table">
+  <table class="pulse-table" tabindex="0">
     <thead><tr><th>Priority</th><th>Evidence</th><th>Action</th></tr></thead>
     <tbody>
       ${pulse.curator_agenda.map((item) => `<tr><td><code class="mono">${esc(item.priority)}</code><br>${esc(item.id)}</td><td>${pulseEvidenceHtml(item) || "None right now."}</td><td>${esc(item.action)}</td></tr>`).join("")}
@@ -59,7 +59,7 @@ export const renderPulse = (ctx) => {
   </ul>
 
   <h2>Newest additions</h2>
-  <table class="pulse-table">
+  <table class="pulse-table" tabindex="0">
     <thead><tr><th>Server</th><th>Category</th><th>Added</th><th>Type</th></tr></thead>
     <tbody>
       ${pulse.newest.slice(0, 8).map((s) => `<tr><td>${pulseLink(ctx, s)}</td><td>${esc(s.category)}</td><td>${esc(s.added)}</td><td>${s.official ? "official" : "community"}${s.remote ? " · remote" : ""}</td></tr>`).join("")}
@@ -68,7 +68,7 @@ export const renderPulse = (ctx) => {
 
   <h2>Verification queue</h2>
   <p>These are the oldest verified entries. The daily curator should start here unless a breaking change or submission is more urgent.</p>
-  <table class="pulse-table">
+  <table class="pulse-table" tabindex="0">
     <thead><tr><th>Server</th><th>Verified</th><th>Age</th><th>Category</th></tr></thead>
     <tbody>
       ${pulse.verification_queue.slice(0, 10).map((s) => `<tr><td>${pulseLink(ctx, s)}</td><td>${esc(s.verified)}</td><td>${s.verification_age_days}d</td><td>${esc(s.category)}</td></tr>`).join("")}
@@ -76,7 +76,7 @@ export const renderPulse = (ctx) => {
   </table>
 
   <h2>Coverage by category</h2>
-  <table class="pulse-table">
+  <table class="pulse-table" tabindex="0">
     <thead><tr><th>Category</th><th>Servers</th><th>Official</th><th>Remote</th></tr></thead>
     <tbody>
       ${pulse.categories.map((c) => `<tr><td><a href="/categories/${c.id}/">${esc(c.name)}</a></td><td>${c.servers}</td><td>${c.official}</td><td>${c.remote}</td></tr>`).join("")}

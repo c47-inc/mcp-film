@@ -30,6 +30,19 @@ const recommendationArticle = (ctx, r, { standalone = false } = {}) => {
   </article>`;
 };
 
+// The index is a chooser; roles, reasons, fallbacks and any handoff are on each route's page.
+const recommendationSummaryCard = (ctx, r) => {
+  const picks = r.primary.map((pick) => [pick, activeServerForSlug(ctx, pick.slug)]).filter(([, s]) => s);
+  return `
+  <article class="recommendation recommendation-summary" id="${esc(r.id)}" data-track-section="recommendation:${esc(r.id)}">
+    <p class="label">${esc(r.best_for)}</p>
+    <h2><a href="/recommendations/${esc(r.id)}/">${esc(r.title)}</a></h2>
+    <p>${esc(r.summary)}</p>
+    <p class="playbook-links"><span class="label">First connections</span> ${picks.map(([pick, s]) => `<a href="/mcps/${s.slug}/">${esc(s.name)}</a> <span class="pick-role">(${esc(pick.role)})</span>`).join(" · ")}</p>
+    <p class="summary-more"><a href="/recommendations/${esc(r.id)}/">Why these, fallbacks and the matching playbook →</a></p>
+  </article>`;
+};
+
 export const renderRecommendations = (ctx) => {
   const { site, recommendations } = ctx;
   const body = `
@@ -42,12 +55,12 @@ export const renderRecommendations = (ctx) => {
 <section class="pulse-grid" aria-label="Recommendation summary">
   <div><span>${recommendations.length}</span><p>intents</p></div>
   <div><span>${new Set(recommendations.flatMap((r) => r.primary.map((p) => p.slug))).size}</span><p>primary servers</p></div>
-  <div><span>${recommendations.filter((r) => r.primary.some((p) => p.slug === "martini")).length}</span><p>Martini routes</p></div>
+  <div><span>${new Set(recommendations.flatMap((r) => r.fallback_slugs ?? [])).size}</span><p>fallback servers</p></div>
   <div><span>${new Set(recommendations.flatMap((r) => r.tags)).size}</span><p>intent tags</p></div>
 </section>
 
 <section class="server-main playbook-doc recommendations-doc">
-  ${recommendations.map((r) => recommendationArticle(ctx, r)).join("")}
+  ${recommendations.map((r) => recommendationSummaryCard(ctx, r)).join("")}
 </section>`;
 
   return layout(ctx, {
