@@ -28,12 +28,12 @@
     "title": "ElevenLabs MCP vs Cartesia MCP",
     "summary": "Two official hosted voice MCPs over OAuth: ElevenLabs' one-stop audio platform against Cartesia's Sonic voice stack.",
     "slugs": ["elevenlabs", "cartesia"],
-    "verdict": "Both are first-party, hosted over OAuth, freemium, and both clone voices. ElevenLabs is the broader connection — speech, sound effects, music (including scoring an existing cut with video_to_music) and audio isolation — but its local server is archived, the hosted tool set is still rolling out, and hosted output lands in an ElevenCreative workspace rather than local files. Cartesia is narrower and more specific: voice changing, localizing a voice into other languages, and pronunciation dictionaries that keep invented names consistent, with a maintained local uvx route as well. Cartesia has no audio infill tool, so do not plan ADR patches around it.",
+    "verdict": "Both are first-party, hosted over OAuth, freemium, and both clone voices. ElevenLabs is the broader connection — speech, sound effects, music (including scoring an existing cut with video_to_music) and audio isolation — but its local server is archived, the hosted creative tools are announced as live but still not listed by name, and hosted output lands in an ElevenCreative workspace rather than local files. Cartesia is narrower and more specific: voice changing, localizing a voice into other languages, and pronunciation dictionaries that keep invented names consistent, with a maintained local uvx route as well. Cartesia has no audio infill tool, so do not plan ADR patches around it.",
     "choose_if": {
       "elevenlabs": "One connection should cover dialogue, sound effects and score, and output landing in an ElevenCreative workspace suits your pipeline.",
       "cartesia": "You need voice changing, localized versions of a character's voice, or pronunciations held consistent across lines and languages."
     },
-    "reviewed": "2026-10-27"
+    "reviewed": "2026-10-29"
   },
   {
     "id": "fal-vs-replicate",
