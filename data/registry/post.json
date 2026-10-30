@@ -8,16 +8,47 @@
     "featured": false,
     "tagline": "Hosted video-understanding MCP: transcripts, shots, visual scenes, soundbites, and clips.",
     "description": "Valossa's official remote MCP hands an agent a watched-and-indexed copy of your footage: speech transcripts, shot and visual-scene breakdowns, overviews, summaries and highlights, natural-language questions about what is on screen, and clip export that comes back as a download URL. For an assistant editor it is the logging pass — find the take, find the soundbite, pull the selects — run against material Valossa has already analysed instead of against raw files. Uploads are a two-step prepare-then-commit handshake, and get_quota_status exists because everything interesting here costs quota.",
-    "capabilities": ["video-understanding", "transcription", "shot-detection", "scene-detection", "summarization", "highlights", "soundbite-selection", "clip-export", "video-qa"],
-    "tools_sample": ["list_all_videos", "get_video_overview", "get_video_transcript", "get_video_shots", "get_video_visual_scenes", "ask_question", "get_video_summary", "get_video_highlights", "get_best_soundbites", "export_clip", "get_clip_download_url", "get_quota_status"],
+    "capabilities": [
+      "video-understanding",
+      "transcription",
+      "shot-detection",
+      "scene-detection",
+      "summarization",
+      "highlights",
+      "soundbite-selection",
+      "clip-export",
+      "video-qa"
+    ],
+    "tools_sample": [
+      "list_all_videos",
+      "get_video_overview",
+      "get_video_transcript",
+      "get_video_shots",
+      "get_video_visual_scenes",
+      "ask_question",
+      "get_video_summary",
+      "get_video_highlights",
+      "get_best_soundbites",
+      "export_clip",
+      "get_clip_download_url",
+      "get_quota_status"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http valossa https://mcp-assistant.valossa.com/mcp",
       "remote_url": "https://mcp-assistant.valossa.com/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser OAuth against a Valossa Assistant account created at https://assistant.valossa.com/signup — no API key" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Browser OAuth against a Valossa Assistant account created at https://assistant.valossa.com/signup — no API key"
+    },
     "pricing": "paid",
-    "links": { "repo": null, "docs": "https://mcp-assistant.valossa.com/documentation", "site": "https://valossa.com/video-ai-assistant/" },
+    "links": {
+      "repo": null,
+      "docs": "https://mcp-assistant.valossa.com/documentation",
+      "site": "https://valossa.com/video-ai-assistant/"
+    },
     "added": "2026-08-25",
     "verified": "2026-10-07",
     "caveats": [
@@ -37,16 +68,47 @@
     "featured": false,
     "tagline": "Hosted OAuth MCP that builds and edits a real, re-openable timeline by conversation.",
     "description": "Clueso's official remote MCP hands an agent a project-clip-element timeline it can actually restructure: create a project, add and split clips, place and reorder overlay elements, batch a voiceover, sync narration to picture, then estimate duration and export. The reason it is listed here is the round-trip — every result stays an editable Clueso project a human can open and finish, rather than a rendered MP4 an agent cannot revise. It also records screen captures and writes companion articles from the same source.",
-    "capabilities": ["timeline-editing", "clip-assembly", "voiceover", "audio-sync", "screen-recording", "brand-templating", "localization", "programmatic-render"],
-    "tools_sample": ["create_project", "add_clips", "split_clip", "update_clips", "add_elements", "reorder_elements", "generate_media", "voiceover_batch", "set_voice", "auto_sync", "record_screen", "estimate_duration", "export_project"],
+    "capabilities": [
+      "timeline-editing",
+      "clip-assembly",
+      "voiceover",
+      "audio-sync",
+      "screen-recording",
+      "brand-templating",
+      "localization",
+      "programmatic-render"
+    ],
+    "tools_sample": [
+      "create_project",
+      "add_clips",
+      "split_clip",
+      "update_clips",
+      "add_elements",
+      "reorder_elements",
+      "generate_media",
+      "voiceover_batch",
+      "set_voice",
+      "auto_sync",
+      "record_screen",
+      "estimate_duration",
+      "export_project"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http Clueso https://connect.clueso.io/mcp",
       "remote_url": "https://connect.clueso.io/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser OAuth against a Clueso account (free or paid) at https://www.clueso.io — no API key or header to manage" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Browser OAuth against a Clueso account (free or paid) at https://www.clueso.io — no API key or header to manage"
+    },
     "pricing": "freemium",
-    "links": { "repo": "https://github.com/clueso-ai/clueso-mcp", "docs": "https://help.clueso.io/mcp-setup", "site": "https://www.clueso.io/mcp" },
+    "links": {
+      "repo": "https://github.com/clueso-ai/clueso-mcp",
+      "docs": "https://help.clueso.io/mcp-setup",
+      "site": "https://www.clueso.io/mcp"
+    },
     "added": "2026-08-30",
     "verified": "2026-10-12",
     "caveats": [
@@ -66,16 +128,38 @@
     "featured": false,
     "tagline": "Index, search, and analyze video libraries with Pegasus and Marengo through MCP.",
     "description": "TwelveLabs' MCP server gives agents semantic video search and analysis: create indexes, upload or batch-index clips, search by natural language or image, summarize footage, generate chapters/highlights, and retrieve embeddings. For filmmakers this is the missing dailies-and-library brain — ask for the shot where a character enters frame, find matching B-roll, or produce structured notes from long generated cuts.",
-    "capabilities": ["video-search", "video-analysis", "dailies-indexing", "embeddings", "metadata-extraction", "entity-search"],
-    "tools_sample": ["create-index", "start-video-indexing-task", "search", "async-analyse-video", "create-entity", "retrieve-video-embeddings"],
+    "capabilities": [
+      "video-search",
+      "video-analysis",
+      "dailies-indexing",
+      "embeddings",
+      "metadata-extraction",
+      "entity-search"
+    ],
+    "tools_sample": [
+      "create-index",
+      "start-video-indexing-task",
+      "search",
+      "async-analyse-video",
+      "create-entity",
+      "retrieve-video-embeddings"
+    ],
     "install": {
       "claude_code": "claude mcp add twelvelabs -e TWELVELABS_API_KEY=YOUR_KEY -- npx -y --package=twelvelabs-mcp twelvelabs-mcp-stdio",
       "remote_url": null,
       "stdio_command": "npx -y --package=twelvelabs-mcp twelvelabs-mcp-stdio"
     },
-    "auth": { "type": "api_key", "env_var": "TWELVELABS_API_KEY", "key_url": "https://playground.twelvelabs.io" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "TWELVELABS_API_KEY",
+      "key_url": "https://playground.twelvelabs.io"
+    },
     "pricing": "freemium",
-    "links": { "repo": "https://github.com/twelvelabs-io/twelvelabs-js", "docs": "https://docs.twelvelabs.io/docs/advanced/model-context-protocol", "site": "https://www.twelvelabs.io" },
+    "links": {
+      "repo": "https://github.com/twelvelabs-io/twelvelabs-js",
+      "docs": "https://docs.twelvelabs.io/docs/advanced/model-context-protocol",
+      "site": "https://www.twelvelabs.io"
+    },
     "added": "2026-06-28",
     "verified": "2026-10-09",
     "caveats": [
@@ -95,16 +179,32 @@
     "featured": false,
     "tagline": "Cross-video agent MCP: build a knowledge store, then ask your whole library questions.",
     "description": "Jockey is TwelveLabs' agentic layer over a corpus rather than a clip. You create a knowledge store, add video and images to it, and then ask questions that span the whole collection — Jockey decomposes the query, retrieves, segments and reasons across items, and answers with clip citations rather than a wall of prose. For an editor this is the archive researcher: find every shot of a location across three seasons of footage, track a face or object through unrelated rushes, or have it assemble a highlight lane before anyone opens the NLE. It is a hosted OAuth endpoint, so there is nothing to install and no key to manage.",
-    "capabilities": ["video-search", "video-analysis", "dailies-indexing", "entity-search", "summarization", "highlights", "metadata-extraction"],
+    "capabilities": [
+      "video-search",
+      "video-analysis",
+      "dailies-indexing",
+      "entity-search",
+      "summarization",
+      "highlights",
+      "metadata-extraction"
+    ],
     "tools_sample": null,
     "install": {
       "claude_code": "claude mcp add --transport http --scope user jockey https://mcp.twelvelabs.io/jockey/mcp",
       "remote_url": "https://mcp.twelvelabs.io/jockey/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser OAuth against a TwelveLabs account — free signup at https://playground.twelvelabs.io" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Browser OAuth against a TwelveLabs account — free signup at https://playground.twelvelabs.io"
+    },
     "pricing": "freemium",
-    "links": { "repo": null, "docs": "https://docs.twelvelabs.io/docs/advanced/model-context-protocol", "site": "https://www.twelvelabs.io/jockey" },
+    "links": {
+      "repo": null,
+      "docs": "https://docs.twelvelabs.io/docs/advanced/model-context-protocol",
+      "site": "https://www.twelvelabs.io/jockey"
+    },
     "added": "2026-08-27",
     "verified": "2026-10-10",
     "caveats": [
@@ -124,16 +224,40 @@
     "featured": false,
     "tagline": "Search, analyze, and generate edits from source videos through Video Jungle.",
     "description": "Video Jungle's MCP server connects agents to its video analysis and edit-generation platform: upload videos by URL, create projects, search analyzed footage by embeddings and keywords, generate edits from one or more videos, and optionally export OpenTimelineIO projects for DaVinci Resolve Studio. It fits the research-to-cutdown workflow: find every moment in a clip set, ask for the edit, then bring the timeline back to an NLE.",
-    "capabilities": ["video-search", "video-analysis", "edit-generation", "otio-export", "local-photos-search", "davinci-resolve"],
-    "tools_sample": ["add-video", "create-videojungle-project", "search-videos", "generate-edit-from-videos", "generate-edit-from-single-video", "edit-locally", "get-project-assets", "update-video-edit"],
+    "capabilities": [
+      "video-search",
+      "video-analysis",
+      "edit-generation",
+      "otio-export",
+      "local-photos-search",
+      "davinci-resolve"
+    ],
+    "tools_sample": [
+      "add-video",
+      "create-videojungle-project",
+      "search-videos",
+      "generate-edit-from-videos",
+      "generate-edit-from-single-video",
+      "edit-locally",
+      "get-project-assets",
+      "update-video-edit"
+    ],
     "install": {
       "claude_code": "claude mcp add video-jungle -- uvx video-editor-mcp YOURAPIKEY",
       "remote_url": null,
       "stdio_command": "uvx video-editor-mcp YOURAPIKEY"
     },
-    "auth": { "type": "api_key", "env_var": null, "key_url": "https://app.video-jungle.com/profile/settings" },
+    "auth": {
+      "type": "api_key",
+      "env_var": null,
+      "key_url": "https://app.video-jungle.com/profile/settings"
+    },
     "pricing": "freemium",
-    "links": { "repo": "https://github.com/burningion/video-editing-mcp", "docs": "https://github.com/burningion/video-editing-mcp#readme", "site": "https://www.video-jungle.com" },
+    "links": {
+      "repo": "https://github.com/burningion/video-editing-mcp",
+      "docs": "https://github.com/burningion/video-editing-mcp#readme",
+      "site": "https://www.video-jungle.com"
+    },
     "added": "2026-06-29",
     "verified": "2026-10-10",
     "caveats": [
@@ -152,16 +276,35 @@
     "featured": false,
     "tagline": "Render After Effects-backed video templates from an agent with Plainly's API.",
     "description": "Plainly's official MCP server lets agents browse renderable designs and custom projects, inspect required template parameters, submit renders, and poll output status. It is a practical fit for brand-safe, repeatable film marketing assets: trailers, lower-third variants, social cutdowns, and personalized deliverables built from After Effects templates rather than free-form generation.",
-    "capabilities": ["template-rendering", "after-effects", "video-automation", "parameterized-video", "render-status"],
-    "tools_sample": ["list_renderable_items", "get_renderable_items_details", "render_item", "check_render_status"],
+    "capabilities": [
+      "template-rendering",
+      "after-effects",
+      "video-automation",
+      "parameterized-video",
+      "render-status"
+    ],
+    "tools_sample": [
+      "list_renderable_items",
+      "get_renderable_items_details",
+      "render_item",
+      "check_render_status"
+    ],
     "install": {
       "claude_code": "claude mcp add plainly -e PLAINLY_API_KEY=YOUR_KEY -- npx -y @plainly-videos/mcp-server@latest",
       "remote_url": null,
       "stdio_command": "npx -y @plainly-videos/mcp-server@latest"
     },
-    "auth": { "type": "api_key", "env_var": "PLAINLY_API_KEY", "key_url": "https://app.plainlyvideos.com/dashboard/user/settings/general" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "PLAINLY_API_KEY",
+      "key_url": "https://app.plainlyvideos.com/dashboard/user/settings/general"
+    },
     "pricing": "paid",
-    "links": { "repo": "https://github.com/plainly-videos/mcp-server", "docs": "https://github.com/plainly-videos/mcp-server#readme", "site": "https://plainlyvideos.com" },
+    "links": {
+      "repo": "https://github.com/plainly-videos/mcp-server",
+      "docs": "https://github.com/plainly-videos/mcp-server#readme",
+      "site": "https://plainlyvideos.com"
+    },
     "added": "2026-06-29",
     "verified": "2026-10-10",
     "caveats": [
@@ -180,17 +323,47 @@
     "featured": false,
     "tagline": "Cloud video editing, Studio previews, and template rendering over Shotstack's hosted MCP.",
     "description": "Shotstack's MCP server exposes its cloud video editing API to agents: render Edit JSON timelines, save reusable templates, render merge-field variants, generate image, video or audio assets from a prompt, poll render status, and open an interactive Studio canvas so a human can preview a cut before it burns credits. For filmmaker-agents it is the programmable render farm lane — fast campaign variants, data-driven video, and cloud assembly jobs that should not depend on a local NLE being open. A `get_shotstack_guide` tool ships the Edit JSON conventions so the agent authors valid timelines without guessing at the schema.",
-    "capabilities": ["cloud-render", "template-rendering", "programmatic-video", "studio-preview", "json-timeline", "remote-mcp"],
-    "tools_sample": ["studio", "render_video", "get_render_status", "create_studio_link", "get_shotstack_guide", "create_template", "update_template", "render_template", "list_models", "quote_generation", "generate_asset", "get_generation_status"],
+    "capabilities": [
+      "cloud-render",
+      "template-rendering",
+      "programmatic-video",
+      "studio-preview",
+      "json-timeline",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "studio",
+      "render_video",
+      "get_render_status",
+      "create_studio_link",
+      "get_shotstack_guide",
+      "create_template",
+      "update_template",
+      "render_template",
+      "list_models",
+      "quote_generation",
+      "generate_asset",
+      "get_generation_status"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http shotstack https://mcp.shotstack.io",
       "remote_url": "https://mcp.shotstack.io/",
-      "remote_headers": ["x-api-key"],
+      "remote_headers": [
+        "x-api-key"
+      ],
       "stdio_command": "npx -y mcp-remote https://mcp.shotstack.io/ --header x-api-key:YOUR_KEY"
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "https://app.shotstack.io — OAuth is the default; headless clients skip it by sending the same key as an x-api-key header" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "https://app.shotstack.io — OAuth is the default; headless clients skip it by sending the same key as an x-api-key header"
+    },
     "pricing": "freemium",
-    "links": { "repo": null, "docs": "https://shotstack.io/docs/guide/agents/mcp-server/", "site": "https://shotstack.io" },
+    "links": {
+      "repo": null,
+      "docs": "https://shotstack.io/docs/guide/agents/mcp-server/",
+      "site": "https://shotstack.io"
+    },
     "added": "2026-06-29",
     "verified": "2026-10-11",
     "caveats": [
@@ -210,16 +383,31 @@
     "featured": false,
     "tagline": "Full AI control of DaVinci Resolve Studio — edit, grade, Fusion, and render via scripting.",
     "description": "MCP server built on Resolve's official Scripting API covering project management, media pool, timeline editing, color grading, Fusion comps, Fairlight audio, and the render queue. The most mature NLE MCP available — a filmmaker-agent can conform timelines, apply grades, and kick off renders without touching the GUI.",
-    "capabilities": ["nle-control", "timeline-editing", "color-grading", "compositing", "render", "media-management"],
+    "capabilities": [
+      "nle-control",
+      "timeline-editing",
+      "color-grading",
+      "compositing",
+      "render",
+      "media-management"
+    ],
     "tools_sample": null,
     "install": {
       "claude_code": null,
       "remote_url": null,
       "stdio_command": "Run `npx davinci-resolve-mcp setup` once — it is the installer, not the server: the npm bootstrapper installs a managed copy under your user app-data directory, then runs the project's Python installer, which creates the venv, detects the Resolve path and can write the config for Claude Desktop, Claude Code, Cursor, VS Code, Windsurf, Zed, Codex CLI and other clients itself. Before connecting, open DaVinci Resolve Studio and set Preferences > General > External scripting using to Local (on the free edition that preference has no effect — use the in-app bridge script instead)."
     },
-    "auth": { "type": "local-app", "env_var": null, "key_url": "Requires DaVinci Resolve 18.5+ running locally — Studio with External Scripting set to Local, or the free edition through the project's in-app bridge script" },
+    "auth": {
+      "type": "local-app",
+      "env_var": null,
+      "key_url": "Requires DaVinci Resolve 18.5+ running locally — Studio with External Scripting set to Local, or the free edition through the project's in-app bridge script"
+    },
     "pricing": "free",
-    "links": { "repo": "https://github.com/samuelgursky/davinci-resolve-mcp", "docs": null, "site": null },
+    "links": {
+      "repo": "https://github.com/samuelgursky/davinci-resolve-mcp",
+      "docs": null,
+      "site": null
+    },
     "added": "2026-06-11",
     "verified": "2026-10-10",
     "caveats": [
@@ -239,16 +427,43 @@
     "featured": false,
     "tagline": "AI-native Mac timeline editor with a built-in local MCP server — closed source since v0.7.6.",
     "description": "Palmier Pro is a Swift video editor built around human-agent co-editing. When the app is open, its local HTTP MCP server lets Claude, Codex, Cursor and Claude Desktop inspect the timeline, search media, add and move clips, generate media, caption, color, apply effects and export from the same project the editor is showing. It shipped as GPLv3 open source and went closed in August 2026 — the MCP surface is unchanged, the source behind it is no longer published.",
-    "capabilities": ["nle-control", "timeline-editing", "media-search", "captioning", "text-based-editing", "generation", "export"],
-    "tools_sample": ["get_timeline", "get_media", "inspect_timeline", "search_media", "add_clips", "insert_clips", "generate_video", "generate_image", "add_captions", "export_project"],
+    "capabilities": [
+      "nle-control",
+      "timeline-editing",
+      "media-search",
+      "captioning",
+      "text-based-editing",
+      "generation",
+      "export"
+    ],
+    "tools_sample": [
+      "get_timeline",
+      "get_media",
+      "inspect_timeline",
+      "search_media",
+      "add_clips",
+      "insert_clips",
+      "generate_video",
+      "generate_image",
+      "add_captions",
+      "export_project"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http palmier-pro http://127.0.0.1:19789/mcp",
       "remote_url": null,
       "stdio_command": null
     },
-    "auth": { "type": "local-app", "env_var": null, "key_url": "Requires Palmier Pro running locally with a project open; generative AI features require login/subscription or BYOK in the app" },
+    "auth": {
+      "type": "local-app",
+      "env_var": null,
+      "key_url": "Requires Palmier Pro running locally with a project open; generative AI features require login/subscription or BYOK in the app"
+    },
     "pricing": "freemium",
-    "links": { "repo": "https://github.com/palmier-io/palmier-pro", "docs": "https://github.com/palmier-io/palmier-pro#readme", "site": "https://palmier.io" },
+    "links": {
+      "repo": "https://github.com/palmier-io/palmier-pro",
+      "docs": "https://github.com/palmier-io/palmier-pro#readme",
+      "site": "https://palmier.io"
+    },
     "added": "2026-06-29",
     "verified": "2026-10-12",
     "caveats": [
@@ -268,16 +483,43 @@
     "featured": false,
     "tagline": "Final Cut Pro MCP with FCPXML editing, live control, media QC and Compressor dispatch.",
     "description": "fcp-mcp gives agents a broad Final Cut Pro bench: parse and rewrite FCPXML, run QC for flash frames and gaps, build rough cuts, control FCP through AppleScript, analyze media through ffprobe, and send jobs to Apple Compressor. It matters when a filmmaker lives in Final Cut but still wants agent-operated timeline repair, captions, cross-NLE handoff, and export automation.",
-    "capabilities": ["final-cut-pro", "fcpxml", "nle-control", "timeline-qc", "media-analysis", "compressor", "cross-nle-export"],
-    "tools_sample": ["fcpxml_qc_report", "fcpxml_detect_flash_frames", "fcpxml_workflow_prepare", "fcpxml_workflow_commit", "fcpxml_export_resolve", "fcpxml_export_fcp7", "fcpxml_apply_template", "fcp_open_library", "fcp_share", "fcp_doctor"],
+    "capabilities": [
+      "final-cut-pro",
+      "fcpxml",
+      "nle-control",
+      "timeline-qc",
+      "media-analysis",
+      "compressor",
+      "cross-nle-export"
+    ],
+    "tools_sample": [
+      "fcpxml_qc_report",
+      "fcpxml_detect_flash_frames",
+      "fcpxml_workflow_prepare",
+      "fcpxml_workflow_commit",
+      "fcpxml_export_resolve",
+      "fcpxml_export_fcp7",
+      "fcpxml_apply_template",
+      "fcp_open_library",
+      "fcp_share",
+      "fcp_doctor"
+    ],
     "install": {
       "claude_code": "claude mcp add-json fcp '{\"type\":\"stdio\",\"command\":\"fcp-mcp\"}' --scope user",
       "remote_url": null,
       "stdio_command": "fcp-mcp"
     },
-    "auth": { "type": "local-app", "env_var": null, "key_url": "Requires macOS 15.6+ with Final Cut Pro for live-control tools; FCPXML tools work without FCP, Python 3.10+ and FFmpeg on PATH are required for media tools, and Apple Compressor is optional" },
+    "auth": {
+      "type": "local-app",
+      "env_var": null,
+      "key_url": "Requires macOS 15.6+ with Final Cut Pro for live-control tools; FCPXML tools work without FCP, Python 3.10+ and FFmpeg on PATH are required for media tools, and Apple Compressor is optional"
+    },
     "pricing": "free",
-    "links": { "repo": "https://github.com/dreliq9/fcp-mcp", "docs": "https://github.com/dreliq9/fcp-mcp#readme", "site": "https://pypi.org/project/fcp-mcp/" },
+    "links": {
+      "repo": "https://github.com/dreliq9/fcp-mcp",
+      "docs": "https://github.com/dreliq9/fcp-mcp#readme",
+      "site": "https://pypi.org/project/fcp-mcp/"
+    },
     "added": "2026-06-29",
     "verified": "2026-10-10",
     "caveats": [
@@ -297,16 +539,40 @@
     "featured": false,
     "tagline": "Turn Final Cut Pro XML into QC, markers, rough cuts, and cross-NLE handoffs.",
     "description": "FCPXML MCP gives agents a deep Final Cut Pro XML workbench: inspect timelines, detect flash frames and gaps, add marker batches, build rough cuts, reformat cuts, export EDL/CSV, and write Resolve or FCP7 handoff files. It fits the assistant-editor jobs that do not require eyes on the frame: count, QC, annotate, restructure, and push a clean XML back into the edit bay.",
-    "capabilities": ["final-cut-pro", "fcpxml", "timeline-qc", "rough-cuts", "marker-automation", "cross-nle-export", "security-hardened"],
-    "tools_sample": ["inspect", "diagnose", "edit", "mark", "generate", "transcript", "deliver"],
+    "capabilities": [
+      "final-cut-pro",
+      "fcpxml",
+      "timeline-qc",
+      "rough-cuts",
+      "marker-automation",
+      "cross-nle-export",
+      "security-hardened"
+    ],
+    "tools_sample": [
+      "inspect",
+      "diagnose",
+      "edit",
+      "mark",
+      "generate",
+      "transcript",
+      "deliver"
+    ],
     "install": {
       "claude_code": "claude mcp add fcpxml -e FCP_PROJECTS_DIR=~/Movies -- uvx fcp-mcp-server",
       "remote_url": null,
       "stdio_command": "uvx fcp-mcp-server"
     },
-    "auth": { "type": "local-app", "env_var": null, "key_url": "XML mode works on exported FCPXML files; Live Mode requires macOS with Final Cut Pro 10.4+ running and a one-time Automation permission grant" },
+    "auth": {
+      "type": "local-app",
+      "env_var": null,
+      "key_url": "XML mode works on exported FCPXML files; Live Mode requires macOS with Final Cut Pro 10.4+ running and a one-time Automation permission grant"
+    },
     "pricing": "free",
-    "links": { "repo": "https://github.com/DareDev256/fcp-mcp-server", "docs": "https://github.com/DareDev256/fcp-mcp-server#readme", "site": "https://pypi.org/project/fcp-mcp-server/" },
+    "links": {
+      "repo": "https://github.com/DareDev256/fcp-mcp-server",
+      "docs": "https://github.com/DareDev256/fcp-mcp-server#readme",
+      "site": "https://pypi.org/project/fcp-mcp-server/"
+    },
     "added": "2026-06-29",
     "verified": "2026-10-12",
     "caveats": [
@@ -326,16 +592,37 @@
     "featured": false,
     "tagline": "Drive Premiere Pro timelines, effects, and exports from your agent via a CEP bridge.",
     "description": "A 283-tool MCP server that controls Premiere Pro through a CEP extension bridge: import media, edit sequences, apply effects and transitions, and export, with context resources and guided prompts alongside the tools. Lets an agent do real NLE assembly inside the editor filmmakers already use, which Adobe's own connector does not offer.",
-    "capabilities": ["nle-control", "timeline-editing", "effects", "render", "media-management"],
-    "tools_sample": ["import_media", "apply_effect", "add_transition", "get_sequences", "get_active_sequence", "export_sequence"],
+    "capabilities": [
+      "nle-control",
+      "timeline-editing",
+      "effects",
+      "render",
+      "media-management"
+    ],
+    "tools_sample": [
+      "import_media",
+      "apply_effect",
+      "add_transition",
+      "get_sequences",
+      "get_active_sequence",
+      "export_sequence"
+    ],
     "install": {
       "claude_code": "claude mcp add premiere-pro -- premiere-pro-mcp",
       "remote_url": null,
       "stdio_command": "premiere-pro-mcp (after `npm install -g adobe-premiere-pro-mcp`, then `premiere-pro-mcp --install-cep` and `premiere-pro-mcp --doctor`; restart Premiere and start the bridge from Window > Extensions > MCP Bridge (CEP)). Node 20+, macOS or Windows, same machine as Premiere. Set PREMIERE_MCP_TOOLSET=full to list every tool instead of the search/invoke gateway."
     },
-    "auth": { "type": "local-app", "env_var": null, "key_url": "Requires Premiere Pro 2020+ running with the bundled 'MCP Bridge' CEP extension" },
+    "auth": {
+      "type": "local-app",
+      "env_var": null,
+      "key_url": "Requires Premiere Pro 2020+ running with the bundled 'MCP Bridge' CEP extension"
+    },
     "pricing": "free",
-    "links": { "repo": "https://github.com/hetpatel-11/Adobe_Premiere_Pro_MCP", "docs": null, "site": null },
+    "links": {
+      "repo": "https://github.com/hetpatel-11/Adobe_Premiere_Pro_MCP",
+      "docs": null,
+      "site": null
+    },
     "added": "2026-06-11",
     "verified": "2026-09-25",
     "caveats": [
@@ -355,16 +642,35 @@
     "featured": false,
     "tagline": "Automate After Effects comps, layers, and keyframes through MCP + ExtendScript.",
     "description": "MCP server that remote-controls Adobe After Effects: create compositions, text/shape/solid layers, cameras, masks, keyframes, and expressions. Useful for agent-driven motion graphics, titles, and VFX passes on generated footage.",
-    "capabilities": ["motion-graphics", "compositing", "animation", "nle-control"],
-    "tools_sample": ["create-composition", "setLayerKeyframe", "setLayerProperties", "createCamera", "setLayerMask"],
+    "capabilities": [
+      "motion-graphics",
+      "compositing",
+      "animation",
+      "nle-control"
+    ],
+    "tools_sample": [
+      "create-composition",
+      "setLayerKeyframe",
+      "setLayerProperties",
+      "createCamera",
+      "setLayerMask"
+    ],
     "install": {
       "claude_code": null,
       "remote_url": null,
       "stdio_command": "Multi-step, no published package: git clone https://github.com/Dakkshin/after-effects-mcp, then `npm install`, `npm run build`, `npm run install-bridge`, and point your client at `node /absolute/path/to/after-effects-mcp/build/index.js`. Node 14+, After Effects 2022+."
     },
-    "auth": { "type": "local-app", "env_var": null, "key_url": "Requires After Effects 2022+ with the 'mcp-bridge-auto' panel open" },
+    "auth": {
+      "type": "local-app",
+      "env_var": null,
+      "key_url": "Requires After Effects 2022+ with the 'mcp-bridge-auto' panel open"
+    },
     "pricing": "free",
-    "links": { "repo": "https://github.com/Dakkshin/after-effects-mcp", "docs": null, "site": null },
+    "links": {
+      "repo": "https://github.com/Dakkshin/after-effects-mcp",
+      "docs": null,
+      "site": null
+    },
     "added": "2026-06-11",
     "verified": "2026-09-25",
     "caveats": [
@@ -384,16 +690,38 @@
     "featured": false,
     "tagline": "Conversational FFmpeg: trim, concat, overlay, scale, and extract frames locally.",
     "description": "Wraps the FFmpeg CLI as MCP tools for finding, probing, cutting, merging, compositing, and resizing local video files. A thin, readable surface for agent-side post on generated clips — no cloud upload, no credits — but it has had no commits since May 2026 and Kinocut now covers the same ground with more care.",
-    "capabilities": ["transcode", "trim-concat", "overlay", "frame-extraction", "media-probe"],
-    "tools_sample": ["find_video_path", "get_video_info", "clip_video", "concat_videos", "overlay_video", "scale_video", "extract_frames_from_video"],
+    "capabilities": [
+      "transcode",
+      "trim-concat",
+      "overlay",
+      "frame-extraction",
+      "media-probe"
+    ],
+    "tools_sample": [
+      "find_video_path",
+      "get_video_info",
+      "clip_video",
+      "concat_videos",
+      "overlay_video",
+      "scale_video",
+      "extract_frames_from_video"
+    ],
     "install": {
       "claude_code": null,
       "remote_url": null,
       "stdio_command": "uv --directory /path/to/ffmpeg-mcp run ffmpeg-mcp (after cloning the repo)"
     },
-    "auth": { "type": "none", "env_var": null, "key_url": null },
+    "auth": {
+      "type": "none",
+      "env_var": null,
+      "key_url": null
+    },
     "pricing": "free",
-    "links": { "repo": "https://github.com/video-creator/ffmpeg-mcp", "docs": null, "site": null },
+    "links": {
+      "repo": "https://github.com/video-creator/ffmpeg-mcp",
+      "docs": null,
+      "site": null
+    },
     "added": "2026-06-11",
     "verified": "2026-10-13",
     "caveats": [
@@ -413,16 +741,46 @@
     "featured": false,
     "tagline": "Guardrailed local video editing MCP — FFmpeg, receipts, quality gates, and repurposing.",
     "description": "Kinocut, formerly mcp-video, wraps FFmpeg and adjacent media tools behind typed, preflighted MCP operations, with a `kino` CLI and Python client over the same engine. For filmmaker agents it is the safer local post bench: inspect clips, trim and merge, burn captions, normalize audio, render variants, run release checkpoints, and fail early when an edit would produce bad media. Every operation writes a Video Receipt with input and output hashes so another agent or a human can verify what actually happened.",
-    "capabilities": ["transcode", "trim-concat", "captioning", "audio-normalization", "quality-check", "repurposing", "hyperframes", "local-post"],
-    "tools_sample": ["search_tools", "video_info", "video_trim", "video_merge", "video_add_text", "video_add_audio", "video_convert", "video_quality_check", "video_shorts", "video_review_package", "video_rescue_inspect", "video_doctor"],
+    "capabilities": [
+      "transcode",
+      "trim-concat",
+      "captioning",
+      "audio-normalization",
+      "quality-check",
+      "repurposing",
+      "hyperframes",
+      "local-post"
+    ],
+    "tools_sample": [
+      "search_tools",
+      "video_info",
+      "video_trim",
+      "video_merge",
+      "video_add_text",
+      "video_add_audio",
+      "video_convert",
+      "video_quality_check",
+      "video_shorts",
+      "video_review_package",
+      "video_rescue_inspect",
+      "video_doctor"
+    ],
     "install": {
       "claude_code": "claude mcp add kinocut -- uvx --from kinocut kino --mcp",
       "remote_url": null,
       "stdio_command": "uvx --from kinocut kino --mcp"
     },
-    "auth": { "type": "none", "env_var": null, "key_url": null },
+    "auth": {
+      "type": "none",
+      "env_var": null,
+      "key_url": null
+    },
     "pricing": "free",
-    "links": { "repo": "https://github.com/KyaniteLabs/kinocut", "docs": "https://github.com/KyaniteLabs/kinocut#readme", "site": "https://kinocut.dev/" },
+    "links": {
+      "repo": "https://github.com/KyaniteLabs/kinocut",
+      "docs": "https://github.com/KyaniteLabs/kinocut#readme",
+      "site": "https://kinocut.dev/"
+    },
     "added": "2026-06-28",
     "verified": "2026-10-27",
     "caveats": [
@@ -442,16 +800,45 @@
     "featured": false,
     "tagline": "Open-source Rust NLE whose built-in MCP runs 700+ editing commands, headless or in the running app.",
     "description": "FilmCraft is the ArtCraft team's open-source non-linear editor, with its own H.264, HEVC, ProRes and AAC codecs, linear-light 32-bit grading with live scopes, a sample-accurate audio mixer and FCPXML, AAF and OMF interchange, and every menu item, slider and drag in it is a typed command its MCP server can run. Headless, an agent cuts, grades, mixes and exports in an in-process session with no window; in bridge mode it drives the running desktop app, clicking, typing and taking screenshots like an editor at the desk. For a filmmaker-agent that is rare: a real timeline it can operate end to end, not a wrapper around FFmpeg.",
-    "capabilities": ["nle-control", "timeline-editing", "color-grading", "mixing", "captioning", "fcpxml", "export", "frame-extraction"],
-    "tools_sample": ["command_list", "command_run", "command_batch", "doc_inspect", "project_inspect", "sequence_inspect", "media_import", "render_frame", "ui_elements", "ui_click", "ui_screenshot"],
+    "capabilities": [
+      "nle-control",
+      "timeline-editing",
+      "color-grading",
+      "mixing",
+      "captioning",
+      "fcpxml",
+      "export",
+      "frame-extraction"
+    ],
+    "tools_sample": [
+      "command_list",
+      "command_run",
+      "command_batch",
+      "doc_inspect",
+      "project_inspect",
+      "sequence_inspect",
+      "media_import",
+      "render_frame",
+      "ui_elements",
+      "ui_click",
+      "ui_screenshot"
+    ],
     "install": {
       "claude_code": "claude mcp add filmcraft -- filmcraft-cli mcp",
       "remote_url": null,
       "stdio_command": "filmcraft-cli mcp"
     },
-    "auth": { "type": "none", "env_var": null, "key_url": null },
+    "auth": {
+      "type": "none",
+      "env_var": null,
+      "key_url": null
+    },
     "pricing": "free",
-    "links": { "repo": "https://github.com/storytold/filmcraft", "docs": "https://github.com/storytold/filmcraft/blob/main/docs/agents.md", "site": "https://getartcraft.com/apps/filmcraft" },
+    "links": {
+      "repo": "https://github.com/storytold/filmcraft",
+      "docs": "https://github.com/storytold/filmcraft/blob/main/docs/agents.md",
+      "site": "https://getartcraft.com/apps/filmcraft"
+    },
     "added": "2026-10-27",
     "verified": "2026-10-27",
     "caveats": [
@@ -470,16 +857,44 @@
     "featured": false,
     "tagline": "CLI-first video workflow runtime with an MCP surface for briefs-to-renders.",
     "description": "VibeFrame is an agentic video workflow runtime: a coding agent turns a brief into storyboard files, generated assets, Hyperframes scenes, reviewed renders, and final MP4s. Its MCP server exposes the same engine as typed tools for project init, build, render, generation, editing, audio, detection, inspection, and timeline operations, with dry runs and cost gates for paid providers.",
-    "capabilities": ["storyboard-to-video", "cloud-render", "text-to-video", "image-to-video", "captioning", "audio-generation", "quality-review", "cost-gates"],
-    "tools_sample": ["project_list", "init", "build", "render", "generate_image", "generate_video", "edit_caption", "audio_duck", "inspect_review", "timeline_create"],
+    "capabilities": [
+      "storyboard-to-video",
+      "cloud-render",
+      "text-to-video",
+      "image-to-video",
+      "captioning",
+      "audio-generation",
+      "quality-review",
+      "cost-gates"
+    ],
+    "tools_sample": [
+      "project_list",
+      "init",
+      "build",
+      "render",
+      "generate_image",
+      "generate_video",
+      "edit_caption",
+      "audio_duck",
+      "inspect_review",
+      "timeline_create"
+    ],
     "install": {
       "claude_code": "claude mcp add vibeframe --scope project -- npx -y @vibeframe/mcp-server",
       "remote_url": null,
       "stdio_command": "npx -y @vibeframe/mcp-server"
     },
-    "auth": { "type": "api_key", "env_var": "FAL_API_KEY", "key_url": "Provider keys are bring-your-own and only generation needs one: FAL_API_KEY (video, via Seedance), OPENAI_API_KEY (images), plus optional GOOGLE_API_KEY, RUNWAY_API_SECRET, KLING_API_KEY, XAI_API_KEY and ELEVENLABS_API_KEY per the MCP server README." },
+    "auth": {
+      "type": "api_key",
+      "env_var": "FAL_API_KEY",
+      "key_url": "Provider keys are bring-your-own and only generation needs one: FAL_API_KEY (video, via Seedance), OPENAI_API_KEY (images), plus optional GOOGLE_API_KEY, RUNWAY_API_SECRET, KLING_API_KEY, XAI_API_KEY and ELEVENLABS_API_KEY per the MCP server README."
+    },
     "pricing": "freemium",
-    "links": { "repo": "https://github.com/vericontext/vibeframe", "docs": "https://github.com/vericontext/vibeframe/blob/main/packages/mcp-server/README.md", "site": "https://vibeframe.ai" },
+    "links": {
+      "repo": "https://github.com/vericontext/vibeframe",
+      "docs": "https://github.com/vericontext/vibeframe/blob/main/packages/mcp-server/README.md",
+      "site": "https://vibeframe.ai"
+    },
     "added": "2026-06-28",
     "verified": "2026-10-14",
     "caveats": [
@@ -500,16 +915,28 @@
     "status": "deprecated",
     "tagline": "Remotion's docs MCP, deprecated — the hosted server shuts down no earlier than Aug 31 2026.",
     "description": "Remotion's official MCP server indexed the entire Remotion documentation into a vector store so coding agents could correctly build React-based videos, animated graphics, and captions. Remotion has now deprecated it: the docs direct you to install Remotion Agent Skills and use /remotion-docs instead, and the hosted MCP is scheduled to shut down. Listed for continuity, not as a recommendation — do not wire it into a new pipeline.",
-    "capabilities": ["docs-search", "programmatic-video", "code-assist"],
+    "capabilities": [
+      "docs-search",
+      "programmatic-video",
+      "code-assist"
+    ],
     "tools_sample": null,
     "install": {
       "claude_code": "claude mcp add remotion -- npx @remotion/mcp@latest",
       "remote_url": null,
       "stdio_command": "npx @remotion/mcp@latest"
     },
-    "auth": { "type": "none", "env_var": null, "key_url": null },
+    "auth": {
+      "type": "none",
+      "env_var": null,
+      "key_url": null
+    },
     "pricing": "free",
-    "links": { "repo": "https://github.com/remotion-dev/remotion", "docs": "https://www.remotion.dev/docs/ai/mcp", "site": "https://www.remotion.dev" },
+    "links": {
+      "repo": "https://github.com/remotion-dev/remotion",
+      "docs": "https://www.remotion.dev/docs/ai/mcp",
+      "site": "https://www.remotion.dev"
+    },
     "added": "2026-06-11",
     "verified": "2026-10-10",
     "caveats": [
@@ -530,16 +957,34 @@
     "status": "deprecated",
     "tagline": "Superseded community wrapper — JSON2Video now ships its own MCP.",
     "description": "Community MCP wrapper for json2video.com: assemble scenes of video, images, text, HTML, voice, and subtitles as JSON and render server-side. JSON2Video has since shipped an official MCP of its own, listed here as `json2video-cli`, with thirteen tools against this one's four and a vendor keeping it current. This entry stays for the configs that already point at it; new pipelines should use the official server.",
-    "capabilities": ["cloud-render", "template-video", "captioning", "video-assembly"],
-    "tools_sample": ["generate_video", "get_video_status", "create_template", "list_templates"],
+    "capabilities": [
+      "cloud-render",
+      "template-video",
+      "captioning",
+      "video-assembly"
+    ],
+    "tools_sample": [
+      "generate_video",
+      "get_video_status",
+      "create_template",
+      "list_templates"
+    ],
     "install": {
       "claude_code": "claude mcp add json2video -e JSON2VIDEO_API_KEY=YOUR_KEY -- npx -y @omerrgocmen/json2video-mcp",
       "remote_url": null,
       "stdio_command": "npx -y @omerrgocmen/json2video-mcp"
     },
-    "auth": { "type": "api_key", "env_var": "JSON2VIDEO_API_KEY", "key_url": "https://json2video.com" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "JSON2VIDEO_API_KEY",
+      "key_url": "https://json2video.com"
+    },
     "pricing": "freemium",
-    "links": { "repo": "https://github.com/omergocmen/json2video-mcp-server", "docs": null, "site": "https://json2video.com" },
+    "links": {
+      "repo": "https://github.com/omergocmen/json2video-mcp-server",
+      "docs": null,
+      "site": "https://json2video.com"
+    },
     "added": "2026-06-11",
     "verified": "2026-10-13",
     "caveats": [
@@ -557,16 +1002,42 @@
     "featured": false,
     "tagline": "The vendor's own MCP: render JSON movies, validate them, and manage the media library.",
     "description": "JSON2Video's official MCP server, shipped as the `mcp` subcommand of its CLI. An agent describes a movie as JSON — scenes of video, images, text, HTML, voice-over and subtitles — validates it before spending credits, renders it server-side, then polls for the MP4. It also exposes the template catalogue and full media-library CRUD, which is what makes it usable for batch work: upload plates once, reference them across a hundred data-driven cuts without re-uploading.",
-    "capabilities": ["cloud-render", "template-video", "captioning", "video-assembly", "tts", "asset-management"],
-    "tools_sample": ["render_video", "check_status", "validate_movie", "list_templates", "get_template", "get_example", "get_account", "media_list", "media_upload", "media_delete"],
+    "capabilities": [
+      "cloud-render",
+      "template-video",
+      "captioning",
+      "video-assembly",
+      "tts",
+      "asset-management"
+    ],
+    "tools_sample": [
+      "render_video",
+      "check_status",
+      "validate_movie",
+      "list_templates",
+      "get_template",
+      "get_example",
+      "get_account",
+      "media_list",
+      "media_upload",
+      "media_delete"
+    ],
     "install": {
       "claude_code": "claude mcp add json2video -e JSON2VIDEO_API_KEY=YOUR_KEY -- npx -y @json2video/cli mcp",
       "remote_url": null,
       "stdio_command": "npx -y @json2video/cli mcp"
     },
-    "auth": { "type": "api_key", "env_var": "JSON2VIDEO_API_KEY", "key_url": "https://json2video.com" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "JSON2VIDEO_API_KEY",
+      "key_url": "https://json2video.com"
+    },
     "pricing": "freemium",
-    "links": { "repo": null, "docs": "https://json2video.com/docs/v2/help-for-ai-agents/mcp-server", "site": "https://json2video.com" },
+    "links": {
+      "repo": null,
+      "docs": "https://json2video.com/docs/v2/help-for-ai-agents/mcp-server",
+      "site": "https://json2video.com"
+    },
     "added": "2026-08-31",
     "verified": "2026-10-13",
     "caveats": [
@@ -587,16 +1058,37 @@
     "status": "archived",
     "tagline": "Archived: a CapCut draft-builder whose repo is now read-only — use vectcut instead.",
     "description": "Python server exposing CapCut draft creation over HTTP/MCP: add video, audio, images, text, subtitles, effects, and stickers, then save as a draft folder that opens in CapCut for finishing. Lets agents pre-assemble social edits that humans polish in CapCut.",
-    "capabilities": ["nle-control", "draft-generation", "captioning", "effects"],
-    "tools_sample": ["create_draft", "add_video", "add_audio", "add_text", "add_subtitle", "add_effect", "save_draft"],
+    "capabilities": [
+      "nle-control",
+      "draft-generation",
+      "captioning",
+      "effects"
+    ],
+    "tools_sample": [
+      "create_draft",
+      "add_video",
+      "add_audio",
+      "add_text",
+      "add_subtitle",
+      "add_effect",
+      "save_draft"
+    ],
     "install": {
       "claude_code": null,
       "remote_url": null,
       "stdio_command": "Not stdio and not packaged: git clone https://github.com/fancyboi999/capcut-mcp, install ffmpeg, `pip install -r requirements.txt` on Python 3.8.20, copy config.json.example to config.json, then `python main.py` — it serves streamable HTTP MCP at http://localhost:9000/mcp, which you add to your client as an http-transport server."
     },
-    "auth": { "type": "none", "env_var": null, "key_url": null },
+    "auth": {
+      "type": "none",
+      "env_var": null,
+      "key_url": null
+    },
     "pricing": "free",
-    "links": { "repo": "https://github.com/fancyboi999/capcut-mcp", "docs": null, "site": null },
+    "links": {
+      "repo": "https://github.com/fancyboi999/capcut-mcp",
+      "docs": null,
+      "site": null
+    },
     "added": "2026-06-11",
     "verified": "2026-09-25",
     "caveats": [
@@ -614,16 +1106,38 @@
     "featured": false,
     "tagline": "Assemble CapCut and Jianying draft projects from an agent over a local stdio MCP server.",
     "description": "Open-source Python toolkit that writes CapCut International and Jianying draft files: create a draft, lay in video, audio, images, text, SRT subtitles, effects, stickers and video keyframes, then save a draft that opens in the editor for finishing. It ships both an HTTP API and a stdio MCP server, so an agent can pre-cut social verticals and captioned versions that an editor polishes in CapCut.",
-    "capabilities": ["nle-control", "draft-generation", "captioning", "effects", "keyframes"],
-    "tools_sample": ["create_draft", "add_video", "add_audio", "add_text", "add_subtitle", "add_video_keyframe", "save_draft"],
+    "capabilities": [
+      "nle-control",
+      "draft-generation",
+      "captioning",
+      "effects",
+      "keyframes"
+    ],
+    "tools_sample": [
+      "create_draft",
+      "add_video",
+      "add_audio",
+      "add_text",
+      "add_subtitle",
+      "add_video_keyframe",
+      "save_draft"
+    ],
     "install": {
       "claude_code": null,
       "remote_url": null,
       "stdio_command": "Multi-step, no published package: git clone https://github.com/sun-guannan/VectCutAPI, `pip install -r requirements.txt -r requirements-mcp.txt` on Python 3.10+, install FFmpeg, copy config.json.example to config.json, then point your client at `python3 mcp_server.py` with cwd and PYTHONPATH set to the repo."
     },
-    "auth": { "type": "none", "env_var": null, "key_url": null },
+    "auth": {
+      "type": "none",
+      "env_var": null,
+      "key_url": null
+    },
     "pricing": "free",
-    "links": { "repo": "https://github.com/sun-guannan/VectCutAPI", "docs": null, "site": "https://www.vectcut.com" },
+    "links": {
+      "repo": "https://github.com/sun-guannan/VectCutAPI",
+      "docs": null,
+      "site": "https://www.vectcut.com"
+    },
     "added": "2026-09-25",
     "verified": "2026-09-25",
     "caveats": [
@@ -642,16 +1156,47 @@
     "featured": false,
     "tagline": "Adobe's official hosted MCP — 50+ tools across Photoshop, Lightroom, Firefly, Premiere, Express and Stock.",
     "description": "Adobe's first official Model Context Protocol connector: a hosted remote server that exposes Creative Cloud capabilities as agent tools across Photoshop, Lightroom, Illustrator, Firefly, Premiere, Express, InDesign and Adobe Stock. Retouch and batch-edit stills to a consistent look, auto-tone and reframe, design and animate from Express templates, search Stock, and reformat or quick-cut video. For a filmmaker-agent this is the key-art, poster-variant and social-cutdown bench, not an editorial tool — the video surface reformats and summarizes clips, it does not open a timeline.",
-    "capabilities": ["image-editing", "image-enhancement", "batch-processing", "template-rendering", "video-reformat", "stock-search", "remote-mcp"],
-    "tools_sample": ["adobe_mandatory_init", "asset_add_file", "image_apply_auto_tone", "image_apply_adjustments", "image_apply_preset", "image_crop_and_resize", "image_select_subject", "image_apply_gaussian_blur", "video_resize", "video_create_quick_cut", "search_design", "animate_design", "download_design", "create_firefly_board"],
+    "capabilities": [
+      "image-editing",
+      "image-enhancement",
+      "batch-processing",
+      "template-rendering",
+      "video-reformat",
+      "stock-search",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "adobe_mandatory_init",
+      "asset_add_file",
+      "image_apply_auto_tone",
+      "image_apply_adjustments",
+      "image_apply_preset",
+      "image_crop_and_resize",
+      "image_select_subject",
+      "image_apply_gaussian_blur",
+      "video_resize",
+      "video_create_quick_cut",
+      "search_design",
+      "animate_design",
+      "download_design",
+      "create_firefly_board"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http adobe-creativity https://adobe-creativity.adobe.io/mcp",
       "remote_url": "https://adobe-creativity.adobe.io/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Sign in with a free or paid Adobe account in the MCP client; a guest tier works with no Adobe account at reduced capability" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Sign in with a free or paid Adobe account in the MCP client; a guest tier works with no Adobe account at reduced capability"
+    },
     "pricing": "freemium",
-    "links": { "repo": "https://github.com/adobe/skills", "docs": "https://developer.adobe.com/adobe-for-creativity/", "site": "https://www.adobe.com" },
+    "links": {
+      "repo": "https://github.com/adobe/skills",
+      "docs": "https://developer.adobe.com/adobe-for-creativity/",
+      "site": "https://www.adobe.com"
+    },
     "added": "2026-08-11",
     "verified": "2026-10-10",
     "caveats": [
@@ -671,17 +1216,49 @@
     "featured": false,
     "tagline": "Adobe's second hosted MCP — compose and run Firefly Creative Production batch pipelines.",
     "description": "The agent front end to Firefly Creative Production, Adobe's graph-based batch pipeline for images, video and 3D. An agent lists the available workflow actions, reads their schemas, composes a graph from a plain-language brief, uploads assets, submits the batch, and polls until the outputs land — then publishes the graph as a reusable endpoint or saves it into Workflow Builder. Where Adobe for Creativity edits one asset at a time in conversation, this is the thing you point at 400 frames, product turntables or a delivery matrix of aspect ratios.",
-    "capabilities": ["batch-processing", "workflow-automation", "background-removal", "color-grade", "video-processing", "3d-render", "remote-mcp"],
-    "tools_sample": ["list_actions", "get_action_schema", "compose_workflow", "upload_asset", "run_workflow_submit", "run_workflow_get_status", "cancel_workflow", "list_workflow_history", "inspect_run", "get_workflow_examples", "publish_workflow", "save_workflow"],
+    "capabilities": [
+      "batch-processing",
+      "workflow-automation",
+      "background-removal",
+      "color-grade",
+      "video-processing",
+      "3d-render",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "list_actions",
+      "get_action_schema",
+      "compose_workflow",
+      "upload_asset",
+      "run_workflow_submit",
+      "run_workflow_get_status",
+      "cancel_workflow",
+      "list_workflow_history",
+      "inspect_run",
+      "get_workflow_examples",
+      "publish_workflow",
+      "save_workflow"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http run-workflow https://run-workflow.adobe.io/mcp --header \"Authorization: Bearer YOUR_IMS_TOKEN\" --header \"x-api-key: YOUR_API_KEY\"",
       "remote_url": "https://run-workflow.adobe.io/mcp",
-      "remote_headers": ["Authorization", "x-api-key"],
+      "remote_headers": [
+        "Authorization",
+        "x-api-key"
+      ],
       "stdio_command": null
     },
-    "auth": { "type": "api_key", "env_var": null, "key_url": "Both an Adobe IMS access token and a Run-Workflow API key are issued by your org admin — there is no self-serve signup" },
+    "auth": {
+      "type": "api_key",
+      "env_var": null,
+      "key_url": "Both an Adobe IMS access token and a Run-Workflow API key are issued by your org admin — there is no self-serve signup"
+    },
     "pricing": "paid",
-    "links": { "repo": "https://github.com/adobe/skills", "docs": "https://helpx.adobe.com/firefly/web/work-with-enterprise-features/creative-production/run-workflow-mcp-overview.html", "site": "https://business.adobe.com/products/firefly-business/firefly-creative-production.html" },
+    "links": {
+      "repo": "https://github.com/adobe/skills",
+      "docs": "https://helpx.adobe.com/firefly/web/work-with-enterprise-features/creative-production/run-workflow-mcp-overview.html",
+      "site": "https://business.adobe.com/products/firefly-business/firefly-creative-production.html"
+    },
     "added": "2026-09-01",
     "verified": "2026-10-14",
     "caveats": [
@@ -701,25 +1278,43 @@
     "featured": false,
     "tagline": "Descript's official hosted MCP — import media, run Underlord edits, publish, from your agent.",
     "description": "Descript's first-party remote MCP server hands an agent the transcript-based editor: import media from a URL or local file with automatic transcription, then drive Underlord to strip filler words, apply Studio Sound, generate captions, build scenes and highlight reels, or create a whole project from a prompt. It also finds and organizes projects and compositions and publishes to a shareable Descript link. The natural home for interview, doc and podcast-adjacent cutting, where the edit is really a text edit.",
-    "capabilities": ["transcript-editing", "captioning", "filler-word-removal", "audio-cleanup", "highlight-reels", "project-management", "transcript-export", "publishing", "remote-mcp"],
+    "capabilities": [
+      "transcript-editing",
+      "captioning",
+      "filler-word-removal",
+      "audio-cleanup",
+      "highlight-reels",
+      "project-management",
+      "transcript-export",
+      "publishing",
+      "remote-mcp"
+    ],
     "tools_sample": null,
     "install": {
       "claude_code": "claude mcp add --transport http descript https://api.descript.com/v2/mcp",
       "remote_url": "https://api.descript.com/v2/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth via your Descript login — no API token; the connection binds to whichever Descript drive your browser session is in" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "OAuth via your Descript login — no API token; the connection binds to whichever Descript drive your browser session is in"
+    },
     "pricing": "paid",
-    "links": { "repo": null, "docs": "https://help.descript.com/hc/en-us/articles/46056322186509-Descript-MCP-overview", "site": "https://www.descript.com/api" },
+    "links": {
+      "repo": null,
+      "docs": "https://help.descript.com/hc/en-us/articles/46056322186509-Descript-MCP-overview",
+      "site": "https://www.descript.com/api"
+    },
     "added": "2026-08-15",
-    "verified": "2026-09-18",
+    "verified": "2026-10-30",
     "caveats": [
       "No rendered media download without publishing: output is a Descript web link or signed URL, with transcripts (text, Markdown, SRT) the exception.",
       "Every import and Underlord edit burns your plan's media minutes and AI credits, and API/MCP access needs a paying subscription.",
       "One connection sees one drive, YouTube URLs cannot be imported, and Claude's directory connector excludes the generative tools.",
       "Tool names are not published."
     ],
-    "notes": "Re-verified 18 Sep 2026: the overview doc is unchanged and api.descript.com/v2/mcp answers 401 to an anonymous request, so the endpoint is live and auth-gated as listed. Official and hosted, so nothing to install, but the export story is still the catch: Descript documents no rendered media download without publishing — an agent can publish to a Descript web link or hand off a signed URL, and anything else you fetch by exporting from the app yourself. TRANSCRIPTS are the exception, and this run pinned down the formats: text, Markdown, HTML, RTF and SRT come back over MCP, DOCX does not. The docs also cover job tracking and cancellation, which matters because imports and Underlord runs are async. Other documented limits: YouTube URLs cannot be imported, job history is kept 30 days, one connection sees exactly one drive (switching drives means re-authenticating, and editing a project on another drive errors), and Claude's directory connector excludes the generative image/video tools. API and MCP access is included for paying subscribers at no extra cost but every import and Underlord edit burns your plan's media minutes and AI credits. Note the two auth stories: MCP is OAuth through your Descript login with no token, while the REST API uses drive-scoped tokens from Settings → API Tokens — descript.com/api blurs them together. Tool names are still not published, so this entry lists capabilities rather than inventing them."
+    "notes": "Re-verified 30 Oct 2026: api.descript.com/v2/mcp still answers 401 to the daily anonymous probe, so the endpoint is live and auth-gated as listed. The overview doc no longer prints the URL itself — it says to copy it from Settings → Descript MCP in the app — and the documented surface has grown: drive search now covers layout packs and media files as well as projects, and a Claude-only route sends Claude Motion animations into Descript. Team and enterprise admins may need to switch on third-party or custom MCP connectors before anyone on the account can connect. Official and hosted, so nothing to install, but the export story is still the catch: Descript documents no rendered media download without publishing — publishing to a Descript web link is what yields signed URLs to the MP4 or audio, and anything else you fetch by exporting from the app yourself. TRANSCRIPTS are the exception, and this run pinned down the formats: text, Markdown, HTML, RTF and SRT come back over MCP, DOCX does not. The docs also cover job tracking and cancellation, which matters because imports and Underlord runs are async. Other documented limits: YouTube URLs cannot be imported, job history is kept 30 days, one connection sees exactly one drive (switching drives means re-authenticating, and editing a project on another drive errors), and Claude's directory connector excludes the generative image/video tools. API and MCP access is included for paying subscribers at no extra cost but every import and Underlord edit burns your plan's media minutes and AI credits. Note the two auth stories: MCP is OAuth through your Descript login with no token, while the REST API uses drive-scoped tokens from Settings → API Tokens — descript.com/api blurs them together. Tool names are still not published, so this entry lists capabilities rather than inventing them."
   },
   {
     "slug": "kapwing",
@@ -730,17 +1325,36 @@
     "featured": false,
     "tagline": "Kapwing's hosted MCP: upload footage, caption, translate, dub and export from a Kapwing workspace.",
     "description": "Kapwing's official hosted MCP connects an agent to the user's Kapwing workspace over OAuth: it uploads footage, adds burned-in subtitles, translates them, dubs a video into another language, and pulls the finished MP4 export, with each edit landing as an editable Kapwing project URL a human can open and fix. Version 1.1.0 adds generative image and video calls, multi-asset projects and transcript-based editing through Kapwing's Kai chat. For a filmmaker-agent it is the shortest route from a locked cut to subtitled, localized deliverables without leaving the chat.",
-    "capabilities": ["captioning", "subtitle-translation", "dubbing", "transcription", "transcript-editing", "asset-upload", "export", "text-to-video", "text-to-image", "remote-mcp"],
+    "capabilities": [
+      "captioning",
+      "subtitle-translation",
+      "dubbing",
+      "transcription",
+      "transcript-editing",
+      "asset-upload",
+      "export",
+      "text-to-video",
+      "text-to-image",
+      "remote-mcp"
+    ],
     "tools_sample": null,
     "install": {
       "claude_code": "claude mcp add --transport http kapwing https://www.kapwing.com/mcp",
       "remote_url": "https://www.kapwing.com/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Sign in with your Kapwing account when the client opens the OAuth flow; no API key" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Sign in with your Kapwing account when the client opens the OAuth flow; no API key"
+    },
     "pricing": "freemium",
     "pricing_note": "Connects on every plan including free; AI edits draw on the workspace's AI credits at website rates, and free accounts hit export paywalls.",
-    "links": { "repo": null, "docs": "https://www.kapwing.com/help/about-the-kapwing-mcp/", "site": "https://www.kapwing.com/mcp" },
+    "links": {
+      "repo": null,
+      "docs": "https://www.kapwing.com/help/about-the-kapwing-mcp/",
+      "site": "https://www.kapwing.com/mcp"
+    },
     "added": "2026-10-28",
     "verified": "2026-10-28",
     "caveats": [
@@ -759,16 +1373,31 @@
     "featured": false,
     "tagline": "Official Topaz Labs MCP — enhance and upscale images with Topaz AI models.",
     "description": "Topaz Labs' own MCP server: send an image path or URL, get back an enhanced/upscaled version from one of 8 Topaz models — four standard (Standard V2, Low Resolution V2, CGI, High Fidelity V2) and four generative (Redefine, Recover 3, Standard MAX, Wonder 2) — defaulting to Standard V2 with auto-upscale to 2K. The official path to Topaz-grade enhancement for stills, plates, and frames in an agent pipeline.",
-    "capabilities": ["upscaling", "image-enhancement", "denoise", "restoration"],
-    "tools_sample": ["image-enhance"],
+    "capabilities": [
+      "upscaling",
+      "image-enhancement",
+      "denoise",
+      "restoration"
+    ],
+    "tools_sample": [
+      "image-enhance"
+    ],
     "install": {
       "claude_code": "claude mcp add topaz -e TOPAZ_API_KEY=YOUR_KEY -- npx -y @topazlabs/mcp",
       "remote_url": null,
       "stdio_command": "npx -y @topazlabs/mcp"
     },
-    "auth": { "type": "api_key", "env_var": "TOPAZ_API_KEY", "key_url": "https://developer.topazlabs.com/getting-started/api-key-setup" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "TOPAZ_API_KEY",
+      "key_url": "https://developer.topazlabs.com/getting-started/api-key-setup"
+    },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/TopazLabs/topaz-mcp", "docs": "https://developer.topazlabs.com/", "site": "https://www.topazlabs.com/api" },
+    "links": {
+      "repo": "https://github.com/TopazLabs/topaz-mcp",
+      "docs": "https://developer.topazlabs.com/",
+      "site": "https://www.topazlabs.com/api"
+    },
     "added": "2026-06-11",
     "verified": "2026-09-18",
     "caveats": [
@@ -788,16 +1417,43 @@
     "featured": false,
     "tagline": "Official remote MCP for upscaling, image/video generation, characters, and asset history.",
     "description": "Magnific's official remote MCP connects agents to its creative upscaler, image generation/editing, video generation, Soul character/style references, creation history, TTS, and 3D model generation through one OAuth endpoint. For filmmakers, it is strongest as a remote polish-and-iteration bench: upscale keeper frames, crop or relight plates, train reusable references, then browse prior generations without leaving the chat.",
-    "capabilities": ["upscaling", "image-generation", "image-editing", "video-generation", "character-references", "asset-history", "tts", "3d-generation"],
-    "tools_sample": ["images_upscale", "images_generate", "images_remove_background", "video_generate", "custom_references_create", "creations_search", "creations_show", "audio_tts", "models3d_generate"],
+    "capabilities": [
+      "upscaling",
+      "image-generation",
+      "image-editing",
+      "video-generation",
+      "character-references",
+      "asset-history",
+      "tts",
+      "3d-generation"
+    ],
+    "tools_sample": [
+      "images_upscale",
+      "images_generate",
+      "images_remove_background",
+      "video_generate",
+      "custom_references_create",
+      "creations_search",
+      "creations_show",
+      "audio_tts",
+      "models3d_generate"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http magnific https://mcp.magnific.com",
       "remote_url": "https://mcp.magnific.com",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth with a Magnific account; no API key is needed for MCP." },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "OAuth with a Magnific account; no API key is needed for MCP."
+    },
     "pricing": "credits",
-    "links": { "repo": null, "docs": "https://docs.magnific.com/modelcontextprotocol", "site": "https://www.magnific.com/api" },
+    "links": {
+      "repo": null,
+      "docs": "https://docs.magnific.com/modelcontextprotocol",
+      "site": "https://www.magnific.com/api"
+    },
     "added": "2026-06-29",
     "verified": "2026-09-21",
     "caveats": [
@@ -816,16 +1472,42 @@
     "featured": false,
     "tagline": "Hosted MCP that clips, captions, dubs, reframes, and publishes long-form footage.",
     "description": "reap's official remote MCP turns a finished long cut into distribution assets without a timeline: prompt-driven moment detection pulls short clips out of a video or YouTube URL, then captions them in 100+ languages, dubs them into 80+ with voice matching, and auto-reframes to 9:16 or 1:1 with face tracking. It also carries the last mile — connected-account publishing and scheduling to YouTube, TikTok, Instagram, LinkedIn and X — which makes it the delivery end of an agent pipeline rather than another generation tool.",
-    "capabilities": ["ai-clipping", "captioning", "dubbing", "subtitle-translation", "transcription", "aspect-ratio-reframing", "social-publishing"],
-    "tools_sample": ["create_clips", "add_captions", "dub_video", "reframe", "transcribe", "publish_clip", "schedule_clips", "get_status", "get_results"],
+    "capabilities": [
+      "ai-clipping",
+      "captioning",
+      "dubbing",
+      "subtitle-translation",
+      "transcription",
+      "aspect-ratio-reframing",
+      "social-publishing"
+    ],
+    "tools_sample": [
+      "create_clips",
+      "add_captions",
+      "dub_video",
+      "reframe",
+      "transcribe",
+      "publish_clip",
+      "schedule_clips",
+      "get_status",
+      "get_results"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http --scope user reap https://mcp.reap.video/mcp",
       "remote_url": "https://mcp.reap.video/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "One-time browser OAuth against a reap account; the endpoint serves OAuth protected-resource metadata and no API key is needed for MCP." },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "One-time browser OAuth against a reap account; the endpoint serves OAuth protected-resource metadata and no API key is needed for MCP."
+    },
     "pricing": "freemium",
-    "links": { "repo": null, "docs": "https://docs.reap.video/api-reference/mcp", "site": "https://reap.video/mcp" },
+    "links": {
+      "repo": null,
+      "docs": "https://docs.reap.video/api-reference/mcp",
+      "site": "https://reap.video/mcp"
+    },
     "added": "2026-08-12",
     "verified": "2026-10-24",
     "caveats": [
@@ -845,16 +1527,47 @@
     "featured": false,
     "tagline": "Local MCP and CLI toolkit for agent-driven video composition, editing, analysis, and rendering.",
     "description": "OrkasVideoStudio gives coding agents 37 typed MCP tools for building editable plan.json timelines, rendering HyperFrames compositions, and handling practical post work with ffmpeg. It can trim, concatenate, mix, caption, transcribe, OCR, measure loudness, detect silence and shot boundaries, and run deterministic delivery checks before a final render. The zero-key path works locally; image, speech, and video generation are optional provider-backed extensions.",
-    "capabilities": ["video-composition", "timeline-editing", "rendering", "ffmpeg-editing", "transcription", "captioning", "shot-analysis", "loudness-metering", "delivery-qa"],
-    "tools_sample": ["ovs_doctor", "draft", "render", "check", "snapshot", "edit_trim", "edit_concat", "edit_normalize_loudness", "transcribe", "scenes", "quality", "plan_promise_check"],
+    "capabilities": [
+      "video-composition",
+      "timeline-editing",
+      "rendering",
+      "ffmpeg-editing",
+      "transcription",
+      "captioning",
+      "shot-analysis",
+      "loudness-metering",
+      "delivery-qa"
+    ],
+    "tools_sample": [
+      "ovs_doctor",
+      "draft",
+      "render",
+      "check",
+      "snapshot",
+      "edit_trim",
+      "edit_concat",
+      "edit_normalize_loudness",
+      "transcribe",
+      "scenes",
+      "quality",
+      "plan_promise_check"
+    ],
     "install": {
       "claude_code": "claude mcp add ovs -- node /absolute/path/to/Orkas-VideoStudio/packages/mcp/dist/index.js",
       "remote_url": null,
       "stdio_command": "node /absolute/path/to/Orkas-VideoStudio/packages/mcp/dist/index.js"
     },
-    "auth": { "type": "none", "env_var": null, "key_url": null },
+    "auth": {
+      "type": "none",
+      "env_var": null,
+      "key_url": null
+    },
     "pricing": "free",
-    "links": { "repo": "https://github.com/Orkas-AI/Orkas-VideoStudio", "docs": "https://github.com/Orkas-AI/Orkas-VideoStudio#readme", "site": null },
+    "links": {
+      "repo": "https://github.com/Orkas-AI/Orkas-VideoStudio",
+      "docs": "https://github.com/Orkas-AI/Orkas-VideoStudio#readme",
+      "site": null
+    },
     "added": "2026-08-12",
     "verified": "2026-10-24",
     "caveats": [
@@ -873,16 +1586,39 @@
     "featured": false,
     "tagline": "Cloud video upscaling and SAM3 segmentation without a local GPU, billed by the second.",
     "description": "AVCLabs' first-party MCP wraps its cloud enhancement backend: upscale and denoise video to 1080p/2K, enhance, colorize and denoise stills, and run Meta's SAM3 to pull pixel-level masks from an image by text prompt. Video runs as an async job (create_task then poll get_task_status) so long clips survive the client timeout. For an agent, this is the desktop Video Enhancer AI workflow reachable as tools — useful for cleaning up archival plates or lifting generated footage that came out soft, as long as the clip is short enough to be worth the credits.",
-    "capabilities": ["video-upscaling", "image-enhancement", "colorization", "denoising", "segmentation"],
-    "tools_sample": ["create_task", "get_task_status", "enhance_video_sync", "enhance_image_sync", "colorize_image_sync", "denoise_image_sync", "sam3_predict", "get_sam3_task_status"],
+    "capabilities": [
+      "video-upscaling",
+      "image-enhancement",
+      "colorization",
+      "denoising",
+      "segmentation"
+    ],
+    "tools_sample": [
+      "create_task",
+      "get_task_status",
+      "enhance_video_sync",
+      "enhance_image_sync",
+      "colorize_image_sync",
+      "denoise_image_sync",
+      "sam3_predict",
+      "get_sam3_task_status"
+    ],
     "install": {
       "claude_code": "claude mcp add avclabs -e API_KEY=YOUR_KEY -- npx -y @avclabs.ai/media-mcp@latest",
       "remote_url": null,
       "stdio_command": "npx -y @avclabs.ai/media-mcp@latest"
     },
-    "auth": { "type": "api_key", "env_var": "API_KEY", "key_url": "https://mcp.avc.ai/" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "API_KEY",
+      "key_url": "https://mcp.avc.ai/"
+    },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/avclabs/media-mcp", "docs": "https://www.avclabs.com/avclabs-mcp.html", "site": "https://mcp.avc.ai" },
+    "links": {
+      "repo": "https://github.com/avclabs/media-mcp",
+      "docs": "https://www.avclabs.com/avclabs-mcp.html",
+      "site": "https://mcp.avc.ai"
+    },
     "added": "2026-08-12",
     "verified": "2026-10-23",
     "caveats": [
@@ -963,14 +1699,33 @@
     "featured": false,
     "tagline": "A local editor with no GUI and no LLM: an append-only edit graph an agent drives over MCP.",
     "description": "Open Edit runs as a local stdio MCP server pinned to one project directory, and hands the agent the machinery instead of the creative decisions: content-addressed ingest, word-level transcription via faster-whisper, an append-only intermediate-representation edit graph in SQLite, and melt + ffmpeg rendering. Every cut is one of 28 recorded, reversible IR operations, so a filmmaker can audit or revert what an agent did to the timeline rather than re-deriving it from a rendered file. Renders go proxy-first at 640x360 and only reach 1080p after passing a ten-check QC gate, which is the difference between an agent iterating cheaply and an agent burning an hour per bad idea.",
-    "capabilities": ["local-post", "edit-graph", "transcription", "ffmpeg", "proxy-render", "quality-check", "motion-graphics"],
-    "tools_sample": ["query_project", "edit_project", "run_script", "trigger_render", "get_render_job", "cancel_render_job"],
+    "capabilities": [
+      "local-post",
+      "edit-graph",
+      "transcription",
+      "ffmpeg",
+      "proxy-render",
+      "quality-check",
+      "motion-graphics"
+    ],
+    "tools_sample": [
+      "query_project",
+      "edit_project",
+      "run_script",
+      "trigger_render",
+      "get_render_job",
+      "cancel_render_job"
+    ],
     "install": {
       "claude_code": "claude mcp add open-edit -- open-edit-mcp --project /ABSOLUTE/PATH/TO/PROJECT",
       "remote_url": null,
       "stdio_command": "open-edit-mcp --project /ABSOLUTE/PATH/TO/PROJECT"
     },
-    "auth": { "type": "none", "env_var": null, "key_url": null },
+    "auth": {
+      "type": "none",
+      "env_var": null,
+      "key_url": null
+    },
     "pricing": "free",
     "links": {
       "repo": "https://github.com/AH64-dll/OpenEdit",
@@ -996,14 +1751,35 @@
     "featured": false,
     "tagline": "Deterministic video from one JSON template — same input, same frames, rendered locally.",
     "description": "LeClap exposes its ffmpeg-video-composer engine over MCP: the agent asks for the template JSON Schema, authors a descriptor of sections, filters, music and text overlays, validates it for free, then renders it to an MP4 on the machine. Nothing is sampled and nothing is uploaded, so the same template produces the same frames on every run — the opposite trade to a generative model, and the right one for titles, lower thirds, and any card you will need to re-render at 3am with one word changed. An opt-in bridge renders compositions from your own Remotion project into a clip the deterministic engine then composites.",
-    "capabilities": ["template-video", "video-assembly", "deterministic-render", "ffmpeg", "local-post", "motion-graphics"],
-    "tools_sample": ["get_samples", "get_template_schema", "validate_template", "edit_template", "compose_video", "render_frames", "probe_media", "transcribe_media", "render_remotion_clip"],
+    "capabilities": [
+      "template-video",
+      "video-assembly",
+      "deterministic-render",
+      "ffmpeg",
+      "local-post",
+      "motion-graphics"
+    ],
+    "tools_sample": [
+      "get_samples",
+      "get_template_schema",
+      "validate_template",
+      "edit_template",
+      "compose_video",
+      "render_frames",
+      "probe_media",
+      "transcribe_media",
+      "render_remotion_clip"
+    ],
     "install": {
       "claude_code": "claude mcp add leclap -e LECLAP_MCP_MEDIA_DIR=/abs/path/to/media -e LECLAP_MCP_OUTPUT_DIR=/abs/path/to/renders -- npx -y @leclap/mcp",
       "remote_url": null,
       "stdio_command": "npx -y @leclap/mcp"
     },
-    "auth": { "type": "none", "env_var": null, "key_url": null },
+    "auth": {
+      "type": "none",
+      "env_var": null,
+      "key_url": null
+    },
     "pricing": "free",
     "links": {
       "repo": "https://github.com/heristop/leclap",
@@ -1029,14 +1805,31 @@
     "featured": false,
     "tagline": "Lets an agent actually watch footage locally — scene-cut keyframes plus transcript, no upload.",
     "description": "crv turns a local file or a URL into something an LLM can read: it detects scene changes with ffmpeg rather than sampling on a fixed interval, deduplicates near-identical frames by pixel difference, transcribes the audio with Whisper, and hands back frames plus a manifest. The MCP mode adds a memory layer — every watched video is indexed, so an agent can ask questions across the whole library instead of one clip at a time. For a filmmaker-agent this is the dailies-review bench that TwelveLabs and Valossa do in the cloud, done on your own machine with nothing leaving it.",
-    "capabilities": ["video-understanding", "scene-detection", "keyframe-extraction", "transcription", "footage-search", "local-post"],
-    "tools_sample": ["watch_video", "get_frames", "get_transcript", "search_memory", "list_watched"],
+    "capabilities": [
+      "video-understanding",
+      "scene-detection",
+      "keyframe-extraction",
+      "transcription",
+      "footage-search",
+      "local-post"
+    ],
+    "tools_sample": [
+      "watch_video",
+      "get_frames",
+      "get_transcript",
+      "search_memory",
+      "list_watched"
+    ],
     "install": {
       "claude_code": "claude mcp add crv -- crv-mcp",
       "remote_url": null,
       "stdio_command": "crv-mcp (after `pip install 'claude-real-video[mcp]'`)"
     },
-    "auth": { "type": "none", "env_var": null, "key_url": null },
+    "auth": {
+      "type": "none",
+      "env_var": null,
+      "key_url": null
+    },
     "pricing": "freemium",
     "links": {
       "repo": "https://github.com/HUANGCHIHHUNGLeo/claude-real-video",

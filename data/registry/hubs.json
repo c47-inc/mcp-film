@@ -54,17 +54,51 @@
     "featured": false,
     "tagline": "Official hosted hub: run any image, video, audio or 3D app, then poll the task.",
     "description": "inference.sh's official streamable-HTTP server exposes its app catalogue as a small, generic tool set — list and inspect apps, run one, then track the task through logs, status and cancellation. The catalogue is the point for filmmakers: FLUX, GPT-Image-2, Veo 3, Seedance, Wan 2.7, ElevenLabs TTS and 3D generation behind one key, priced per run with the cost shown before you commit. It also proxies other MCP servers you have connected, so an agent can reach a generation app and a production tool through the same endpoint.",
-    "capabilities": ["text-to-image", "text-to-video", "image-to-video", "tts", "3d-generation", "model-search", "async-jobs", "job-cancel", "job-logs", "mcp-proxy"],
-    "tools_sample": ["app_list", "app_get", "app_run", "task_get", "task_list", "task_logs", "task_cancel", "knowledge_search", "skill_use", "mcp_list", "mcp_tools", "mcp_run"],
+    "capabilities": [
+      "text-to-image",
+      "text-to-video",
+      "image-to-video",
+      "tts",
+      "3d-generation",
+      "model-search",
+      "async-jobs",
+      "job-cancel",
+      "job-logs",
+      "mcp-proxy"
+    ],
+    "tools_sample": [
+      "app_list",
+      "app_get",
+      "app_run",
+      "task_get",
+      "task_list",
+      "task_logs",
+      "task_cancel",
+      "knowledge_search",
+      "skill_use",
+      "mcp_list",
+      "mcp_tools",
+      "mcp_run"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http inference https://api.inference.sh/mcp --header \"Authorization: Bearer YOUR_INF_KEY\"",
       "remote_url": "https://api.inference.sh/mcp",
-      "remote_headers": ["Authorization"],
+      "remote_headers": [
+        "Authorization"
+      ],
       "stdio_command": null
     },
-    "auth": { "type": "api_key", "env_var": null, "key_url": "inference.sh workspace → Settings → API Keys (an inf_ prefixed token, sent as Authorization: Bearer)" },
+    "auth": {
+      "type": "api_key",
+      "env_var": null,
+      "key_url": "inference.sh workspace → Settings → API Keys (an inf_ prefixed token, sent as Authorization: Bearer)"
+    },
     "pricing": "credits",
-    "links": { "repo": null, "docs": "https://inference.sh/docs/connectors/mcp-server", "site": "https://inference.sh" },
+    "links": {
+      "repo": null,
+      "docs": "https://inference.sh/docs/connectors/mcp-server",
+      "site": "https://inference.sh"
+    },
     "added": "2026-08-26",
     "verified": "2026-10-07",
     "caveats": [
@@ -83,17 +117,53 @@
     "featured": false,
     "tagline": "One hosted endpoint to search, run and chain 1,000+ image, video and audio models.",
     "description": "fal's official stateless MCP server gives agents the entire fal platform through eleven tools: discover models, search docs, read schemas and pricing, run inference, submit and cancel async jobs, collect results and upload files. For filmmakers it is the broadest single gateway — Veo, Kling, LTX-2, Hailuo, FLUX, Ideogram, plus audio like Stable Audio 2.5, CassetteAI SFX and Beatoven — behind one connector.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "image-editing", "music", "sfx", "tts", "transcription", "model-search", "docs-search", "file-upload", "async-jobs", "job-cancel"],
-    "tools_sample": ["search_models", "get_model_schema", "get_pricing", "search_docs", "run_model", "submit_job", "check_job", "get_job_result", "cancel_job", "upload_file", "recommend_model"],
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "text-to-image",
+      "image-editing",
+      "music",
+      "sfx",
+      "tts",
+      "transcription",
+      "model-search",
+      "docs-search",
+      "file-upload",
+      "async-jobs",
+      "job-cancel"
+    ],
+    "tools_sample": [
+      "search_models",
+      "get_model_schema",
+      "get_pricing",
+      "search_docs",
+      "run_model",
+      "submit_job",
+      "check_job",
+      "get_job_result",
+      "cancel_job",
+      "upload_file",
+      "recommend_model"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http fal-ai https://mcp.fal.ai/mcp --header \"Authorization: Bearer YOUR_FAL_KEY\"",
       "remote_url": "https://mcp.fal.ai/mcp",
-      "remote_headers": ["Authorization"],
+      "remote_headers": [
+        "Authorization"
+      ],
       "stdio_command": null
     },
-    "auth": { "type": "api_key", "env_var": "FAL_KEY", "key_url": "fal.ai dashboard → API Keys (sent as Authorization: Bearer header, never stored server-side); ChatGPT and Codex connect by OAuth through the fal plugin instead" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "FAL_KEY",
+      "key_url": "fal.ai dashboard → API Keys (sent as Authorization: Bearer header, never stored server-side); ChatGPT and Codex connect by OAuth through the fal plugin instead"
+    },
     "pricing": "credits",
-    "links": { "repo": null, "docs": "https://fal.ai/docs/model-apis/mcp", "site": "https://fal.ai" },
+    "links": {
+      "repo": null,
+      "docs": "https://fal.ai/docs/model-apis/mcp",
+      "site": "https://fal.ai"
+    },
     "added": "2026-06-11",
     "verified": "2026-10-02",
     "caveats": [
@@ -112,16 +182,50 @@
     "featured": false,
     "tagline": "Official hosted MCP for Krea image/video models, schemas, uploads, and job widgets.",
     "description": "Krea's official Streamable HTTP MCP lets agents discover available image and video models, inspect live input schemas, quote a job's cost before submitting it, generate, upload local assets, poll results, and cancel mistakes; agent tools can also hand a brief to Krea Agent in the background. For filmmakers it is a clean direct route into Krea's creative API and model shelf without hard-coding endpoints that drift. The MCP Apps widget can show an inline generation tile, auto-poll job progress, retry, cancel, and compare enhancement results in clients that support it.",
-    "capabilities": ["model-search", "schema-inspection", "text-to-image", "image-to-image", "text-to-video", "image-to-video", "file-upload", "async-jobs", "job-cancel", "cost-estimation", "credit-balance", "mcp-apps", "deprecation-metadata"],
-    "tools_sample": ["list_models", "get_model_schema", "generate", "execute_node_app", "get_job", "cancel_job", "get_upload_url", "upload_asset", "send_agent_message", "get_agent_session", "wait_for_agent_session"],
+    "capabilities": [
+      "model-search",
+      "schema-inspection",
+      "text-to-image",
+      "image-to-image",
+      "text-to-video",
+      "image-to-video",
+      "file-upload",
+      "async-jobs",
+      "job-cancel",
+      "cost-estimation",
+      "credit-balance",
+      "mcp-apps",
+      "deprecation-metadata"
+    ],
+    "tools_sample": [
+      "list_models",
+      "get_model_schema",
+      "generate",
+      "execute_node_app",
+      "get_job",
+      "cancel_job",
+      "get_upload_url",
+      "upload_asset",
+      "send_agent_message",
+      "get_agent_session",
+      "wait_for_agent_session"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http krea-ai https://api.krea.ai/mcp",
       "remote_url": "https://api.krea.ai/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth browser flow; API-token fallback from https://www.krea.ai/app/api/tokens sent as Authorization: Bearer." },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "OAuth browser flow; API-token fallback from https://www.krea.ai/app/api/tokens sent as Authorization: Bearer."
+    },
     "pricing": "credits",
-    "links": { "repo": null, "docs": "https://www.krea.ai/docs/developers/mcp", "site": "https://www.krea.ai" },
+    "links": {
+      "repo": null,
+      "docs": "https://www.krea.ai/docs/developers/mcp",
+      "site": "https://www.krea.ai"
+    },
     "added": "2026-06-29",
     "verified": "2026-10-27",
     "caveats": [
@@ -140,16 +244,31 @@
     "featured": false,
     "tagline": "Official remote MCP for discovering and running thousands of models on Replicate.",
     "description": "Replicate's official MCP server (remote, plus a self-hostable npm package generated from their HTTP API) lets agents search, compare and run any Replicate model — Veo, Kling, Wan, FLUX, SDXL, LTX and more. Experimental 'code mode' lets the model write sandboxed TypeScript against the Replicate SDK for faster multi-step chains.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "model-search", "predictions", "upscaling"],
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "text-to-image",
+      "model-search",
+      "predictions",
+      "upscaling"
+    ],
     "tools_sample": null,
     "install": {
       "claude_code": "claude mcp add replicate https://mcp.replicate.com/sse --transport sse --scope user",
       "remote_url": "https://mcp.replicate.com/sse",
       "stdio_command": "npx -y replicate-mcp@alpha --tools=code"
     },
-    "auth": { "type": "oauth", "env_var": "REPLICATE_API_TOKEN", "key_url": "https://replicate.com/account/api-tokens (the remote server runs an OAuth flow and stores the token on your behalf)" },
+    "auth": {
+      "type": "oauth",
+      "env_var": "REPLICATE_API_TOKEN",
+      "key_url": "https://replicate.com/account/api-tokens (the remote server runs an OAuth flow and stores the token on your behalf)"
+    },
     "pricing": "paid",
-    "links": { "repo": "https://github.com/replicate/replicate-mcp-code-mode", "docs": "https://replicate.com/docs/reference/mcp", "site": "https://mcp.replicate.com" },
+    "links": {
+      "repo": "https://github.com/replicate/replicate-mcp-code-mode",
+      "docs": "https://replicate.com/docs/reference/mcp",
+      "site": "https://mcp.replicate.com"
+    },
     "added": "2026-06-11",
     "verified": "2026-10-03",
     "caveats": [
@@ -168,16 +287,44 @@
     "featured": false,
     "tagline": "Browse, price, and run 130+ image, video, audio and voice models through one MCP.",
     "description": "RunAPI's official MCP server gives agents catalog discovery, input-schema inspection, prompt search, pricing lookup, media task creation, polling and balance checks across its model marketplace. It now ships in two forms: a hosted remote at mcp.runapi.ai and the local stdio npm package. For filmmakers it is a pragmatic aggregator for Flux, Kling, Seedance, Veo, Suno, ElevenLabs and related media endpoints when you want the agent to pick a model from current constraints instead of memorized slugs.",
-    "capabilities": ["model-search", "pricing", "prompt-search", "text-to-video", "image-to-video", "text-to-image", "music", "tts", "async-jobs"],
-    "tools_sample": ["list_models", "get_model_info", "list_actions", "check_pricing", "search_prompts", "login", "create_task", "get_task", "check_balance"],
+    "capabilities": [
+      "model-search",
+      "pricing",
+      "prompt-search",
+      "text-to-video",
+      "image-to-video",
+      "text-to-image",
+      "music",
+      "tts",
+      "async-jobs"
+    ],
+    "tools_sample": [
+      "list_models",
+      "get_model_info",
+      "list_actions",
+      "check_pricing",
+      "search_prompts",
+      "login",
+      "create_task",
+      "get_task",
+      "check_balance"
+    ],
     "install": {
       "claude_code": "claude mcp add runapi -s user -- npx -y @runapi.ai/mcp",
       "remote_url": "https://mcp.runapi.ai/mcp",
       "stdio_command": "npx -y @runapi.ai/mcp"
     },
-    "auth": { "type": "api_key", "env_var": "RUNAPI_API_KEY", "key_url": "https://runapi.ai/mcp (hosted remote takes OAuth or an API key as bearer; the local package adds a browser `login` tool that writes ~/.config/runapi/config.json)" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "RUNAPI_API_KEY",
+      "key_url": "https://runapi.ai/mcp (hosted remote takes OAuth or an API key as bearer; the local package adds a browser `login` tool that writes ~/.config/runapi/config.json)"
+    },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/runapi-ai/mcp", "docs": "https://github.com/runapi-ai/mcp#readme", "site": "https://runapi.ai" },
+    "links": {
+      "repo": "https://github.com/runapi-ai/mcp",
+      "docs": "https://github.com/runapi-ai/mcp#readme",
+      "site": "https://runapi.ai"
+    },
     "added": "2026-06-29",
     "verified": "2026-10-04",
     "caveats": [
@@ -197,16 +344,51 @@
     "featured": false,
     "tagline": "Official Runware MCP for image, video, audio, 3D, upscaling, and model search.",
     "description": "Runware's official npm MCP package gives agents access to the Runware API: image generation, video generation, audio generation, 3D, upscaling, background removal, captioning, model discovery, pricing, task lookup, and account balance. It also searches the community catalog, so an agent can pull a Civitai fine-tune or a custom upload into a shot. For filmmaker-agents it is a broad media workbench, especially useful when a prompt needs model search plus schema validation before spending credits.",
-    "capabilities": ["text-to-image", "text-to-video", "image-to-video", "audio-generation", "3d-generation", "upscaling", "background-removal", "image-captioning", "model-search", "pricing", "task-inspection", "media-storage", "custom-model-upload"],
-    "tools_sample": ["run", "model_schema", "list_models", "model_details", "model_examples", "model_pricing", "list_capabilities", "model_search", "media_storage", "model_upload", "account", "get_task_details"],
+    "capabilities": [
+      "text-to-image",
+      "text-to-video",
+      "image-to-video",
+      "audio-generation",
+      "3d-generation",
+      "upscaling",
+      "background-removal",
+      "image-captioning",
+      "model-search",
+      "pricing",
+      "task-inspection",
+      "media-storage",
+      "custom-model-upload"
+    ],
+    "tools_sample": [
+      "run",
+      "model_schema",
+      "list_models",
+      "model_details",
+      "model_examples",
+      "model_pricing",
+      "list_capabilities",
+      "model_search",
+      "media_storage",
+      "model_upload",
+      "account",
+      "get_task_details"
+    ],
     "install": {
       "claude_code": "claude mcp add runware -e RUNWARE_API_KEY=YOUR_KEY -- npx -y @runware/mcp",
       "remote_url": null,
       "stdio_command": "npx -y @runware/mcp"
     },
-    "auth": { "type": "api_key", "env_var": "RUNWARE_API_KEY", "key_url": "https://my.runware.ai" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "RUNWARE_API_KEY",
+      "key_url": "https://my.runware.ai"
+    },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/Runware/mcp", "docs": "https://github.com/Runware/mcp#readme", "site": "https://runware.ai" },
+    "links": {
+      "repo": "https://github.com/Runware/mcp",
+      "docs": "https://github.com/Runware/mcp#readme",
+      "site": "https://runware.ai"
+    },
     "added": "2026-06-29",
     "verified": "2026-10-04",
     "caveats": [
@@ -225,16 +407,51 @@
     "featured": false,
     "tagline": "Run Veo, Seedance, Kling, Runway, Suno, ElevenLabs, FLUX and more through one local MCP.",
     "description": "Community MCP server and sibling CLI for Kie.ai's media API, covering image, video, music and speech models from one connector — 38 tools across image, video, audio and task utilities. Since v4 it no longer fires generations directly: the agent drafts a plan with prepare_media_generation, a human approves it, and submit_media_generation spends the credits. For filmmaker-agents that buys a spend checkpoint in front of a broad model shelf, at the cost of an extra round trip per shot.",
-    "capabilities": ["model-hub", "text-to-video", "image-to-video", "text-to-image", "image-editing", "music", "tts", "sfx", "lip-sync", "upscaling", "async-jobs", "task-polling", "tool-filtering"],
-    "tools_sample": ["prepare_media_generation", "submit_media_generation", "nano_banana_image", "veo3_generate_video", "bytedance_seedance_video", "kling_video", "runway_aleph_video", "suno_generate_music", "elevenlabs_tts", "list_models", "wait_for_task", "list_tasks"],
+    "capabilities": [
+      "model-hub",
+      "text-to-video",
+      "image-to-video",
+      "text-to-image",
+      "image-editing",
+      "music",
+      "tts",
+      "sfx",
+      "lip-sync",
+      "upscaling",
+      "async-jobs",
+      "task-polling",
+      "tool-filtering"
+    ],
+    "tools_sample": [
+      "prepare_media_generation",
+      "submit_media_generation",
+      "nano_banana_image",
+      "veo3_generate_video",
+      "bytedance_seedance_video",
+      "kling_video",
+      "runway_aleph_video",
+      "suno_generate_music",
+      "elevenlabs_tts",
+      "list_models",
+      "wait_for_task",
+      "list_tasks"
+    ],
     "install": {
       "claude_code": "claude mcp add kie-ai -e KIE_AI_API_KEY=YOUR_KEY -- npx -y @felores/kie-ai-mcp-server",
       "remote_url": null,
       "stdio_command": "npx -y @felores/kie-ai-mcp-server"
     },
-    "auth": { "type": "api_key", "env_var": "KIE_AI_API_KEY", "key_url": "https://kie.ai/api-key" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "KIE_AI_API_KEY",
+      "key_url": "https://kie.ai/api-key"
+    },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/felores/kie-cli-mcp", "docs": "https://github.com/felores/kie-cli-mcp#readme", "site": "https://kie.ai" },
+    "links": {
+      "repo": "https://github.com/felores/kie-cli-mcp",
+      "docs": "https://github.com/felores/kie-cli-mcp#readme",
+      "site": "https://kie.ai"
+    },
     "added": "2026-06-29",
     "verified": "2026-10-04",
     "caveats": [
@@ -254,16 +471,40 @@
     "featured": false,
     "tagline": "Quote a shot across the video model zoo, then approve the one you want to pay for.",
     "description": "Hosted AI video and image production with model comparison, project budgeting, exact quotes and result recovery in a shared library. The packaged plan and generate skills orchestrate distinct MCP tools rather than being the names of the remote tools themselves. A filmmaker can compare the cost of a shot list before preparing a concrete request; submitting one paid attempt requires explicit approval of its exact quote.",
-    "capabilities": ["model-routing", "price-comparison", "text-to-video", "image-to-video", "cost-gates", "job-recovery"],
-    "tools_sample": ["list_models", "get_model_details", "calculate_project_budget", "prepare_generation", "confirm_generation", "get_generation_status", "list_recent_generations", "present_generation"],
+    "capabilities": [
+      "model-routing",
+      "price-comparison",
+      "text-to-video",
+      "image-to-video",
+      "cost-gates",
+      "job-recovery"
+    ],
+    "tools_sample": [
+      "list_models",
+      "get_model_details",
+      "calculate_project_budget",
+      "prepare_generation",
+      "confirm_generation",
+      "get_generation_status",
+      "list_recent_generations",
+      "present_generation"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http maxvideoai https://api.maxvideoai.com/mcp",
       "remote_url": "https://api.maxvideoai.com/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "https://maxvideoai.com" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "https://maxvideoai.com"
+    },
     "pricing": "credits",
-    "links": {"repo": "https://github.com/camgraphe/maxvideoai-plugin", "docs": "https://maxvideoai.com/docs/mcp", "site": "https://maxvideoai.com"},
+    "links": {
+      "repo": "https://github.com/camgraphe/maxvideoai-plugin",
+      "docs": "https://maxvideoai.com/docs/mcp",
+      "site": "https://maxvideoai.com"
+    },
     "added": "2026-08-31",
     "verified": "2026-09-19",
     "caveats": [
@@ -282,16 +523,39 @@
     "featured": false,
     "tagline": "Model intelligence MCP for prompt syntax, pricing, and budget-aware picks.",
     "description": "Promptibus does not generate media; it gives agents current model profiles, pricing, parameters, prompt linting, and prompt optimization for image, video, audio, text, and code models. For filmmaker-agents spending across Runway, Sora, Veo, FLUX, Suno, Midjourney-style tools, and other fast-moving model families, it is a preflight layer that reduces stale syntax and expensive wrong-model choices.",
-    "capabilities": ["model-recommendation", "pricing", "prompt-linting", "prompt-optimization", "model-parameters", "model-profiles"],
-    "tools_sample": ["recommend_model", "optimize_prompt", "lint_prompt", "compare_models", "get_parameters", "get_model_profile", "get_pricing"],
+    "capabilities": [
+      "model-recommendation",
+      "pricing",
+      "prompt-linting",
+      "prompt-optimization",
+      "model-parameters",
+      "model-profiles"
+    ],
+    "tools_sample": [
+      "recommend_model",
+      "optimize_prompt",
+      "lint_prompt",
+      "compare_models",
+      "get_parameters",
+      "get_model_profile",
+      "get_pricing"
+    ],
     "install": {
       "claude_code": "claude mcp add promptibus -- npx -y @promptibus/mcp",
       "remote_url": "https://promptibus.com/api/mcp",
       "stdio_command": "npx -y @promptibus/mcp"
     },
-    "auth": { "type": "api_key", "env_var": "PROMPTIBUS_API_KEY", "key_url": "https://promptibus.com/settings/api-keys" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "PROMPTIBUS_API_KEY",
+      "key_url": "https://promptibus.com/settings/api-keys"
+    },
     "pricing": "freemium",
-    "links": { "repo": "https://github.com/promptibus/mcp", "docs": "https://github.com/promptibus/mcp#readme", "site": "https://promptibus.com/mcp" },
+    "links": {
+      "repo": "https://github.com/promptibus/mcp",
+      "docs": "https://github.com/promptibus/mcp#readme",
+      "site": "https://promptibus.com/mcp"
+    },
     "added": "2026-06-29",
     "verified": "2026-10-05",
     "caveats": [
@@ -310,16 +574,46 @@
     "featured": false,
     "tagline": "Comfy Org's own MCP: drive your local ComfyUI, or Comfy Cloud, from an agent.",
     "description": "The official server for ComfyUI, in two connections that share a vocabulary but not an identical tool list: a stdio server that drives the ComfyUI on your own machine through comfy-cli, and a hosted endpoint at cloud.comfy.org for people without a GPU. It reads your actual install — custom nodes, installed models, GPU specs — so an agent can tell you a model will not fit before it downloads 20GB, then run the workflow, poll the job and fetch the outputs. For a filmmaker that means local open video models on your own hardware with the vendor's own maintenance behind the server.",
-    "capabilities": ["text-to-image", "text-to-video", "workflow-execution", "workflow-authoring", "local-inference", "model-management", "hardware-introspection", "job-monitoring"],
-    "tools_sample": ["run_workflow", "generate_image", "partner_generate", "run_template", "job", "fetch_outputs", "validate_workflow", "search_templates", "search_models", "server_info", "launch_comfyui", "install_node"],
+    "capabilities": [
+      "text-to-image",
+      "text-to-video",
+      "workflow-execution",
+      "workflow-authoring",
+      "local-inference",
+      "model-management",
+      "hardware-introspection",
+      "job-monitoring"
+    ],
+    "tools_sample": [
+      "run_workflow",
+      "generate_image",
+      "partner_generate",
+      "run_template",
+      "job",
+      "fetch_outputs",
+      "validate_workflow",
+      "search_templates",
+      "search_models",
+      "server_info",
+      "launch_comfyui",
+      "install_node"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http comfy-cloud https://cloud.comfy.org/mcp",
       "remote_url": "https://cloud.comfy.org/mcp",
       "stdio_command": "pip install comfy-mcp \"comfy-cli>=1.14.0\" then: claude mcp add comfy-mcp -e COMFY_BIN=/path/to/venv/bin/comfy -- comfy-mcp"
     },
-    "auth": { "type": "oauth", "env_var": "COMFY_API_KEY", "key_url": "https://platform.comfy.org/profile/api-keys" },
+    "auth": {
+      "type": "oauth",
+      "env_var": "COMFY_API_KEY",
+      "key_url": "https://platform.comfy.org/profile/api-keys"
+    },
     "pricing": "freemium",
-    "links": { "repo": "https://github.com/Comfy-Org/comfy-mcp", "docs": "https://docs.comfy.org/agent-tools/local", "site": "https://comfy.org" },
+    "links": {
+      "repo": "https://github.com/Comfy-Org/comfy-mcp",
+      "docs": "https://docs.comfy.org/agent-tools/local",
+      "site": "https://comfy.org"
+    },
     "added": "2026-08-29",
     "verified": "2026-10-11",
     "caveats": [
@@ -339,16 +633,41 @@
     "featured": false,
     "tagline": "Drive a local ComfyUI: 40+ tools for image, video, audio and 3D workflows.",
     "description": "Connects agents to a local or remote ComfyUI instance with 40+ tools for running, validating, composing and managing node workflows, plus 70+ bundled example workflows (FLUX, SDXL, SD3.5, ControlNet, LTX-Video, Mochi, AnimateDiff, Stable Audio). The free/local route for filmmakers who own GPUs and want full pipeline control, including open video models.",
-    "capabilities": ["text-to-image", "image-to-image", "text-to-video", "audio-generation", "3d-generation", "workflow-execution", "local-inference"],
-    "tools_sample": ["run_workflow", "validate_workflow", "search_templates", "get_example_workflow", "build_node", "list_models", "get_queue", "recommend_workflow"],
+    "capabilities": [
+      "text-to-image",
+      "image-to-image",
+      "text-to-video",
+      "audio-generation",
+      "3d-generation",
+      "workflow-execution",
+      "local-inference"
+    ],
+    "tools_sample": [
+      "run_workflow",
+      "validate_workflow",
+      "search_templates",
+      "get_example_workflow",
+      "build_node",
+      "list_models",
+      "get_queue",
+      "recommend_workflow"
+    ],
     "install": {
       "claude_code": "claude mcp add comfyui --transport stdio -- docker run -i --rm --pull always -e COMFYUI_URL=http://host.docker.internal:8000 ghcr.io/shawnrushefsky/comfyui-mcp:latest",
       "remote_url": null,
       "stdio_command": "docker run -i --rm --pull always -e COMFYUI_URL=http://host.docker.internal:8000 ghcr.io/shawnrushefsky/comfyui-mcp:latest"
     },
-    "auth": { "type": "none", "env_var": "COMFYUI_URL", "key_url": "Points at your own ComfyUI instance — port 8000 for the Desktop app, 8188 for a manual install — no cloud account needed" },
+    "auth": {
+      "type": "none",
+      "env_var": "COMFYUI_URL",
+      "key_url": "Points at your own ComfyUI instance — port 8000 for the Desktop app, 8188 for a manual install — no cloud account needed"
+    },
     "pricing": "free",
-    "links": { "repo": "https://github.com/shawnrushefsky/comfyui-mcp", "docs": "https://github.com/shawnrushefsky/comfyui-mcp#readme", "site": "https://comfy.org" },
+    "links": {
+      "repo": "https://github.com/shawnrushefsky/comfyui-mcp",
+      "docs": "https://github.com/shawnrushefsky/comfyui-mcp#readme",
+      "site": "https://comfy.org"
+    },
     "added": "2026-06-11",
     "verified": "2026-10-11",
     "caveats": [
@@ -367,16 +686,47 @@
     "featured": false,
     "tagline": "Midjourney in an agent — plus Kling, Luma, Hailuo, Hunyuan, Wan, Suno via PiAPI.",
     "description": "TypeScript MCP server over PiAPI's unified API, best known as the practical Midjourney route since Midjourney has no public API or official MCP. Also covers FLUX, Kling video and effects, Luma Dream Machine, Hailuo, Hunyuan/Skyreels/Wan video, Trellis 3D, MMAudio scoring and Suno music. Since Jul 2026 it also generates a contract-backed tool for every committed PiAPI (model, task_type) pair, so the exposed surface tracks the upstream catalog instead of only the hand-written convenience tools.",
-    "capabilities": ["text-to-image", "midjourney", "text-to-video", "image-to-video", "music", "tts", "3d-generation", "upscaling", "background-removal", "faceswap"],
-    "tools_sample": ["generate_image", "midjourney_imagine", "generate_video_kling", "generate_video_hailuo", "generate_video_luma", "generate_video_wan", "generate_music_suno", "generate_music_for_video", "image_upscale", "generate_3d_model", "piapi_qubico_flux1_schnell_txt2img"],
+    "capabilities": [
+      "text-to-image",
+      "midjourney",
+      "text-to-video",
+      "image-to-video",
+      "music",
+      "tts",
+      "3d-generation",
+      "upscaling",
+      "background-removal",
+      "faceswap"
+    ],
+    "tools_sample": [
+      "generate_image",
+      "midjourney_imagine",
+      "generate_video_kling",
+      "generate_video_hailuo",
+      "generate_video_luma",
+      "generate_video_wan",
+      "generate_music_suno",
+      "generate_music_for_video",
+      "image_upscale",
+      "generate_3d_model",
+      "piapi_qubico_flux1_schnell_txt2img"
+    ],
     "install": {
       "claude_code": null,
       "remote_url": null,
       "stdio_command": "Multi-step: git clone https://github.com/apinetwork/piapi-mcp-server, npm install, npm run build, then point your client at node /absolute/path/to/dist/index.js with PIAPI_API_KEY in env. Node 16+."
     },
-    "auth": { "type": "api_key", "env_var": "PIAPI_API_KEY", "key_url": "https://piapi.ai/workspace/key" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "PIAPI_API_KEY",
+      "key_url": "https://piapi.ai/workspace/key"
+    },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/apinetwork/piapi-mcp-server", "docs": "https://piapi.ai/docs/overview", "site": "https://piapi.ai" },
+    "links": {
+      "repo": "https://github.com/apinetwork/piapi-mcp-server",
+      "docs": "https://piapi.ai/docs/overview",
+      "site": "https://piapi.ai"
+    },
     "added": "2026-06-11",
     "verified": "2026-10-05",
     "caveats": [
@@ -396,16 +746,34 @@
     "featured": false,
     "tagline": "Foundry's node-based AI workflow engine, drivable by an outside agent over local HTTP.",
     "description": "Griptape Nodes is a drag-and-drop generative-AI workflow builder from Foundry — the Nuke company — with libraries covering Google Veo and Imagen, FLUX, Luma, Topaz, ElevenLabs, WAN and LTX, plus first-party bridges out to Nuke, Blender and USD. The engine you run locally exposes its own Streamable HTTP MCP endpoint, so an external agent can drive the graph rather than only operating inside Griptape's editor. For a filmmaker that makes it the rare hub where the model roster and the compositing app share one orchestration layer.",
-    "capabilities": ["workflow-orchestration", "multi-model-generation", "image-generation", "video-generation", "node-graph", "nuke-bridge", "blender-bridge", "usd", "local-inference"],
+    "capabilities": [
+      "workflow-orchestration",
+      "multi-model-generation",
+      "image-generation",
+      "video-generation",
+      "node-graph",
+      "nuke-bridge",
+      "blender-bridge",
+      "usd",
+      "local-inference"
+    ],
     "tools_sample": null,
     "install": {
       "claude_code": "claude mcp add --transport http griptape-nodes http://localhost:8125/mcp/",
       "remote_url": null,
       "stdio_command": "uv tool install griptape-nodes (shorthand `gtn`), or the managed Griptape Nodes Desktop app for macOS/Windows/Linux; the engine must be running before a client can connect"
     },
-    "auth": { "type": "local-app", "env_var": "GT_CLOUD_API_KEY", "key_url": "https://nodes.griptape.ai — sign in to generate the Griptape API key the engine needs; the MCP endpoint itself has no auth" },
+    "auth": {
+      "type": "local-app",
+      "env_var": "GT_CLOUD_API_KEY",
+      "key_url": "https://nodes.griptape.ai — sign in to generate the Griptape API key the engine needs; the MCP endpoint itself has no auth"
+    },
     "pricing": "freemium",
-    "links": { "repo": null, "docs": "https://docs.griptapenodes.com/en/stable/guides/mcp/external_clients/", "site": "https://www.griptapenodes.com" },
+    "links": {
+      "repo": null,
+      "docs": "https://docs.griptapenodes.com/en/stable/guides/mcp/external_clients/",
+      "site": "https://www.griptapenodes.com"
+    },
     "added": "2026-08-20",
     "verified": "2026-09-28",
     "caveats": [
@@ -424,16 +792,33 @@
     "featured": false,
     "tagline": "One OAuth endpoint onto ImagineArt's video, image and music models — 96 tools, no keys.",
     "description": "ImagineArt's official remote MCP exposes its whole generation catalogue through a single OAuth endpoint: text-to-video against Sora, Veo, Kling 3, Seedance, Runway, Hailuo, Wan and Luma; stills from Seedream, Flux, Imagen and Midjourney; plus music, upscaling, background removal and two guided pipelines (Ad Studio, Fashion Studio). For a filmmaker-agent it is a one-connection route to several flagship video models that have no first-party MCP, billed against one credit balance instead of six vendor accounts.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "image-editing", "upscaling", "background-removal", "music", "credit-balance"],
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "text-to-image",
+      "image-editing",
+      "upscaling",
+      "background-removal",
+      "music",
+      "credit-balance"
+    ],
     "tools_sample": null,
     "install": {
       "claude_code": "claude mcp add --transport http imagine https://mcp.imagine.art",
       "remote_url": "https://mcp.imagine.art",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser OAuth against an existing imagine.art account — no API key to generate or rotate; the endpoint's protected-resource metadata points at auth.vyro.ai with scopes openid, email and mcp:tools" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Browser OAuth against an existing imagine.art account — no API key to generate or rotate; the endpoint's protected-resource metadata points at auth.vyro.ai with scopes openid, email and mcp:tools"
+    },
     "pricing": "credits",
-    "links": { "repo": null, "docs": "https://www.imagine.art/mcp", "site": "https://www.imagine.art" },
+    "links": {
+      "repo": null,
+      "docs": "https://www.imagine.art/mcp",
+      "site": "https://www.imagine.art"
+    },
     "added": "2026-09-15",
     "verified": "2026-10-25",
     "caveats": [
@@ -453,16 +838,49 @@
     "featured": false,
     "tagline": "Remote hub over 180+ hosted models: video, image, speech, 3D, plus GPUs by the hour.",
     "description": "EmpirioLabs' official remote MCP puts its inference platform behind one streamable-HTTP endpoint — generate_video against Kling O3, Wan 2.7, Seedance 2.0 Pro, Hunyuan Video 1.5, Pixverse V5.6 and SVI 2.0 Pro, stills from Qwen Image 2.0, Seedream 5.0 Lite, Hunyuan Image 3 and Nova Canvas, speech from GLM-TTS and Gemini TTS, music from Stable Audio 2.5, plus transcription, 3D generation and a compose_video recipe step. Useful to a filmmaker-agent as a cheap second source for open-weights video models and for the rarer surfaces most hubs skip: 3D assets and per-hour GPU instances in the same connection.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "image-editing", "text-to-3d", "tts", "music", "transcription", "model-search", "async-jobs", "batch-jobs"],
-    "tools_sample": ["list_models", "get_model", "generate_video", "generate_image", "edit_image", "compose_video", "generate_3d", "text_to_speech", "generate_audio", "transcribe_audio", "analyze_image", "get_job"],
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "text-to-image",
+      "image-editing",
+      "text-to-3d",
+      "tts",
+      "music",
+      "transcription",
+      "model-search",
+      "async-jobs",
+      "batch-jobs"
+    ],
+    "tools_sample": [
+      "list_models",
+      "get_model",
+      "generate_video",
+      "generate_image",
+      "edit_image",
+      "compose_video",
+      "generate_3d",
+      "text_to_speech",
+      "generate_audio",
+      "transcribe_audio",
+      "analyze_image",
+      "get_job"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http empiriolabs https://mcp.empiriolabs.ai/mcp",
       "remote_url": "https://mcp.empiriolabs.ai/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth 2.1 browser sign-in for Claude and ChatGPT; scripts and editors can instead send an EmpirioLabs API key as an Authorization: Bearer header. Scopes are per-toolset (media, models, jobs, gpu, hosted_agents, …)" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "OAuth 2.1 browser sign-in for Claude and ChatGPT; scripts and editors can instead send an EmpirioLabs API key as an Authorization: Bearer header. Scopes are per-toolset (media, models, jobs, gpu, hosted_agents, …)"
+    },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/EmpirioLabs-AI/mcp", "docs": "https://docs.empiriolabs.ai/mcp", "site": "https://empiriolabs.ai" },
+    "links": {
+      "repo": "https://github.com/EmpirioLabs-AI/mcp",
+      "docs": "https://docs.empiriolabs.ai/mcp",
+      "site": "https://empiriolabs.ai"
+    },
     "added": "2026-09-15",
     "verified": "2026-10-25",
     "caveats": [
@@ -547,16 +965,53 @@
     "featured": false,
     "tagline": "Hosted OAuth MCP onto Mage's 31 image, video and audio models, with saved characters and references.",
     "description": "Mage's official remote server puts its consumer generation platform behind sixteen tools: one generate call that takes any catalogue model by name, a free estimate_cost check before anything is spent, uploads, request polling and cancellation, and history search. The part that matters for film work is the persistence layer — create_character and create_reference store a face or a look on the account so later shots can reuse it, which is the cheap version of continuity. Defaults are Mango 3 for stills, Cherry 2 Pro for video and Seed Audio for sound, with first-and-last-frame video via the Lemon model.",
-    "capabilities": ["text-to-image", "text-to-video", "image-to-video", "first-last-frame", "audio-generation", "character-consistency", "reference-images", "cost-estimate", "asset-upload", "async-jobs", "remote-mcp"],
-    "tools_sample": ["list_models", "get_model", "estimate_cost", "create_upload", "generate", "get_request", "cancel_request", "get_account", "list_characters", "create_character", "delete_character", "list_references", "create_reference", "delete_reference", "list_history", "search_creations"],
+    "capabilities": [
+      "text-to-image",
+      "text-to-video",
+      "image-to-video",
+      "first-last-frame",
+      "audio-generation",
+      "character-consistency",
+      "reference-images",
+      "cost-estimate",
+      "asset-upload",
+      "async-jobs",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "list_models",
+      "get_model",
+      "estimate_cost",
+      "create_upload",
+      "generate",
+      "get_request",
+      "cancel_request",
+      "get_account",
+      "list_characters",
+      "create_character",
+      "delete_character",
+      "list_references",
+      "create_reference",
+      "delete_reference",
+      "list_history",
+      "search_creations"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http mage https://mcp.mage.space/mcp",
       "remote_url": "https://mcp.mage.space/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser OAuth against a Mage account (guest sessions cannot connect) — protected-resource metadata names https://www.mage.space as the authorization server with scope mage. Headless setups can send a Mage API key as an Authorization: Bearer header instead" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Browser OAuth against a Mage account (guest sessions cannot connect) — protected-resource metadata names https://www.mage.space as the authorization server with scope mage. Headless setups can send a Mage API key as an Authorization: Bearer header instead"
+    },
     "pricing": "credits",
-    "links": { "repo": null, "docs": "https://www.mage.space/developers/mcp", "site": "https://www.mage.space" },
+    "links": {
+      "repo": null,
+      "docs": "https://www.mage.space/developers/mcp",
+      "site": "https://www.mage.space"
+    },
     "added": "2026-10-25",
     "verified": "2026-10-25",
     "caveats": [
@@ -596,6 +1051,7 @@
       "atlas_transcribe_audio",
       "atlas_quick_generate",
       "atlas_upload_media",
+      "atlas_chat",
       "atlas_get_prediction",
       "atlas_get_balance",
       "atlas_get_model_costs"
@@ -617,14 +1073,14 @@
       "site": "https://www.atlascloud.ai"
     },
     "added": "2026-09-18",
-    "verified": "2026-09-18",
+    "verified": "2026-10-30",
     "caveats": [
-      "npm has sat at 1.7.0 since Aug 2026 while the repo moves, so npx installs lag the source.",
+      "npm has sat at 1.7.0 since 27 Aug 2026 while the repo kept moving into late October, so npx installs lag the source.",
       "Uploaded files are temporary and may be cleaned up, and abusing the upload tool can get your key suspended, so it is not asset storage.",
       "No free tier, and the catalogue numbers are the README's, so treat atlas_list_models as the real inventory.",
       "The README declares MIT but GitHub detects no licence file."
     ],
-    "notes": "Verified 18 Sep 2026 from the repo, npm and the vendor's pricing page. The best thing here is the flag nobody else ships: every generation tool takes dry_run: true, which returns the request the server would send without submitting it or charging — the cheapest way to let an agent rehearse an expensive video call. Also useful that atlas_get_model_costs exists at all, since the failure mode of every aggregator is an agent burning a balance it cannot see. Now the caveats. The catalogue numbers — 130+ image models, 200+ video models, 443 live models overall — are the README's, checked against nothing; treat atlas_list_models as the real inventory. Maintenance is uneven: the repo was pushed 16 Sep 2026 but npm has sat at 1.7.0 since 27 Aug, so npx installs lag the source, and the project has 8 stars in an org created December 2025. The README declares MIT but GitHub detects no licence file in the repo, which is a difference that matters if you are vendoring it. Uploaded files are explicitly temporary — the README says they may be cleaned up periodically and that abusing the upload tool can get your key suspended — so do not treat atlas_upload_media as asset storage. No free tier on the pricing page; per-unit rates are quoted per model (GPT Image 2.5 from $0.0687 an image) with discounts advertised against list. This lane is crowded: fal, replicate and runware are older, better documented and more widely used. Reach for Atlas Cloud when the specific model you want is in its catalogue and not theirs, or when you want the dry-run rehearsal."
+    "notes": "Re-checked 30 Oct 2026 against the repo and npm; first verified 18 Sep 2026 from the repo, npm and the vendor's pricing page. The best thing here is the flag nobody else ships: every generation tool takes dry_run: true, which returns the request the server would send without submitting it or charging — the cheapest way to let an agent rehearse an expensive video call. Also useful that atlas_get_model_costs exists at all, since the failure mode of every aggregator is an agent burning a balance it cannot see. Now the caveats. The catalogue numbers are the README's and do not agree with themselves: as of 30 Oct it claims 510 live models in one place and per-category counts (229 video, 138 image, 82 LLM, 15 audio, 14 3D) that sum to 478 in another; treat atlas_list_models as the real inventory. The fifteen tools include atlas_chat for the LLM side of that catalogue. Maintenance is uneven: the repo was pushed 29 Oct 2026 but npm still has not moved off 1.7.0 (27 Aug), two months of source that npx installs never see, and the project has 18 stars in an org created December 2025. The README declares MIT but GitHub detects no licence file in the repo, which is a difference that matters if you are vendoring it. Uploaded files are explicitly temporary — the README says they may be cleaned up periodically and that abusing the upload tool can get your key suspended — so do not treat atlas_upload_media as asset storage. No free tier on the pricing page; per-unit rates are quoted per model (GPT Image 2.5 from $0.0687 an image) with discounts advertised against list. This lane is crowded: fal, replicate and runware are older, better documented and more widely used. Reach for Atlas Cloud when the specific model you want is in its catalogue and not theirs, or when you want the dry-run rehearsal."
   },
   {
     "slug": "artlist",
@@ -678,16 +1134,47 @@
     "featured": false,
     "tagline": "Hosted OAuth MCP for 20+ video, image, audio and 3D models, with a credit preview on every call.",
     "description": "Popcraft's official remote MCP puts Seedance 2.0 and 2.5, Veo 3.1, Kling 3.0 Omni, Hailuo 3, Wan 3.0, Nano Banana, GPT Image 2.5 and Seedream behind one OAuth endpoint, plus TTS, sound effects, music, 3D and Topaz upscaling. For a filmmaker-agent the useful parts are the plumbing: get_cost previews the exact credit price of any generation before it runs, models_explore returns each model's reference limits, durations and aspect ratios, and a signed-upload tool streams large reference plates from disk instead of through the context window. Results chain straight into the next call, so draft-at-480p-then-upgrade-to-1080p is one tool away.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "image-editing", "tts", "sfx", "music-generation", "3d-generation", "upscaling", "cost-estimation", "file-upload", "oauth-remote"],
-    "tools_sample": ["popcraft_generate_video", "popcraft_generate_image", "popcraft_generate_audio", "popcraft_generate_3d", "popcraft_upscale_video", "popcraft_upgrade_video", "popcraft_models_explore", "popcraft_media_upload", "popcraft_balance"],
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "text-to-image",
+      "image-editing",
+      "tts",
+      "sfx",
+      "music-generation",
+      "3d-generation",
+      "upscaling",
+      "cost-estimation",
+      "file-upload",
+      "oauth-remote"
+    ],
+    "tools_sample": [
+      "popcraft_generate_video",
+      "popcraft_generate_image",
+      "popcraft_generate_audio",
+      "popcraft_generate_3d",
+      "popcraft_upscale_video",
+      "popcraft_upgrade_video",
+      "popcraft_models_explore",
+      "popcraft_media_upload",
+      "popcraft_balance"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http popcraft https://popcraft.ai/api/mcp",
       "remote_url": "https://popcraft.ai/api/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth 2.1 with dynamic client registration — no API key; in Claude Code run /mcp → popcraft → Authenticate and sign in at https://popcraft.ai" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "OAuth 2.1 with dynamic client registration — no API key; in Claude Code run /mcp → popcraft → Authenticate and sign in at https://popcraft.ai"
+    },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/popcraft-ai/popcraft-mcp", "docs": "https://popcraft.ai/mcp", "site": "https://popcraft.ai" },
+    "links": {
+      "repo": "https://github.com/popcraft-ai/popcraft-mcp",
+      "docs": "https://popcraft.ai/mcp",
+      "site": "https://popcraft.ai"
+    },
     "added": "2026-10-03",
     "verified": "2026-10-03",
     "caveats": [
@@ -706,17 +1193,46 @@
     "featured": false,
     "tagline": "One hosted endpoint over 450 models: text-to-video from Veo, Kling, Seedance and Hailuo on one pay-as-you-go balance.",
     "description": "GenMagic is an OpenAI-compatible gateway with a remote MCP in front of it. list_models returns each model's id, price and, for video, the resolutions, clip lengths and whether it renders audio; create_video starts a text-to-video job on any of them and get_video polls it. Speech, music and image generation sit on the same balance. For an agent that wants to compare Veo 3.1, Kling 3.0, Seedance 2.5 and Hailuo 3 without four accounts, it is a cheap place to start.",
-    "capabilities": ["text-to-video", "text-to-image", "image-to-image", "tts", "music", "model-search", "multi-model-generation", "async-jobs", "pricing", "remote-mcp"],
-    "tools_sample": ["list_models", "create_video", "get_video", "generate_image", "generate_speech", "generate_music", "generate_text"],
+    "capabilities": [
+      "text-to-video",
+      "text-to-image",
+      "image-to-image",
+      "tts",
+      "music",
+      "model-search",
+      "multi-model-generation",
+      "async-jobs",
+      "pricing",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "list_models",
+      "create_video",
+      "get_video",
+      "generate_image",
+      "generate_speech",
+      "generate_music",
+      "generate_text"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http genmagic https://genmagic.co/api/mcp --header \"Authorization: Bearer YOUR_GENMAGIC_API_KEY\"",
       "remote_url": "https://genmagic.co/api/mcp",
-      "remote_headers": ["Authorization"],
+      "remote_headers": [
+        "Authorization"
+      ],
       "stdio_command": null
     },
-    "auth": { "type": "api_key", "env_var": "GENMAGIC_API_KEY", "key_url": "https://genmagic.co/get-api-key (keys start gm_live_; verified email unlocks a small starter credit)" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "GENMAGIC_API_KEY",
+      "key_url": "https://genmagic.co/get-api-key (keys start gm_live_; verified email unlocks a small starter credit)"
+    },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/yumaheymans/genmagic-mcp", "docs": "https://genmagic.co/developers", "site": "https://genmagic.co" },
+    "links": {
+      "repo": "https://github.com/yumaheymans/genmagic-mcp",
+      "docs": "https://genmagic.co/developers",
+      "site": "https://genmagic.co"
+    },
     "added": "2026-10-10",
     "verified": "2026-10-10",
     "caveats": [
@@ -735,16 +1251,41 @@
     "featured": false,
     "tagline": "WaveSpeed's live image, video, audio and 3D catalogue behind seven tools, hosted or via npx.",
     "description": "WaveSpeed's own server reads its model catalogue from the live API instead of a pinned list, so an agent searches with list_models, reads a model's real input schema with get_model_schema, quotes the job with get_price, then fires run_model. For a filmmaker-agent that is one bill and one verb across many upstream image and video models, with an explicit price check before an expensive shot and resumable polling for renders that outlast a single tool call.",
-    "capabilities": ["multi-model-generation", "text-to-image", "text-to-video", "image-to-video", "audio-generation", "3d-generation", "model-discovery", "cost-tracking"],
-    "tools_sample": ["list_models", "get_model_schema", "run_model", "get_price", "get_balance", "upload_file", "get_prediction"],
+    "capabilities": [
+      "multi-model-generation",
+      "text-to-image",
+      "text-to-video",
+      "image-to-video",
+      "audio-generation",
+      "3d-generation",
+      "model-discovery",
+      "cost-tracking"
+    ],
+    "tools_sample": [
+      "list_models",
+      "get_model_schema",
+      "run_model",
+      "get_price",
+      "get_balance",
+      "upload_file",
+      "get_prediction"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http wavespeed https://api.wavespeed.ai/mcp",
       "remote_url": "https://api.wavespeed.ai/mcp",
       "stdio_command": "npx -y @wavespeed/mcp"
     },
-    "auth": { "type": "oauth", "env_var": "WAVESPEED_API_KEY", "key_url": "https://wavespeed.ai/accesskey — the hosted server signs in through the browser and mints a key named 'MCP · <app>'; the npx server and header-only clients take WAVESPEED_API_KEY or an Authorization: Bearer header" },
+    "auth": {
+      "type": "oauth",
+      "env_var": "WAVESPEED_API_KEY",
+      "key_url": "https://wavespeed.ai/accesskey — the hosted server signs in through the browser and mints a key named 'MCP · <app>'; the npx server and header-only clients take WAVESPEED_API_KEY or an Authorization: Bearer header"
+    },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/WaveSpeedAI/mcp-server", "docs": "https://wavespeed.ai/docs/mcp", "site": "https://wavespeed.ai" },
+    "links": {
+      "repo": "https://github.com/WaveSpeedAI/mcp-server",
+      "docs": "https://wavespeed.ai/docs/mcp",
+      "site": "https://wavespeed.ai"
+    },
     "added": "2026-10-19",
     "verified": "2026-10-19",
     "caveats": [
@@ -816,5 +1357,56 @@
       "The org and repo are about a week old, the backend is closed, and tool names come from the README."
     ],
     "notes": "Checked 26 Oct 2026. An initialize POST to https://api.popnow.ai/mcp (protocol 2025-06-18 and 2025-11-25) returns 401 with a WWW-Authenticate pointing at protected-resource metadata that names api.popnow.ai as the authorization server, with S256 PKCE, refresh tokens and dynamic client registration. There is no anonymous tools/list, so the tool names above come from the vendor README, not a live call. The repo (MIT, created 18 Oct 2026) holds setup docs, server.json and the @popnow/mcp stdio bridge only; the backend is closed. The official MCP Registry lists io.github.popnow-ai/popnow-mcp 0.1.0 as active. Billing is credit packs with no subscription, $9 for 9,000 credits up to $99 for 120,000 (1 credit = $0.001); PopNow prices a default 5-second MiniMax H3 clip at 185 credits. Jobs under 300 credits start without a confirmation step, so an agent can spend unprompted below that line: keep client approvals on and watch check_balance. OAuth spends website credits while an API key spends a separate USD API balance, and the two do not transfer. Music runs on Suno v6, and Suno has no official public API, so treat those tracks with the same ToS caution as any Suno reseller. The org and repo are about a week old; expect churn."
+  },
+  {
+    "slug": "picsart",
+    "name": "Picsart MCP",
+    "vendor": "Picsart",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "Picsart's hosted MCP: one sign-in and one credit balance over 140+ image, video and audio models.",
+    "description": "Picsart's first-party remote server, launched 8 May 2026, puts its generative catalogue behind one OAuth connection. The launch post lists image models such as Nano Banana, Flux, Recraft, Ideogram and Imagen, video from Sora, Veo, Kling, Seedance, Hailuo, Runway and Pika, ElevenLabs voices and Lyria music, plus utility edits — background removal and replacement, enhance, upscale, vectorize and video extension. For a filmmaker-agent it is a single-bill route to most of the headline video models with the finishing chores attached, and the assistant can check a generation's credit cost before it spends.",
+    "capabilities": [
+      "multi-model-generation",
+      "text-to-image",
+      "text-to-video",
+      "image-to-video",
+      "image-editing",
+      "background-removal",
+      "upscaling",
+      "vectorization",
+      "video-extension",
+      "tts",
+      "music-generation",
+      "cost-tracking",
+      "remote-mcp"
+    ],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http picsart https://api.picsart.com/gen-ai/mcp",
+      "remote_url": "https://api.picsart.com/gen-ai/mcp",
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "OAuth via your Picsart account sign-in — no API key to paste; generations draw on that account's credit balance"
+    },
+    "pricing": "credits",
+    "pricing_note": "One Picsart credit balance covers every model; the launch post publishes no per-model rates or plan requirement.",
+    "links": {
+      "repo": null,
+      "docs": "https://picsart.com/blog/mcp/",
+      "site": "https://picsart.com"
+    },
+    "added": "2026-10-30",
+    "verified": "2026-10-30",
+    "caveats": [
+      "Two different Picsart MCP servers exist: this OAuth one for generation, and an API-key Creative APIs server at mcp.picsart.io/v1 for developers.",
+      "No per-model credit prices or plan requirement are published, so let the assistant quote the cost before every video call.",
+      "Tool names for this server are not published; the client has to enumerate them."
+    ],
+    "notes": "Verified 30 Oct 2026 from Picsart's launch post (8 May 2026) and the endpoint's own OAuth protected-resource metadata, which names auth.picsart.com as the authorization server with scopes openid, profile and workflows.execute — so the URL is live and gated, but nothing here was run with an account. The launch post documents connector setup for Claude, Cursor and ChatGPT by URL plus sign-in; the claude_code line is the standard remote form for that URL, not a command Picsart prints. Know which Picsart you are connecting: docs.picsart.io describes a separate Creative APIs MCP at mcp.picsart.io/v1 that takes an X-Picsart-API-Key header and exposes dozens of named tools for background removal, upscaling, effects, trims, concats and transcription across Picsart's developer APIs — that one is the programmable-image-API product, billed per API, and its own page miscounts its tools (it claims 90+ and lists 83). This entry is the consumer generation server. The catalogue (140+ models) is the vendor's count, and the model list reads like a reseller's: you get Sora, Veo and Kling through Picsart's credits rather than the upstream vendor's, with whatever lag and parameter subset that implies. No rate limits or file-size limits are published, and folder batches run one by one — Picsart points bulk work at its separate CLI. For an aggregator with published per-model pricing see fal or replicate; reach for this when the team already pays Picsart."
   }
 ]
