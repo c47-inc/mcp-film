@@ -8,16 +8,46 @@
     "featured": false,
     "tagline": "Official hosted Airtable MCP: query, create, and update production-tracking bases.",
     "description": "Airtable's official remote MCP server lets agents search bases, read schemas, filter/sort records, create and update rows, build interface pages, and draft automations — ideal for shot trackers, casting sheets, asset libraries, and budgets. OAuth via Dynamic Client Registration (or a personal access token), and it enforces each user's existing Airtable permissions.",
-    "capabilities": ["base-search", "schema-inspection", "record-crud", "record-search", "comments", "table-creation", "interface-pages", "automations"],
-    "tools_sample": ["list_workspaces", "search_bases", "create_base", "list_tables_for_base", "get_table_schema", "list_records_for_table", "search_records", "create_records_for_table", "update_records_for_table", "create_table", "list_pages_for_base", "list_records_for_page"],
+    "capabilities": [
+      "base-search",
+      "schema-inspection",
+      "record-crud",
+      "record-search",
+      "comments",
+      "table-creation",
+      "interface-pages",
+      "automations"
+    ],
+    "tools_sample": [
+      "list_workspaces",
+      "search_bases",
+      "create_base",
+      "list_tables_for_base",
+      "get_table_schema",
+      "list_records_for_table",
+      "search_records",
+      "create_records_for_table",
+      "update_records_for_table",
+      "create_table",
+      "list_pages_for_base",
+      "list_records_for_page"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http airtable https://mcp.airtable.com/mcp",
       "remote_url": "https://mcp.airtable.com/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth browser flow (primary); PATs also supported at https://airtable.com/create/tokens" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "OAuth browser flow (primary); PATs also supported at https://airtable.com/create/tokens"
+    },
     "pricing": "freemium",
-    "links": { "repo": null, "docs": "https://airtable.com/developers/agents/mcp/getting-started", "site": "https://www.airtable.com" },
+    "links": {
+      "repo": null,
+      "docs": "https://airtable.com/developers/agents/mcp/getting-started",
+      "site": "https://www.airtable.com"
+    },
     "added": "2026-06-11",
     "verified": "2026-10-26",
     "caveats": [
@@ -36,16 +66,48 @@
     "featured": false,
     "tagline": "Notion's hosted MCP: search, read, and write docs, wikis, and databases via OAuth.",
     "description": "Notion's official hosted MCP server gives agents OAuth-scoped access to a workspace: keyword search over pages and people, a separate AI search that reaches connected sources when the workspace has Notion AI, fetch of pages and databases, and create/update content through AI-native, Markdown-first tools. The natural home for script drafts, beat sheets, character bibles, and shot lists an agent can read and update.",
-    "capabilities": ["workspace-search", "ai-search", "page-crud", "database-crud", "database-views", "file-uploads", "comments", "skills", "calendar", "markdown-first"],
-    "tools_sample": ["notion-search", "notion-fetch", "notion-create-pages", "notion-update-page", "notion-create-database", "notion-create-view", "notion-query-data-sources", "notion-create-file-upload", "notion-create-comment", "notion-calendar-list-events", "notion-spawn-session", "notion-get-users"],
+    "capabilities": [
+      "workspace-search",
+      "ai-search",
+      "page-crud",
+      "database-crud",
+      "database-views",
+      "file-uploads",
+      "comments",
+      "skills",
+      "calendar",
+      "markdown-first"
+    ],
+    "tools_sample": [
+      "notion-search",
+      "notion-fetch",
+      "notion-create-pages",
+      "notion-update-page",
+      "notion-create-database",
+      "notion-create-view",
+      "notion-query-data-sources",
+      "notion-create-file-upload",
+      "notion-create-comment",
+      "notion-calendar-list-events",
+      "notion-spawn-session",
+      "notion-get-users"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http notion https://mcp.notion.com/mcp",
       "remote_url": "https://mcp.notion.com/mcp",
       "stdio_command": "npx -y @notionhq/notion-mcp-server"
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "One-click OAuth at mcp.notion.com; Business and Enterprise workspace owners can issue an MCP token (Developer portal → New MCP token) for headless bearer access; the local server uses a NOTION_TOKEN integration token" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "One-click OAuth at mcp.notion.com; Business and Enterprise workspace owners can issue an MCP token (Developer portal → New MCP token) for headless bearer access; the local server uses a NOTION_TOKEN integration token"
+    },
     "pricing": "freemium",
-    "links": { "repo": "https://github.com/makenotion/notion-mcp-server", "docs": "https://developers.notion.com/guides/mcp/get-started-with-mcp", "site": "https://www.notion.com" },
+    "links": {
+      "repo": "https://github.com/makenotion/notion-mcp-server",
+      "docs": "https://developers.notion.com/guides/mcp/get-started-with-mcp",
+      "site": "https://www.notion.com"
+    },
     "added": "2026-06-11",
     "verified": "2026-10-28",
     "caveats": [
@@ -64,16 +126,41 @@
     "featured": false,
     "tagline": "Google's official remote Drive MCP: search, read, and create files with Workspace governance.",
     "description": "A first-party hosted MCP endpoint from the Drive API team that lets agents search files, read content as a natural-language representation, retrieve metadata, and create/download files — inheriting the user's Drive permissions and Workspace data governance. The production file server for dailies, exports, and shared media.",
-    "capabilities": ["file-search", "file-read", "file-create", "file-copy", "recent-files", "metadata", "permission-aware"],
-    "tools_sample": ["search_files", "read_file_content", "download_file_content", "create_file", "copy_file", "get_file_metadata", "get_file_permissions", "list_recent_files"],
+    "capabilities": [
+      "file-search",
+      "file-read",
+      "file-create",
+      "file-copy",
+      "recent-files",
+      "metadata",
+      "permission-aware"
+    ],
+    "tools_sample": [
+      "search_files",
+      "read_file_content",
+      "download_file_content",
+      "create_file",
+      "copy_file",
+      "get_file_metadata",
+      "get_file_permissions",
+      "list_recent_files"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http google-drive https://drivemcp.googleapis.com/mcp/v1",
       "remote_url": "https://drivemcp.googleapis.com/mcp/v1",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Bring your own Google Cloud OAuth client (consent screen + client ID/secret) — see the configure-mcp-server guide" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Bring your own Google Cloud OAuth client (consent screen + client ID/secret) — see the configure-mcp-server guide"
+    },
     "pricing": "freemium",
-    "links": { "repo": null, "docs": "https://developers.google.com/workspace/drive/api/guides/configure-mcp-server", "site": "https://drive.google.com" },
+    "links": {
+      "repo": null,
+      "docs": "https://developers.google.com/workspace/drive/api/guides/configure-mcp-server",
+      "site": "https://drive.google.com"
+    },
     "added": "2026-06-11",
     "verified": "2026-10-28",
     "caveats": [
@@ -92,16 +179,42 @@
     "featured": false,
     "tagline": "Dropbox's official remote MCP (beta) for dailies, footage folders, and file ops.",
     "description": "Dropbox's hosted MCP server (beta) connects agents to Dropbox files and folders with OAuth: list, search, upload, download, move, copy, delete, and share, plus revision history, transcription, and Markdown conversion for drafting and summarization. The same endpoint now carries Dropbox Sign and Paper tools, so release forms and location agreements can go out without a second connector.",
-    "capabilities": ["file-search", "upload-download", "file-ops", "sharing-links", "content-fetch", "transcription"],
-    "tools_sample": ["ListFolder", "Search", "GetFileMetadata", "GetFileContent", "CreateFile", "CreateSharedLink", "ListFileRevisions", "RestoreFileRevision", "GetTranscript", "GetMarkdown"],
+    "capabilities": [
+      "file-search",
+      "upload-download",
+      "file-ops",
+      "sharing-links",
+      "content-fetch",
+      "transcription"
+    ],
+    "tools_sample": [
+      "ListFolder",
+      "Search",
+      "GetFileMetadata",
+      "GetFileContent",
+      "CreateFile",
+      "CreateSharedLink",
+      "ListFileRevisions",
+      "RestoreFileRevision",
+      "GetTranscript",
+      "GetMarkdown"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http dropbox https://mcp.dropbox.com/mcp",
       "remote_url": "https://mcp.dropbox.com/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Dropbox OAuth consent via mcp.dropbox.com" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Dropbox OAuth consent via mcp.dropbox.com"
+    },
     "pricing": "freemium",
-    "links": { "repo": null, "docs": "https://help.dropbox.com/integrations/connect-dropbox-mcp-server", "site": "https://www.dropbox.com" },
+    "links": {
+      "repo": null,
+      "docs": "https://help.dropbox.com/integrations/connect-dropbox-mcp-server",
+      "site": "https://www.dropbox.com"
+    },
     "added": "2026-06-11",
     "verified": "2026-10-29",
     "caveats": [
@@ -120,17 +233,46 @@
     "featured": false,
     "tagline": "Official Cloudinary MCP for uploading, organizing, searching, and transforming media assets.",
     "description": "Cloudinary's official Asset Management MCP gives agents a media backlot: upload images, videos, and files; search and organize assets; apply Cloudinary transformations; and generate archives for delivery. For film pipelines, it is the missing bridge between generated takes, campaign assets, review exports, and CDN-ready versions.",
-    "capabilities": ["asset-management", "media-upload", "media-search", "video-assets", "image-transforms", "video-transforms", "cdn-delivery", "archive-generation", "mcp-ui-apps"],
-    "tools_sample": ["transform-asset", "get-tx-reference", "list_tools", "describe_tool_input", "execute_tool", "list_scopes"],
+    "capabilities": [
+      "asset-management",
+      "media-upload",
+      "media-search",
+      "video-assets",
+      "image-transforms",
+      "video-transforms",
+      "cdn-delivery",
+      "archive-generation",
+      "mcp-ui-apps"
+    ],
+    "tools_sample": [
+      "transform-asset",
+      "get-tx-reference",
+      "list_tools",
+      "describe_tool_input",
+      "execute_tool",
+      "list_scopes"
+    ],
     "install": {
       "claude_code": "claude mcp add cloudinary-assets -e CLOUDINARY_CLOUD_NAME=YOUR_CLOUD -e CLOUDINARY_API_KEY=YOUR_KEY -e CLOUDINARY_API_SECRET=YOUR_SECRET -- npx -y @cloudinary/asset-management-mcp start",
       "remote_url": "https://asset-management.mcp.cloudinary.com/mcp",
-      "remote_headers": ["cloudinary-cloud-name", "cloudinary-api-key", "cloudinary-api-secret"],
+      "remote_headers": [
+        "cloudinary-cloud-name",
+        "cloudinary-api-key",
+        "cloudinary-api-secret"
+      ],
       "stdio_command": "npx -y @cloudinary/asset-management-mcp start"
     },
-    "auth": { "type": "api_key", "env_var": "CLOUDINARY_URL", "key_url": "Cloudinary Dashboard → Settings → Access Keys; remote endpoint expects cloudinary-cloud-name, cloudinary-api-key, and cloudinary-api-secret headers" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "CLOUDINARY_URL",
+      "key_url": "Cloudinary Dashboard → Settings → Access Keys; remote endpoint expects cloudinary-cloud-name, cloudinary-api-key, and cloudinary-api-secret headers"
+    },
     "pricing": "freemium",
-    "links": { "repo": "https://github.com/cloudinary/asset-management-mcp", "docs": "https://cloudinary.com/documentation/cloudinary_llm_mcp", "site": "https://cloudinary.com" },
+    "links": {
+      "repo": "https://github.com/cloudinary/asset-management-mcp",
+      "docs": "https://cloudinary.com/documentation/cloudinary_llm_mcp",
+      "site": "https://cloudinary.com"
+    },
     "added": "2026-06-29",
     "verified": "2026-09-20",
     "caveats": [
@@ -149,16 +291,40 @@
     "featured": false,
     "tagline": "Full Google Workspace control — Drive, Docs, Sheets, Slides, Gmail, Calendar and more.",
     "description": "The most comprehensive community Workspace MCP: 120+ tools across 12 Google services, with OAuth 2.0/2.1 multi-user support and tool tiers. For film teams: Drive media file search/read/share plus Docs (scripts), Sheets (budgets and shot lists), Slides (pitch decks), Gmail, and Calendar — one server for the whole production office.",
-    "capabilities": ["drive-files", "docs", "sheets", "slides", "gmail", "calendar", "permissions"],
-    "tools_sample": ["search_drive_files", "get_drive_file_content", "create_drive_file", "create_doc", "modify_sheet_values", "send_gmail_message", "manage_event"],
+    "capabilities": [
+      "drive-files",
+      "docs",
+      "sheets",
+      "slides",
+      "gmail",
+      "calendar",
+      "permissions"
+    ],
+    "tools_sample": [
+      "search_drive_files",
+      "get_drive_file_content",
+      "create_drive_file",
+      "create_doc",
+      "modify_sheet_values",
+      "send_gmail_message",
+      "manage_event"
+    ],
     "install": {
       "claude_code": "claude mcp add google-workspace -e GOOGLE_OAUTH_CLIENT_ID=YOUR_ID -e GOOGLE_OAUTH_CLIENT_SECRET=YOUR_SECRET -- uvx workspace-mcp --tool-tier core",
       "remote_url": null,
       "stdio_command": "uvx workspace-mcp --tool-tier core"
     },
-    "auth": { "type": "oauth", "env_var": "GOOGLE_OAUTH_CLIENT_ID", "key_url": "OAuth client from Google Cloud Console (https://console.cloud.google.com/apis/credentials)" },
+    "auth": {
+      "type": "oauth",
+      "env_var": "GOOGLE_OAUTH_CLIENT_ID",
+      "key_url": "OAuth client from Google Cloud Console (https://console.cloud.google.com/apis/credentials)"
+    },
     "pricing": "free",
-    "links": { "repo": "https://github.com/taylorwilsdon/google_workspace_mcp", "docs": "https://workspacemcp.com/docs", "site": "https://workspacemcp.com" },
+    "links": {
+      "repo": "https://github.com/taylorwilsdon/google_workspace_mcp",
+      "docs": "https://workspacemcp.com/docs",
+      "site": "https://workspacemcp.com"
+    },
     "added": "2026-06-11",
     "verified": "2026-10-29",
     "caveats": [
@@ -177,25 +343,40 @@
     "featured": false,
     "tagline": "Official remote MCP for searching and downloading licensed Getty stills and footage.",
     "description": "Getty Images' hosted MCP server, launched 12 Aug 2026, exposes the creative, editorial, news, sport, and archival library to agents: search stills and video, read asset metadata, and download files under your organization's existing licence. For a film team it is the licensed-archive counterpart to generative video — the route an agent takes when a cut needs real news footage, sports plates, or historical material that no model can lawfully fabricate. Tools are meant to be discovered at runtime rather than hard-coded.",
-    "capabilities": ["stock-search", "video-search", "media-search", "asset-download", "metadata", "remote-mcp"],
+    "capabilities": [
+      "stock-search",
+      "video-search",
+      "media-search",
+      "asset-download",
+      "metadata",
+      "remote-mcp"
+    ],
     "tools_sample": null,
     "install": {
       "claude_code": null,
       "remote_url": "https://mcp.gettyimages.com/v1",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "API key and secret from your Getty Images account representative — https://engage.gettyimages.com/MCP-contact-sales" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "API key and secret from your Getty Images account representative — https://engage.gettyimages.com/MCP-contact-sales"
+    },
     "pricing": "paid",
-    "links": { "repo": null, "docs": "https://developer.gettyimages.com/mcp/", "site": "https://www.gettyimages.com/ai/mcp" },
+    "links": {
+      "repo": null,
+      "docs": "https://developer.gettyimages.com/mcp/",
+      "site": "https://www.gettyimages.com/ai/mcp"
+    },
     "added": "2026-08-13",
-    "verified": "2026-09-17",
+    "verified": "2026-10-30",
     "caveats": [
       "Enterprise-gated: an active Getty agreement and an API key plus secret from an account rep, with no signup link.",
       "No published header form, client config or tool names, and Getty asks you not to hard-code tool names because they are still changing.",
       "Search spans the whole library while downloads are bounded by your subscription, so an agent can surface an asset it has no right to deliver.",
       "Throttled at 20 queries per second."
     ],
-    "notes": "Enterprise-gated, not self-serve: access needs an active Getty agreement (Premium Access or Editorial Subscription) or a reseller partnership, acceptance of the Web Service Terms, and an API key plus secret issued by an account rep — there is no signup link, only contact-sales. Re-checked 17 Sep 2026 and nothing has moved in five weeks: same endpoint, same 20-queries-per-second throttle, same OAuth 2.0 client-credentials or authorization-code handshake, and still no published header form, client config snippet, or tool names. So claude_code stays null until the connect recipe is public; point your agent at the server and let it read the auth and tool descriptions there. Getty asks explicitly that you not hard-code tool names or parameters, because they are still changing. The sharp edge is licensing, not plumbing: search spans the whole library while downloads are bounded by your subscription, so an agent can surface an asset it has no right to deliver — check the licence before you cut it in. Nothing here generates; for a self-serve licensed-footage route see stockfilm, and for stills-with-an-open-API see magnific."
+    "notes": "Enterprise-gated, not self-serve: access needs an active Getty agreement (Premium Access or Editorial Subscription) or a reseller partnership, acceptance of the Web Service Terms, and an API key plus secret issued by an account rep — there is no signup link, only contact-sales. The developer page still promises the functionality will \"change and expand\" without a single dated changelog entry, and the daily probe keeps getting an auth challenge from the endpoint, so it is alive and gated. Re-checked 30 Oct 2026 and nothing has moved in eleven weeks: same endpoint, same 20-queries-per-second throttle, same OAuth 2.0 client-credentials or authorization-code handshake, and still no published header form, client config snippet, or tool names. So claude_code stays null until the connect recipe is public; point your agent at the server and let it read the auth and tool descriptions there. Getty asks explicitly that you not hard-code tool names or parameters, because they are still changing. The sharp edge is licensing, not plumbing: search spans the whole library while downloads are bounded by your subscription, so an agent can surface an asset it has no right to deliver — check the licence before you cut it in. Nothing here generates; for a self-serve licensed-footage route see stockfilm, and for stills-with-an-open-API see magnific."
   },
   {
     "slug": "stockfilm",
@@ -206,16 +387,44 @@
     "featured": false,
     "tagline": "Remote MCP for searching and licensing restored 8mm and Super 8 home-movie footage.",
     "description": "Stockfilm's hosted MCP puts a vintage home-movie archive — real 8mm and Super 8 reels scanned in 4K, spanning the 1930s to the 1980s — behind nine agent tools: text, year and location search, clip metadata, visual similarity lookup, a rights check, an auto-assembled rough cut, and a quote-to-download licensing chain that settles on Stripe. For a filmmaker it covers the one thing generative video cannot legitimately produce: authentic period texture with provenance. Connecting takes no account or key, so an agent can search and build a timeline before anyone spends anything.",
-    "capabilities": ["archival-footage", "stock-search", "video-search", "rough-cuts", "rights-check", "license-info", "pricing", "metadata", "remote-mcp"],
-    "tools_sample": ["search_vintage_footage", "get_clip_details", "find_similar_footage", "build_rough_cut", "check_clip_rights", "license_clip", "quote_4k_license", "create_4k_checkout", "get_4k_order"],
+    "capabilities": [
+      "archival-footage",
+      "stock-search",
+      "video-search",
+      "rough-cuts",
+      "rights-check",
+      "license-info",
+      "pricing",
+      "metadata",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "search_vintage_footage",
+      "get_clip_details",
+      "find_similar_footage",
+      "build_rough_cut",
+      "check_clip_rights",
+      "license_clip",
+      "quote_4k_license",
+      "create_4k_checkout",
+      "get_4k_order"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http stockfilm https://api.stockfilm.com/mcp",
       "remote_url": "https://api.stockfilm.com/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "none", "env_var": null, "key_url": "No credentials to connect; payment happens per clip at licensing time — https://stockfilm.com/for-ai-agents" },
+    "auth": {
+      "type": "none",
+      "env_var": null,
+      "key_url": "No credentials to connect; payment happens per clip at licensing time — https://stockfilm.com/for-ai-agents"
+    },
     "pricing": "freemium",
-    "links": { "repo": null, "docs": "https://stockfilm.com/for-ai-agents", "site": "https://stockfilm.com" },
+    "links": {
+      "repo": null,
+      "docs": "https://stockfilm.com/for-ai-agents",
+      "site": "https://stockfilm.com"
+    },
     "added": "2026-08-16",
     "verified": "2026-09-21",
     "caveats": [
