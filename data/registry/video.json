@@ -776,5 +776,34 @@
       "Credits are held at render start and charged only on success, and commercial use without a watermark is included."
     ],
     "notes": "Checked 18 Oct 2026 against varg.ai/mcp and the changelog; nothing was rendered. The endpoint is up (it rejects a bare GET with 400, as streamable HTTP servers do), but Glama's health check on 18 Oct could not complete an authenticated call, so tools beyond the seven the vendor names are unconfirmed — call tools/list. varg's page offers an Add-to-Claude link rather than a CLI command; the claude_code line is the standard HTTP add for the published endpoint. A ChatGPT plugin shipped on 16 Oct 2026. No free tier: plans start at $24/month for 700 credits, a 5-second clip runs roughly 37-200 credits depending on model, and credits are held at render start and only charged on success. Commercial use without a watermark is included on every plan per the homepage. The linked repo is the separate open-source vargai TypeScript SDK (Apache-2.0, 342 stars, pushed 16 Oct 2026), not the MCP server itself. Overlaps with higgsfield and fal as an aggregator; pick varg if you want a priced, agent-planned ad pipeline rather than raw model access."
+  },
+  {
+    "slug": "pictory",
+    "name": "Pictory MCP",
+    "vendor": "Pictory",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Hosted MCP that turns a brief into a narrated stock-footage or motion-graphics video, with preview before render.",
+    "description": "Pictory's first-party remote server puts its script-to-video product behind 25 tools: build a Standard video from text, preview it, edit individual scene elements, swap in stock or AI-generated clips, pick voices and music, then render; Pictory 3.0 accounts get a separate motion-graphics path with brand kits and transitions. Sign-in is your ordinary Pictory account over OAuth, with no API subscription. For a film agent it is an explainer, promo and social-cut assembler rather than a shot generator — useful for the marketing deliverables around a film, not the film.",
+    "capabilities": ["text-to-video", "script-to-video", "stock-search", "music-search", "tts", "motion-graphics", "brand-kits", "media-upload", "video-rendering", "remote-mcp"],
+    "tools_sample": ["create_video_from_text", "preview_video_from_text", "update_preview_elements", "render_preview", "search_media", "search_music", "generate_ai_video_asset", "create_motion_project", "render_motion_video", "get_job_status", "get_quota"],
+    "install": {
+      "claude_code": "claude mcp add --transport http --callback-port 3118 pictory-ai-video https://mcp.pictory.ai/mcp",
+      "remote_url": "https://mcp.pictory.ai/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Sign in with your Pictory account (email/password or Google) — run claude mcp login pictory-ai-video after adding; no API key or API subscription needed" },
+    "pricing": "paid",
+    "pricing_note": "Starter $29/month ($25 billed annually) with 2,000 AI credits a month; a 14-day trial gives 300 credits, 3 videos and 720p exports.",
+    "links": { "repo": null, "docs": "https://docs.pictory.ai/claude-mcp/overview", "site": "https://pictory.ai" },
+    "added": "2026-10-31",
+    "verified": "2026-10-31",
+    "caveats": [
+      "Which videos you can make depends on your account generation: Pictory 2.0 gets Standard only, 3.0 gets Motion Graphics only, and the move is one-way.",
+      "Stock-footage explainers and promos, not shot-level generation; AI clips cost credits per model and add 3-4 minutes each to a render.",
+      "Claude Code needs --callback-port 3118 for the OAuth callback, per Pictory's own instructions."
+    ],
+    "notes": "Listed 31 Oct 2026 from Pictory's own docs (docs.pictory.ai/claude-mcp); nothing was rendered, and the endpoint is not yet in a daily health probe, so treat the 25-tool list as the vendor's word until tools/list confirms it. The inconvenient part is account generation: per the docs, Pictory 2.0 accounts can only make Standard videos over MCP and the server rejects Motion Graphics requests from them, while 3.0 accounts get Motion Graphics only — and moving to 3.0 is one-way, through support. Motion renders cost 200 AI credits per video minute on the first successful render (re-renders of the same project are free); stock media and music cost nothing, AI-generated images and clips are priced per model, and premium narration draws on separate voice minutes. Standard videos run 8-500 seconds, up to 100 scenes, in 16:9, 9:16 or 1:1, with uploads capped at 100 MB; a preview takes 2-5 minutes and a render 5-15. Claude asks for confirmation before rendering. A video not saved as an editable project is not kept in your Pictory account. The docs require `--callback-port 3118` on the Claude Code add; claude.ai and Desktop take the URL as a custom connector. This hosted server replaces Pictory's older local package, @pictory/pictory-mcp-server on npm, which still needs PICTORY_CLIENT_ID, PICTORY_CLIENT_SECRET and PICTORY_USER_ID from a developer account and has not shipped since 1.0.8 in July 2025 — use the hosted endpoint. Compare invideo and revid for the same brief-to-video job; none of the three gives you frame continuity across a scene."
   }
 ]
