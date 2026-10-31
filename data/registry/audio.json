@@ -232,6 +232,35 @@
     "notes": "MIT, Python >=3.10, PyPI sonilo-mcp 0.27.0 shipped 19 Sep 2026 — 47 releases since mid-July, so it is the fastest-moving music server in this directory, at 53 stars and listed in the official MCP registry. The roster keeps growing: video_to_sound and video_to_video_sound (music plus effects in one pass), video_to_video_sfx and a proofread tool for dubbing scripts have joined the tools sampled here. Set SONILO_API_KEY or run `sonilo login` from the sonilo-cli npm package first; the server has no hosted remote. Read the licensing page before you deliver: commercial-use rights are plan-gated to Pro, Premium, Enterprise and 'eligible API users' — Free and Creator output is personal use only — and Sonilo states plainly that those rights 'do not remove every copyright, platform, client, or broadcast review'. The training-data claim is Sonilo's, not independently audited. Hard limits per the current README: video-to-music up to 360s, video-to-SFX up to 480s, dubbing up to 300s, uploads typically 300 MB; output lands in ~/Desktop unless SONILO_MCP_BASE_PATH is set, and TIME_OUT_SECONDS defaults to 600. Inputs: H.264/HEVC/VP9/AV1 in mp4/mov/m4v/webm. Billing is per second generated with a couple of free runs per tool, except dubbing, which bills from the first call."
   },
   {
+    "slug": "doseedo",
+    "name": "Doseedo Film Score",
+    "vendor": "Doseedo",
+    "official": true,
+    "category": "music",
+    "featured": false,
+    "tagline": "Spots the cut, plays the score your agent writes on AI instruments, and lays it on the picture.",
+    "description": "Doseedo's hosted film endpoint covers the parts of scoring to picture an agent cannot do alone, and leaves the composing to the agent. doseedo_spot_video turns a cut into a music editor's cue sheet (every cut frame-exact, shots with keyframes, dialogue spans, proposed cues with SMPTE in and out, hit points); doseedo_tempo_map lands the hits on downbeats; doseedo_render_score plays the parts the agent wrote, one stem per part, each with a receipt saying whether it played its notes; doseedo_score_to_picture lays the mixed cues on the video, ducked under the dialogue and normalised to a delivery loudness. For a filmmaker-agent it is the route where the music is written to this cut rather than generated to its length, and comes back as stems and a Logic Pro or Ableton Live project.",
+    "capabilities": ["scoring", "video-analysis", "scene-detection", "cue-sheet", "hit-points", "tempo-map", "midi-to-audio", "stems", "mixing", "audio-ducking", "loudness-normalization", "daw-export", "sound-effects"],
+    "tools_sample": ["doseedo_spot_video", "doseedo_tempo_map", "doseedo_render_score", "doseedo_render_midi", "doseedo_check_take", "doseedo_mix", "doseedo_generate_sound", "doseedo_score_to_picture", "doseedo_session_from_stems", "doseedo_quote"],
+    "install": {
+      "claude_code": "claude mcp add --transport http doseedo-film https://api.doseedo.com/mcp/film",
+      "remote_url": "https://api.doseedo.com/mcp/film",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth 2.1 with dynamic client registration on first tool call; or an X-API-Key header with a key from https://doseedo.com/settings/api-keys" },
+    "pricing": "freemium",
+    "pricing_note": "A free account gets 120 credits a month; spotting, tempo maps, mixing and delivery cost none, and rendering is 10 credits per 30 s window per six parts.",
+    "links": { "repo": null, "docs": "https://doseedo.com/guides/score-a-film-with-an-ai-agent", "site": "https://doseedo.com/mcp" },
+    "added": "2026-10-29",
+    "verified": "2026-10-29",
+    "caveats": [
+      "It does not compose: the agent writes every note, and doseedo_generate_music is only a prompt sketch, so expect to bring a capable model.",
+      "Instruments are AI models, not sample libraries; a take can miss or add notes, which the per-part receipt reports.",
+      "Spotting reads light, motion, editing and the soundtrack, not story: the agent decides what each cue is about."
+    ],
+    "notes": "Hosted Streamable HTTP; /mcp/film lists only the twenty film tools, and /mcp on the same host carries the full set of 45 (stems, transcription, covers, DAW session control, project conversion). It does not compose: the agent writes every note, and doseedo_generate_music is only a prompt sketch, so expect to bring a capable model. Instruments are AI models, not sample libraries; a take can miss or add notes, which the per-part receipt reports, and a failed part is re-rendered once automatically. Spotting reads light, motion, editing and the soundtrack, not story: the agent decides what each cue is about. Limits: spot_video takes mp4, mov, m4v, webm or mkv up to 2 GB and 3 hours; render_score takes up to 32 lines and 600 s per call; score_to_picture takes up to 64 tracks and 25 minutes per call, and delivery never limits, so a mix that is too dynamic arrives under the loudness target with a report saying why. Initialize, tools/list and the catalogue tools answer without credentials. The Terms give you ownership of what you create, to the extent the law allows. Output is instrumental only: no vocals."
+  },
+  {
     "slug": "epidemic-sound",
     "name": "Epidemic Sound MCP Server",
     "vendor": "Epidemic Sound",
