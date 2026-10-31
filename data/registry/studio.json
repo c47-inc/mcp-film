@@ -295,8 +295,8 @@
       "remote-mcp"
     ],
     "tools_sample": [
-      "generate_script",
-      "generate_storyboard",
+      "script_generate",
+      "storyboard_generate",
       "export_video"
     ],
     "install": {
@@ -319,14 +319,14 @@
       "site": "https://framesail.com"
     },
     "added": "2026-09-18",
-    "verified": "2026-09-18",
+    "verified": "2026-10-31",
     "caveats": [
-      "No free tier, and MCP is not on the entry plan: API and MCP access starts at Pro ($54 a month, billed quarterly).",
+      "No free tier, and MCP is not on the entry plan: API and MCP access starts at Pro ($63 a month, billed quarterly).",
       "Credits expire two months after they are granted, so a quiet month is a forfeited month.",
       "Only three tool names are published, and it is hosted only with no way to audit which upstream model the pipeline uses.",
       "Pick one surface per run; the vendor says not to mix MCP and REST."
     ],
-    "notes": "Verified 18 Sep 2026 from the vendor's own pages: the endpoint, transport, both auth paths and the connect command come from framesail.com/developers, and an anonymous GET on api.framesail.com/mcp answers 401, so the server is live and gated. Price is the first thing to check, because there is no free tier and MCP is not on the entry plan: quarterly billing runs Creator $22/month (12,000 credits), Pro $54/month (30,000), Studio $137/month (80,000) and Scale $551/month (330,000), and 'API & MCP access' is listed from Pro upward. Credits roll over but expire two months after they are granted, so a quiet month is a forfeited month. Only three tool names are published — generate_script, generate_storyboard and export_video — so tools_sample lists those three rather than a number; third-party directories quote a tool count the vendor does not, and we did not run tools/list without a paid key. Hosted only: no repo, no local package, nothing to self-host, and no way to audit what the pipeline sends to which upstream model. The vendor also ships a REST API over the same stages and says to pick one surface per run rather than mixing MCP and REST. If you want the same script-to-cut arc with a timeline you can actually edit, compare martini; if you only need the breakdown and prompts and will generate elsewhere, penshot does that part for free."
+    "notes": "Re-checked 31 Oct 2026 against the vendor's own pages: the endpoint, HTTP transport, both auth paths (fsk_ bearer key or browser OAuth) and the connect command on framesail.com/developers are unchanged, and the daily probe still gets a 401 from api.framesail.com/mcp, so the server is live and gated. Two things moved since the 18 Sep listing. Prices went up at the bottom of the ladder: quarterly billing now runs Creator $35/month (19,500 credits), Pro $63/month (35,000), Studio $137/month (80,000) and Scale $551/month (330,000), there is still no free tier, and API and MCP access still starts at Pro. And the published tool names changed: the developers page now shows script_generate, storyboard_generate and export_video, where it previously said generate_script and generate_storyboard — so prompts or allowlists written against the old names need updating. Monthly and top-up credits roll over but expire two months after they are granted, so a quiet month is a forfeited month. Only those three tool names are published, so tools_sample lists them rather than a number; third-party directories quote a tool count the vendor does not, and we did not run tools/list without a paid key. Hosted only: no repo, no local package, nothing to self-host, and no way to audit what the pipeline sends to which upstream model. The vendor also ships a REST API over the same stages and says to pick one surface per run rather than mixing MCP and REST. If you want the same script-to-cut arc with a timeline you can actually edit, compare martini; if you only need the breakdown and prompts and will generate elsewhere, penshot does that part for free."
   },
   {
     "slug": "frameo",

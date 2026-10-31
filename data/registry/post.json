@@ -1390,7 +1390,7 @@
     "auth": {
       "type": "api_key",
       "env_var": "TOPAZ_API_KEY",
-      "key_url": "https://developer.topazlabs.com/getting-started/api-key-setup"
+      "key_url": "https://developer.topazlabs.com/getting-started/api-key"
     },
     "pricing": "credits",
     "links": {
@@ -1399,14 +1399,14 @@
       "site": "https://www.topazlabs.com/api"
     },
     "added": "2026-06-11",
-    "verified": "2026-09-18",
+    "verified": "2026-10-31",
     "caveats": [
       "Image only: video enhancement is not supported via MCP, so for Topaz video upscaling use the Topaz models on fal through the fal MCP.",
       "Stdio only with no HTTP transport, so it needs a filesystem-capable client rather than Claude's browser chat.",
       "Dormant: npm 0.1.14 and the last commit both date to Feb 2026.",
       "The API key is shown exactly once at creation."
     ],
-    "notes": "Official, MIT, TypeScript — and dormant: re-checked 18 Sep 2026 and nothing has moved. v0.1.14 on npm and the last repo commit both still date to 16 Feb 2026, seven months ago; the repo has gained one star in five weeks (6 total) and no commits. It installs and runs, but nobody is extending it. IMAGE ONLY — the README still says 'Image only -- video enhancement is not yet supported' via MCP even though Topaz's developer API covers Video AI, Photo AI, and Gigapixel, and it still lists HTTP streaming transport as 'not yet supported but may be added in a future release', so ChatGPT, remote agents and web/mobile clients are out. One tool, image-enhance, taking a local path or URL: a filesystem-capable client is required (Claude Code, Cursor, Windsurf, VS Code — not Claude's browser chat). The key_url here changed this run — Topaz's old how-do-i-get-my-api-key page now 404s and the live page is getting-started/api-key-setup, which warns the key is shown exactly once at creation. For Topaz VIDEO upscaling today, go around it to the Topaz models hosted on fal.ai via the fal MCP (fal-ai/topaz/upscale/video — re-confirmed 18 Sep 2026 at $0.01/second up to 720p, $0.02 to 1080p, $0.08 above 1080p, doubled for 60fps output and halved for Gaia 2)."
+    "notes": "Official, MIT, TypeScript — and dormant: re-checked 31 Oct 2026 and nothing has moved. v0.1.14 on npm and the last repo commit both still date to 16 Feb 2026, eight and a half months ago; the repo sits at 7 stars, not archived, with no commits since. It installs and runs, but nobody is extending it. IMAGE ONLY — the README still says 'Image only -- video enhancement is not yet supported' via MCP even though Topaz's developer API covers Video AI, Photo AI, and Gigapixel, and it still lists HTTP streaming transport as 'not yet supported but may be added in a future release', so ChatGPT, remote agents and web/mobile clients are out. One tool, image-enhance, taking a local path or URL: a filesystem-capable client is required (Claude Code, Cursor, Windsurf, VS Code — not Claude's browser chat). Topaz keeps moving its key page: the README still links the dead how-do-i-get-my-api-key URL, the getting-started/api-key-setup page this listing used in September now 404s too, and the live 'API Key Setup' page is getting-started/api-key (API tab, Create API Key), which warns 'You may only view your API key on creation'. For Topaz VIDEO upscaling today, go around it to the Topaz models hosted on fal.ai via the fal MCP (fal-ai/topaz/upscale/video — re-confirmed 18 Sep 2026 at $0.01/second up to 720p, $0.02 to 1080p, $0.08 above 1080p, doubled for 60fps output and halved for Gaia 2)."
   },
   {
     "slug": "magnific",
