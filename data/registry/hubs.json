@@ -1408,5 +1408,53 @@
       "Tool names for this server are not published; the client has to enumerate them."
     ],
     "notes": "Verified 30 Oct 2026 from Picsart's launch post (8 May 2026) and the endpoint's own OAuth protected-resource metadata, which names auth.picsart.com as the authorization server with scopes openid, profile and workflows.execute — so the URL is live and gated, but nothing here was run with an account. The launch post documents connector setup for Claude, Cursor and ChatGPT by URL plus sign-in; the claude_code line is the standard remote form for that URL, not a command Picsart prints. Know which Picsart you are connecting: docs.picsart.io describes a separate Creative APIs MCP at mcp.picsart.io/v1 that takes an X-Picsart-API-Key header and exposes dozens of named tools for background removal, upscaling, effects, trims, concats and transcription across Picsart's developer APIs — that one is the programmable-image-API product, billed per API, and its own page miscounts its tools (it claims 90+ and lists 83). This entry is the consumer generation server. The catalogue (140+ models) is the vendor's count, and the model list reads like a reseller's: you get Sora, Veo and Kling through Picsart's credits rather than the upstream vendor's, with whatever lag and parameter subset that implies. No rate limits or file-size limits are published, and folder batches run one by one — Picsart points bulk work at its separate CLI. For an aggregator with published per-model pricing see fal or replicate; reach for this when the team already pays Picsart."
+  },
+  {
+    "slug": "getimg",
+    "name": "getimg.ai MCP",
+    "vendor": "getimg.ai",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "getimg.ai's hosted MCP: image, video, music, speech and SFX generation on one OAuth login.",
+    "description": "getimg.ai's official remote server, launched 21 Oct 2026, puts the app's whole toolbox behind one OAuth connection. That covers image generation and editing with references, upscaling, relighting, background removal, video from text or first and last frames with native sound, and music, speech and sound effects, with past results reusable from the library. For a filmmaker-agent it is one credit balance for boards, animatics and temp audio. The catch is that getimg routes requests to third-party models (Seedance and others) rather than training its own.",
+    "capabilities": [
+      "text-to-image",
+      "image-editing",
+      "text-to-video",
+      "image-to-video",
+      "upscaling",
+      "background-removal",
+      "music",
+      "tts",
+      "sound-effects",
+      "credit-balance"
+    ],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http getimg https://getimg.ai/mcp",
+      "remote_url": "https://getimg.ai/mcp",
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Browser sign-in to a getimg.ai account when the client first connects; you pick a team on the approval screen, and its credits and library are used"
+    },
+    "pricing": "credits",
+    "pricing_note": "No free plan listed; Entry is $15/mo for 8,000 credits, up to Ultra at $199/mo for 107,500, with yearly billing discounted.",
+    "links": {
+      "repo": null,
+      "docs": "https://getimg.ai/guides/guide-to-getimg-ai-mcp-server",
+      "site": "https://getimg.ai/mcp"
+    },
+    "added": "2026-11-02",
+    "verified": "2026-11-02",
+    "caveats": [
+      "No free plan is listed, and MCP generations draw on the same paid credits as the app.",
+      "Links shared in chat expire after 24 hours. The files stay in your getimg library, so download them before the links die.",
+      "No tool list or model list is published; run tools/list once connected."
+    ],
+    "notes": "Verified 2 Nov 2026 from getimg.ai's own pages: the MCP landing page at getimg.ai/mcp, the launch post (21 Oct 2026) and the setup guide. The claude mcp add line is printed verbatim on the vendor's landing page. Auth is a browser sign-in with no API key. You choose a team at approval, generations bill to that team's credits and land in its library, and switching teams means disconnecting and reconnecting. The vendor names one tool (generate_image) in an example and publishes no full tool list, hence a null tools_sample. Models are picked automatically unless you name one (the vendor's example is Seedance 2.5), so you are getting resold third-party models, and reference-clip and audio guidance work only on models that support them. Pricing: no free plan on the pricing page. Plans run Entry $15/mo (8,000 credits), Core $35 (19,000), Plus $79 (42,500) and Ultra $199 (107,500), discounted on yearly billing, and the vendor says commercial rights apply on paid plans. Video and audio jobs are slow. Nothing here was run with an account. For aggregators with published per-model pricing and a longer track record, see fal, replicate or kie-ai."
   }
 ]

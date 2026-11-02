@@ -64,25 +64,54 @@
     "category": "story-preproduction",
     "featured": false,
     "tagline": "Official Miro MCP — build and read storyboards, frames, and planning boards via AI.",
-    "description": "Miro's hosted MCP server (public beta) lets agents create and read board content, now through an SVG canvas model: the agent writes a board by sending SVG and reads one back the same way, alongside tools to create and search boards, place images, and work prototypes and comments. A strong fit for storyboard layouts, shot-planning walls, and mood boards your whole team can see.",
-    "capabilities": ["storyboarding", "board-creation", "svg-canvas", "mood-boards", "prototypes", "comments", "image-retrieval"],
-    "tools_sample": ["board_create", "board_search_boards", "canvas_create_from_svg", "canvas_read_as_svg", "canvas_update_from_svg", "image_create", "image_get_upload_url", "prototype_create", "prototype_read", "comment_list_comments", "comment_reply", "comment_resolve"],
+    "description": "Miro's hosted MCP server lets agents create and read board content through an SVG canvas model: the agent writes a board by sending SVG and reads one back the same way. Alongside that are about fifty tools for boards, spaces, sharing, tables, images, prototypes and comments. A strong fit for storyboard layouts, shot-planning walls, and mood boards your whole team can see.",
+    "capabilities": [
+      "storyboarding",
+      "board-creation",
+      "svg-canvas",
+      "mood-boards",
+      "prototypes",
+      "comments",
+      "image-retrieval"
+    ],
+    "tools_sample": [
+      "board_create",
+      "board_search_boards",
+      "board_share",
+      "canvas_create_from_svg",
+      "canvas_read_as_svg",
+      "canvas_update_from_svg",
+      "canvas_search",
+      "image_create",
+      "image_get_upload_url",
+      "table_sync_rows",
+      "comment_list_comments",
+      "comment_reply"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http miro https://mcp.miro.com",
       "remote_url": "https://mcp.miro.com",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth 2.1 with dynamic client registration; run /mcp auth in Claude Code and complete the Miro browser flow" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "OAuth 2.1 with dynamic client registration; run /mcp auth in Claude Code and complete the Miro browser flow"
+    },
     "pricing": "freemium",
-    "links": { "repo": "https://github.com/miroapp/miro-ai", "docs": "https://developers.miro.com/docs/miro-mcp", "site": "https://miro.com/ai/mcp/" },
+    "links": {
+      "repo": "https://github.com/miroapp/miro-ai",
+      "docs": "https://developers.miro.com/docs/miro-mcp",
+      "site": "https://miro.com/ai/mcp/"
+    },
     "added": "2026-06-11",
-    "verified": "2026-09-20",
+    "verified": "2026-11-02",
     "caveats": [
       "The tool surface was rebuilt around an SVG canvas model, so cached configs and prompts that placed items one by one will break.",
-      "Still public beta, and an Enterprise admin must enable MCP before anyone on an Enterprise plan can authorize.",
-      "The Claude Code plugin ships engineering-facing skills, not film-facing ones."
+      "On Enterprise plans MCP is disabled by default, and an admin must enable it before anyone can connect.",
+      "The Claude Code plugin's skills are mostly engineering- and diagram-facing, not film-facing."
     ],
-    "notes": "The tool surface was rebuilt since we last checked, so cached configs and prompts will break. Miro's tools page now documents an SVG canvas model — canvas_create_from_svg, canvas_read_as_svg, canvas_update_from_svg and a canvas_get_canvas_composer_skill helper — and states that board_list_items and the whole context_*, layout_*, diagram_* and doc_* families were removed; table_create, table_list_rows and table_sync_rows are marked deprecating soon. Practical effect for storyboards: you no longer place sticky notes and frames item by item, you hand the server SVG. Still public beta more than seven months after the 2 Feb 2026 launch — the Claude Code marketplace listing still says 'MCP is in Public Beta', even though developers.miro.com now leads with 'works for all Miro plans, even free teams'. Enterprise remains the catch: that listing says an Enterprise admin must enable MCP before anyone can authorize. Endpoint re-confirmed 20 Sep 2026 as https://mcp.miro.com (Miro's connect docs write it with a trailing slash; both forms are in Miro's own material). The Claude Code plugin route needs two commands, not one — /plugin marketplace add miroapp/miro-ai then /plugin install miro@miro-ai — and it ships three skills (miro-code-review, miro-code-spec, miro-code-explain-on-board) that are engineering-facing rather than film-facing. miroapp/miro-ai is alive: 154 stars, last push 17 Sep 2026. Tool names above are from developers.miro.com/docs/miro-mcp-tools — the server's own tools/list is the source of truth."
+    "notes": "Re-checked 2 Nov 2026. Miro's tools page was updated 28 Oct 2026 and now documents about fifty tools: the SVG canvas set (canvas_create_from_svg, canvas_read_as_svg, canvas_update_from_svg, canvas_search, and composer and format skill loaders), plus board sharing and moves, spaces and sections, blog posts, brand context, and an import-claude-design-from-url tool. The page says board_list_items and the whole context_*, layout_*, diagram_* and doc_* families were removed and 'can no longer be called', so old configs and prompts will break. The table tools are no longer marked as deprecating soon. Practical effect for storyboards: you no longer place sticky notes and frames item by item, you hand the server SVG. Miro's developer docs no longer call the server a beta and say it 'works for all Miro plans, even free teams'. Enterprise is the catch: the admin guide says MCP is disabled by default on Enterprise and an admin must enable it before anyone can connect. The endpoint is https://mcp.miro.com (Miro's connection guide writes it with a trailing slash) with OAuth 2.1 and dynamic client registration. The claude mcp add line above is the standard HTTP form for that endpoint. Miro itself recommends its plugin: /plugin marketplace add miroapp/miro-ai then /plugin install miro@miro-ai. The plugin bundles the MCP server and eight skills (browse, code-review, code-spec, code-explain-on-board, diagram, doc, format, table); none of them is film-specific. miroapp/miro-ai is alive: 164 stars, last push 17 Sep 2026. Tool names above are from developers.miro.com/docs/miro-mcp-tools; the server's own tools/list is the source of truth."
   },
   {
     "slug": "framethrower",
