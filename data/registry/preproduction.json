@@ -48,13 +48,13 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/dkf2studios/studio-state-public", "docs": "https://github.com/dkf2studios/studio-state-public/blob/main/INSTALL.md", "site": "https://dkf2studios.gumroad.com/l/flplx" },
     "added": "2026-06-28",
-    "verified": "2026-09-20",
+    "verified": "2026-11-03",
     "caveats": [
       "One studio's shim, published rather than maintained: no commit since Jun 2026.",
       "Needs Python 3.9+, the mcp[cli] package, and a project root containing _pipeline/STATE.json and episodes/.",
       "A state shim, not a generator, and the paid Studio Method pack is upsold in the README."
     ],
-    "notes": "MIT, still live but frozen: re-checked 20 Sep 2026 and the last push is unchanged at 16 Jun 2026 — three months without a commit — with still 0 stars, so treat it as one studio's shim published rather than a maintained project. The repo is not archived and INSTALL.md is still in place, so nothing has broken; nothing has moved either. Prerequisites the README front-loads: Python 3.9+ and `pip install \"mcp[cli]\"`, plus a project root containing _pipeline/STATE.json and episodes/ — run tests/test_acceptance.py against the bundled demo project first (expect 4/4). It is a state shim, not a generator, and the paid Studio Method pack is upsold in the README. The useful bit is safe by design — only `update_shot` writes, and only to a per-scene `shot_status.json` sidecar."
+    "notes": "MIT, still live but frozen: re-checked 3 Nov 2026 and the last push is unchanged at 16 Jun 2026 — four and a half months without a commit — with still 0 stars, so treat it as one studio's shim published rather than a maintained project. The repo is not archived and INSTALL.md is still in place, so nothing has broken; nothing has moved either. Prerequisites the README front-loads: Python 3.9+ and `pip install \"mcp[cli]\"`, plus a project root containing _pipeline/STATE.json and episodes/ — run tests/test_acceptance.py against the bundled demo project first (expect 4/4). It is a state shim, not a generator, and the paid Studio Method pack is upsold in the README. The useful bit is safe by design — only `update_shot` writes, and only to a per-scene `shot_status.json` sidecar."
   },
   {
     "slug": "miro",
