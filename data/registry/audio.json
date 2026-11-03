@@ -144,6 +144,35 @@
     "notes": "The stale one in this category, and a month staler than last time: re-checked 23 Sep 2026, PyPI allvoicelab-mcp is still pinned at 0.0.5 from 1 Aug 2025 and the repo is still last pushed 5 Aug 2025 — thirteen months without a commit, now 61 stars, still MIT. The seven tools and both API domains are unchanged, so it is official and correct rather than maintained; treat the pin as frozen. Region matters: global keys use https://api.allvoicelab.com, mainland-China keys use https://api.allvoicelab.cn, and mismatching key to domain surfaces as a 'tool unavailable' error rather than an auth failure. Requires Python >=3.11 (PyPI metadata; the README does not say so) and paid credits. Renders land in your home directory unless you set ALLVOICELAB_BASE_PATH — point it at the shot folder before a dubbing pass or you will be hunting for files."
   },
   {
+    "slug": "suno",
+    "name": "Suno MCP (beta)",
+    "vendor": "Suno",
+    "official": true,
+    "category": "music",
+    "featured": false,
+    "tagline": "Suno's own hosted MCP: write, extend, remix and voice songs from chat, gated behind early access.",
+    "description": "Suno's first-party remote MCP, signed in with a Suno account rather than an API key. Suno's page describes four jobs: songs from a text prompt, an uploaded voice memo or loop turned into a full track, covers, mashups and extensions of songs already in your library, and saved Suno Voices applied to new generations. For a filmmaker it is the first sanctioned way to put Suno in an agent pipeline for temp score and songs, without going through a reseller.",
+    "capabilities": ["music", "music-generation", "song-extension", "covers", "remix", "remote-mcp"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http suno https://api.suno.com/mcp",
+      "remote_url": "https://api.suno.com/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "https://suno.com/mcp — sign in with a Suno account; access requires the early-access form on that page" },
+    "pricing": "credits",
+    "pricing_note": "Draws on the credits of your existing Suno plan; no separate MCP pricing is published.",
+    "links": { "repo": null, "docs": "https://suno.com/mcp", "site": "https://suno.com" },
+    "added": "2026-11-03",
+    "verified": "2026-11-03",
+    "caveats": [
+      "Early access only: you request it through a form on suno.com/mcp, and an account without approval cannot use the connector yet.",
+      "Account OAuth only, with no API key or service account, so unattended backend pipelines are not a documented use.",
+      "Suno's page names no tools and says nothing on commercial rights, so read the tools/list and your plan's Terms of Service before using a track in a film."
+    ],
+    "notes": "Endpoint alive: https://api.suno.com/mcp answered an anonymous request with HTTP 401 on 3 Nov 2026, which is what an OAuth-gated server should do. Tools were not run, because access is gated. Trade coverage dates the launch to 28 Oct 2026. Suno's own page, suno.com/mcp, documents the endpoint, the Claude Code command (run /mcp afterwards to sign in), and connector steps for Claude, ChatGPT, Gemini and Cursor. It lists no tool names, so the capabilities above come from its prose. Access goes through a 'Get early access' form, and the page's FAQ warns that some host apps only allow custom connectors on paid plans. Songs use the credits on your current Suno plan, and they land in your normal Suno library. The page does not address commercial rights, so the plan you are on governs what you may do with a track: check before it goes into a cut. This replaces the reseller route for most people. suno-acedata still reaches things Suno's page does not mention, such as stems, WAV/MIDI export and API-key automation, but it remains an unofficial reseller in a ToS gray area. For music you can clear with certainty, Sonilo, Lyria (Google GenMedia) and Stable Audio via fal remain the safer picks."
+  },
+  {
     "slug": "suno-acedata",
     "name": "SunoMCP (AceDataCloud)",
     "vendor": "Community (AceDataCloud — not Suno)",
@@ -151,7 +180,7 @@
     "category": "music",
     "featured": false,
     "tagline": "Full Suno workflow via a third-party API: songs, lyrics, stems, extends, personas.",
-    "description": "The most complete Suno bridge available as an MCP server, built on AceDataCloud's reseller API: generate songs from prompts or custom lyrics, extend, cover, remaster, mash up, replace a time range, split stems, and export WAV, MIDI or MP4. Personas keep one vocalist consistent across cues. It reaches capabilities Suno itself exposes through no official API or MCP — which is precisely the problem.",
+    "description": "The most complete Suno bridge available as an MCP server, built on AceDataCloud's reseller API: generate songs from prompts or custom lyrics, extend, cover, remaster, mash up, replace a time range, split stems, and export WAV, MIDI or MP4. Personas keep one vocalist consistent across cues. Suno now has its own gated MCP beta (see suno); this reseller still covers stems, WAV/MIDI export and API-key automation that Suno's page does not mention.",
     "capabilities": ["music", "lyrics", "song-extension", "stems", "covers", "personas", "vocal-extraction"],
     "tools_sample": ["suno_generate_music", "suno_generate_custom_music", "suno_extend_music", "suno_cover_music", "suno_stems_music", "suno_replace_section", "suno_generate_with_persona", "suno_generate_lyrics", "suno_get_wav", "suno_get_midi", "suno_get_task"],
     "install": {
@@ -166,12 +195,12 @@
     "added": "2026-06-11",
     "verified": "2026-09-24",
     "caveats": [
-      "Suno has no official public API, so this reseller wrapper is plausibly against Suno's ToS and no commercial-rights claim can be guaranteed.",
+      "Unofficial reseller, plausibly against Suno's ToS. Suno launched its own MCP beta in Oct 2026 (listed as suno), so try that first if you have access.",
       "For music you can actually clear, prefer Sonilo, Lyria (Google GenMedia) or Stable Audio via the fal hub.",
       "SUNO_DEFAULT_MODEL still defaults to chirp-v5-5, so set a v6 id explicitly and call suno_list_models.",
       "Renders are slow (the timeout is 1800s), and the unprefixed tool names in the lower half of the README are out of date."
     ],
-    "notes": "Suno still has NO official public API as of late September 2026 — its CPO posted an intake form in July 2026 saying the company is only exploring a developer API, partner-curated, with no public endpoints, docs or date. So this and every other Suno wrapper is an unofficial reseller, plausibly against Suno's ToS, and no commercial-rights claim on the output can be guaranteed. Same for all Udio wrappers. For music you can actually clear, prefer Sonilo, Lyria (Google GenMedia) or Stable Audio via the fal hub. Mechanically it is alive and moving: PyPI mcp-suno 2026.9.9.0 shipped 9 Sep 2026 — the same day Suno launched its v6 family — adding chirp-v6, chirp-v6-wild and chirp-v6-mini, plus new custom-model tools; MIT, 55 stars, roughly 35–40 suno_-prefixed tools. Trap: SUNO_DEFAULT_MODEL still defaults to chirp-v5-5 in both README and source, so set it to a v6 id explicitly if you want the current model, and call suno_list_models rather than trusting any list. SUNO_REQUEST_TIMEOUT is 1800s, because renders are slow. The older unprefixed tool names in the lower half of the README are out of date."
+    "notes": "Update 3 Nov 2026: Suno now runs its own hosted MCP at https://api.suno.com/mcp, listed here as suno. It is gated behind early access and uses account OAuth only, and Suno's page names no tools and does not mention stems or WAV/MIDI export. That leaves this wrapper useful mainly for headless, API-key automation and those extras. An account-gated MCP is not a public developer API, and the reseller's access is not sanctioned by Suno, so this and every other Suno wrapper is an unofficial reseller, plausibly against Suno's ToS, and no commercial-rights claim on the output can be guaranteed. Same for all Udio wrappers. For music you can actually clear, prefer Sonilo, Lyria (Google GenMedia) or Stable Audio via the fal hub. Mechanically it is alive and moving: PyPI mcp-suno 2026.9.9.0 shipped 9 Sep 2026 — the same day Suno launched its v6 family — adding chirp-v6, chirp-v6-wild and chirp-v6-mini, plus new custom-model tools; MIT, 55 stars, roughly 35–40 suno_-prefixed tools. Trap: SUNO_DEFAULT_MODEL still defaults to chirp-v5-5 in both README and source, so set it to a v6 id explicitly if you want the current model, and call suno_list_models rather than trusting any list. SUNO_REQUEST_TIMEOUT is 1800s, because renders are slow. The older unprefixed tool names in the lower half of the README are out of date."
   },
   {
     "slug": "mureka",
