@@ -1416,7 +1416,7 @@
     "category": "enhancement",
     "featured": false,
     "tagline": "Official remote MCP for upscaling, image/video generation, characters, and asset history.",
-    "description": "Magnific's official remote MCP connects agents to its creative upscaler, image generation/editing, video generation, Soul character/style references, creation history, TTS, and 3D model generation through one OAuth endpoint. For filmmakers, it is strongest as a remote polish-and-iteration bench: upscale keeper frames, crop or relight plates, train reusable references, then browse prior generations without leaving the chat.",
+    "description": "Magnific's official remote MCP connects agents to its creative upscaler, image and video generation and upscaling, audio (TTS, music, SFX), 3D models and scenes, stock, and creation history through one OAuth endpoint. For filmmakers, it is strongest as a remote polish-and-iteration bench: upscale keeper frames or clips, extend shots, price a call before running it, then browse prior generations without leaving the chat.",
     "capabilities": [
       "upscaling",
       "image-generation",
@@ -1425,18 +1425,23 @@
       "character-references",
       "asset-history",
       "tts",
-      "3d-generation"
+      "3d-generation",
+      "video-upscaling",
+      "cost-estimation"
     ],
     "tools_sample": [
       "images_upscale",
+      "video_upscale",
       "images_generate",
       "images_remove_background",
       "video_generate",
-      "custom_references_create",
+      "video_extend",
+      "simulate_cost",
       "creations_search",
-      "creations_show",
       "audio_tts",
-      "models3d_generate"
+      "audio_sfx_generate",
+      "models3d_generate",
+      "scene3d_add_shots"
     ],
     "install": {
       "claude_code": "claude mcp add --transport http magnific https://mcp.magnific.com",
@@ -1455,13 +1460,13 @@
       "site": "https://www.magnific.com/api"
     },
     "added": "2026-06-29",
-    "verified": "2026-09-21",
+    "verified": "2026-11-05",
     "caveats": [
       "Remote only, with no local package and no source repo.",
-      "Tools draw from the same Magnific credit balance as the app, and the catalogue is grouped rather than enumerated, so live tools/list is the source of truth.",
-      "The surface is broader than upscaling, so use explicit prompts when you want faithful enhancement rather than creative reinterpretation."
+      "236 tools by the docs' own count, drawing on the same credit balance as the app; some need a Premium plan or an enterprise account. Run simulate_cost first.",
+      "The surface is far broader than upscaling, so use explicit prompts when you want faithful enhancement rather than creative reinterpretation."
     ],
-    "notes": "Re-checked 21 Sep 2026: endpoint, transport, OAuth and the `claude mcp add` command above are all unchanged, and a bare initialize returns the expected 401 with an OAuth protected-resource challenge. Remote streamable HTTP only; no local package or source repo is published for the official MCP, and a plain browser GET on the endpoint just redirects to the web app. The docs say tools draw from the same Magnific credit balance as the app/API, and live `tools/list` is the source of truth — the published catalogue is still grouped by domain (account, creations, image generation and editing, video, audio, 3D, custom references, folders and spaces, discovery) rather than enumerated tool by tool. The MCP surface is broader than pure upscaling — image/video generation, Soul references, TTS, 3D, folders, and prior-creation browsing — so use explicit prompts when you want faithful enhancement rather than creative reinterpretation."
+    "notes": "Re-checked 5 Nov 2026: endpoint, transport, OAuth and the `claude mcp add` command above are unchanged, and the daily probe gets the expected 401 with an OAuth challenge. What changed is size: the docs now enumerate 236 tools across 13 groups (account and credits, creations and uploads, images, video, audio, 3D models, 3D scenes, library and brand kits, stock, design, spaces and flows, organize and share, enterprise teams). Video now has its own upscale and extend tools, audio covers voice cloning, music and SFX, and there is a 3D scene builder with shots. Remote streamable HTTP only; no local package or source repo is published, and a plain browser GET on the endpoint just redirects to the web app. Tools draw from the same credit balance as the app; `simulate_cost` estimates a call for free, so make the agent use it before expensive video jobs. Some tools need a Premium or higher plan and the team tools need an enterprise account; live `tools/list` is the source of truth for what your account sees. With that much surface, use explicit prompts when you want faithful enhancement rather than creative reinterpretation, and expect a 236-tool server to crowd a client's tool budget."
   },
   {
     "slug": "reap",

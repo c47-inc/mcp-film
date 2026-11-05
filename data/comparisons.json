@@ -52,13 +52,13 @@
     "title": "Topaz vs Magnific vs AVCLabs: upscaling MCPs",
     "summary": "Three official upscaling MCPs: Topaz for stills, AVCLabs for short video clips, Magnific as a hosted generate-and-polish bench.",
     "slugs": ["topaz", "magnific", "avclabs"],
-    "verdict": "They split by medium. Topaz is image-only over MCP — one image-enhance tool across eight Topaz models, local stdio, dormant since February 2026 — and for Topaz video upscaling its listing points to the Topaz models on fal. AVCLabs is the one built for video, but its ceiling is 1080p/2K and the entry plan buys about 100 seconds a month, so it is a spot-fix tool. Magnific is hosted over OAuth and does far more than upscale — generation, references, TTS, 3D — which is why its listing advises explicit prompts when you want faithful enhancement rather than creative reinterpretation.",
+    "verdict": "They split by medium. Topaz is image-only over MCP — one image-enhance tool across eight Topaz models, local stdio, dormant since February 2026 — and for Topaz video upscaling its listing points to the Topaz models on fal. AVCLabs is the one built for video, but its ceiling is 1080p/2K and the entry plan buys about 100 seconds a month, so it is a spot-fix tool. Magnific is hosted over OAuth and now upscales video as well as stills, but it is a 236-tool generation suite first — image, video, audio, 3D — which is why its listing advises explicit prompts when you want faithful enhancement rather than creative reinterpretation, and a free simulate_cost call before big jobs.",
     "choose_if": {
       "topaz": "You are enhancing stills, plates or frames from a filesystem-capable client and want Topaz models specifically.",
-      "magnific": "You work in a client with no local install and want upscaling next to generation and creation history on one credit balance.",
+      "magnific": "You work in a client with no local install and want image or video upscaling next to generation and creation history on one credit balance.",
       "avclabs": "You need to lift a short clip, or colorize, denoise or mask a still, in the cloud without a local GPU."
     },
-    "reviewed": "2026-10-31"
+    "reviewed": "2026-11-05"
   },
   {
     "id": "davinci-resolve-mcp-options",
@@ -90,12 +90,12 @@
     "title": "Unreal MCP: Epic's server vs Unreal Engine MCP (Flopperam / Aura)",
     "summary": "Epic's in-editor server for UE 5.8 against the third-party server that covers UE 5.5 to 5.7 and offers a hosted endpoint.",
     "slugs": ["unreal-mcp-epic", "unreal-engine"],
-    "verdict": "Engine version decides it. Epic's server ships inside UE 5.8 as an Experimental plugin, binds to loopback only with no authentication layer, and discovers toolsets at runtime through three meta-tools, so studios can register their own. The Flopperam server covers UE 5.5 through 5.7 and has a hosted, key-gated endpoint with 50+ tools including Blueprint authoring, plus a local mode that needs its C++ plugin compiled. Its open-source half has had no code commit since June 2026, and the company now belongs to Aura, whose product page does not mention MCP. As of 4 Nov 2026 that hosted endpoint has been returning HTTP 503 for five days running, with no shutdown notice, so do not plan around it until it answers again.",
+    "verdict": "Engine version decides it. Epic's server ships inside UE 5.8 as an Experimental plugin, binds to loopback only with no authentication layer, and discovers toolsets at runtime through three meta-tools, so studios can register their own. The Flopperam server covers UE 5.5 through 5.7 and has a hosted, key-gated endpoint with 50+ tools including Blueprint authoring, plus a local mode that needs its C++ plugin compiled. Its open-source half has had no code commit since June 2026, and the company now belongs to Aura, whose product page does not mention MCP. As of 5 Nov 2026 that hosted endpoint has been returning HTTP 503 for six days running, with no shutdown notice, so do not plan around it until it answers again.",
     "choose_if": {
       "unreal-mcp-epic": "You are on UE 5.8 and want the server that moves with the engine, on one machine.",
       "unreal-engine": "You are on UE 5.5 to 5.7 or need Blueprint authoring depth, and accept a parked open-source repo and a hosted endpoint that is currently down."
     },
-    "reviewed": "2026-11-04"
+    "reviewed": "2026-11-05"
   },
   {
     "id": "frameio-official-vs-community",
