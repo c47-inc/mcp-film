@@ -35,10 +35,10 @@
     "official": true,
     "category": "voice-speech",
     "featured": false,
-    "tagline": "Official Cartesia (Sonic) server: low-latency TTS, cloning, voice change, localization.",
-    "description": "Cartesia's official MCP server exposes its Sonic voice stack: TTS with speed, volume and emotion controls, speech-to-text, voice cloning, voice changing, voice localization into other languages, and pronunciation dictionaries. For a filmmaker-agent it is strongest on ADR-style voice replacement and on holding a character's pronunciation of invented names consistent across every line and language version.",
-    "capabilities": ["tts", "stt", "voice-cloning", "voice-changing", "voice-accents", "localization", "pronunciation-dictionaries"],
-    "tools_sample": ["text_to_speech", "speech_to_text", "list_voices", "get_voice", "clone_voice", "update_voice", "voice_change", "localize_voice", "add_voice_accents", "delete_voice_accent", "create_pronunciation_dict", "download_file", "get_credit_usage"],
+    "tagline": "Official Cartesia (Sonic) server: low-latency TTS, cloning, localization, pronunciation dictionaries.",
+    "description": "Cartesia's official MCP server exposes its Sonic voice stack: TTS with speed, volume and emotion controls, speech-to-text, voice cloning, voice localization into other languages, accent controls and pronunciation dictionaries. For a filmmaker-agent it is strongest at keeping a character's voice consistent and pronouncing invented names the same way in every line and language version.",
+    "capabilities": ["tts", "stt", "voice-cloning", "voice-accents", "localization", "pronunciation-dictionaries"],
+    "tools_sample": ["text_to_speech", "speech_to_text", "list_voices", "get_voice", "clone_voice", "update_voice", "localize_voice", "list_accents", "add_voice_accents", "list_models", "create_pronunciation_dict", "download_file", "get_credit_usage"],
     "install": {
       "claude_code": "claude mcp add --transport http --scope user cartesia-mcp https://mcp.cartesia.ai/mcp",
       "remote_url": "https://mcp.cartesia.ai/mcp",
@@ -48,14 +48,14 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/cartesia-ai/cartesia-mcp", "docs": "https://docs.cartesia.ai/tools/ai/mcp", "site": "https://www.cartesia.ai" },
     "added": "2026-06-11",
-    "verified": "2026-09-22",
+    "verified": "2026-11-07",
     "caveats": [
-      "There is no audio infill tool, so do not plan an ADR patch workflow around it; the count is 18 tools, not the 20 the README claims.",
+      "Voice Changer is gone: Cartesia sunset the API on 20 Aug 2026 and pulled the voice_change tool on 29 Sep. Do not plan ADR voice replacement around it.",
       "The local uvx route needs Python 3.13+, which breaks older pinned toolchains.",
       "get_credit_usage needs a separate CARTESIA_ADMIN_API_KEY, and TTS download URLs expire in 24 hours.",
       "The repo carries no LICENSE file."
     ],
-    "notes": "The August caveat is gone: OAuth discovery now works. /.well-known/oauth-authorization-server returns 200 on 22 Sep 2026 with an authorization-code + PKCE (S256) flow, dynamic client registration and an `mcp` scope, so standards-compliant clients complete the handshake; /.well-known/oauth-protected-resource is still a 404, which is the older half of the spec and matters only to clients that insist on it. The endpoint itself answers 401 unauthenticated. Development restarted hard — PyPI cartesia-mcp 0.22.3 shipped 21 Sep 2026 (was 0.19.0 in August), with voice accent attach/detach tools in 0.21.0, rate limiting and session capping on the hosted transport in 0.20.0–0.22.2, and a python-multipart CVE bump on 9 Sep. The README now recommends hosted over local. Tool count is 18, counted in cartesia_mcp/server.py, not the 20 the README claims; still no audio `infill`, so do not plan an ADR patch workflow around it. Local route: `claude mcp add -e CARTESIA_API_KEY=<your-api-key> cartesia-mcp -- uvx cartesia-mcp`, needing Python 3.13+, which uvx will fetch and which breaks older pinned toolchains. Repo still carries no LICENSE file and still only ~14 stars despite being first-party. get_credit_usage needs a separate CARTESIA_ADMIN_API_KEY; admin and standard keys are not interchangeable. TTS defaults to save=true, returning a file_id and a download_url that expires in 24 hours."
+    "notes": "The one thing that changed for filmmakers is a removal: Cartesia sunset its Voice Changer API (POST /voice-changer/bytes) on 20 Aug 2026 with no replacement, and cartesia-mcp dropped the voice_change tool on 29 Sep 2026 (PR #111). Anyone who listed this for ADR-style speech-to-speech replacement should look at ElevenLabs instead; there was never an audio infill tool either. Everything else moves fast: PyPI cartesia-mcp went from 0.22.3 to 0.30.0 between 21 Sep and 7 Nov 2026, adding list_accents, list_models, list_agent_models (Cartesia's Managed Agents LLMs), accent on instant clones, and a local-only output_path on text_to_speech. The hosted server rejects output_path, so hosted runs hand back a file_id and a 24-hour download_url, and its temp copies are deleted after about an hour. The tool count is now 20, matching the README, which CI now keeps in sync with the code. Re-checked 7 Nov 2026: the hosted endpoint https://mcp.cartesia.ai/mcp answers 401 with OAuth metadata, the README still recommends hosted over local, and the claude mcp add line above is copied from it. Local route: `claude mcp add -e CARTESIA_API_KEY=<your-api-key> cartesia -- uvx cartesia-mcp`, needing Python 3.13+, which uvx fetches for you and which breaks older pinned toolchains. get_credit_usage needs a separate CARTESIA_ADMIN_API_KEY, and admin and standard keys are not interchangeable. The repo still has no LICENSE file and only 17 stars despite being first-party."
   },
   {
     "slug": "fish-audio",
@@ -505,21 +505,19 @@
     "install": {
       "claude_code": null,
       "remote_url": "https://mcp.zapier.com/api/v1/connect",
-      "remote_headers": ["Authorization"],
       "stdio_command": null
     },
-    "auth": { "type": "api_key", "env_var": null, "key_url": "Create a server at https://mcp.zapier.com, connect Auphonic, then copy the connection token" },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Sign in to Zapier when your MCP client prompts, then connect Auphonic; unlisted clients and code use a connection token from https://mcp.zapier.com instead" },
     "pricing": "freemium",
-    "links": { "repo": null, "docs": "https://docs.zapier.com/mcp/overview/how-connections-work", "site": "https://zapier.com/mcp/auphonic" },
+    "links": { "repo": null, "docs": "https://docs.zapier.com/mcp/clients", "site": "https://zapier.com/mcp/auphonic" },
     "added": "2026-06-11",
-    "verified": "2026-09-22",
+    "verified": "2026-11-07",
     "caveats": [
-      "A generic Zapier gateway, not a dedicated audio MCP: two Auphonic actions, so you get submit a job with a preset, not per-parameter control.",
-      "The token is minted per Zapier MCP server, shown once, and grants whatever that server exposes, so treat it as a password.",
-      "Servers default to agentic mode, which lets the agent enable actions mid-conversation; switch to managed mode for a fixed toolset.",
-      "Auphonic gives 2 free processing hours a month, and every call routes your audio through a third integration layer."
+      "A generic Zapier gateway, not a dedicated audio MCP. Auphonic has two actions, so you submit a preset job with no per-parameter control.",
+      "Each successful tool call costs two Zapier tasks, and Auphonic gives only 2 free processing hours a month.",
+      "Agents can find and enable actions mid-conversation through meta-tools, which is unpredictable in a pipeline. Pin the actions on the Configure page."
     ],
-    "notes": "Docs link moved: the old help.zapier.com article 301s to docs.zapier.com, and the page that actually specifies the wire format is now /mcp/overview/how-connections-work. The endpoint is unchanged and still live — one shared Streamable HTTP URL, https://mcp.zapier.com/api/v1/connect (401 unauthenticated on 22 Sep 2026), Streamable HTTP only, with `Authorization: Bearer <token>` as the documented form; the query-string variant ?token= still works and Zapier's own docs now warn it ends up in logs and shell history. The token is minted per MCP server you create at mcp.zapier.com after connecting Auphonic, is shown exactly once, and grants whatever tools that server exposes, so treat it as a password; there is no published CLI one-liner, so add it through your client's header config. New since August: servers default to 'agentic mode', which exposes 16 static meta-tools (discover_zapier_actions, enable_zapier_action, auto_provision_mcp and so on) and lets the agent enable actions mid-conversation — convenient interactively, unpredictable in a pipeline. Switch the server to managed mode at mcp.zapier.com if you want a fixed toolset with pre-filled fields. Still a generic Zapier gateway rather than a dedicated audio MCP: the surface is two Auphonic actions — Create Production and its trigger — so an agent gets 'submit a job with a preset', not per-parameter mastering control, and every call routes your audio through a third integration layer. Tool names stay null because Zapier mints them from the actions you enable rather than publishing a fixed list — read tools/list once connected. Auphonic gives 2 free processing hours per month, and its own docs at auphonic.com/help still make no mention of MCP. For measured loudness compliance without the middleman, REAPER MCP in this directory does analyze_loudness plus apply_limiter locally, and the AudioLab entry meters a finished file against named delivery targets; ElevenLabs isolate_audio remains the nearest one-shot dialogue denoiser."
+    "notes": "Connecting is easier now. OAuth is Zapier's default for listed MCP clients: point the client at https://mcp.zapier.com/api/v1/connect, sign in when prompted, and Zapier auto-provisions a server with actions pre-enabled for apps already connected to your account. No token and no custom header is needed any more. Connection tokens (Authorization: Bearer, or the ?token= query form, which Zapier warns ends up in logs) remain for unlisted clients and for code. For Claude Code, Zapier's docs say a session signed in with a Claude account already has the organization's connector and that you should not run `claude mcp add`; they point to the Zapier plugin in zapier/marketplace or anthropics/claude-plugins-official. That is why no CLI line is listed here. Billing: each successful tool call uses two tasks from your Zapier plan, and failed calls are free. It is still a generic Zapier gateway rather than a dedicated audio MCP. The Auphonic surface on zapier.com/mcp/auphonic is still one action, Create Production (input file, start flag, metadata, output basename), and one trigger, New Production, so an agent gets 'submit a job with a preset', not per-parameter mastering control. Every call also routes your audio through a third integration layer. If an action is not enabled, the agent can find and enable it mid-request through discover_zapier_actions and enable_zapier_action. That is handy interactively and unpredictable in a pipeline, so fix fields and connections on the Configure your actions page. Tool names stay null because Zapier mints them from the actions you enable. Re-checked 7 Nov 2026: the endpoint answers 401 with OAuth metadata. Auphonic gives 2 free processing hours a month, and its own help pages still make no mention of MCP. For measured loudness compliance without the middleman, REAPER MCP in this directory does analyze_loudness plus apply_limiter locally, and the AudioLab entry meters a finished file against named delivery targets. ElevenLabs isolate_audio remains the nearest one-shot dialogue denoiser."
   },
   {
     "slug": "audiolab",

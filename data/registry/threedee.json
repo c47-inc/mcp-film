@@ -94,44 +94,25 @@
     "featured": false,
     "tagline": "Third-party Unreal MCP for UE 5.5+, with a hosted 50-tool option Epic's server has no answer to.",
     "description": "Two modes: a hosted 'Flop MCP' over streamable HTTP with 50+ tools across Blueprint authoring, materials, VFX, animation, landscape, AI/behaviour trees, cinematics and PCG, and an open-source local Python server plus C++ plugin with a smaller scene-level toolset. The reason to reach for it over Epic's first-party server is engine coverage — UE 5.5 through 5.7 — and Blueprint authoring depth.",
-    "capabilities": [
-      "3d-scene-control",
-      "blueprint-authoring",
-      "world-building",
-      "virtual-production"
-    ],
-    "tools_sample": [
-      "bp_create",
-      "bp_variable",
-      "bp_nodes",
-      "create_town",
-      "create_castle"
-    ],
+    "capabilities": ["3d-scene-control", "blueprint-authoring", "world-building", "virtual-production"],
+    "tools_sample": ["bp_create", "bp_variable", "bp_nodes", "create_town", "create_castle"],
     "install": {
       "claude_code": null,
       "remote_url": "https://agent.flopperam.com/mcp",
       "stdio_command": null
     },
-    "auth": {
-      "type": "api_key",
-      "env_var": null,
-      "key_url": "https://flopperam.com/account (hosted mode); local mode is free but requires compiling the bundled UnrealMCP C++ plugin"
-    },
+    "auth": { "type": "api_key", "env_var": null, "key_url": "https://flopperam.com/account (hosted mode); local mode is free but requires compiling the bundled UnrealMCP C++ plugin" },
     "pricing": "freemium",
-    "links": {
-      "repo": "https://github.com/flopperam/unreal-engine-mcp",
-      "docs": null,
-      "site": "https://www.tryaura.dev"
-    },
+    "links": { "repo": "https://github.com/flopperam/unreal-engine-mcp", "docs": null, "site": "https://www.tryaura.dev" },
     "added": "2026-06-11",
-    "verified": "2026-11-06",
+    "verified": "2026-11-07",
     "caveats": [
-      "The hosted endpoint has returned HTTP 503 since 31 Oct 2026: seven daily probes in a row, and again by hand on 6 Nov. Treat hosted mode as down.",
+      "The hosted endpoint has returned HTTP 503 since 31 Oct 2026: eight daily probes in a row, the latest on 7 Nov. Treat hosted mode as down.",
       "The open-source half is parked: no code commit since Jun 2026, and the repo has no LICENCE file despite the README's MIT line.",
       "Flopperam was acquired by Aura, whose product page does not mention MCP or this endpoint.",
       "ChiR24/Unreal_mcp is the most actively maintained community option if you need current commits."
     ],
-    "notes": "Hosted mode is down at the moment, and nobody has said why. The daily probe has had HTTP 503 from https://agent.flopperam.com/mcp on seven checks in a row (last good answer 30 Oct 2026), and we got the same 503 by hand on 2, 3, 4, 5 and 6 Nov 2026. A 503 is not a 401, so this is an outage, not a key problem. No shutdown notice exists anywhere: the README still calls the hosted server actively developed and still documents the endpoint, the API-key route (flopperam.com/account) and per-client config, and flopperam.com/docs is still live under a 2026 Flopperam footer. More than a week in, status stays active only because nobody has announced anything and the open-source local mode still works as published. A web search on 6 Nov turned up no shutdown or outage notice either. If you need hosted Unreal tooling today, this is not it. Ownership: the README says Flopperam has been acquired by Aura and points development at tryaura.dev. Aura's product page sells an agent for Unreal 5.4+ and Unity 5/6, working in the editor, Claude Code, Codex and IDEs, with a two-week free trial and $10 of premium credit, and it still never mentions MCP or this endpoint. Re-checked 6 Nov 2026: 1.1k stars, last push still 26 Jun 2026, repo not archived, README unchanged (it still calls the hosted server actively developed), so the open-source half is parked. The README's licence line says MIT, but the repo contains no LICENCE file, so the grant is unconfirmed. Local mode requires compiling the bundled UnrealMCP C++ plugin. Landscape: Epic ships a first-party server for UE 5.8 (unreal-mcp-epic). chongdashu/unreal-mcp is the most-starred but has not been pushed since Apr 2025. ChiR24/Unreal_mcp (MIT, TypeScript plus a C++ Automation Bridge plugin, ~1k stars, last pushed 6 Nov 2026, not archived) is the most actively maintained community option, and the one to use while this endpoint is down."
+    "notes": "Hosted mode is down at the moment, and nobody has said why. The daily probe has had HTTP 503 from https://agent.flopperam.com/mcp on eight checks in a row through 7 Nov 2026 (last good answer 30 Oct 2026), and we got the same 503 by hand on 2, 3, 4, 5 and 6 Nov 2026. A 503 is not a 401, so this is an outage, not a key problem. No shutdown notice exists anywhere: the README still calls the hosted server actively developed and still documents the endpoint, the API-key route (flopperam.com/account) and per-client config, and flopperam.com/docs is still live under a 2026 Flopperam footer. Eight days in, status stays active only because nobody has announced anything and the open-source local mode still works as published. Web searches on 6 and 7 Nov turned up no shutdown or outage notice either, and on 7 Nov flopperam.com/docs still carried its MCP section with no notice. If you need hosted Unreal tooling today, this is not it. Ownership: the README says Flopperam has been acquired by Aura and points development at tryaura.dev. Aura's product page sells an agent for Unreal 5.4+ and Unity 5/6, working in the editor, Claude Code, Codex and IDEs, with a two-week free trial and $10 of premium credit, and it still never mentions MCP or this endpoint. Re-checked 7 Nov 2026: 1.1k stars, last commit still 26 Jun 2026, repo not archived, README unchanged (it still calls the hosted server actively developed), so the open-source half is parked. The README's licence line says MIT, but the repo contains no LICENCE file, so the grant is unconfirmed. Local mode requires compiling the bundled UnrealMCP C++ plugin. Landscape: Epic ships a first-party server for UE 5.8 (unreal-mcp-epic). chongdashu/unreal-mcp is the most-starred but has not been pushed since Apr 2025. ChiR24/Unreal_mcp (MIT, TypeScript plus a C++ Automation Bridge plugin, ~1k stars, last pushed 6 Nov 2026, not archived) is the most actively maintained community option, and the one to use while this endpoint is down."
   },
   {
     "slug": "houdini",
