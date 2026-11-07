@@ -48,7 +48,7 @@
       { "slug": "martini", "role": "series-studio", "why": "Library collections for recurring characters, props, and locations, shared across projects, plus the canvas and timeline where episodes are generated and cut." },
       { "slug": "higgsfield", "role": "character-aware-generation", "why": "Hosted video/image connector with character-consistency-oriented workflows." },
       { "slug": "recraft", "role": "style-and-assets", "why": "Official image server for repeatable styles, raster/vector assets, upscaling, and background work." },
-      { "slug": "cartesia", "role": "character-voice", "why": "Low-latency TTS, voice cloning, voice changing, infill, and localization." },
+      { "slug": "cartesia", "role": "character-voice", "why": "Low-latency TTS, voice cloning, localization, and pronunciation dictionaries." },
       { "slug": "studio-state", "role": "continuity-state", "why": "Keeps characters, locations, shot status, and session orientation grounded in project files." },
       { "slug": "airtable", "role": "production-tracking", "why": "Hosted production database operations for episodes, assets, reviews, and status fields." }
     ],
@@ -116,7 +116,7 @@
     "martini_handoff": "Use Martini when generated audio needs to stay attached to the shots and timeline it scores, alongside the approved video takes.",
     "primary": [
       { "slug": "elevenlabs", "role": "voice-sfx-music", "why": "Official server covering TTS, voice cloning, SFX, music, transcription, and audio isolation." },
-      { "slug": "cartesia", "role": "performance-voice", "why": "Low-latency TTS, STT, cloning, voice changing, infill, and localization." },
+      { "slug": "cartesia", "role": "performance-voice", "why": "Low-latency TTS, STT, cloning, localization, and pronunciation dictionaries." },
       { "slug": "mureka", "role": "songs-and-score", "why": "Official MCP for lyrics, songs, instrumental music, and local playback." },
       { "slug": "deepgram", "role": "transcription", "why": "Official transcription, diarization, audio intelligence, and TTS." },
       { "slug": "auphonic-zapier", "role": "audio-cleanup", "why": "Audio post automation for leveling, noise reduction, loudness, and cleanup via Zapier." }
