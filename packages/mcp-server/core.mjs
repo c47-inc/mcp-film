@@ -31,11 +31,14 @@ export const SERVER_INSTRUCTIONS = [
   "Dead or archived listings are hidden unless include_inactive is true.",
 ].join(" ");
 
+// Same icon as the registry entry's server.json (public/icon-512.png, from favicon.svg).
+export const SERVER_ICON = { src: "https://mcp.film/assets/icon-512.png", mimeType: "image/png", sizes: ["512x512"] };
+
 export function initializeResult(offered, version) {
   return {
     protocolVersion: negotiateProtocolVersion(offered),
     capabilities: { tools: {} },
-    serverInfo: { name: "mcp-film", title: "mcp.film directory", version },
+    serverInfo: { name: "mcp-film", title: "mcp.film directory", version, websiteUrl: "https://mcp.film", icons: [SERVER_ICON] },
     instructions: SERVER_INSTRUCTIONS,
   };
 }
