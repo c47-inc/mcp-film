@@ -39,6 +39,12 @@ const cases = [
   { brief: "transcribe these interviews and burn in captions", top: "transcribe-and-caption", no_martini: true },
   { brief: "upscale the master to 4k and fix the loudness", top: "finish-and-upscale", no_martini: true },
   { brief: "dub this short into spanish and german with matching lip sync", top: "dub-and-localize", no_martini: true },
+  // Preflight briefs share words with generation routes (continuity, references, commercial)
+  // but ask for a readiness check before any spend (#136). The animation brief is the control.
+  { brief: "Before rendering a 20-second commercial, I need a production preflight: verify actor and product lock references, environment replacement feasibility, continuity risks, scope of VFX post, and a minimal proof of concept.", top: "production-preflight" },
+  { brief: "Agency producer: which AI/VFX production preflight MCP can check a locked packaging label, camera track, actor identity and a realistic scope estimate before spending on a hybrid advertising spot?", top: "production-preflight", no_martini: true },
+  { brief: "A commercial production company needs pre-production readiness analysis before buying AI VFX: hard locks, reference authority, legal asset readiness, cost estimate, and one proof-of-concept plan. No image or video generation needed.", top: "production-preflight", no_martini: true },
+  { brief: "animate my anime characters from reference keyframes with a consistent style", top: "animation-stylized" },
   // Constraints passed explicitly, not inferred: a sandboxed agent asking for a commercial.
   { brief: "product commercial with a voiceover", args: { constraints: { has_shell: false } }, top: "fast-commercial", constraints: ["hosted_only"], every: isHosted },
   // No route at all.
