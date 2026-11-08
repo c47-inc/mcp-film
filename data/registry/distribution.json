@@ -255,5 +255,34 @@
       "The hosted catalogue differs from the local CLI one, so trust tools/list over either count."
     ],
     "notes": "Checked 10 Oct 2026: the hosted endpoint completes initialize (autoposting-mcp 1.0.0) and refuses tools/list without a bearer token, the official MCP Registry lists ai.autoposting/autoposting, and npm @autoposting.ai/cli is at 0.5.5 (MIT, updated 7 Oct 2026). The docs say 68 tools, the README says 69, and the hosted catalogue differs from the local CLI one, so trust tools/list over either. Only a sliver of the surface is about film: YouTube publishing, scheduling and the clip renderer. The rest is social media management (knowledge bases, AI-rewritten posts, carousels). Requires a paid Autoposting account plus connected social accounts; the open-source CLI does not make the service free. For plain YouTube upload without the platform compare youtube-yutu."
+  },
+  {
+    "slug": "repostit",
+    "name": "Repostit",
+    "vendor": "Repostit",
+    "official": true,
+    "category": "distribution",
+    "featured": false,
+    "tagline": "Hosted OAuth MCP for Repostit's social cross-poster: repost workflows, scheduled posts, publishing and delivery checks.",
+    "description": "Repostit's connector lets an agent check which social accounts are connected, set up standing repost workflows (every new TikTok to YouTube Shorts, say), create and schedule a one-off post (a 'Brief'), publish it, and confirm delivery per platform. For a film team it handles the cutdown-and-trailer push across TikTok, Instagram, YouTube, X, Threads, LinkedIn and Pinterest once the edit is locked. It is a social cross-posting tool, not a festival or distributor delivery pipeline.",
+    "capabilities": ["social-publishing","scheduled-publishing","channel-publishing","repurposing","delivery-status","remote-mcp"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http repostit https://repostit-mcp-cfjcykgqda-uc.a.run.app/mcp/v1.1",
+      "remote_url": "https://repostit-mcp-cfjcykgqda-uc.a.run.app/mcp/v1.1",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser OAuth (dynamic client registration) against a Repostit account from https://repostit.io, with social accounts already connected there" },
+    "pricing": "paid",
+    "pricing_note": "14-day trial (10 posts, 3 workflows, no card), then $5/mo for 10 video posts or unlimited-post plans from about $10 to $14/mo.",
+    "links": { "repo": null, "docs": "https://repostit.io/docs/use-repostit-in-claude-and-chatgpt/", "site": "https://repostit.io" },
+    "added": "2026-11-07",
+    "verified": "2026-11-07",
+    "caveats": [
+      "The endpoint is a bare Google Cloud Run URL from Repostit's connector page; repostit.io/mcp, the address in the submission, does not serve MCP.",
+      "Built for reposting: sources are TikTok, Instagram, Facebook, Pinterest, X or Dropbox, so finished masters go through Dropbox first.",
+      "No tool names published and no public repo; the OAuth scopes include publish:write, so gate the publish calls in your client."
+    ],
+    "notes": "Checked 7 Nov 2026: the Cloud Run endpoint answers initialize with 401 Bearer realm=\"Repostit\" and publishes OAuth protected-resource metadata with scopes connections:read, workflows:write, briefs:write, publish:write and status:read. We have no account, so tools/list and tool names are unverified, and the vendor documents actions rather than tool names. The URL is the one on Repostit's own connector page (app.repostit.io/claude-connector.html) and in the official MCP Registry (io.github.hax98/repostit, 2026.10.23, under a staff member's GitHub namespace rather than a repostit domain namespace). repostit.io/mcp returns 404/405, and the user docs only say to find Repostit in Claude's or ChatGPT's connector list, which we did not confirm; if Repostit moves the service, the raw run.app address will break without warning. Platforms per the vendor docs: post from TikTok, Instagram, Facebook, Pinterest, X or Dropbox; publish to TikTok, Instagram, Facebook, YouTube, Pinterest, LinkedIn, X, Threads, Google Drive or Dropbox. No Vimeo, and no direct upload of a local file through the connector is documented. Money: every plan has a 14-day trial with no card (10 posts counted per destination, 1 account per platform, 3 workflows); Basic is $5/mo for 10 video posts; Starter, Influencer and Agency show both $10/$20/$99 and $14/$29/$149 a month, apparently annual versus monthly billing, with 1, 5 and 30 accounts per platform. The terms (effective 7 Mar 2025) name Repostit LLC in Newark, Delaware, while the footer says Repostit, Inc. The domain dates to Nov 2024. Closest neighbour is Autoposting, which also cuts clips; Repostit is the narrower, cheaper cross-poster."
   }
 ]

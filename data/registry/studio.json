@@ -412,5 +412,65 @@
       "Tools are not listed without sign-in, so the public sample is the two the vendor guide names; call get_help once connected."
     ],
     "notes": "Changed under the listing between September and October 2026. On 23 Sep an unauthenticated POST to https://mcp.invideo.io/mcp completed a handshake and listed one tool, generate-video-from-script. On 27 Oct the same POST returns 401 with `WWW-Authenticate: Bearer resource_metadata=…`, the protected-resource document names pro-api-auth.invideo.io as the authorization server, and the error text points agents at a device sign-in flow. mcp.film's daily endpoint check caught the change. The vendor's agent guide (mcp.invideo.io/mcp/agents.md) now describes a cloud video editor ('Figma and GitHub for video'): projects with a main timeline, branches and edit history, opened by URL, with the user watching edits land live. Connect: Claude Code, Codex, Cursor, VS Code, claude.ai custom connectors and ChatGPT developer-mode connectors are documented; in Claude Code the sign-in is `/mcp` → invideo → Authenticate after a restart. Agents with no browser use RFC 8628 device sign-in (user approves a code on their own device; tokens last about a day and refresh tokens rotate). The CLI (github.com/invideoio/cli, Apache-2.0, one native binary also on npm and PyPI as `invideo`, 0.1.1 on 27 Oct) covers projects, notebook pages, edits and branches, assets, `gen run` with `--dry-run` pricing and `--max-credits`, stock library search and exports; its README says the CLI and MCP are the same invideo. Pricing (invideo.io/pricing, 27 Oct): Starter $20/seat/month for 400 credits, Plus $60 for 2,000, higher tiers above; Starter has Lite-only agent access and no Seedance 2.0/2.5. Not checked: the signed-in tool list, which needs an account; tools_sample lists only get_help and list_projects, the two the guide names. Re-categorised from Video Generation to Full-Stack AI Studios because the server now holds the project, timeline, generation and review in one place."
+  },
+  {
+    "slug": "genflick",
+    "name": "Genflick MCP",
+    "vendor": "Genflick",
+    "official": true,
+    "category": "studio",
+    "featured": false,
+    "tagline": "Hosted film and series studio: agents edit saved story documents or hand approved production to Genflick's agents.",
+    "description": "Genflick's official remote server connects an assistant to the same Film and Series studios its built-in director, Genny, works in: saved series briefs, characters and episode outlines, the Library and Social. Instead of a flat tool list it exposes a discoverable library of nested toolsets and skills, driven through call_studio_tool and read_studio_tool_result, or the assistant delegates an approved task to a Genflick studio agent and checks back on it. The pitch for a series is one cast held across episodes; paid production stops at a proposal with a credit ceiling that you approve inside Genflick, not in the chat.",
+    "capabilities": ["text-to-video","image-to-video","text-to-image","multi-model-generation","character-consistency","storyboarding","script-generation","project-management","upscaling","social-publishing","skills","cost-gates","async-jobs","remote-mcp"],
+    "tools_sample": ["call_studio_tool","read_studio_tool_result"],
+    "install": {
+      "claude_code": "claude mcp add --transport http genflick https://genflick.com/mcp/studios",
+      "remote_url": "https://genflick.com/mcp/studios",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser OAuth (PKCE, dynamic client registration) against a Genflick account, scoped to the whole account or selected workspaces: https://genflick.com/developers/mcp" },
+    "pricing": "freemium",
+    "pricing_note": "Free daily allowance of director chat and 20 images; video needs credits from plans ($19.90/160 to $1,000/14,000 a month) or packs from $9.90/80.",
+    "links": { "repo": null, "docs": "https://genflick.com/developers/mcp", "site": "https://genflick.com" },
+    "added": "2026-11-07",
+    "verified": "2026-11-07",
+    "caveats": [
+      "Free every day means director chat and 20 images, when available and subject to account, region and provider limits. Video always costs credits.",
+      "Only two tool names are public; the rest are nested toolsets the assistant discovers after OAuth, so you cannot audit the surface before signing in.",
+      "OAuth advertises 28 scopes, including social:publish, ads:activate and crm:deliver. Whole-account access reaches Social; pick selected workspaces.",
+      "The 4K claim is an upscale step, not native generation; the about page calls Genflick largely a one-person effort, and there is no public repo."
+    ],
+    "notes": "Checked 7 Nov 2026: the endpoint answers initialize with a 401 Bearer challenge pointing at protected-resource metadata, and the authorization server at genflick.com/api/auth supports dynamic client registration and S256 PKCE. Its scope list covers projects, assets, work start/cancel, automation, social publish, and an ads, commerce and CRM block the docs' own Codex login line does not request. tools/list needs auth, so tools_sample is the two tools the docs name; everything else sits behind a toolset library that mirrors Genflick's in-app agents and changes when they do. Paid production returns a proposal with a credit ceiling that you approve in the Genflick web app; the connection cannot buy credits or switch on auto-reload. Free tier per the pricing page and FAQ: Genny chat plus 20 images a day, no card, 'when available', not every model or quality setting. Credits run $0.071 to $0.124 each; Genflick's own estimate is about 3 one-minute videos from the $19.90 Starter plan at the cheapest settings, and the Pro plan's figures work out to roughly 50 to 170 credits per finished minute. Purchased credits do not expire; refunds are case by case. 4K comes from the Video Upscaler (free in-browser, or AI-enhanced for credits) applied to takes before export, not from the generators. The changelog names Seedance 2.0, Veo 3.1, Kling 3.0, Wan 2.6 and Grok video among its providers; there is no current public model list. The terms leave commercial use to 'the specific product plan' and each provider's terms, without spelling either out. MCP support shipped in v1.66.0 (15 Oct 2026). The about page names the developer as Adam (adam@genflick.com) and calls the product largely a one-person effort; the changelog dates public launch to 15 Mar 2026, though WHOIS shows genflick.com registered 18 Apr 2026. The MCP Registry entry sits under a personal GitHub namespace, io.github.buildngrowsv/genflick (v1.0.0, published 29 Oct 2026), and genflick.com does not link that account; the official status rests on the endpoint and docs being on genflick.com. Closed source, hosted only."
+  },
+  {
+    "slug": "reverie-movies",
+    "name": "Reverie Movies MCP",
+    "vendor": "Reverie Movies (Justin Crosbie)",
+    "official": true,
+    "category": "studio",
+    "featured": false,
+    "tagline": "Hosted shot-by-shot film builder: plan, render continuation chains, score, lip-sync and export, quoted before spend.",
+    "description": "Reverie's official remote server documents all 54 tools: a free planning track (ideate_concepts, advance_plan_stage, create_project_from_plan) that turns an idea or script into scenes, shots and a cast, then render_clip and render_chain across Veo 3.1, Kling 3.0/4.0, Seedance 2.x, MiniMax H3, Wan 3.0 and Gemini Omni. Continuity is the organising idea: a continuation shot starts on the last frame of the one before, end frames and intercuts bridge shots, and view_shot_frames lets the agent check each take before building on it. ElevenLabs voice-over, Lyria score, sync.so lip-sync, sound effects, timeline trims and export_movie finish the cut, and every paid call is a server-enforced quote-then-confirm.",
+    "capabilities": ["text-to-video","image-to-video","multi-model-generation","character-consistency","continuity","first-last-frame","storyboarding","script-generation","video-extension","video-editing","voiceover","music-generation","lip-sync","sound-effects","timeline-editing","transitions","export","cost-gates","credit-balance","async-jobs","remote-mcp"],
+    "tools_sample": ["get_filmmaking_guide","ideate_concepts","advance_plan_stage","create_project_from_plan","create_clip","generate_character_image","generate_clip_image","render_clip","render_chain","extend_clip","view_shot_frames","generate_voice_over","generate_music","lip_sync_clip","get_credit_balance","export_movie"],
+    "install": {
+      "claude_code": "claude mcp add --transport http reverie https://api.reveriemovies.com/mcp",
+      "remote_url": "https://api.reveriemovies.com/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser OAuth 2.1 (PKCE, dynamic client registration, scope 'agent'); signing in creates a Reverie account: https://reveriemovies.com/connect" },
+    "pricing": "credits",
+    "pricing_note": "300 starter credits once, no card; then one-off packs from $10/100 to $100/1,500 credits that never expire. No subscription.",
+    "links": { "repo": null, "docs": "https://reveriemovies.com/docs/mcp", "site": "https://reveriemovies.com" },
+    "added": "2026-11-07",
+    "verified": "2026-11-07",
+    "caveats": [
+      "The free tier is a one-off 300 starter credits, about 15 five-second clips by Reverie's own math. After that it is prepaid packs, and all sales are final.",
+      "render_clip's resolution option stops at 1080p (two models' notes mention 4K), 16:9 or 9:16; shots are silent unless with_audio, which costs 50% more.",
+      "Seedance models refuse photorealistic people (fal's real-person check), and the vendor warns Veo adds strangers to wide group shots.",
+      "A one-developer product in early access: hosted only, closed source, and quotes expire after an hour and work once."
+    ],
+    "notes": "Checked 7 Nov 2026: the endpoint answers initialize with a 401 Bearer challenge, and the protected-resource and authorization-server metadata on api.reveriemovies.com advertise one scope, agent, with dynamic client registration, S256 PKCE and public clients only. tools/list needs auth, so tools_sample comes from the docs page, which lists 54 tools with readOnly/destructive annotations and promises tools are only ever added, never renamed or removed. 15 tools spend credits, and each one returns a quote (credits_required, quote_id) that must come back with confirm: true. The server enforces this; a quote lasts an hour and works once. Credits are bought on the website, never through the tools. The submission's Veo, Kling and Seedance claim checks out in render_clip's model enum, which also lists MiniMax H3, Wan 3.0 and Gemini Omni Flash; extend_clip is Veo-only. Pricing is the homepage's: 300 free credits on sign-up, then $10/100, $25/300, $50/700 or $100/1,500, framed as about 20 credits per five-second clip and 5 per image; export costs 1 credit, voice-over 1 per 200 characters, and get_credit_balance returns the live per-tier rates. Terms say you own generated outputs subject to the terms and the law; no watermark is mentioned anywhere I checked, but that is unconfirmed without an account. A ChatGPT app exists alongside the Claude connector, and a Claude Code plugin (github.com/justincrosbie/reverie-claude, created 1 Nov 2026) bundles the same endpoint with a filmmaking skill. No MCP Registry entry; the registry's 'Reverie' (ai.knowall/reverie) is an unrelated Neo4j memory server. The founder named on the site is Justin Crosbie, who filed the submission. The footer says Reverie Movies Pty Ltd with ABN 77 215 353 742, but ABN Lookup lists that number as Justin Crosbie, sole trader. Domain registered January 2026."
   }
 ]
