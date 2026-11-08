@@ -104,16 +104,16 @@
     },
     "auth": { "type": "api_key", "env_var": "HUME_API_KEY", "key_url": "https://platform.hume.ai" },
     "pricing": "freemium",
-    "links": { "repo": "https://github.com/HumeAI/mcp-server-hume", "docs": "https://dev.hume.ai/docs/text-to-speech-tts/mcp-server", "site": "https://www.hume.ai" },
+    "links": { "repo": "https://github.com/HumeAI/mcp-server-hume", "docs": "https://github.com/HumeAI/mcp-server-hume#readme", "site": "https://www.hume.ai" },
     "added": "2026-06-11",
-    "verified": "2026-09-22",
+    "verified": "2026-11-08",
     "caveats": [
-      "Effectively dormant: npm 0.3.0 dates from Jan 2026 and main has had no real commit since.",
+      "Effectively dormant: npm 0.3.0 dates from Jan 2026 and main has had no commit since.",
       "TTS only, with five tools, so pair it with something else for SFX and transcription.",
-      "dev.hume.ai/_mcp/server is a separate docs-search MCP that will not synthesize a line of dialogue.",
+      "Hume's TTS docs now point only at dev.hume.ai/_mcp/server, a docs-search MCP that will not synthesize a line of dialogue.",
       "Set --workdir or audio lands in the system temp directory; EMBEDDED_AUDIO_MODE returns audio inline for clients without filesystem reach."
     ],
-    "notes": "Official but effectively dormant, and the gap keeps widening: npm @humeai/mcp-server is still 0.3.0, published 8 Jan 2026 — over eight months with no release. The GitHub repo reports a push on 26 Aug 2026, but that is not the default branch: the newest commit on main is still 'bump v (#17)' from 8 Jan 2026, so read the push date as branch noise, not maintenance. ~9 stars, 3 open issues, no LICENSE file in the tree even though npm metadata declares ISC. Hume's docs site also serves a separate MCP at https://dev.hume.ai/_mcp/server, but that is Mintlify documentation search (one searchDocs tool) — it will not synthesize a line of dialogue, so do not wire it in expecting Octave. Five tools — a much narrower surface than ElevenLabs or Cartesia, and TTS-only, so pair it with something else for SFX and transcription. Set --workdir/-w (or WORKDIR) or audio lands in the system temp directory under /hume-tts; local playback wants ffplay or another CLI player on PATH. EMBEDDED_AUDIO_MODE (default false) returns audio inline instead, which is what you want in a client that cannot reach your filesystem."
+    "notes": "Official but effectively dormant. Re-checked 8 Nov 2026: npm @humeai/mcp-server is still 0.3.0, published 8 Jan 2026, so ten months without a release. The GitHub repo reports a push on 26 Aug 2026, but that is not the default branch: the newest commit on main is still 'bump v (#17)' from 8 Jan 2026, so read the push date as branch noise, not maintenance. ~9 stars, 3 open issues, no LICENSE file in the tree even though npm metadata declares ISC. Docs drift: the README still links dev.hume.ai/docs/text-to-speech-tts/mcp-server, but that page no longer documents this package. It now only tells coding agents to connect to https://dev.hume.ai/_mcp/server, which is Mintlify documentation search (one searchDocs tool). It will not synthesize a line of dialogue, so do not wire it in expecting Octave. The repo README is now the only install reference, so the docs link here points to it. Five tools — a much narrower surface than ElevenLabs or Cartesia, and TTS-only, so pair it with something else for SFX and transcription. Set --workdir/-w (or WORKDIR) or audio lands in the system temp directory under /hume-tts; local playback wants ffplay or another CLI player on PATH. EMBEDDED_AUDIO_MODE (default false) returns audio inline instead, which is what you want in a client that cannot reach your filesystem."
   },
   {
     "slug": "allvoicelab",
@@ -135,13 +135,13 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/allvoicelab/AllVoiceLab-MCP", "docs": "https://github.com/allvoicelab/AllVoiceLab-MCP#readme", "site": "https://www.allvoicelab.com" },
     "added": "2026-06-29",
-    "verified": "2026-09-23",
+    "verified": "2026-11-08",
     "caveats": [
       "Frozen: PyPI 0.0.5 and the repo have not moved since Aug 2025.",
       "Region matters: mismatching the key to the API domain (.com global, .cn mainland) surfaces as tool unavailable, not an auth error.",
       "Requires Python 3.11+ and paid credits, and renders land in your home directory unless ALLVOICELAB_BASE_PATH is set."
     ],
-    "notes": "The stale one in this category, and a month staler than last time: re-checked 23 Sep 2026, PyPI allvoicelab-mcp is still pinned at 0.0.5 from 1 Aug 2025 and the repo is still last pushed 5 Aug 2025 — thirteen months without a commit, now 61 stars, still MIT. The seven tools and both API domains are unchanged, so it is official and correct rather than maintained; treat the pin as frozen. Region matters: global keys use https://api.allvoicelab.com, mainland-China keys use https://api.allvoicelab.cn, and mismatching key to domain surfaces as a 'tool unavailable' error rather than an auth failure. Requires Python >=3.11 (PyPI metadata; the README does not say so) and paid credits. Renders land in your home directory unless you set ALLVOICELAB_BASE_PATH — point it at the shot folder before a dubbing pass or you will be hunting for files."
+    "notes": "The stale one in this category, and staler with every check. Re-checked 8 Nov 2026: PyPI allvoicelab-mcp is still pinned at 0.0.5 from 1 Aug 2025, and the repo was last pushed 5 Aug 2025, fifteen months without a commit. It now has 63 stars, is still MIT, and is not archived. The seven tools and both API domains are unchanged, so it is official and correct rather than maintained; treat the pin as frozen. Region matters: global keys use https://api.allvoicelab.com, mainland-China keys use https://api.allvoicelab.cn, and mismatching key to domain surfaces as a 'tool unavailable' error rather than an auth failure. Requires Python >=3.11 (PyPI metadata; the README does not say so) and paid credits. Renders land in your home directory unless you set ALLVOICELAB_BASE_PATH — point it at the shot folder before a dubbing pass or you will be hunting for files."
   },
   {
     "slug": "suno",
