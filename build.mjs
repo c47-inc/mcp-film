@@ -876,6 +876,7 @@ const serverJson = {
   description: "Search the curated directory of MCP servers for AI filmmaking and plan a full production stack.",
   version: mcpPkg.version,
   websiteUrl: site.url,
+  icons: [{ src: `${site.url}/assets/icon-512.png`, mimeType: "image/png", sizes: ["512x512"] }],
   repository: { url: `https://github.com/${site.github_repo}`, source: "github", subfolder: "packages/mcp-server" },
   remotes: [{ type: "streamable-http", url: `${site.url}/mcp` }],
   packages: [{
