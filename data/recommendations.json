@@ -257,6 +257,21 @@
     "fallback_slugs": ["higgsfield", "pixverse", "magic-hour", "mage", "runway", "comfyui-artokun", "fal", "apatero"]
   },
   {
+    "id": "production-preflight",
+    "title": "Preflight a production before spending on generation",
+    "summary": "Check a commercial or VFX-heavy brief before any generation credits are spent: hard locks on products and identities, reference and rights readiness, a scoped estimate, quotes per shot, and one bounded proof of concept.",
+    "best_for": "Agency and production-company briefs, hybrid live-action and AI spots, VFX feasibility checks, budget and scope estimates, and a human sign-off gate before uploads or paid renders.",
+    "tags": ["preflight", "readiness", "feasibility", "pre-production", "estimate", "budget", "quote", "scope", "locks", "risk", "proof-of-concept", "poc", "sign-off", "procurement", "vfx"],
+    "primary": [
+      { "slug": "objekts-production-desk", "role": "readiness-verdict", "why": "Takes a structured brief with hard and soft locks and per-element routes, and returns a readiness verdict, blocking inputs and one proof of concept; it generates nothing." },
+      { "slug": "cinegenta", "role": "plan-and-quote", "why": "Turns a script into scenes, cast, props and shots and returns a free itemised quote; a capped run starts only on an explicit greenlight." },
+      { "slug": "maxvideoai", "role": "per-shot-quotes", "why": "Compares what a shot list would cost across video models and needs approval of an exact quote before any paid attempt." },
+      { "slug": "studio-state", "role": "lock-tracking", "why": "Keeps characters, locations and shot lock status in project files, so locked references stay locked once production starts." },
+      { "slug": "airtable", "role": "budget-and-sign-off", "why": "Official hosted base for the budget sheet, asset clearance and approval log the producer signs off on." }
+    ],
+    "fallback_slugs": ["penshot", "framethrower", "getty-images", "notion", "google-drive"]
+  },
+  {
     "id": "publish-and-distribute",
     "title": "Publish, schedule and send out review links",
     "summary": "The last mile: YouTube upload, social cutdowns and scheduling across platforms, review and approval links for the client, hosting with analytics, and thumbnails.",
