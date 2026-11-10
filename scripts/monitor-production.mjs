@@ -206,6 +206,10 @@ const checks = [
     ["go-http-client", "Go-http-client/2.0"],
     ["curl", "curl/8.7.1"],
   ].map(([family, userAgent]) => ({
+    // Cloudflare Pages blocks Python-urllib's default UA on its own platform (error 1010 on
+    // mcp-film.pages.dev too), before the zone's settings and Skip rules apply. Nothing in our
+    // dashboard can lift it, so that exact block is a warning; any other failure still fails.
+    ...(family === "python-urllib" ? { platformBlock: /\b1010\b/ } : {}),
     name: `${family} can POST /mcp initialize`,
     url: `${base}/mcp?monitor=${smoke}`,
     method: "POST",
@@ -396,6 +400,18 @@ async function runHttpCheck(check) {
       const problem = check.validateText(body);
       ok = !problem;
       detail += ok ? ", body valid" : `, ${problem}`;
+    }
+
+    if (!ok && check.platformBlock && res.status === 403) {
+      const body = await res.text().catch(() => "");
+      if (check.platformBlock.test(body)) {
+        return {
+          name: check.name,
+          result: "WARN",
+          status: String(res.status),
+          detail: `${detail}, Cloudflare Pages platform block (error 1010); set a User-Agent header to get through`,
+        };
+      }
     }
 
     if (!ok && check.wafSensitive && res.status === 403) {
