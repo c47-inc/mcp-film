@@ -222,14 +222,14 @@
     "pricing": "credits",
     "links": { "repo": "https://github.com/SkyworkAI/Mureka-mcp", "docs": "https://platform.mureka.ai/docs/en/quickstart.html", "site": "https://platform.mureka.ai" },
     "added": "2026-06-29",
-    "verified": "2026-09-24",
+    "verified": "2026-11-10",
     "caveats": [
       "Effectively abandoned as a package: PyPI 0.0.13 and the last commit are from May 2025, with an unreviewed PR about a missing httpx dependency.",
       "Only four tools; the wider Mureka API has since grown stems, remix and TTS that this MCP does not expose.",
       "TIME_OUT_SECONDS defaults to 60, far too short for a full song, so raise it before any production run.",
       "Audio saves to $HOME/Desktop unless MUREKA_MCP_BASE_PATH is set, and credits are required."
     ],
-    "notes": "Official and MIT, but effectively abandoned as a package: PyPI mureka-mcp 0.0.13 and the last repo commit are both 13 May 2025 — sixteen months untouched at 116 stars. Community PRs are piling up unreviewed, including one opened 27 Aug 2026 to declare the missing httpx dependency and pin mcp to v1 — a hint that a fresh uvx install may resolve dependencies the code was never tested against. The wider Mureka API has since grown prompt-to-song, soundtrack, stems, remix, region editing and TTS endpoints; this MCP still exposes only four tools. Credits required. Confirmed in the source: audio saves to $HOME/Desktop unless MUREKA_MCP_BASE_PATH is set, and TIME_OUT_SECONDS defaults to 60 — far too short for a full song, so raise it (the README's own example uses 300) before any production run."
+    "notes": "Official and MIT, but effectively abandoned as a package: PyPI mureka-mcp 0.0.13 and the last repo commit are both 13 May 2025 — eighteen months untouched at 123 stars as of a 10 Nov 2026 re-check, with the repo not archived. Community PRs are piling up unreviewed, including one opened 27 Aug 2026 to declare the missing httpx dependency and pin mcp to v1 — a hint that a fresh uvx install may resolve dependencies the code was never tested against. The wider Mureka API has since grown prompt-to-song, soundtrack, stems, remix, region editing and TTS endpoints; this MCP still exposes only four tools. Credits required. Confirmed in the source: audio saves to $HOME/Desktop unless MUREKA_MCP_BASE_PATH is set, and TIME_OUT_SECONDS defaults to 60 — far too short for a full song, so raise it (the README's own example uses 300) before any production run."
   },
   {
     "slug": "sonilo",
