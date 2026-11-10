@@ -2019,5 +2019,64 @@
       "Installing ChatCut Desktop on the same machine disables the plugin, and the server itself is closed."
     ],
     "notes": "Verified 2026-10-26 against the vendor's plugin repo and docs; we have no account, so no live tools/list — the tool names above come from the plugin's basics skill, not the server. The endpoint and OAuth resource are taken from claude/.claude-plugin/plugin.json (plugin v1.10.23). The intended route is the Claude Code plugin, which also sends ChatCut client headers and loads the skills; a bare claude mcp add against the URL is untested by us. The repo (ChatCut-Inc/agent-plugin, created June 2026, ~980 stars, pushed 26 Oct 2026) is GPL-3.0 per the manifests but carries no LICENSE file, and it holds only the plugin and skills — the server itself is closed. Known friction from the vendor's own docs: tools load only at session start, so open a new session after install or update, and the plugin does not update itself; exports render in a signed-in browser tab that must stay open, cloud video tops out at 1080p, local-only files need a supported import path, and installing ChatCut Desktop on the same machine disables the plugin. Money: free tier caps web export at 60 minutes total; paid plans run $38 to $141 a month (annual) for 200 to 800 credits, and only paid tiers list 'all AI agent editing capabilities' — which agent features work on the free plan is not spelled out. One caution: the vendor's install doc is written as instructions for agents, including proxy-hunting advice; read it before letting an agent run it. Not to be confused with OpenChatCut, an unrelated open-source project."
+  },
+  {
+    "slug": "askeditor",
+    "name": "AskEditor",
+    "vendor": "AskEditor",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Hosted OAuth MCP into AskEditor's browser timeline editor: cut, caption, add titles and motion graphics, export MP4.",
+    "description": "AskEditor's hosted server lets an agent work on a real multitrack timeline in AskEditor's web editor: open or create a project, upload or import footage, trim, split and move clips, set keyframes and transitions, add text and captions, write motion-graphic assets, look at the cut as frames, and export an MP4. Every change shows live in the editor, so a human can take over and trim by hand. For a filmmaker it finishes your own footage rather than generating a film, and the project stays editable instead of being flattened into a render.",
+    "capabilities": ["timeline-editing","captioning","motion-graphics","media-management","asset-upload","frame-extraction","transcription","render","remote-mcp"],
+    "tools_sample": ["list_projects","create_editor_project","open_project","get_timeline","edit_timeline","trim_clip","split_clip","set_keyframes","add_text","get_clip_transcript","write_asset","import_media_from_url","watch_edit","export_video","get_export","load_skill","call_tool"],
+    "install": {
+      "claude_code": "claude mcp add --transport http askeditor https://mcp.askeditor.com/mcp",
+      "remote_url": "https://mcp.askeditor.com/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser OAuth 2.1 (dynamic client registration, PKCE) against an AskEditor account from https://askeditor.com/login; ake_live_ API keys from Settings → API keys for clients that cannot run OAuth" },
+    "pricing": "freemium",
+    "pricing_note": "Free plan with 2 GB storage and 1080p exports; Creator/Pro/Studio at $12/$30/$60 a month billed yearly for 1,200/3,000/6,000 credits.",
+    "links": { "repo": "https://github.com/AskEditor/askeditor-plugin", "docs": "https://askeditor.com/docs/mcp/connect", "site": "https://askeditor.com" },
+    "added": "2026-11-07",
+    "verified": "2026-11-07",
+    "caveats": [
+      "Timeline edits are free; generated media and first-time transcription spend credits, and the Free plan lists no monthly credit allowance.",
+      "Watermark terms are vague: Free promises only the first job watermark-free, while paid tiers list no watermark as a perk. 4K starts at Pro.",
+      "Closed server; the public repo holds only the MIT plugin and skills. About 200 tools sit behind list_skills, load_skill and call_tool."
+    ],
+    "notes": "Checked 7 Nov 2026: the OAuth protected-resource and authorization-server metadata at mcp.askeditor.com answer and match the docs (scope mcp, dynamic client registration, PKCE S256, public clients), and an unauthenticated GET on /mcp returns a JSON error asking for a bearer key. A full initialize could not be run from our network, and we have no account, so there is no live tools/list; the tool names come from the vendor's MCP tools page. The connector lists roughly 45 everyday tools; about two hundred more are loaded on demand through list_skills, load_skill and call_tool, so an agent's visible tool list understates what it can do. Registered in the official MCP Registry as com.askeditor/askeditor (0.1.10, published 12 Oct 2026, matching the plugin manifest). The vendor's preferred route in the Claude and ChatGPT desktop apps is its plugin (MIT, github.com/AskEditor/askeditor-plugin, created Oct 2026), which opens the editor beside the chat; the claude mcp add above is the vendor's documented Claude Code command, and signing in is a separate /mcp → Authenticate step. Money: editing is free; generated video, images, voices and music, and AskEditor's own transcription the first time a file is heard, spend credits, and anything over a few credits or any deletion waits for approval. The Free plan lists 100 chats a day, 2 GB of storage, unlimited 1080p exports and 'your first job free, no watermark', but no monthly credits, so captioning new footage on Free may need a top-up; whether later Free exports carry a watermark is not stated anywhere we could find. 4K and the beta CapCut/Final Cut Pro bridge (Mac) start at Pro. Formal retention windows are 'to be published', and the terms name no legal entity beyond 'AskEditor' under Delaware law. The GitHub org and registry entry date from Oct 2026, the domain from Nov 2024. Closest neighbours are ChatCut and Clueso; the reason to pick this one is that editing itself costs nothing."
+  },
+  {
+    "slug": "valmera",
+    "name": "Valmera Video Editor",
+    "vendor": "Valmera (DIYAR TAREQ TRADING L.L.C, UAE)",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Hosted OAuth MCP that cuts uploaded footage on a versioned EDL, renders previews and exports an H.264 MP4.",
+    "description": "Valmera gives a connected assistant its own hosted editor: upload the footage, wait for indexing, then read transcripts, shots and frames and cut against them, with captions, reframing, music, b-roll and grading layered on as numbered EDL versions. The original upload is never modified, any cut can be restored, and a render_preview pass sits between the edit and export_final, which renders the full-resolution file from source. For an assistant editor it is a rough-cut-and-revise loop that runs without an NLE, at the price of a subscription and a branded export.",
+    "capabilities": ["video-editing","rough-cuts","transcript-editing","filler-word-removal","captioning","color-grading","stock-search","ai-clipping","preview-urls","render","async-jobs","remote-mcp"],
+    "tools_sample": ["create_project","upload_start","index_status","get_transcript","get_shots","keep_segments","cut_range","cut_silences","add_captions","set_frame","auto_reframe","add_music","render_preview","export_final","wait_for_job","download_url"],
+    "install": {
+      "claude_code": "claude mcp add --transport http valmera https://valmera.io/mcp/server",
+      "remote_url": "https://valmera.io/mcp/server",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser OAuth (dynamic client registration, PKCE S256) against a valmera.io account; a static bearer token can be minted at https://valmera.io/mcp/connect" },
+    "pricing": "paid",
+    "pricing_note": "Account and uploads free; MCP editing starts at Plus, $15 a month for 500 credits. Pro is $50, Max $100.",
+    "links": { "repo": "https://github.com/ABO3SKRALMASAOODI/valmera-mcp", "docs": "https://valmera.io/mcp/tools", "site": "https://valmera.io" },
+    "added": "2026-11-07",
+    "verified": "2026-11-07",
+    "caveats": [
+      "Exports are branded: the vendor's 7 Nov recorded run carries a corner mark throughout and a 5-second end card, and it says paid does not mean unbranded.",
+      "No free editing and no trial: account and uploads are free, MCP editing starts at $15 a month for 500 credits, and per-tool credit costs are unpublished.",
+      "A 220-tool catalogue behind OAuth, so it was checked from the vendor's public server card, not a live tools/list; 47 tools are marked read-only.",
+      "Young and closed: domain registered March 2026, in the MCP Registry since August, and the repo holds skills and docs on a personal GitHub account."
+    ],
+    "notes": "Checked 7 Nov 2026: https://valmera.io/mcp/server answers 401 with a Bearer challenge (realm valmera, scope valmera.edit) pointing at protected-resource metadata, and the authorization server advertises dynamic client registration, PKCE S256 and token revocation. Editing itself was not exercised, because it needs a paid account. The public server card lists 220 tools in nine groups and states that tools with an unconfigured backing service are hidden from tools/list, so a connected client may see fewer. Editing the same project from Studio and over MCP at once is refused. The vendor's recorded run of 7 Nov (MCP-RECORDED-EDIT.md, commit 798e873) checks out: the published final MP4 hashes to the receipt value, ffprobe reads 1080x1080 at 30 fps for 15.0 s from a 1280x720 source, and extracted frames show an 'Edited using Valmera AI' corner mark on the program plus a five-second end card. The subscribe page says the end card is appended, the homepage says paid plans normally omit overlay watermarks unless service settings override that, and the vendor's own FREE-EXPORT-CHECK doc says not to assume a paid export is unbranded; check a real export before committing a deliverable. Plans: Plus $15 a month (500 credits, MCP only), Pro $50 (1,500, adds Valmera's own agent), Max $100 (4,000); annual is ten months' price, credits do not roll over, new checkouts have no trial and there is a 14-day refund window. Upload limits are 3 hours, but the size cap reads 14 GB on the homepage and 100 GB on the setup and tool pages. The terms leave content ownership with the user, are governed by UAE law, and list no AI model subprocessors. The repo is MIT-licensed skills, docs and client plugins; the engine is closed. It is published from a personal GitHub account, but valmera.io links to it and the DNS-verified io.valmera registry namespace (0.2.0, 5 Oct 2026) points to it. Skipped on 8 Sep 2026 as too green (v0.1.1 on an onrender.com host); the endpoint has since moved to valmera.io. For a hosted timeline you can reopen and hand-finish, Clueso and ChatCut are the closer comparisons."
   }
 ]

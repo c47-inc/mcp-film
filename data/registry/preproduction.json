@@ -266,5 +266,35 @@
       "The repo sits on a personal account with no licence and holds manifests and marketing docs, not server source."
     ],
     "notes": "Checked live 26 Oct 2026: initialize answers on protocol 2025-11-25 and 2025-06-18 as objekts-production-desk 0.1.0, stateless and without auth, and tools/list returns the seven tools above. A diagnose_production call with a minimal brief returned a BRIEFABLE verdict. Protocol 2026-07-28 is rejected with HTTP 400, so clients that only speak the new stateless protocol cannot connect until objekts ships its announced upgrade. The vendor documents only Claude's Connectors UI, so no Claude Code command is listed; the generic remote URL works. It is a free front door to a commercial studio: estimate_production returns directional ranges in roubles, and four tools upload files or submit, update or delete a brief for human review by objekts — keep those behind explicit confirmation. Diagnosis needs heavy structured input (a 12-flag readiness object, assets with lock domains) and gives back a terse verdict, so thin briefs get thin answers. The registry entry ai.objekts.mcp/production-desk confirms the publisher's domain, but the GitHub repo sits on a personal account, carries no licence, and holds manifests and marketing docs rather than server source. Version numbers disagree: the live server reports 0.1.0, the registry's latest is 0.1.3, and the repo's server.json says 0.1.4."
+  },
+  {
+    "slug": "fake-by-objekts",
+    "name": "FAKE by objekts",
+    "vendor": "objekts",
+    "official": true,
+    "category": "story-preproduction",
+    "featured": false,
+    "tagline": "Versioned face geometry and character state for consistent fictional adults; the host chat model renders the image.",
+    "description": "A hosted MCP from objekts, the studio behind Production Desk, that keeps a synthetic actor's identity as data rather than as the last good image: Google GNM craniofacial geometry, connected morphology controls, age layers, grooming, locks and a versioned Character State. It renders nothing itself; Studio hands a geometry board and the chosen Identity Master back to the host chat, whose own image model makes the portrait. For a filmmaker-agent it is a continuity bible for recurring AI characters across shots and campaigns, provided the client can run its interactive Studio.",
+    "capabilities": ["character-consistency","continuity-locks","face-geometry","version-history","remote-mcp"],
+    "tools_sample": ["open_character_studio","about_objekts","read_portrait_request","get_character_project","update_character_state","upload_reference_photo","approve_identity_master","prepare_portrait_request"],
+    "install": {
+      "claude_code": null,
+      "remote_url": "https://fake.objekts.ai/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "none", "env_var": null, "key_url": "No account or key; each project is addressed by a projectId and a private projectKey held by the Studio widget" },
+    "pricing": "free",
+    "pricing_note": "FAKE takes no payment; portraits use the host chat's own image generator and whatever plan that requires.",
+    "links": { "repo": "https://github.com/peach420fuzz/objekts-production-desk", "docs": "https://fake.objekts.ai/install", "site": "https://objekts.ai/" },
+    "added": "2026-11-07",
+    "verified": "2026-11-07",
+    "caveats": [
+      "It renders nothing: portraits come from the host chat's own image tool, a path written for ChatGPT; other hosts get a geometry board and a prompt.",
+      "Five of the eight tools are app-only actions inside an interactive Studio widget, so a client that cannot render MCP Apps UI gets very little.",
+      "It fits geometry from photos of real faces, and the only consent rule is 'do not upload media you are not authorized to use'; deletion is by email.",
+      "Protocol 2026-07-28 is rejected with HTTP 400, and the server source is not public: the repo holds docs and manifests only."
+    ],
+    "notes": "Checked 7 Nov 2026: initialize answers on protocols 2025-11-25, 2025-06-18 and 2025-03-26 as fake-by-objekts 0.4.9, stateless and without auth, and tools/list returns the eight tools above; a tools/list sent as 2026-07-28 gets HTTP 400. Not listed on 10 Oct 2026 (#85) because the endpoint returned Cloudflare error 1027; that is resolved. It renders nothing itself. The interactive Studio, an MCP Apps widget, owns geometry, photo fitting and master selection, and five of the eight tools are marked app-only; the model sees only open_character_studio, about_objekts and read_portrait_request. The documented render path hands a geometry board and references to ChatGPT's built-in image generator; the vendor's own package README says other clients without a transfer path get downloadable geometry and a portrait prompt. The vendor documents a Claude Code command, but a terminal client cannot show the Studio, so none is given here. Nothing was created or uploaded in this check, so the authoring loop itself is unverified. Likeness is the inconvenient part: it fits geometry from a face photo, reference photos are stored as private project media served by short-lived URLs, and the privacy page (23 Oct 2026) sets no retention period and says nothing about biometric data. The terms limit it to 'fictional adult human identities and authorized reference workflows', with 'do not upload media you are not authorized to use' as the only consent rule, and the adults-only rule is enforced in code only as a minimum apparent age of 18. Get a release before fitting anyone real. Deletion is by email to salute@objekts.ai. objekts is a studio in Barcelona and Moscow, and about_objekts is a pitch for its production services. As with Production Desk, the repo sits on the personal account peach420fuzz, has no licence and holds docs, manifests and smoke tests rather than server source. No official MCP Registry entry yet."
   }
 ]

@@ -745,5 +745,65 @@
       "Rights are assigned only as far as Savuko holds them with no content-ID clearance promised, and the Replicate model is undisclosed."
     ],
     "notes": "Checked 26 Oct 2026: initialize (2025-06-18 and 2025-11-25) returns a 401 OAuth challenge with scopes account:read, songs:create and songs:read, the protected-resource metadata and dynamic client registration are in place, and the official MCP Registry lists io.github.constantinginga/words-into-music 0.1.0. Not tested past sign-in, so the tool list comes from the vendor docs, which also describe a create_checkout_link tool that opens Stripe. Paid only: subscriptions from $9.99 a month for 30 songs or one-time packs from $9.99 for 20, one credit per song, one active job per account, about two minutes per take. Output is a private link that needs the owner's login, and the MP3 comes from the web app. No stems, voice cloning, line edits or melody upload, so it suits temp tracks and lyric sketches more than score. The terms (15 Oct 2026) allow commercial use, but rights are assigned only as far as Savuko holds them and subject to provider restrictions, with no promise of exclusivity, copyright, non-infringement or content-ID clearance — clear it before release. Generation runs on Replicate; the model is not disclosed."
+  },
+  {
+    "slug": "awesomevideo",
+    "name": "AwesomeVideo",
+    "vendor": "AwesomeVideo (awesomevideoeditor.com; operator not named on the site)",
+    "official": true,
+    "category": "transcription",
+    "featured": false,
+    "tagline": "Hosted captioning MCP: transcribe, translate and burn styled subtitles, returning MP4 plus SRT, VTT and JSON.",
+    "description": "One caption_video call takes a public link or uploaded file, runs Whisper transcription, optional translation and a server-side burn, and hands back the captioned MP4 with SRT, VTT and a word-timed JSON transcript. Around that sit the pieces a deliverables pass needs: transcript correction before the burn, a no-login review link for a producer to approve the text, translation that keeps cue timing, basic dubbing, silence and filler cuts, and 9:16 clips. Every paid tool has a free estimate path and a maxCredits cap, so an agent can price a whole batch before it spends.",
+    "capabilities": ["captioning","transcription","transcript-editing","localization","dubbing","filler-word-removal","ai-clipping","human-review-handoff","batch-processing","cost-estimation","async-jobs","remote-mcp"],
+    "tools_sample": ["caption_video","transcribe","edit_transcript","burn_captions","request_review","translate","dub","remove_silences","create_clips","batch","estimate","get_job"],
+    "install": {
+      "claude_code": "claude mcp add --transport http awesomevideo https://api.awesomevideoeditor.com/mcp/oauth",
+      "remote_url": "https://api.awesomevideoeditor.com/mcp/oauth",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth with email magic-link sign-in at /mcp/oauth; or the keyless https://api.awesomevideoeditor.com/mcp, where create_key mints an av_live_ bearer key with no account" },
+    "pricing": "credits",
+    "pricing_note": "Prepaid, 1 credit = 1 cent: captions 5 credits per audio minute (7 translated); packs from $5, plans $9 to $99 a month.",
+    "links": { "repo": "https://github.com/vhmartinezm/awesomevideo-mcp", "docs": "https://api.awesomevideoeditor.com/llms.txt", "site": "https://awesomevideoeditor.com" },
+    "added": "2026-11-07",
+    "verified": "2026-11-07",
+    "caveats": [
+      "No terms of service or privacy policy on the site, and no named operator, so think twice before sending it client footage.",
+      "The free trial is 10 welcome credits, about two minutes of captions, behind a proof-of-work and a daily per-network slot.",
+      "Machine-grade stack: Whisper large-v3-turbo, m2m100 translation and MeloTTS or WaveNet dub voices, with no voice cloning or lip sync.",
+      "Paid calls fetch links up to 80 MB; larger files go through import_url or multipart upload (2 GB, 3 hours). YouTube links are refused."
+    ],
+    "notes": "Checked 7 Nov 2026: an anonymous initialize on https://api.awesomevideoeditor.com/mcp answered as awesomevideo 0.5.0 (protocol 2025-06-18) and tools/list returned 27 tools; /mcp/oauth answers 401 with protected-resource metadata, and the authorization server advertises dynamic client registration and PKCE S256. Without a key only create_key, estimate and get_catalog work; everything else needs a bearer key or the OAuth route. No tool was called. Prices from the pricing and facts pages: transcription 1 credit a minute, server burn 4, translation 2, dubbing 5 (basic) or 12 (standard) per source minute per language, preview 1 flat; packs are $5 for 500, $20 for 2,200 and $50 for 6,000 credits and never expire; plans are $9, $29 and $99 a month. Failed jobs are refunded and a short balance returns 402 with a checkout link rather than a charge. There are no terms of service or privacy policy anywhere on the site (/terms, /privacy and /legal all 404), no named company, and request_review links open without a login for up to 7 days. The domain dates from December 2024, but the MCP Registry entry (com.awesomevideoeditor/awesomevideo, now 0.5.1, one release ahead of what the server reports) was first published on 31 Oct 2026. The GitHub repo is a README and one ClawHub skill under a personal account (vhmartinezm) with no licence; it is not the server source, and the vendor site does not link to it. Vendor pages disagree on batch size (10 or 50 files) and clip counts (1-5 or up to 10), so trust estimate over the prose. For captions inside an editor, Kapwing and Reap are the editor-backed alternatives; for transcript text alone, Deepgram."
+  },
+  {
+    "slug": "doseedo",
+    "name": "Doseedo Film Score",
+    "vendor": "Doseedo",
+    "official": true,
+    "category": "music",
+    "featured": false,
+    "tagline": "Spots the cut, plays the parts your agent writes on AI instrument models, and mixes the cues onto the picture.",
+    "description": "Doseedo's hosted film endpoint covers the parts of scoring to picture an agent cannot do alone and leaves the writing to the agent. doseedo_spot_video turns a cut into a cue sheet (frame-exact cuts, keyframes, dialogue spans, cues with SMPTE in and out, hit points); doseedo_tempo_map lands the hits on downbeats; doseedo_render_score plays the written parts, one stem per part with a receipt saying whether each played its notes; doseedo_score_to_picture lays the mixed cues on the untouched video, ducked under dialogue and normalised to a delivery loudness. For a filmmaker-agent it is the route where music is written to this cut rather than generated to its length, and it comes back as stems plus a Logic Pro or Ableton Live project.",
+    "capabilities": ["music-generation","video-analysis","scene-detection","cue-sheet","hit-points","tempo-map","midi","stems","mixing","audio-ducking","loudness-normalization","daw-export","sfx","cost-estimation"],
+    "tools_sample": ["doseedo_spot_video","doseedo_tempo_map","doseedo_render_score","doseedo_render_midi","doseedo_check_take","doseedo_mix","doseedo_score_to_picture","doseedo_supervise_cues","doseedo_split_soundtrack","doseedo_session_from_stems","doseedo_generate_sound","doseedo_quote"],
+    "install": {
+      "claude_code": "claude mcp add --transport http --scope user doseedo-film https://api.doseedo.com/mcp/film",
+      "remote_url": "https://api.doseedo.com/mcp/film",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser OAuth with dynamic client registration on the first tool call, or an X-API-Key header with a key from https://doseedo.com/settings/api-keys" },
+    "pricing": "freemium",
+    "pricing_note": "Free account: 120 credits a month; rendering is 10 credits per 30 s per six player rows, while spotting, mix and delivery are free under a fair-use cap.",
+    "links": { "repo": null, "docs": "https://doseedo.com/guides/score-a-film-with-an-ai-agent", "site": "https://doseedo.com/mcp" },
+    "added": "2026-11-07",
+    "verified": "2026-11-07",
+    "caveats": [
+      "The free account is 120 credits a month, and Doseedo's own 70-second, 22-part case-study cue spent all 120; Pro is $12 for 2,000.",
+      "An initialize on protocol 2025-11-25 gets an error instead of a downgrade; 2025-06-18 and 2026-07-28 work, so confirm your client connects.",
+      "It performs, it does not compose: the agent writes every note, or doseedo_supervise_cues cuts public-domain repertoire to the cues.",
+      "Instruments are AI models, not sample libraries: a take can miss or add notes, so read each part's fit receipt and listen before delivery."
+    ],
+    "notes": "Checked 7 Nov 2026: https://api.doseedo.com/mcp/film answers initialize anonymously as doseedo-film-score 0.21.0 and tools/list returns 25 tools; /mcp on the same host carries 48, including doseedo_generate_music (a prompt-to-song sketch), covers, project conversion and Logic session editing through Dø Desktop. Both are in the official MCP Registry at 0.21.0, as com.doseedo/film-score and com.doseedo/doseedo. Protocol handling is unusual: a client asking for 2025-11-25 gets JSON-RPC error -32022 rather than a downgrade, while 2025-06-18 and stateless 2026-07-28 work. Tool calls return 401 with OAuth protected-resource metadata; the authorization server supports dynamic registration and PKCE, and approving a client mints a revocable dsk_ key, so the X-API-Key header is the headless route. The vendor prints a Claude Code command only for /mcp; the line above is the same command pointed at the film endpoint. doseedo_instruments, doseedo_tempo_map, doseedo_recipes and doseedo_quote answer without signing in. Pricing per https://doseedo.com/pricing and doseedo_quote: a free account gets 120 credits a month with a monthly ceiling, and Pro is $12 for 2,000 with extra credits at 500 for $5. Rendering costs 10 credits per 30-second window per group of up to six player rows, so a six-player section counts as six. Spotting, tempo maps, mixing, delivery and the DAW session spend no credits, but spotting draws on a daily fair-use cap. Doseedo's own Big Buck Bunny case study spent 120 credits on one 70-second, 22-part cue: a free month in one cue. Limits: spotting takes mp4, mov, m4v, webm or mkv up to 2 GB and 3 h; render_score takes 32 lines, 96 player rows and 600 s a call; score_to_picture takes 64 tracks and 25 minutes a call, and a loud orchestral cue can land under the loudness target with a report saying why. A failed part is re-rolled once automatically. doseedo_supervise_cues cuts passages from about a thousand public-domain orchestral works to the cue sheet, with the credit line a CC BY edition needs. Spotting sees light, motion, editing and the soundtrack, not story. Output is instrumental per the guide, though the catalogue includes choir and wordless voice timbres; it lists 87 instruments where the site says 50+. Sound effects come from Stable Audio Open. Result URLs are pre-signed for 24 hours, and cancelling a running job discards the output but still spends the credits. Terms of 28 Oct 2026: you own generated content 'to the extent permitted by law', originality is not guaranteed, and outputs may not be used to train audio or music models; Doseedo says its models are trained on commissioned and licensed multitrack sessions and never on uploads, which is its own claim, not independently audited. For straight video-to-music without writing notes, Sonilo is the local alternative. Submitted by the vendor in PR #154 on 29 Oct 2026."
   }
 ]

@@ -311,5 +311,35 @@
       "Not available in Lite, Commandline, Team Render, c4dpy or Cineware, and it slows on scenes with hundreds of objects."
     ],
     "notes": "One day old at listing: released with Cinema 4D 2026.4.0 on 30 Sep 2026, per Maxon's FAQ page and coverage in CG Channel and AEC Magazine. The server costs nothing extra, but Cinema 4D is subscription-only ($109/month or $839/year per CG Channel), so this is a paid entry in practice. Off by default; connections are local-only unless you tick Allow Remote Connections, and Maxon warns remote traffic is unencrypted, so whitelist IPs and keep it on a trusted network. Not available in Cinema 4D Lite, Commandline, Team Render, c4dpy or Cineware. Claude Desktop and ChatGPT Desktop are the officially supported clients; other MCP clients and local models via LM Studio may work but are unsupported, and a local model will fight C4D and your renderer for the same GPU. Maxon also notes it slows down on scenes with hundreds of separate objects. Two separate toggles — Allow exec_python Command and Allow Python-Bearing Operations — decide whether the agent can run arbitrary Python or author Python-containing objects; leave both off unless you need them. Fifteen tool groups can be switched individually, but Maxon has not published tool names in a form this directory could read (the help pages render client-side), and no Claude Code command is documented — Cinema 4D writes client configs itself, so Claude Code users should copy the generated entry. For C4D 2024–2026.3 the community ttiimmaacc/cinema4d-mcp remains the fallback."
+  },
+  {
+    "slug": "studiotwin",
+    "name": "StudioTwin MCP",
+    "vendor": "RealTwin Solutions Inc.",
+    "official": true,
+    "category": "3d-vfx",
+    "featured": false,
+    "tagline": "Hosted credit-metered MCP for previz assets: concepts, meshes, motion, PBR materials, HDRIs and sound effects.",
+    "description": "StudioTwin's hosted MCP puts its asset toolkits behind one API key: ConceptLab concept images, image-to-3D meshes, text-to-motion for characters and MetaHumans, PBR material sets, HDRI environment maps and text-to-sound effects, all as async jobs whose outputs come back as asset references and presigned download URLs. For a previz or virtual-production agent it is one credit balance in place of five vendor accounts. The Unreal route is a separate in-editor plugin behind Epic's Unreal MCP, and Blender pairs this endpoint with Blender's own MCP and a StudioTwin addon for import.",
+    "capabilities": ["3d-generation","text-to-motion","pbr-materials","hdri-generation","sfx","storyboarding","async-jobs","cost-estimation","credit-balance","file-upload","asset-download","blender-integration"],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add -s user --transport http studiotwin https://api.studiotwin.ai/mcp --header 'x-api-key: ${STUDIOTWIN_API_KEY}'",
+      "remote_url": "https://api.studiotwin.ai/mcp",
+      "remote_headers": ["x-api-key"],
+      "stdio_command": null
+    },
+    "auth": { "type": "api_key", "env_var": "STUDIOTWIN_API_KEY", "key_url": "https://app.studiotwin.ai/dashboard/api-keys (st_... key, shown once, scoped to the selected organization)" },
+    "pricing": "freemium",
+    "pricing_note": "Free Starter plan with monthly credits; Pro is 'coming soon', and top-up credits are sold but not publicly priced.",
+    "links": { "repo": "https://github.com/realtwin/studiotwin-mcp-skill", "docs": "https://docs.studiotwin.ai/docs/web-mcp", "site": "https://www.studiotwin.ai/mcp/" },
+    "added": "2026-11-07",
+    "verified": "2026-11-07",
+    "caveats": [
+      "Free tier is 50 credits a month until you complete your profile, then 100; a 3D mesh costs 25 to 165 credits and an env map-to-world 80.",
+      "Every model is third-party (Hunyuan, Kimodo, FLUX.1-schnell, Tripo3D, Patina, ElevenLabs), and the terms allow training on your inputs and outputs.",
+      "No tool catalogue is published; names are discovered live. Unreal needs the separate UE plugin on UE 5.8+, and Blender motion import is unfinished."
+    ],
+    "notes": "Checked 7 Nov 2026: the endpoint is stateless Streamable HTTP, POST only, tools only. An anonymous initialize gets 401 'API key required'; a bad key in x-api-key gets 'Invalid API key', so the header is confirmed. The key is an st_... secret from the dashboard. The vendor publishes no client config, so the claude mcp add line above is built from the documented endpoint and header, not copied from their docs. The submission's `npx skills add realtwin/studiotwin-mcp-skill` installs an MIT guidance skill (v1.5.0), not a server; there is no npm package and no MCP Registry entry. Tool names are not published either: the docs say only `studiotwin_*`, discover live, and the operation families are cost estimate, credit balance, submit/poll/cancel jobs, asset upload, list and download. Credits per the How Credits Work page: motion 5 per action (HY Motion 1.0 or Kimodo), text/image-to-env-map 20/25 (FLUX.1-schnell), env map-to-world 80 (HY World 1.0), image-to-mesh 25 (Hunyuan3D 2.1), 45 (Tripo3D V3), 75 (P1) or 165 (P2), retopology 15/45, materials 20 or a resolution formula (Patina via fal), and SFX round(max(seconds,5) x 0.6) on ElevenLabs. ConceptLab images run 1 to 72 credits by quality. The homepage advertises 100 free credits a month; the docs give 50 until the profile is completed. Pro is unpriced and 'coming soon', and top-ups never expire. Import formats: meshes .glb, env maps .hdr/.png, materials as albedo, height, normal, roughness and metalness maps. Terms (21 Mar 2026, Delaware law): you keep whatever copyright you hold in outputs, and RealTwin gets a licence to use inputs and outputs, including for model training. RealTwin Solutions is a venture studio founded in 2019; StudioTwin is in early access. Compared with Meshy or Tripo it is broader (motion, HDRI, PBR and SFX on one balance) but owns none of the models it runs."
   }
 ]
