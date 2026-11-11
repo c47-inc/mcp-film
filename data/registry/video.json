@@ -806,5 +806,65 @@
       "Claude Code needs --callback-port 3118 for the OAuth callback, per Pictory's own instructions."
     ],
     "notes": "Listed 31 Oct 2026 from Pictory's own docs (docs.pictory.ai/claude-mcp); nothing was rendered, and the endpoint is not yet in a daily health probe, so treat the 25-tool list as the vendor's word until tools/list confirms it. The inconvenient part is account generation: per the docs, Pictory 2.0 accounts can only make Standard videos over MCP and the server rejects Motion Graphics requests from them, while 3.0 accounts get Motion Graphics only — and moving to 3.0 is one-way, through support. Motion renders cost 200 AI credits per video minute on the first successful render (re-renders of the same project are free); stock media and music cost nothing, AI-generated images and clips are priced per model, and premium narration draws on separate voice minutes. Standard videos run 8-500 seconds, up to 100 scenes, in 16:9, 9:16 or 1:1, with uploads capped at 100 MB; a preview takes 2-5 minutes and a render 5-15. Claude asks for confirmation before rendering. A video not saved as an editable project is not kept in your Pictory account. The docs require `--callback-port 3118` on the Claude Code add; claude.ai and Desktop take the URL as a custom connector. This hosted server replaces Pictory's older local package, @pictory/pictory-mcp-server on npm, which still needs PICTORY_CLIENT_ID, PICTORY_CLIENT_SECRET and PICTORY_USER_ID from a developer account and has not shipped since 1.0.8 in July 2025 — use the hosted endpoint. Compare invideo and revid for the same brief-to-video job; none of the three gives you frame continuity across a scene."
+  },
+  {
+    "slug": "domoai",
+    "name": "DomoAI MCP",
+    "vendor": "DomoAI",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "DomoAI's video, image, voice, avatar and upscale tools as a local MCP, with a priced plan before every render.",
+    "description": "DomoAI's first-party server, shipped inside its own CLI, exposes the studio's creation features as MCP tools: animation and reference-to-video, image generation and upscaling, text-to-speech with custom voices, and talking avatars. Every job goes through plan_creation first, which shows model, length, resolution and credit cost, and create only runs against the digest of a plan you approved. For a filmmaker-agent that is the useful part: stylised video passes and cleanup can be scripted without surprise spend.",
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "text-to-image",
+      "upscaling",
+      "tts",
+      "avatar-video",
+      "credit-estimation"
+    ],
+    "tools_sample": [
+      "plan_creation",
+      "create",
+      "list_capabilities",
+      "list_templates",
+      "list_generations",
+      "list_voices",
+      "add_voice",
+      "get_generation_status",
+      "show_generation_result",
+      "get_balance",
+      "animate",
+      "reference_to_video",
+      "image_upscale",
+      "text_to_speech"
+    ],
+    "install": {
+      "claude_code": "claude mcp add --scope user domoai -- domoai mcp",
+      "remote_url": null,
+      "stdio_command": "Requires Node.js 22.12+. npm install -g @domoai/cli, then domoai setup claude-code (or codex, cursor, claude-desktop) registers `domoai mcp` as a stdio server; sign in with domoai login --start and domoai login --finish, restart the host, and check with domoai doctor."
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Device-style sign-in from the CLI (domoai login --start / --finish) against a DomoAI account at https://www.domoai.app"
+    },
+    "pricing": "credits",
+    "pricing_note": "Spends the same personal or team credits as the DomoAI website; no MCP-specific pricing, and some long-form features are PRO-only.",
+    "links": {
+      "repo": null,
+      "docs": "https://www.domoai.app/mcp",
+      "site": "https://www.domoai.app"
+    },
+    "added": "2026-11-11",
+    "verified": "2026-11-11",
+    "caveats": [
+      "Local stdio only: there is no hosted endpoint, so web ChatGPT and other remote-only clients cannot use it.",
+      "Closed source; the @domoai/cli npm package is UNLICENSED and was first published 29 Oct 2026, so it is days old.",
+      "Spends your normal DomoAI credits, and some long-form features are PRO-only."
+    ],
+    "notes": "New, and official: DomoAI announced its MCP and CLI on 6 Nov 2026, and npm @domoai/cli first appeared on 29 Oct 2026 (0.2.1 on 30 Oct). The MCP server is the CLI itself (`domoai mcp`, stdio); `domoai setup <host>` writes the config for Claude Code, Codex, Cursor or Claude Desktop, and other local-MCP clients can be wired by hand. The vendor says it has not tested those individually. There is no remote URL, so ChatGPT on the web is out. Sign-in uses the two-step `domoai login --start` / `--finish` flow, and the docs warn that plain `domoai login` can outlast an agent's command timeout. The code is valid for 10 minutes. The README counts 16 fixed tools plus one creation tool per capability, 28 in all at launch, so trust tools/list over this sample. Generation is gated by plan_creation and an approved plan_digest, which is the right shape for an agent that should not spend unattended. Results can render in an MCP Apps player. The MCP docs name no underlying models, so you cannot pick or pin one from here. Closed source, UNLICENSED, no public repo. Credits are shared with the website, and the announcement says some long-form features are PRO-only. For an open multi-model hub, compare fal or Replicate."
   }
 ]
