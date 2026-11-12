@@ -624,14 +624,14 @@
       "site": null
     },
     "added": "2026-06-11",
-    "verified": "2026-09-25",
+    "verified": "2026-11-12",
     "caveats": [
       "tools/list shows only five gateway tools by default; set PREMIERE_MCP_TOOLSET=full for the flat list of all 283.",
       "Anonymous telemetry is on by default; opt out with PREMIERE_MCP_TELEMETRY=0 or DO_NOT_TRACK=1.",
       "Nothing connects until you open the CEP panel in Premiere and click Start Bridge; run verify_premiere_connection first.",
       "Adobe's own hosted connector cannot open or edit a Premiere project, so community bridges still own real editorial."
     ],
-    "notes": "Packaged on npm as adobe-premiere-pro-mcp (MIT; 1.2.8 on 2 Sep 2026), so a global install plus `--install-cep` is the documented path and the client just runs the premiere-pro-mcp binary. Two things changed since August that bite: (1) tools/list now advertises only five tools by default — search_tools, get_tool_schema, invoke_tool, verify_premiere_connection, list_sequences — and the other 280 operations are reached through search_tools then invoke_tool; set PREMIERE_MCP_TOOLSET=full for a flat list (the README recommends that for Claude Code's native tool search). (2) Anonymous usage telemetry is ON by default — install id, OS, version, tool names and success/failure, not project names or media paths per the README; opt out with PREMIERE_MCP_TELEMETRY=0, DO_NOT_TRACK=1, or the checkbox in the CEP panel. The panel also nags about npm updates (PREMIERE_MCP_UPDATE_CHECK=0 to silence). Nothing connects until you open the CEP panel in Premiere and click Start Bridge; run `verify_premiere_connection` first. CEP is the supported bridge; UXP is explicitly experimental. Adobe DOES have an official MCP — the hosted 'Adobe for Creativity' connector, listed separately here — but its video surface is reformat/quick-cut class with no tool that opens or edits a Premiere project, so community bridges still own real editorial. This one: 607 stars, pushed 25 Sep 2026. Alternatives: leancoderkavy/premiere-pro-mcp (288 stars, MIT, pushed 25 Sep 2026) and ayushozha/AdobePremiereProMCP (106 stars, MIT, pushed 31 Aug 2026) — both clone-and-build."
+    "notes": "Packaged on npm as adobe-premiere-pro-mcp (MIT; 1.2.11 current on 12 Nov 2026), so a global install plus `--install-cep` is the documented path and the client just runs the premiere-pro-mcp binary. Two things changed since August that bite: (1) tools/list now advertises only five tools by default — search_tools, get_tool_schema, invoke_tool, verify_premiere_connection, list_sequences — and the other 280 operations are reached through search_tools then invoke_tool; set PREMIERE_MCP_TOOLSET=full for a flat list (the README recommends that for Claude Code's native tool search). (2) Anonymous usage telemetry is ON by default — install id, OS, version, tool names and success/failure, not project names or media paths per the README; opt out with PREMIERE_MCP_TELEMETRY=0, DO_NOT_TRACK=1, or the checkbox in the CEP panel. The panel also nags about npm updates (PREMIERE_MCP_UPDATE_CHECK=0 to silence). Nothing connects until you open the CEP panel in Premiere and click Start Bridge; run `verify_premiere_connection` first. CEP is the supported bridge; UXP is explicitly experimental. Adobe DOES have an official MCP — the hosted 'Adobe for Creativity' connector, listed separately here — but its video surface is reformat/quick-cut class with no tool that opens or edits a Premiere project, so community bridges still own real editorial. Re-checked 12 Nov 2026: install path, 283-tool catalog, gateway default and telemetry default all unchanged; 855 stars, last pushed 2 Nov 2026, and the README says it is actively tested on Premiere Pro 26.0. Alternatives: leancoderkavy/premiere-pro-mcp (517 stars, MIT, pushed 12 Nov 2026) and ayushozha/AdobePremiereProMCP (143 stars, MIT, pushed 5 Oct 2026) — both clone-and-build."
   },
   {
     "slug": "after-effects",
@@ -672,14 +672,14 @@
       "site": null
     },
     "added": "2026-06-11",
-    "verified": "2026-09-25",
+    "verified": "2026-11-12",
     "caveats": [
       "Unmaintained: last pushed Apr 2026, so expect no fixes for newer AE builds.",
       "Clone-and-build only; nothing is on npm.",
       "The bridge is a polling panel: open Window > mcp-bridge-auto.jsx with Auto-run commands enabled, or every tool call silently waits.",
       "For template-based AE rendering in the cloud without a local install, see plainly-videos."
     ],
-    "notes": "653 stars, MIT — still the most popular After Effects MCP, but last pushed Apr 1 2026 (checked 25 Sep 2026): nearly six months without a commit, so treat it as unmaintained and do not expect fixes for newer AE builds. Install path is unchanged and still clone-and-build; nothing is on npm. The bridge is a polling panel, not a socket: open Window > mcp-bridge-auto.jsx in AE and leave 'Auto-run commands' enabled, or every tool call silently waits. For template-based AE rendering in the cloud without a local install, see plainly-videos in this directory."
+    "notes": "884 stars, MIT — still the most popular After Effects MCP, but last pushed Apr 1 2026 (re-checked 12 Nov 2026): over seven months without a commit, so treat it as unmaintained and do not expect fixes for newer AE builds. Install path is unchanged and still clone-and-build; nothing is on npm. The bridge is a polling panel, not a socket: open Window > mcp-bridge-auto.jsx in AE and leave 'Auto-run commands' enabled, or every tool call silently waits. For template-based AE rendering in the cloud without a local install, see plainly-videos in this directory."
   },
   {
     "slug": "ffmpeg",
