@@ -1486,5 +1486,66 @@
       "Inputs are validated strictly, and a guessed field name fails. Always call get_input_schema first."
     ],
     "notes": "Hosted only, Streamable HTTP, nothing to install. Documented on developer.civitai.com since May 2026, with the Claude Code line above taken from the docs' own config component. On 7 Nov 2026 the endpoint answered 405 to a plain GET, so it is live but expects MCP POSTs. The anonymous handshake has not yet been checked by our probe. Auth is the same API key as the REST API, sent as a Bearer header, with no OAuth flow. In claude.ai and Claude Desktop that means a custom connector with a custom Authorization header, not the config file. Calls run as your account and spend its Buzz. run_step, run_workflow, caption_media and transcribe_audio accept whatif: true to price a job without running it, and results say when a price is a cap that may settle lower. Clients on MCP revision 2026-07-28 also get a confirmation before paid runs and the tasks extension, so long video jobs don't time out. On older clients, set waitForCompletion: false and poll get_workflow. The design is generic on purpose. New engines appear without a server change, but the agent has to do the find_services → get_input_schema → run_step dance every time, and unknown properties are rejected rather than ignored. Generated videos and audio come back as signed URLs that expire after five minutes, so download them straight away. The docs name no specific video models, and find_services is the only reliable catalogue. This is the generation server. Civitai's separate site MCP, for browsing models, posting and messaging, is not listed here. For a broader non-community model catalogue, fal and Replicate in this directory cover the same ground without Buzz."
+  },
+  {
+    "slug": "apiframe",
+    "name": "Apiframe MCP",
+    "vendor": "Apiframe (Katario LLC)",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "Hosted gateway to one credit wallet across Seedance, Kling, Veo, Sora, Flux, Suno and Topaz upscalers.",
+    "description": "Apiframe's official remote server puts its whole catalogue behind nine generic tools: generate image, video and music, edit and upscale stills, upscale video, remove backgrounds, then poll the job. For a film pipeline the draw is breadth on one key — Seedance, Kling, Veo, Sora and Hailuo for shots, Topaz for finishing, Suno, Udio, Lyria and Mureka for temp score — with list_models returning live prices before an agent spends.",
+    "capabilities": [
+      "text-to-image",
+      "text-to-video",
+      "image-to-video",
+      "image-editing",
+      "upscaling",
+      "video-upscaling",
+      "background-removal",
+      "music-generation",
+      "async-jobs",
+      "model-search"
+    ],
+    "tools_sample": [
+      "generate_image",
+      "generate_video",
+      "generate_music",
+      "edit_image",
+      "upscale_image",
+      "upscale_video",
+      "remove_background",
+      "get_job",
+      "list_models"
+    ],
+    "install": {
+      "claude_code": "claude mcp add --transport http apiframe https://mcp.apiframe.ai --header \"X-API-Key: YOUR_API_KEY\"",
+      "remote_url": "https://mcp.apiframe.ai",
+      "remote_headers": [
+        "X-API-Key"
+      ],
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "api_key",
+      "env_var": null,
+      "key_url": "Apiframe dashboard (the same key as the REST API, sent as X-API-Key)"
+    },
+    "pricing": "credits",
+    "pricing_note": "Plans from $39/mo for 4,000 credits (1 credit = $0.01); no free plan, 100 one-time starter credits after a phone check or $1 payment.",
+    "links": {
+      "repo": null,
+      "docs": "https://apiframe.ai/mcp",
+      "site": "https://apiframe.ai"
+    },
+    "added": "2026-11-13",
+    "verified": "2026-11-13",
+    "caveats": [
+      "Suno and Udio carry no 'official partner' label on Apiframe's own page, unlike its ByteDance models; treat music output as a rights question until cleared.",
+      "No free plan: subscriptions start at $39/mo, unused plan credits do not roll over, and there are no refunds.",
+      "Hosted only, no source repo; fal and kie-ai cover similar ground if you want a second quote."
+    ],
+    "notes": "New listing, not yet exercised end to end here. Checked 13 Nov 2026: the MCP page documents a streamable-HTTP remote at https://mcp.apiframe.ai keyed by the regular REST API key in an X-API-Key header, with a Claude Code one-liner and an mcp-remote bridge for stdio-only clients; the endpoint answered an anonymous initialize with 401, as expected without a key. The tool set is a thin generic wrapper — the model is an argument, and list_models returns the live catalogue with pricing. Apiframe marks Seedance as offered in an official ByteDance partnership and names BytePlus, Alibaba Cloud and MiniMax as partners, but Suno and Udio carry no such label, and neither has a public first-party API, so treat music from them as a ToS and rights gray area. The company is better known for an unofficial Midjourney API; Midjourney does not appear on its current homepage, MCP or pricing pages. Pricing is subscription credits at $0.01 each: Basic $39/mo (4,000 credits), Pro $99, Growth $399, Scale $749; top-ups expire after 60 days, plan credits do not roll over, and there are no refunds. Hosted only with no source repo and no published docs beyond the /mcp page. Comparable hubs: fal (broader catalogue, schema tool) and kie-ai."
   }
 ]

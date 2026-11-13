@@ -1090,12 +1090,12 @@
       "site": null
     },
     "added": "2026-06-11",
-    "verified": "2026-09-25",
+    "verified": "2026-11-13",
     "caveats": [
       "The repo is archived and read-only, last pushed Aug 2025 with no license file; use vectcut instead.",
       "A local HTTP service on port 9000 pinned to end-of-life Python 3.8.20, and draft folders must be copied into CapCut's drafts directory by hand."
     ],
-    "notes": "Use `vectcut` instead. Checked 25 Sep 2026: fancyboi999/capcut-mcp is archived (read-only) on GitHub, last pushed Aug 21 2025, 95 stars, no license file. Its README is headed 'CapCutAPI' and exposes the same create_draft/add_video/save_draft surface as sun-guannan's CapCutAPI, since renamed VectCutAPI — which is Apache-2.0, 2,000+ stars, pushed Sep 2026, and ships its own stdio MCP server. Kept listed so old configs resolve to an explanation. If you still run this one: it is a local HTTP service on port 9000, pinned to end-of-life Python 3.8.20, and generated draft folders must be copied into CapCut's drafts directory by hand."
+    "notes": "Use `vectcut` instead. Checked 13 Nov 2026: fancyboi999/capcut-mcp is still archived (read-only) on GitHub, last pushed Aug 21 2025, 96 stars, no license file. Its README is headed 'CapCutAPI' and exposes the same create_draft/add_video/save_draft surface as sun-guannan's CapCutAPI, since renamed VectCutAPI — which is Apache-2.0, 2,300+ stars, pushed Nov 2026, and ships its own stdio MCP server. Kept listed so old configs resolve to an explanation. If you still run this one: it is a local HTTP service on port 9000, pinned to end-of-life Python 3.8.20, and generated draft folders must be copied into CapCut's drafts directory by hand."
   },
   {
     "slug": "vectcut",
@@ -1139,13 +1139,13 @@
       "site": "https://www.vectcut.com"
     },
     "added": "2026-09-25",
-    "verified": "2026-09-25",
+    "verified": "2026-11-13",
     "caveats": [
       "Clone-and-pip only; nothing is on PyPI, and the TypeScript wrapper's npm package is still marked once published.",
       "Drafts still have to land in CapCut's or Jianying's drafts folder, and draft formats change with app updates, so test against your version.",
       "ByteDance offers no official CapCut MCP, and the English README's MCP guide links are broken; read MCP_Documentation_English.md directly."
     ],
-    "notes": "Apache-2.0, 2,252 stars, pushed 23 Sep 2026 — the actively maintained successor to the CapCutAPI code that the archived capcut-mcp entry copied. The MCP server exposes 11 tools; the README's install is clone-and-pip, nothing is on PyPI. A separate TypeScript wrapper in the repo's mcp-server/ folder talks to the HTTP API on port 9001, but its npm package is marked 'once published', so use the Python stdio server. Drafts target CapCut International or Jianying and still have to land in the app's drafts folder; draft formats change with app updates, so test against your installed version. VectCut also runs a hosted cloud editor at vectcut.com with preview and cloud render — its pricing and any hosted MCP endpoint were not verified here. ByteDance offers no official CapCut MCP. Docs are English and Chinese; the English README's MCP guide links are broken Google redirects, read MCP_Documentation_English.md in the repo directly."
+    "notes": "Apache-2.0 (the LICENSE file; pyproject.toml's classifier still says MIT), 2,374 stars, pushed 7 Nov 2026; the last code change, merged 16 Oct 2026, fixed a macOS import crash and the MCP tool schemas — the actively maintained successor to the CapCutAPI code that the archived capcut-mcp entry copied. The MCP server exposes 11 tools (re-counted 13 Nov 2026); the README's install is clone-and-pip, and neither the pyproject name capcut-api nor the wrapper's capcut-mcp-server exists on PyPI or npm. A separate TypeScript wrapper in the repo's mcp-server/ folder talks to the HTTP API on port 9001, but its npm package is marked 'once published', so use the Python stdio server. Drafts target CapCut International or Jianying and still have to land in the app's drafts folder; draft formats change with app updates, so test against your installed version. VectCut also runs a hosted cloud editor at vectcut.com with preview and cloud render — its pricing and any hosted MCP endpoint were not verified here. ByteDance offers no official CapCut MCP. Docs are English and Chinese; the English README's MCP guide links are broken Google redirects, read MCP_Documentation_English.md in the repo directly."
   },
   {
     "slug": "adobe-creativity",
