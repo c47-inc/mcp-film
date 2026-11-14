@@ -1,12 +1,12 @@
 {
-  "checked_at": "2026-11-13T04:42:24Z",
+  "checked_at": "2026-11-14T04:43:05Z",
   "probe_version": 1,
   "summary": {
-    "endpoints": 109,
-    "answered": 108,
-    "ok": 20,
-    "auth_required": 88,
-    "handshake_only": 0,
+    "endpoints": 110,
+    "answered": 109,
+    "ok": 19,
+    "auth_required": 89,
+    "handshake_only": 1,
     "error": 1,
     "unreachable": 0,
     "failing_3_or_more": 1,
@@ -30,7 +30,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "adobe-run-workflow": {
       "url": "https://run-workflow.adobe.io/mcp",
@@ -46,7 +46,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "airtable": {
       "url": "https://mcp.airtable.com/mcp",
@@ -62,7 +62,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "akool": {
       "url": "https://openapi.akool.com/mcp/v1",
@@ -78,7 +78,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "apatero": {
       "url": "https://mcp.apatero.ai/mcp",
@@ -94,7 +94,23 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
+    },
+    "apiframe": {
+      "url": "https://mcp.apiframe.ai",
+      "result": "auth_required",
+      "http_status": 401,
+      "protocol_version": null,
+      "server_name": null,
+      "server_version": null,
+      "tool_count": null,
+      "anonymous_tools_list": false,
+      "auth_required": true,
+      "www_authenticate": false,
+      "oauth_metadata": false,
+      "error": null,
+      "consecutive_failures": 0,
+      "last_ok": "2026-11-14"
     },
     "artlist": {
       "url": "https://mcp.artlist.io/mcp",
@@ -110,7 +126,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "artyfile": {
       "url": "https://artyfile.com/api/mcp",
@@ -126,7 +142,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "askeditor": {
       "url": "https://mcp.askeditor.com/mcp",
@@ -142,7 +158,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "audiolab": {
       "url": "https://audiolab.tools/mcp",
@@ -158,7 +174,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "audiopod": {
       "url": "https://mcp.audiopod.ai",
@@ -174,7 +190,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "auphonic-zapier": {
       "url": "https://mcp.zapier.com/api/v1/connect",
@@ -190,7 +206,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "autoposting": {
       "url": "https://app.autoposting.ai/mcp",
@@ -206,7 +222,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "awesomevideo": {
       "url": "https://api.awesomevideoeditor.com/mcp/oauth",
@@ -222,7 +238,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "bithuman": {
       "url": "https://mcp.bithuman.ai/mcp",
@@ -238,7 +254,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "budgetpixel": {
       "url": "https://mcp.budgetpixel.com/mcp",
@@ -254,7 +270,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "canva": {
       "url": "https://mcp.canva.com/mcp",
@@ -270,7 +286,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "cartesia": {
       "url": "https://mcp.cartesia.ai/mcp",
@@ -286,7 +302,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "chatcut": {
       "url": "https://api.chatcut.io/api/external-mcp/mcp",
@@ -302,7 +318,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "cinegenta": {
       "url": "https://cinegenta.com/api/mcp",
@@ -318,7 +334,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "civitai": {
       "url": "https://orchestration.civitai.com/mcp/v2",
@@ -334,7 +350,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "clip-studio": {
       "url": "https://clipstudio.ai/api/mcp",
@@ -350,7 +366,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "clipwright": {
       "url": "https://mcp.clipwright.io/mcp",
@@ -366,7 +382,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "cloudinary-assets": {
       "url": "https://asset-management.mcp.cloudinary.com/mcp",
@@ -382,7 +398,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "clueso": {
       "url": "https://connect.clueso.io/mcp",
@@ -398,7 +414,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "comfy-mcp": {
       "url": "https://cloud.comfy.org/mcp",
@@ -414,7 +430,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "craftstory": {
       "url": "https://mcp.craftstory.com/mcp",
@@ -430,7 +446,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "d-id": {
       "url": "https://docs.d-id.com/mcp",
@@ -446,7 +462,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "descript": {
       "url": "https://api.descript.com/v2/mcp",
@@ -462,7 +478,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "doseedo": {
       "url": "https://api.doseedo.com/mcp/film",
@@ -478,7 +494,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "dropbox": {
       "url": "https://mcp.dropbox.com/mcp",
@@ -494,7 +510,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "elevenlabs": {
       "url": "https://api.elevenlabs.io/v1/mcp",
@@ -510,7 +526,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "empiriolabs": {
       "url": "https://mcp.empiriolabs.ai/mcp",
@@ -526,7 +542,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "epidemic-sound": {
       "url": "https://www.epidemicsound.com/a/mcp-service/mcp",
@@ -542,7 +558,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "everygen": {
       "url": "https://everygen.ai/api/mcp",
@@ -558,7 +574,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "fake-by-objekts": {
       "url": "https://fake.objekts.ai/mcp",
@@ -574,7 +590,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "fal": {
       "url": "https://mcp.fal.ai/mcp",
@@ -590,7 +606,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "filmlab": {
       "url": "https://mcp-lab.thefilmradar.com/mcp",
@@ -606,7 +622,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "filmmap": {
       "url": "https://moviescenemap.com/mcp",
@@ -622,7 +638,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "fish-audio": {
       "url": "https://api.fish.audio/mcp",
@@ -638,7 +654,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "flux-bfl": {
       "url": "https://mcp.bfl.ai",
@@ -654,7 +670,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "frameio-official": {
       "url": "https://mcp.frame.io/v1/mcp",
@@ -670,7 +686,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "frameo": {
       "url": "https://mcp.frameo.ai/mcp",
@@ -686,7 +702,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "framesail": {
       "url": "https://api.framesail.com/mcp",
@@ -702,7 +718,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "framethrower": {
       "url": "https://framethrower.ai/api/mcp",
@@ -718,7 +734,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "genflick": {
       "url": "https://genflick.com/mcp/studios",
@@ -734,7 +750,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "genmagic": {
       "url": "https://genmagic.co/api/mcp",
@@ -750,7 +766,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "getimg": {
       "url": "https://getimg.ai/mcp",
@@ -766,7 +782,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "getty-images": {
       "url": "https://mcp.gettyimages.com/v1",
@@ -782,7 +798,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "google-drive": {
       "url": "https://drivemcp.googleapis.com/mcp/v1",
@@ -798,7 +814,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "hedra-official": {
       "url": "https://mcp.hedra.com",
@@ -814,7 +830,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "heygen": {
       "url": "https://mcp.heygen.com/mcp/v1/",
@@ -830,7 +846,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "higgsfield": {
       "url": "https://mcp.higgsfield.ai/mcp",
@@ -846,7 +862,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "ideogram": {
       "url": "https://mcp.ideogram.ai/mcp",
@@ -862,7 +878,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "imagine-art": {
       "url": "https://mcp.imagine.art",
@@ -878,7 +894,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "incarn": {
       "url": "https://api.incarn.co/mcp",
@@ -894,7 +910,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "inference-sh": {
       "url": "https://api.inference.sh/mcp",
@@ -910,7 +926,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "invideo": {
       "url": "https://mcp.invideo.io/mcp",
@@ -926,7 +942,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "kapwing": {
       "url": "https://www.kapwing.com/mcp",
@@ -942,7 +958,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "kleo": {
       "url": "https://mcp.kleooai.com/mcp",
@@ -958,7 +974,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "kling-official": {
       "url": "https://kling.ai/mcp",
@@ -974,7 +990,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "krea": {
       "url": "https://api.krea.ai/mcp",
@@ -990,7 +1006,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "mage": {
       "url": "https://mcp.mage.space/mcp",
@@ -1006,7 +1022,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "magic-hour": {
       "url": "https://mcp.magichour.ai/",
@@ -1022,7 +1038,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "magnific": {
       "url": "https://mcp.magnific.com",
@@ -1038,7 +1054,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "makeaivideo": {
       "url": "https://mcp.makeaivideo.ai",
@@ -1054,7 +1070,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "martini": {
       "url": "https://www.martini.film/mcp",
@@ -1070,7 +1086,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "maxvideoai": {
       "url": "https://api.maxvideoai.com/mcp",
@@ -1086,7 +1102,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "mirelo": {
       "url": "https://mcp.mirelo.ai/mcp",
@@ -1102,7 +1118,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "miro": {
       "url": "https://mcp.miro.com",
@@ -1118,7 +1134,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "mosaic-motion": {
       "url": "https://mcp.motion.so/mcp",
@@ -1134,7 +1150,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "multivoice": {
       "url": "https://db.multivoice.ai/mcp",
@@ -1150,7 +1166,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "mux": {
       "url": "https://mcp.mux.com",
@@ -1166,7 +1182,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "notion": {
       "url": "https://mcp.notion.com/mcp",
@@ -1182,7 +1198,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "objekts-production-desk": {
       "url": "https://mcp.objekts.ai/mcp",
@@ -1198,7 +1214,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "opusclip": {
       "url": "https://mcp.opus.pro/mcp",
@@ -1214,7 +1230,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "picsart": {
       "url": "https://api.picsart.com/gen-ai/mcp",
@@ -1230,7 +1246,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "pictory": {
       "url": "https://mcp.pictory.ai/mcp",
@@ -1246,7 +1262,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "pika": {
       "url": "https://mcp.pika.art/mcp",
@@ -1262,7 +1278,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "popcraft": {
       "url": "https://popcraft.ai/api/mcp",
@@ -1278,7 +1294,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "popnow": {
       "url": "https://api.popnow.ai/mcp",
@@ -1294,23 +1310,23 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "promptibus": {
       "url": "https://promptibus.com/api/mcp",
-      "result": "ok",
+      "result": "handshake_only",
       "http_status": 200,
       "protocol_version": "2025-06-18",
       "server_name": "promptibus",
       "server_version": "0.4.2",
-      "tool_count": 7,
-      "anonymous_tools_list": true,
+      "tool_count": null,
+      "anonymous_tools_list": false,
       "auth_required": false,
       "www_authenticate": false,
       "oauth_metadata": false,
-      "error": null,
+      "error": "tools/list HTTP 502",
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "reap": {
       "url": "https://mcp.reap.video/mcp",
@@ -1326,7 +1342,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "recraft": {
       "url": "https://mcp.recraft.ai/mcp",
@@ -1342,7 +1358,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "reelsfarm": {
       "url": "https://mcp.reelsfarm.com/mcp",
@@ -1358,7 +1374,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "replicate": {
       "url": "https://mcp.replicate.com/sse",
@@ -1374,7 +1390,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "repostit": {
       "url": "https://repostit-mcp-cfjcykgqda-uc.a.run.app/mcp/v1.1",
@@ -1390,7 +1406,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "reverie-movies": {
       "url": "https://api.reveriemovies.com/mcp",
@@ -1406,7 +1422,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "revid": {
       "url": "https://www.revid.ai/api/mcp",
@@ -1422,7 +1438,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "runapi": {
       "url": "https://mcp.runapi.ai/mcp",
@@ -1438,7 +1454,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "runway": {
       "url": "https://mcp.runwayml.com/mcp",
@@ -1454,7 +1470,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "shotstack": {
       "url": "https://mcp.shotstack.io/",
@@ -1470,7 +1486,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "stockfilm": {
       "url": "https://api.stockfilm.com/mcp",
@@ -1486,7 +1502,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "studiotwin": {
       "url": "https://api.studiotwin.ai/mcp",
@@ -1502,7 +1518,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "suno": {
       "url": "https://api.suno.com/mcp",
@@ -1518,7 +1534,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "suno-acedata": {
       "url": "https://suno.mcp.acedata.cloud/mcp",
@@ -1534,7 +1550,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "sync-labs": {
       "url": "https://mcp.sync.so/mcp",
@@ -1550,7 +1566,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "twelvelabs-jockey": {
       "url": "https://mcp.twelvelabs.io/jockey/mcp",
@@ -1566,7 +1582,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "unreal-engine": {
       "url": "https://agent.flopperam.com/mcp",
@@ -1581,7 +1597,7 @@
       "www_authenticate": false,
       "oauth_metadata": false,
       "error": "HTTP 503",
-      "consecutive_failures": 14,
+      "consecutive_failures": 15,
       "last_ok": "2026-10-30"
     },
     "valmera": {
@@ -1598,7 +1614,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "valossa": {
       "url": "https://mcp-assistant.valossa.com/mcp",
@@ -1614,7 +1630,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "varg": {
       "url": "https://mcp.varg.ai/mcp",
@@ -1630,7 +1646,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "veed-fabric": {
       "url": "https://www.veed.io/api/v1/mcp",
@@ -1646,7 +1662,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "videogen": {
       "url": "https://mcp.videogen.io/mcp",
@@ -1662,7 +1678,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "vimeo": {
       "url": "https://mcp.vimeo.com/mcp",
@@ -1678,7 +1694,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "vivideo": {
       "url": "https://api.vivideo.ai/mcp",
@@ -1694,7 +1710,7 @@
       "oauth_metadata": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "wavespeed": {
       "url": "https://api.wavespeed.ai/mcp",
@@ -1710,7 +1726,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "wireflow": {
       "url": "https://www.wireflow.ai/api/mcp",
@@ -1726,7 +1742,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "wistia": {
       "url": "https://api.wistia.com/mcp/api",
@@ -1742,7 +1758,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "words-into-music": {
       "url": "https://mcp.wordsintomusic.com/mcp",
@@ -1758,7 +1774,7 @@
       "oauth_metadata": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     }
   },
   "packages": {
@@ -1770,7 +1786,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "allvoicelab": {
       "registry": "pypi",
@@ -1780,7 +1796,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "atlas-cloud": {
       "registry": "npm",
@@ -1790,17 +1806,17 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "audiolab": {
       "registry": "npm",
       "name": "@audiolabtools/mcp-server",
       "found": true,
-      "latest_version": "0.5.1",
+      "latest_version": "0.5.2",
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "autoposting": {
       "registry": "npm",
@@ -1810,7 +1826,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "avclabs": {
       "registry": "npm",
@@ -1820,37 +1836,37 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "blender": {
       "registry": "pypi",
       "name": "mcp-for-blender",
       "found": true,
-      "latest_version": "2.2.8",
+      "latest_version": "2.2.9",
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "cartesia": {
       "registry": "pypi",
       "name": "cartesia-mcp",
       "found": true,
-      "latest_version": "0.30.0",
+      "latest_version": "0.31.0",
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "clipwright": {
       "registry": "npm",
       "name": "@clipwright/mcp-server",
       "found": true,
-      "latest_version": "0.56.0",
+      "latest_version": "0.58.0",
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "cloudinary-assets": {
       "registry": "npm",
@@ -1860,7 +1876,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "comfyui-artokun": {
       "registry": "npm",
@@ -1870,7 +1886,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "craftstory": {
       "registry": "npm",
@@ -1880,17 +1896,17 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "fcpxml-mcp": {
       "registry": "pypi",
       "name": "fcp-mcp-server",
       "found": true,
-      "latest_version": "0.30.0",
+      "latest_version": "0.32.0",
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "google-workspace": {
       "registry": "pypi",
@@ -1900,7 +1916,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "hedra": {
       "registry": "npm",
@@ -1910,17 +1926,17 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "hume": {
       "registry": "npm",
       "name": "@humeai/mcp-server",
       "found": true,
       "latest_version": "0.3.0",
-      "deprecated": false,
+      "deprecated": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "json2video": {
       "registry": "npm",
@@ -1930,7 +1946,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "json2video-cli": {
       "registry": "npm",
@@ -1940,7 +1956,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "kie-ai": {
       "registry": "npm",
@@ -1950,7 +1966,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "kling": {
       "registry": "npm",
@@ -1960,7 +1976,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "leclap": {
       "registry": "npm",
@@ -1970,7 +1986,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "mcp-video": {
       "registry": "pypi",
@@ -1980,7 +1996,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "mediagen": {
       "registry": "npm",
@@ -1990,7 +2006,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "meshy": {
       "registry": "npm",
@@ -2000,7 +2016,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "minimax": {
       "registry": "pypi",
@@ -2010,7 +2026,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "mureka": {
       "registry": "pypi",
@@ -2020,7 +2036,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "mux": {
       "registry": "npm",
@@ -2030,7 +2046,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "notion": {
       "registry": "npm",
@@ -2040,7 +2056,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "pixverse": {
       "registry": "pypi",
@@ -2050,7 +2066,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "plainly-videos": {
       "registry": "npm",
@@ -2060,7 +2076,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "promptibus": {
       "registry": "npm",
@@ -2070,7 +2086,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "remotion": {
       "registry": "npm",
@@ -2080,7 +2096,7 @@
       "deprecated": true,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "replicate": {
       "registry": "npm",
@@ -2090,7 +2106,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "runapi": {
       "registry": "npm",
@@ -2100,7 +2116,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "runware": {
       "registry": "npm",
@@ -2110,7 +2126,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "sanzaru": {
       "registry": "pypi",
@@ -2120,7 +2136,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "sonicmatch": {
       "registry": "pypi",
@@ -2130,17 +2146,17 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "sonilo": {
       "registry": "pypi",
       "name": "sonilo-mcp",
       "found": true,
-      "latest_version": "0.28.0",
+      "latest_version": "0.28.1",
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "stability-ai": {
       "registry": "npm",
@@ -2150,27 +2166,27 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "suno-acedata": {
       "registry": "pypi",
       "name": "mcp-suno",
       "found": true,
-      "latest_version": "2026.11.12.0",
+      "latest_version": "2026.11.13.0",
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "sync-labs": {
       "registry": "npm",
       "name": "@sync.so/mcp-server",
       "found": true,
-      "latest_version": "0.3.13",
+      "latest_version": "0.3.22",
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "topaz": {
       "registry": "npm",
@@ -2180,7 +2196,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "tripo": {
       "registry": "pypi",
@@ -2190,7 +2206,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "twelvelabs": {
       "registry": "npm",
@@ -2200,7 +2216,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "vibeframe": {
       "registry": "npm",
@@ -2210,7 +2226,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "video-jungle": {
       "registry": "pypi",
@@ -2220,7 +2236,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "videogen": {
       "registry": "npm",
@@ -2230,7 +2246,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "vivideo": {
       "registry": "npm",
@@ -2240,7 +2256,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "wavespeed": {
       "registry": "npm",
@@ -2250,7 +2266,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     },
     "youtube-data": {
       "registry": "npm",
@@ -2260,7 +2276,7 @@
       "deprecated": false,
       "error": null,
       "consecutive_failures": 0,
-      "last_ok": "2026-11-13"
+      "last_ok": "2026-11-14"
     }
   }
 }
