@@ -1547,5 +1547,57 @@
       "Hosted only, no source repo; fal and kie-ai cover similar ground if you want a second quote."
     ],
     "notes": "New listing, not yet exercised end to end here. Checked 13 Nov 2026: the MCP page documents a streamable-HTTP remote at https://mcp.apiframe.ai keyed by the regular REST API key in an X-API-Key header, with a Claude Code one-liner and an mcp-remote bridge for stdio-only clients; the endpoint answered an anonymous initialize with 401, as expected without a key. The tool set is a thin generic wrapper — the model is an argument, and list_models returns the live catalogue with pricing. Apiframe marks Seedance as offered in an official ByteDance partnership and names BytePlus, Alibaba Cloud and MiniMax as partners, but Suno and Udio carry no such label, and neither has a public first-party API, so treat music from them as a ToS and rights gray area. The company is better known for an unofficial Midjourney API; Midjourney does not appear on its current homepage, MCP or pricing pages. Pricing is subscription credits at $0.01 each: Basic $39/mo (4,000 credits), Pro $99, Growth $399, Scale $749; top-ups expire after 60 days, plan credits do not roll over, and there are no refunds. Hosted only with no source repo and no published docs beyond the /mcp page. Comparable hubs: fal (broader catalogue, schema tool) and kie-ai."
+  },
+  {
+    "slug": "imagera",
+    "name": "Imagera MCP",
+    "vendor": "Imagera AI",
+    "official": true,
+    "category": "model-hub",
+    "featured": false,
+    "tagline": "Hosted OAuth connector to Imagera's credit-billed shelf of image, video, upscale, voice and music models.",
+    "description": "Imagera is a Toronto-based creation platform whose official remote MCP puts its catalogue behind one OAuth sign-in. The MCP page counts 99 image, 175 video, 18 upscale, 75 audio, 14 3D and 10 lipsync models, from Seedance and Wan to Topaz upscalers, ElevenLabs voices and OmniHuman lipsync. For a filmmaker-agent it means one bill for plates, animatics, voice and music, with every output also saved to an Imagera library.",
+    "capabilities": [
+      "text-to-image",
+      "image-editing",
+      "text-to-video",
+      "image-to-video",
+      "upscaling",
+      "voiceover",
+      "music-generation",
+      "lipsync",
+      "multi-model-generation",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "generate_image",
+      "animate_image",
+      "run_skill"
+    ],
+    "install": {
+      "claude_code": "claude mcp add --transport http imagera https://mcp.imagera.ai/mcp",
+      "remote_url": "https://mcp.imagera.ai/mcp",
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Browser OAuth against https://mcp.imagera.ai on first connect, no API key; assistant access needs the Pro plan — https://imagera.ai/pricing"
+    },
+    "pricing": "paid",
+    "pricing_note": "Assistant access is part of Pro ($49.99/mo, 1,150 credits including a limited-time bonus); an 8-second clip costs about 65 credits.",
+    "links": {
+      "repo": null,
+      "docs": "https://imagera.ai/mcp",
+      "site": "https://imagera.ai"
+    },
+    "added": "2026-11-15",
+    "verified": "2026-11-15",
+    "caveats": [
+      "Assistant access is a Pro-plan feature ($49.99/mo); the $19.99 Starter plan does not appear to include it, and there is no free plan.",
+      "No published tool list: three tool names appear in the vendor's case studies, so call tools/list after connecting.",
+      "Nine days in the official registry, no source repo, and no Claude Code command in the docs; the one here is the standard HTTP add."
+    ],
+    "notes": "New listing, not yet exercised end to end here. Checked 15 Nov 2026: https://mcp.imagera.ai/mcp answers an anonymous initialize with 401 and a Bearer challenge asking for scopes mcp:read and mcp:generate, and its protected-resource metadata names mcp.imagera.ai as the authorization server and imagera.ai/mcp as the documentation. It has been in the official MCP Registry since 6 Nov 2026 as ai.imagera/imagera, a namespace that requires control of the imagera.ai domain, so the vendor claim holds. The MCP page lists Claude Code among supported clients but gives no command; the one here is the standard HTTP add for the published endpoint, and sign-in is browser OAuth with no key to paste. The page publishes no tool reference: generate_image, animate_image and run_skill are the only names that appear, in its case studies, so treat the sample as partial. The model counts (99 image, 175 video, 75 audio and so on) are the vendor's own and were not checked model by model. Money: the page says using Imagera inside an assistant is part of the Pro plan, and that generations spend normal credits. Pro is $49.99/mo for 700 credits plus a 450-credit bonus offered 'for a short time'. Starter ($19.99, 380 credits) and Business ($199.99) also exist, and plan credits do not roll over. The vendor's own examples put an 8-second animated clip at about 65 credits and a hero image at 15, so a Pro month is roughly 17 short clips. Every plan states a commercial licence with no watermark. Outputs come back in the conversation and are also saved to your Imagera library. Hosted only, with no source repo. Comparable hubs: BudgetPixel (published tool list, Topaz video upscale) and Apiframe (API-key auth, one credit wallet)."
   }
 ]
