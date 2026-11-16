@@ -1642,7 +1642,7 @@
     "category": "editing-post",
     "featured": false,
     "tagline": "Turns long footage into ranked short clips, then captions, edits, and schedules them.",
-    "description": "OpusClip's first-party hosted MCP gives an agent the whole repurposing chain: submit a file or URL, get back clips ranked by a virality score, pull the word-timed transcript, then fix a clip with named edit operations — section trims, splits, reorders, phrase cuts, filler and pause removal, caption styling, dubbing, undo. It can also report what is on screen across a source range: faces, positions, and whether the person on camera is the one speaking. From there it censors profanity, generates thumbnails and per-platform social copy, groups clips into collections, and schedules or posts them to connected accounts. For a film pipeline this is the tail end — the trailer cutdowns, the festival teasers, the vertical social pulls off a finished piece — not the edit itself. OpusClip's marketing page promises HD, 4K, or an Adobe Premiere XML project, but the MCP export tools document HD download URLs only.",
+    "description": "OpusClip's first-party hosted MCP gives an agent the whole repurposing chain: submit a file or URL, get back clips ranked by a virality score, pull the word-timed transcript, then fix a clip with named edit operations — section trims, splits, reorders, phrase cuts, filler and pause removal, caption styling, dubbing, undo. It can also report what is on screen across a source range: faces, positions, and whether the person on camera is the one speaking. From there it censors profanity, generates thumbnails and per-platform social copy, and can now generate voiceover, music and short video (Hailuo 3, Seedance 2.5) in the same session. It also groups clips into collections and schedules or posts them to connected accounts. For a film pipeline this is the tail end — the trailer cutdowns, the festival teasers, the vertical social pulls off a finished piece — not the edit itself. OpusClip's marketing page promises HD, 4K, or an Adobe Premiere XML project, but the MCP export tools document HD download URLs only.",
     "capabilities": [
       "clip-curation",
       "transcript-editing",
@@ -1653,7 +1653,10 @@
       "scheduling",
       "publishing",
       "scene-analysis",
-      "remote-mcp"
+      "remote-mcp",
+      "text-to-video",
+      "tts",
+      "music-generation"
     ],
     "tools_sample": [
       "opusclip_submit_project",
@@ -1666,13 +1669,16 @@
       "opusclip_export_clip",
       "opusclip_create_social_copy_job",
       "opusclip_create_thumbnail_job",
+      "opusclip_create_speech_job",
+      "opusclip_create_music_job",
+      "opusclip_create_video_job",
       "opusclip_schedule_publish",
       "opusclip_get_usage"
     ],
     "install": {
       "claude_code": "claude mcp add --transport http opusclip https://mcp.opus.pro/mcp",
       "remote_url": "https://mcp.opus.pro/mcp",
-      "stdio_command": "npx -y @opusclip/mcp (a launcher for the same hosted server, not a local one — npm 0.3.0, 4 Sep 2026; prefer the HTTP endpoint)"
+      "stdio_command": "npx -y @opusclip/mcp (a launcher for the same hosted server, not a local one — npm 0.3.0; prefer the HTTP endpoint, the media tools are served by mcp.opus.pro only)"
     },
     "auth": {
       "type": "oauth",
@@ -1686,14 +1692,14 @@
       "site": "https://www.opus.pro/mcp"
     },
     "added": "2026-08-19",
-    "verified": "2026-09-27",
+    "verified": "2026-11-16",
     "caveats": [
-      "Entitlement is not universal: Pro Beta and Max orgs get API access, so a free account may connect and find the write tools locked.",
+      "Any account can connect and list tools, but calling them needs Pro Beta, Max or Business access; free accounts get an upgrade prompt.",
       "Quotas are real: 15 hours or 900 credits a month, a 10-credit floor per project, and 4 concurrent projects.",
       "Exports are HD download URLs only, despite the marketing page advertising 4K and Premiere XML.",
       "Virality ranking and vertical reframe are the product's opinion for short-form social, and it will impose it on narrative footage."
     ],
-    "notes": "Official and hosted. The docs still say Pro-tier API access is in beta, and the editing surface has already changed underneath early adopters: editing scripts were retired, and `opusclip_get_editing_script` / `opusclip_apply_editing_script` remain only as no-op signposts that redirect to `opusclip_edit_clip`, now the only editing route. An agent holding a cached tool list from August will be calling dead names. The docs now count 27 workflow tools, including those two signposts, plus 2 thumbnail tools, while the marketing page still says 27. Trust live `tools/list` over any published count. Rechecked 27 Sep 2026: https://mcp.opus.pro/mcp still serves OAuth protected-resource metadata pointing at a WorkOS AuthKit authorization server. The docs also contradict the marketing page on export: the page advertises 4K and Premiere XML, but `opusclip_export_clip` and `opusclip_export_collection` are documented as HD download URLs only. Entitlement is not universal: the docs say Pro Beta and Max organizations get API access automatically and business customers run under their contract, so a free account may connect and find the write tools locked. Quotas are per workspace and real — 15h / 900 credits a month, a 10-credit floor charged per project regardless of length, and 4 concurrent projects, resetting on the 1st UTC. Fourteen of the tools are writes that spend credits and prompt for approval per call. The public repo is a thin 6-star wrapper (MIT, pushed 20 Sep 2026) under an org with a GitHub IP allow list, so you cannot browse its source anonymously; the docs are the real reference. Scored for short-form social, not for narrative: virality ranking and vertical reframe are the product's opinion, and it will impose it."
+    "notes": "Official and hosted. Re-checked 16 Nov 2026: the docs now count 37 tools — 29 workflow tools (15 read, 14 write) plus 8 media tools that only https://mcp.opus.pro/mcp serves, not the npm launcher. The media set is new and widens the server past repurposing: `opusclip_create_speech_job` (30 voices, 6,000-character cap, CJK characters count triple), `opusclip_create_music_job`, `opusclip_create_video_job` (Hailuo 3 at 5–15 s, 768p or 2K, first/last frame; Seedance 2.5 at 4–30 s, 480p or 720p, optional native audio) and reference-media analysis (up to 300 s). Media jobs quote a fixed price before spending, hold credits while running and release them on failure, and their download URLs expire after 24 hours — but they draw on the same 900-credit monthly cap as clipping, so a few 2K generations can starve the repurposing work. The editing surface keeps shifting under early adopters: `opusclip_get_editing_script`, `opusclip_apply_editing_script` and `opusclip_create_media_generation_job` are no longer listed, and an agent calling them from a cached tool list is redirected; `opusclip_edit_clip` is the only editing route. Trust live `tools/list` over any published count. The docs still contradict the marketing page on export: the page advertises 4K and Premiere XML, but `opusclip_export_clip` and `opusclip_export_collection` are documented as HD download URLs only. Entitlement: any account can complete OAuth and see the catalogue, but calling tools needs Pro Beta, Max or Business access (Business per contract). Quotas are per workspace — 15h / 900 credits a month (a 403 when exhausted, resetting on the 1st UTC), a 10-credit floor per project regardless of length, and 4 concurrent projects (429 beyond that). The docs give only a JSON `url` config, not a `claude mcp add` line; the command here is the standard HTTP form for that URL. The public repo is a thin wrapper (10 stars, MIT, pushed 23 Oct 2026). Scored for short-form social, not for narrative: virality ranking and vertical reframe are the product's opinion, and it will impose it."
   },
   {
     "slug": "open-edit",
