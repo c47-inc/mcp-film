@@ -357,26 +357,25 @@
     "category": "sound-design",
     "featured": false,
     "tagline": "Drives a live REAPER session: tracks, MIDI, FX, mixing, stems, and loudness analysis.",
-    "description": "The first server in this directory that puts an agent inside an actual DAW session rather than beside it. 58 tools cover project and track management, MIDI item and note writing, FX chains and parameters, sends and busses, volume and pan automation, mastering chains, and rendering to stems or a time selection. For a filmmaker-agent it closes the loop after generative SFX and dialogue: import the clips, lay them against picture, mix, then analyze loudness, dynamics and clipping before delivery.",
-    "capabilities": ["daw-control", "mixing", "mastering", "midi", "fx-chains", "automation", "stem-render", "loudness-analysis"],
-    "tools_sample": ["create_track", "import_audio_file", "add_fx", "set_fx_parameter", "set_track_volume", "add_volume_automation", "render_stems", "analyze_loudness", "detect_clipping", "apply_limiter"],
+    "description": "The first server in this directory that puts an agent inside an actual DAW session rather than beside it. About 60 tools cover project and track management, track templates, MIDI item and note writing, FX chains and parameters, sends and busses, volume and pan automation, mastering chains, and rendering to stems, a time selection or one file per region. For a filmmaker-agent it closes the loop after generative SFX and dialogue: import the clips, lay them against picture, mix, then analyze loudness, dynamics and clipping before delivery.",
+    "capabilities": ["daw-control", "mixing", "mastering", "midi", "fx-chains", "automation", "stem-render", "loudness-analysis", "track-templates"],
+    "tools_sample": ["create_track", "import_audio_file", "insert_track_template", "add_fx", "set_fx_parameter", "set_track_volume", "add_volume_automation", "render_stems", "render_regions", "analyze_loudness", "detect_clipping", "apply_limiter"],
     "install": {
       "claude_code": "claude mcp add reaper -- reaper-mcp-server",
       "remote_url": null,
-      "stdio_command": "reaper-mcp-server (after installing from source: `git clone https://github.com/bonfire-systems/reaper-mcp && pip install -e ./reaper-mcp`. The PyPI package `reaper-mcp-server` 0.1.1 predates the mcp 2.x port — see notes. Never `pip install reaper-mcp`, which is someone else's project)"
+      "stdio_command": "reaper-mcp-server (after `pip install reaper-mcp-server`, 0.4.0 or later. Never `pip install reaper-mcp`, which is someone else's project)"
     },
     "auth": { "type": "local-app", "env_var": null, "key_url": "No key; requires a licensed REAPER install running locally with its distant API enabled" },
     "pricing": "free",
     "links": { "repo": "https://github.com/bonfire-systems/reaper-mcp", "docs": "https://github.com/bonfire-systems/reaper-mcp#readme", "site": "https://www.reaper.fm" },
     "added": "2026-08-11",
-    "verified": "2026-09-27",
+    "verified": "2026-11-17",
     "caveats": [
-      "A fresh pip install reaper-mcp-server resolves an SDK the 0.1.1 release was not written for and should fail at import; install from source.",
-      "reaper-mcp on PyPI is an unrelated project by a different author.",
+      "reaper-mcp on PyPI is an unrelated project by a different author; the package you want is reaper-mcp-server.",
       "Two-stage setup: enable REAPER's distant API by running scripts/enable_reapy.py from Actions > Run ReaScript, then restart REAPER.",
-      "REAPER itself is a paid licence after evaluation, and the analysis tools pull in librosa, numpy and soundfile."
+      "Needs REAPER 7+ running locally, which is a paid licence after evaluation; the analysis tools pull in librosa, numpy and soundfile."
     ],
-    "notes": "Install friction is the story, and it got worse. The PyPI release, `reaper-mcp-server` 0.1.1 (27 Mar 2026, still the only version since), imports `mcp.server.fastmcp` and declares an unbounded `mcp>=1.0.0`. The repo's own port commit (merged 23 Aug 2026) says mcp 2.0 removed that module, and PyPI's current mcp is 2.2.0. So a fresh `pip install reaper-mcp-server` resolves an SDK the release was not written for, and it should fail at import. Install from source, where the server now targets mcp 2.x. Pinning `mcp<2` next to the PyPI package is the untested fallback. The same port also serialises tool calls, because parallel calls under mcp 2.x interleaved on reapy's single socket. Don't confuse the names either: `reaper-mcp` on PyPI is an unrelated project by a different author (nbdy). Setup is two-stage: the server talks to REAPER through python-reapy, which needs REAPER's distant API switched on by running `scripts/enable_reapy.py` via Actions > Run ReaScript and then restarting REAPER. MIT, Python >=3.10, ~143 stars, classified Alpha on PyPI. The repo was last pushed 23 Aug 2026 after two quiet months: alive, but not busy. REAPER itself is a paid licence after its evaluation period, and pulls in librosa, numpy and soundfile for the analysis tools."
+    "notes": "The install problem is fixed. PyPI now carries `reaper-mcp-server` 0.2.0 (3 Oct 2026), 0.3.0 (7 Oct) and 0.4.0 (25 Oct), all pinned to `mcp>=2.0.0,<3`, so a plain `pip install reaper-mcp-server` gets a build written for the current SDK. The old 0.1.1 trap, where the package imported a module mcp 2.0 removed, no longer applies to a fresh install. 0.3.0 was a correctness pass: the commit log shows fixes to rendering, FX, automation, sends, record arming and fades verified against a live REAPER, plus mutation testing; one breaking change is `apply_limiter`, whose release_ms became release_db_per_sec. 0.4.0 adds `render_regions` (one file per project region, handy for per-scene or per-cue deliveries) and track templates. The README now says REAPER 7 or later and counts both 61 and 60 tools in different places. Don't confuse the names: `reaper-mcp` on PyPI is an unrelated project by a different author (nbdy). Setup is two-stage: the server talks to REAPER through python-reapy, which needs REAPER's distant API switched on by running `scripts/enable_reapy.py` via Actions > Run ReaScript and then restarting REAPER. Tool calls are serialised, because parallel calls interleaved on reapy's single socket. MIT, Python >=3.10, ~190 stars, still classified Alpha on PyPI, last pushed 25 Oct 2026; re-checked 17 Nov 2026. REAPER itself is a paid licence after its evaluation period, and the analysis tools pull in librosa, numpy and soundfile."
   },
   {
     "slug": "ableton-mcp",
@@ -456,12 +455,12 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/peerjakobsen/audiogen-mcp", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-09-28",
+    "verified": "2026-11-17",
     "caveats": [
       "Apple Silicon only, Python 3.9 to 3.11, about 4GB of weights and 8GB RAM, with a manual install order because xformers will not build.",
-      "Frozen since Jan 2026 and well behind cloud SFX quality; come here only when the audio must not leave the machine."
+      "Frozen since Jan 2026 (ten months, re-checked 17 Nov) and well behind cloud SFX quality; come here only when the audio must not leave the machine."
     ],
-    "notes": "The weakest entry in this category and listed only for the offline use case, and re-checked unchanged on 28 Sep 2026: PyPI audiogen-mcp 0.2.1 and repo both frozen at 25 Jan 2026 — eight months without a commit — still one star, still MIT. Apple Silicon only, Python 3.9-3.11 (audiocraft does not support 3.12+), needs ffmpeg, ~4GB of disk for weights and ~8GB RAM. The install ordering is manual because xformers will not build on Apple Silicon. For quality, prefer ElevenLabs text_to_sound_effects or CassetteAI SFX via the fal MCP; come here only when the audio must not leave the machine."
+    "notes": "The weakest entry in this category and listed only for the offline use case, and re-checked unchanged on 17 Nov 2026: PyPI audiogen-mcp 0.2.1 and repo both frozen at 25 Jan 2026, ten months without a commit — still one star, still MIT. Apple Silicon only, Python 3.9-3.11 (audiocraft does not support 3.12+), needs ffmpeg, ~4GB of disk for weights and ~8GB RAM. The install ordering is manual because xformers will not build on Apple Silicon. For quality, prefer ElevenLabs text_to_sound_effects or CassetteAI SFX via the fal MCP; come here only when the audio must not leave the machine."
   },
   {
     "slug": "audio-studio-mcp",
