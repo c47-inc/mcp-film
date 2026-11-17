@@ -2084,5 +2084,38 @@
       "Young and closed: domain registered March 2026, in the MCP Registry since August, and the repo holds skills and docs on a personal GitHub account."
     ],
     "notes": "Checked 7 Nov 2026: https://valmera.io/mcp/server answers 401 with a Bearer challenge (realm valmera, scope valmera.edit) pointing at protected-resource metadata, and the authorization server advertises dynamic client registration, PKCE S256 and token revocation. Editing itself was not exercised, because it needs a paid account. The public server card lists 220 tools in nine groups and states that tools with an unconfigured backing service are hidden from tools/list, so a connected client may see fewer. Editing the same project from Studio and over MCP at once is refused. The vendor's recorded run of 7 Nov (MCP-RECORDED-EDIT.md, commit 798e873) checks out: the published final MP4 hashes to the receipt value, ffprobe reads 1080x1080 at 30 fps for 15.0 s from a 1280x720 source, and extracted frames show an 'Edited using Valmera AI' corner mark on the program plus a five-second end card. The subscribe page says the end card is appended, the homepage says paid plans normally omit overlay watermarks unless service settings override that, and the vendor's own FREE-EXPORT-CHECK doc says not to assume a paid export is unbranded; check a real export before committing a deliverable. Plans: Plus $15 a month (500 credits, MCP only), Pro $50 (1,500, adds Valmera's own agent), Max $100 (4,000); annual is ten months' price, credits do not roll over, new checkouts have no trial and there is a 14-day refund window. Upload limits are 3 hours, but the size cap reads 14 GB on the homepage and 100 GB on the setup and tool pages. The terms leave content ownership with the user, are governed by UAE law, and list no AI model subprocessors. The repo is MIT-licensed skills, docs and client plugins; the engine is closed. It is published from a personal GitHub account, but valmera.io links to it and the DNS-verified io.valmera registry namespace (0.2.0, 5 Oct 2026) points to it. Skipped on 8 Sep 2026 as too green (v0.1.1 on an onrender.com host); the endpoint has since moved to valmera.io. For a hosted timeline you can reopen and hand-finish, Clueso and ChatCut are the closer comparisons."
+  },
+  {
+    "slug": "eddie-ai",
+    "name": "Eddie AI MCP",
+    "vendor": "Eddie AI (Press Play Labs, Inc.)",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Hosted MCP for Eddie's AI assistant editor: transcript-driven selects and assemblies, captions, and NLE export.",
+    "description": "Eddie is an assistant editor built for interview- and documentary-style footage, and its first-party hosted server lets Claude or ChatGPT drive it: list imported sources, search transcripts for soundbites, build an edit, add captions and export. The point for a filmmaker-agent is the hand-off: the vendor says edits export to Premiere Pro, Final Cut Pro and DaVinci Resolve, with Avid in beta, so the agent produces a rough cut an editor finishes in a real NLE rather than a flattened render.",
+    "capabilities": ["transcription", "soundbite-selection", "rough-cut", "captioning", "nle-export", "remote-mcp"],
+    "tools_sample": ["list_sources", "find_transcript_segments", "create_edit_result", "add_captions", "export_edit"],
+    "install": {
+      "claude_code": null,
+      "remote_url": "https://mcp.heyeddie.ai/api/mcp",
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Sign in with an Eddie account at https://www.heyeddie.ai; the client discovers the OAuth flow on first connection"
+    },
+    "pricing": "credits",
+    "pricing_note": "500 free credits on signup, then one-time packs from $10 for 1,000; import costs about 250 credits per footage hour.",
+    "links": {
+      "repo": null,
+      "docs": "https://www.heyeddie.ai/mcp",
+      "site": "https://www.heyeddie.ai"
+    },
+    "added": "2026-11-17",
+    "verified": "2026-11-17",
+    "caveats": ["Footage must already be imported into Eddie; the documented tools work on existing sources and do not upload media.", "Import is billed at about 250 credits per footage hour, so a long shoot spends credits before any editing happens.", "The vendor documents claude.ai custom connectors and a ChatGPT plugin, not Claude Code; a bare claude mcp add against the URL is untested by us."],
+    "notes": "Verified 17 Nov 2026 against the vendor's install page (heyeddie.ai/mcp) and pricing page. An unauthenticated POST to https://mcp.heyeddie.ai/api/mcp returns 401 with a Bearer challenge, and the protected-resource document names auth.heyeddie.ai as the authorization server, so the endpoint is live and OAuth-only. We have no account, so no live tools/list: the five tool names come from the install page, while No Film School's 27 Aug 2026 launch coverage describes around a hundred tools spanning transcripts, soundbites, assembly, b-roll, captions, music, voiceover, multicam and NLE export. Treat the larger number as the vendor's claim until you see it in your own client. Footage has to be imported into Eddie first. The install page documents no media upload through the assistant, and import is the biggest line on the bill at about 250 credits per footage hour in 15-minute blocks. The pricing page estimates 1,100 to 1,700 credits all-in for a three-hour project. Credits are one-time packs with no subscription: 1,000 for $10, 5,000 for $45, 15,000 for $120 and 50,000 for $350, plus 500 free credits for new accounts. The pricing page says it exports to Premiere Pro, Final Cut Pro and DaVinci Resolve, with Avid Media Composer in beta. Connect: claude.ai custom connector (name 'Eddie AI', the URL above, OAuth client fields left blank), which the vendor says works on every Claude plan including Free, or the Eddie plugin by Press Play Labs in ChatGPT. Closed source. For editing inside a browser NLE instead of handing off to your own, ChatCut and invideo are the closer comparisons."
   }
 ]
