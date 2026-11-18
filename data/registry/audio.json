@@ -569,13 +569,13 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/deepgram/mcp", "docs": "https://developers.deepgram.com", "site": "https://deepgram.com" },
     "added": "2026-06-11",
-    "verified": "2026-09-28",
+    "verified": "2026-11-18",
     "caveats": [
       "A thin shim: the tool list is fetched at runtime from Deepgram's developer API, so you cannot see the surface before connecting.",
-      "PyPI 0.1.1 is the only release (Apr 2026) and the repo has not moved since May, with eight open issues.",
+      "PyPI 0.1.1 is still the only release (Apr 2026) and the repo has not moved since May, with eight open issues.",
       "It depends on https://api.dx.deepgram.com staying up."
     ],
-    "notes": "Official but thin on the ground, and re-checked on 28 Sep 2026 and the code has not moved: PyPI deepgram-mcp still 0.1.1 (4 Apr 2026, its only release), repo still last pushed 6 May 2026, MIT, two stars, eight open issues and climbing. Deepgram's own summary calls it a 'standalone MCP proxy… remote-proxy architecture with zero client upgrades', which is the honest framing — the package is a thin shim and the capability lives upstream. The runtime tool fetch is genuinely useful but means you cannot see the tool surface before connecting, and it depends on Deepgram's developer API at https://api.dx.deepgram.com staying up. An SSE HTTP mode exists: `deepgram-mcp --transport sse --port 8000`. AssemblyAI's only official MCP is a documentation server, not transcription, so Deepgram remains the strongest official cloud-STT MCP."
+    "notes": "Official but thin on the ground, and re-checked on 18 Nov 2026 and the code still has not moved: PyPI deepgram-mcp still 0.1.1 (4 Apr 2026, its only release), repo still last pushed 6 May 2026, MIT, three stars, eight open issues, no deprecation notice. Deepgram's own summary calls it a 'standalone MCP proxy… remote-proxy architecture with zero client upgrades', which is the honest framing — the package is a thin shim and the capability lives upstream. The runtime tool fetch is genuinely useful but means you cannot see the tool surface before connecting, and it depends on Deepgram's developer API at https://api.dx.deepgram.com staying up. An SSE HTTP mode exists: `deepgram-mcp --transport sse --port 8000`. AssemblyAI's only official MCP is a documentation server, not transcription, so Deepgram remains the strongest official cloud-STT MCP."
   },
   {
     "slug": "sanzaru",
