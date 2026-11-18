@@ -775,13 +775,13 @@
       "site": "https://www.griptapenodes.com"
     },
     "added": "2026-08-20",
-    "verified": "2026-09-28",
+    "verified": "2026-11-18",
     "caveats": [
       "The free tier is non-commercial, single user, testing only; Professional is $40 per user per month.",
       "The MCP endpoint binds to localhost:8125 with no authentication at all, so do not bind 0.0.0.0.",
       "The engine is closed source and the tool surface is not published, so run tools/list once connected."
     ],
-    "notes": "Read the licence before you bill a client: Foundry's pricing page puts the free tier under 'Non-Commercial', single user, testing only. Professional is $40/user/month (or $400/year, capped at three users) and includes $40 of model credits — running open-source models locally or wiring in your own provider keys does not spend them. The engine is closed source, so links.repo is null: PyPI griptape-nodes is proprietary-licensed (0.99.0, published 22 Sep 2026, after four minor releases in a month — the cadence is real), and github.com/griptape-ai/griptape-nodes-app 404s to the public. The node libraries are open, Apache-2.0, and moving: griptape-nodes-library-nuke was last pushed 25 Sep 2026. Two things to know about the MCP endpoint — it binds to localhost:8125 with no authentication at all (Griptape's own docs warn you not to bind 0.0.0.0), and the tool surface is not published anywhere, so run tools/list once connected; tools_sample stays null rather than guessed. Override the bind with GTN_MCP_SERVER_HOST and GTN_MCP_SERVER_PORT. Foundry acquired Griptape on 18 Feb 2026 and the deeper Nuke agent work shown at NAB is still early access, so this endpoint is what you can actually connect to today."
+    "notes": "Read the licence before you bill a client: Foundry's pricing page puts the free tier under 'Non-Commercial', single user, testing only. Professional is $40/user/month (or $400/year, capped at three users) and includes $40 of model credits — running open-source models locally or wiring in your own provider keys does not spend them. The engine is closed source, so links.repo is null: PyPI griptape-nodes is proprietary (re-checked 18 Nov 2026 at 0.104.1, published 17 Nov 2026, with a release roughly every week since mid-October — the cadence is real), and github.com/griptape-ai/griptape-nodes-app 404s to the public. The node libraries are open, Apache-2.0, and moving: griptape-nodes-library-nuke was last pushed 18 Nov 2026. Two things to know about the MCP endpoint — it binds to localhost:8125 with no authentication at all (Griptape's own docs warn you not to bind 0.0.0.0), and the tool surface is not published anywhere, so run tools/list once connected; tools_sample stays null rather than guessed. Override the bind with GTN_MCP_SERVER_HOST and GTN_MCP_SERVER_PORT (port 0 lets the OS pick one); keep the trailing slash, because /mcp redirects to /mcp/. Foundry acquired Griptape on 18 Feb 2026 and the deeper Nuke agent work shown at NAB is still early access, so this endpoint is what you can actually connect to today."
   },
   {
     "slug": "imagine-art",
