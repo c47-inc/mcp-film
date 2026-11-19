@@ -286,31 +286,49 @@
   },
   {
     "slug": "kling-official",
-    "name": "Kling MCP (Official)",
+    "name": "Kling AI Global Plugin",
     "vendor": "Kling AI (Kuaishou)",
     "official": true,
     "category": "video-generation",
     "featured": false,
-    "tagline": "Kling's own hosted MCP: text and image to video or stills, over OAuth on your Kling credits.",
-    "description": "Kuaishou now fronts Kling with a first-party remote MCP at kling.ai/mcp, replacing the key-and-secret dance the community servers require with browser OAuth. Eight tools cover text-to-image, image-to-image, text-to-video, image-to-video, file upload, task polling and credit balance, with the available models declared by the server at runtime rather than pinned in a README. For a filmmaker-agent this is the shortest verified path to current Kling models without going through a hub and paying a hub's markup.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "image-to-image", "asset-upload", "job-polling"],
-    "tools_sample": ["text_to_image", "image_to_image", "text_to_video", "image_to_video", "query_tasks", "file_upload", "account", "tool_list"],
+    "tagline": "Kling's official Claude plugin connects to the Global MCP endpoint for image and video creation.",
+    "description": "Kling's official Claude plugin connects to the Global hosted MCP with browser OAuth and the user's Global Kling account. Its bundled Skills guide image and video generation, Elements, motion-library browsing, uploads, credit checks and task status; the host discovers live tools and models at connection time. Generation uses the account's Kling credits.",
+    "capabilities": [
+      "text-to-image",
+      "image-to-image",
+      "text-to-video",
+      "image-to-video",
+      "elements",
+      "motion-control",
+      "asset-upload",
+      "job-polling",
+      "remote-mcp"
+    ],
+    "tools_sample": null,
     "install": {
-      "claude_code": "claude mcp add --transport http kling https://kling.ai/mcp",
-      "remote_url": "https://kling.ai/mcp",
+      "claude_code": "claude plugin install kling-ai --marketplace klingai-tech/claude-plugin",
+      "remote_url": "https://kling.ai/mcp/plugin",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser OAuth against https://kling.ai/auth — PKCE plus Dynamic Client Registration, scopes generation.create, generation.read and account.credit.read. No API key to paste." },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Authorize in the browser with a Global Kling account; generation uses that account’s credits."
+    },
     "pricing": "credits",
-    "links": { "repo": null, "docs": "https://kling.ai/app/mcp/guide", "site": "https://kling.ai" },
+    "links": {
+      "repo": "https://github.com/klingai-tech/claude-plugin",
+      "docs": "https://kling.ai/app/mcp/guide",
+      "site": "https://kling.ai"
+    },
     "added": "2026-09-06",
-    "verified": "2026-10-20",
+    "verified": "2026-11-20",
     "caveats": [
-      "Narrower than the community kling server: no effects, virtual try-on or KOLORS tools, and no documented model list, so call tool_list.",
-      "Closed source with no public repo, and it spends the same Kling credits as the consumer platform.",
-      "Expect a browser authorization on first connect; the CLI line is the standard HTTP form, not a vendor one-liner."
+      "The HTTP endpoint requires OAuth; an unauthenticated request returned 401 on 20 Nov 2026.",
+      "The plugin docs do not publish a fixed tool list or model roster; let the MCP host discover current tools.",
+      "Generation spends credits in the connected Global Kling account."
     ],
-    "notes": "First verified 2026-09-06 from primary sources only; re-checked 2026-10-20, when the protected-resource metadata still named https://kling.ai/mcp behind https://kling.ai/auth with the same three scopes. https://kling.ai/mcp answers 401, and /.well-known/oauth-protected-resource/mcp names it as the resource behind authorization server https://kling.ai/auth; that server's metadata publishes authorization_code and refresh_token grants, S256 PKCE and a registration_endpoint, so DCR works and no pre-shared credential is needed. Tool names come from Kling's own npm package @klingai/cli-global (0.1.3 at first check, 0.2.3 published 2026-10-16 so it is actively shipped; published by klingai-fe off a Kuaishou corp git remote), which calls itself a thin MCP client whose commands map 1:1 to backend MCP tools. Kling's setup page is a client-rendered app that returns nothing readable to a fetcher, so the CLI line above is the standard streamable-HTTP form of the documented endpoint, not a copy of a vendor one-liner — expect a browser authorization on first connect. Narrower than the community `kling` server: no effects, no virtual try-on, no KOLORS-specific tools, and no documented model list — call tool_list. Closed source, no public repo, and it spends the same Kling credits as the consumer platform."
+    "notes": "Checked 20 Nov 2026 against Kling’s official Global plugin README and .mcp.json. The plugin declares https://kling.ai/mcp/plugin and installs through the Claude marketplace; its Skills describe image/video generation, Elements, motion-library browsing, uploads, credit checks and task status. We did not authenticate or call tools/list, so tool names and model availability are intentionally not listed. A direct unauthenticated request to the declared endpoint returned HTTP 401, consistent with an OAuth-protected service; this does not verify an authenticated MCP handshake. Use a Global Kling account; generation consumes its credits."
   },
   {
     "slug": "kling",
@@ -866,5 +884,51 @@
       "Spends your normal DomoAI credits, and some long-form features are PRO-only."
     ],
     "notes": "New, and official: DomoAI announced its MCP and CLI on 6 Nov 2026, and npm @domoai/cli first appeared on 29 Oct 2026 (0.2.1 on 30 Oct). The MCP server is the CLI itself (`domoai mcp`, stdio); `domoai setup <host>` writes the config for Claude Code, Codex, Cursor or Claude Desktop, and other local-MCP clients can be wired by hand. The vendor says it has not tested those individually. There is no remote URL, so ChatGPT on the web is out. Sign-in uses the two-step `domoai login --start` / `--finish` flow, and the docs warn that plain `domoai login` can outlast an agent's command timeout. The code is valid for 10 minutes. The README counts 16 fixed tools plus one creation tool per capability, 28 in all at launch, so trust tools/list over this sample. Generation is gated by plan_creation and an approved plan_digest, which is the right shape for an agent that should not spend unattended. Results can render in an MCP Apps player. The MCP docs name no underlying models, so you cannot pick or pin one from here. Closed source, UNLICENSED, no public repo. Credits are shared with the website, and the announcement says some long-form features are PRO-only. For an open multi-model hub, compare fal or Replicate."
+  },
+  {
+    "slug": "kling-china-official",
+    "name": "Kling AI China Plugin",
+    "vendor": "Kling AI (Kuaishou)",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Kling's official China Claude plugin connects to its regional MCP endpoint for image and video creation.",
+    "description": "Kling's official China Claude plugin connects to a hosted MCP with browser OAuth and a China Kling account. Its bundled Skills guide image and video generation, Elements, motion-library browsing, uploads, credit checks and task status; the host discovers live tools and models at connection time. Generation uses the account's Kling credits.",
+    "capabilities": [
+      "text-to-image",
+      "image-to-image",
+      "text-to-video",
+      "image-to-video",
+      "elements",
+      "motion-control",
+      "asset-upload",
+      "job-polling",
+      "remote-mcp"
+    ],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude plugin marketplace add klingai-tech/claude-plugin-cn && claude plugin install kling-ai-cn@klingai-cn",
+      "remote_url": "https://klingai.com/mcp/plugin",
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Authorize in the browser with a China Kling account; generation uses that account’s credits."
+    },
+    "pricing": "credits",
+    "links": {
+      "repo": "https://github.com/klingai-tech/claude-plugin-cn",
+      "docs": null,
+      "site": "https://klingai.com"
+    },
+    "added": "2026-11-20",
+    "verified": "2026-11-20",
+    "caveats": [
+      "The HTTP endpoint requires OAuth; an unauthenticated request returned 401 on 20 Nov 2026.",
+      "The plugin docs do not publish a fixed tool list or model roster; let the MCP host discover current tools.",
+      "Generation spends credits in the connected China Kling account."
+    ],
+    "notes": "Checked 20 Nov 2026 against Kling’s official China plugin README and .mcp.json. The plugin declares https://klingai.com/mcp/plugin and installs through the Kling AI CN Claude marketplace; its Skills describe image/video generation, Elements, motion-library browsing, uploads, credit checks and task status. We did not authenticate or call tools/list, so tool names and model availability are intentionally not listed. A direct unauthenticated request to the declared endpoint returned HTTP 401, consistent with an OAuth-protected service; this does not verify an authenticated MCP handshake. Use a China Kling account; generation consumes its credits."
   }
 ]
