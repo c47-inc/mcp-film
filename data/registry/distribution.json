@@ -37,8 +37,8 @@
     "featured": false,
     "tagline": "Official Canva remote MCP for campaign designs, thumbnails, decks, exports, and comments.",
     "description": "Canva's official remote MCP connects agents to editable design workflows: generate and edit designs, search libraries, manage assets and brand materials, export in delivery formats, resize for channels, and handle comments. For film teams it is the campaign and pitch-collateral bench: YouTube thumbnails, posters, social cutdowns, pitch decks, review decks, and branded variants around the actual film.",
-    "capabilities": ["design-generation", "design-editing", "design-search", "template-autofill", "design-export", "design-import", "resize", "comments", "asset-management", "brand-management", "folder-management"],
-    "tools_sample": ["generate-design", "search-designs", "get-design-content", "start-editing-transaction", "perform-editing-operations", "export-design", "resize-design", "autofill-design", "comment-on-design", "upload-asset-from-url"],
+    "capabilities": ["design-generation", "design-editing", "design-search", "template-autofill", "design-export", "design-import", "resize", "comments", "asset-management", "brand-management", "folder-management", "image-generation", "background-removal"],
+    "tools_sample": ["generate-design", "search-designs", "get-design-content", "start-editing-transaction", "perform-editing-operations", "export-design", "resize-design", "autofill-design", "generate-image", "remove-background"],
     "install": {
       "claude_code": "claude mcp add --transport http canva https://mcp.canva.com/mcp",
       "remote_url": "https://mcp.canva.com/mcp",
@@ -48,14 +48,14 @@
     "pricing": "freemium",
     "links": { "repo": null, "docs": "https://www.canva.dev/docs/mcp/", "site": "https://www.canva.com/ai-connector/" },
     "added": "2026-06-29",
-    "verified": "2026-09-29",
+    "verified": "2026-11-19",
     "caveats": [
-      "Plan gates: autofill, brand templates and resize are Pro and above, as are lossless PNG export and premium elements.",
-      "Tools are rate-limited at 20 to 100 requests a minute each.",
+      "Plan gates: nine tools (autofill, brand templates, resize) are Pro and above; Free gets standard-quality exports and only a resize trial.",
+      "Per-tool limits run 10 to 100 requests a minute under a 300/min per-user cap shared across all your MCP clients.",
       "Custom OAuth clients may need redirect-URI allowlisting; CIMD is Canva's recommended auth method.",
       "Editing is a four-call transaction flow (start, perform, commit, cancel), easy to miss if you only know generate-and-export."
     ],
-    "notes": "Checked 29 Sep 2026: endpoint https://mcp.canva.com/mcp still returns 401 unauthenticated — alive and OAuth-gated. The published tools table still lists 33 tools, including a four-call editing-transaction flow (start / perform-operations / commit / cancel) and folder management, so agents that only know generate-and-export are leaving the edit surface unused. Plan gates loosened: autofill-design and get-brand-template-dataset, previously Enterprise-only, are now marked Pro and above, alongside resize-design, list-brand-kits, search-brand-templates and create-design-from-brand-template — so data-driven variants (one poster template, many cast or territory versions) no longer need an Enterprise seat. Everything else is on all plans, rate-limited 20–100 req/min per tool (resolve-shortlink is unmetered), and export quality depends on plan: lossless PNG and premium elements are Pro and up. Canva documents the endpoint rather than a per-client command; CIMD is its recommended auth method and custom OAuth clients may need redirect-URI allowlisting."
+    "notes": "Re-checked 19 Nov 2026: endpoint https://mcp.canva.com/mcp still returns 401 unauthenticated, so it is alive and OAuth-gated. The surface has grown. The published tools table now lists 46 tools, up from 33 at our 29 Sep check. New since then: image tools (generate-image, remove-background, separate-image-layers), brand-template authoring (create-brand-template-draft, publish-brand-template), plus copy-design, merge-designs, create-design and get-design-dataset. For a film team, layer separation and background removal on key art cover poster and thumbnail prep that used to need a second tool. The four-call editing transaction (start / perform-operations / commit / cancel) is still the part agents miss if they only know generate-and-export. Plan gates: nine tools are Pro and above: the three autofill/dataset tools, five brand-template tools and resize-design (Free gets a limited resize trial). That means data-driven variants, one poster template filled with many cast or territory versions, need at least a Pro seat. Everything else is on all plans. Per-tool limits run 10 to 100 requests a minute (generate-image is the tightest at 10), under a server-wide cap of 300 a minute per user shared across all of that user's MCP clients. Export quality depends on plan: Free gets standard quality, and designs with premium elements can fail with license_required. Canva documents the endpoint rather than a per-client command. CIMD is its recommended auth method, and custom OAuth clients may need redirect-URI allowlisting."
   },
   {
     "slug": "mux",
