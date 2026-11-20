@@ -584,10 +584,10 @@
     "official": false,
     "category": "transcription",
     "featured": false,
-    "tagline": "Whisper and GPT-4o transcription, audio chat, and TTS against one OpenAI key.",
-    "description": "Community MCP server wrapping OpenAI's audio APIs: Whisper and GPT-4o transcription with enhancement templates, interactive 'chat with audio' analysis, format conversion and compression, and OpenAI TTS. A filmmaker-agent can transcribe dailies, interrogate them in place, then generate scratch narration without leaving the same credential. Its own blurb is now 'lightweight multimodal MCP server' rather than an audio one — recent releases have widened into gpt-image, ElevenLabs-voiced podcast synthesis, and a Sora video surface that no longer has a backend.",
-    "capabilities": ["transcription", "audio-analysis", "tts", "format-conversion", "podcast-synthesis", "image-generation"],
-    "tools_sample": ["transcribe_audio", "chat_with_audio", "create_audio", "convert_audio", "compress_audio", "generate_podcast", "wait_for", "view_media"],
+    "tagline": "OpenAI transcription, audio chat and TTS, plus Higgsfield video and gpt-image, in one community server.",
+    "description": "Community MCP server that started as a wrapper for OpenAI's audio APIs and now bills itself as a multimodal media server: gpt-transcribe, GPT-4o and Whisper transcription, interactive 'chat with audio' analysis, format conversion and compression, OpenAI or ElevenLabs TTS, and multi-voice podcast synthesis. Since OpenAI killed Sora it generates, edits and extends video through the Higgsfield API (Seedance 2.5, Kling 3.0), priced before submission, and it does gpt-image generation and editing. A filmmaker-agent can transcribe dailies, interrogate them in place, and cut scratch narration or a test clip from the same tool surface.",
+    "capabilities": ["transcription", "audio-analysis", "tts", "format-conversion", "podcast-synthesis", "image-generation", "text-to-video", "image-to-video"],
+    "tools_sample": ["transcribe_audio", "chat_with_audio", "create_audio", "generate_podcast", "create_video", "extend_video", "generate_image", "wait_for"],
     "install": {
       "claude_code": "claude mcp add sanzaru -e OPENAI_API_KEY=YOUR_KEY -e SANZARU_MEDIA_PATH=/absolute/path/to/media -- uvx \"sanzaru[all]\"",
       "remote_url": null,
@@ -597,14 +597,14 @@
     "pricing": "paid",
     "links": { "repo": "https://github.com/TJC-LP/sanzaru", "docs": null, "site": null },
     "added": "2026-06-11",
-    "verified": "2026-09-29",
+    "verified": "2026-11-20",
     "caveats": [
-      "The video tools target sora-2, which OpenAI removed on 24 Sep 2026, so [all] installs a dead video module; pick sanzaru[audio].",
-      "Every call bills your OpenAI account, and the content guardrails are OpenAI's.",
-      "One maintainer's momentum, with three releases in a single day, so expect churn.",
+      "Since 0.14.0 the base package is a CLI only: an MCP install needs the mcp extra, so use sanzaru[all] or sanzaru[mcp,audio].",
+      "Video runs on Higgsfield and needs a separate prepaid HF_KEY; OpenAI calls bill your OpenAI account under OpenAI's guardrails.",
+      "One maintainer's momentum, with 6 stars and frequent breaking releases, so expect churn.",
       "For fully offline transcription use jwulff/whisper-mcp or SmartLittleApps/local-stt-mcp."
     ],
-    "notes": "Successor to the widely-listed and now-deprecated arcaputo3/mcp-server-whisper. Still moving fast: PyPI sanzaru 0.12.2 (28 Sep 2026, three releases that day), MIT, Python >=3.10, but only 6 stars for a project of this scope, so it is one maintainer's momentum. Buy the audio, not the bundle: the video tools (create_video, remix_video and friends) target sora-2 and sora-2-pro, and OpenAI removed both models and the whole Videos API on 24 Sep 2026 with no replacement listed on its deprecations page — yet the README as of 29 Sep still presents them as current, so an agent that sees those tools will try them and fail. 0.12.1 did repair the audio side of the same churn: chat_with_audio had been broken on its defaults since OpenAI retired the gpt-4o audio-preview models, and now defaults to gpt-audio-1.5. 0.12.0 made ElevenLabs eleven_v4 the recommended podcast engine, and 0.11.1 added `wait_for` so agents block on long jobs instead of polling. The README now leads with `/plugin marketplace add TJC-LP/sanzaru` or `uv tool install sanzaru`; the uvx command above still works. Extras are video, audio, image, elevenlabs and databricks — pick `sanzaru[audio]` for transcription work and add `sanzaru[elevenlabs]` if you want ElevenLabs TTS instead of OpenAI's; `[all]` now installs a dead video module. No local moderation: content guardrails are OpenAI's. Every call bills your OpenAI account. For fully offline transcription use jwulff/whisper-mcp or SmartLittleApps/local-stt-mcp (whisper.cpp, Apple Silicon, diarization)."
+    "notes": "Successor to the widely-listed and now-deprecated arcaputo3/mcp-server-whisper. Re-checked 20 Nov 2026: PyPI sanzaru 0.15.0 (5 Nov 2026), MIT, Python >=3.11, last push 5 Nov, still only 6 stars, so it is one maintainer's momentum moving fast. The Sora problem is fixed. OpenAI removed the Videos API on 24 Sep 2026, and 0.13.0 (29 Sep) rebuilt video on the Higgsfield API: Seedance 2.5 by default (4-30 s, native audio) or Kling 3.0, with edit and extend tools. Every job is priced before it is submitted, and max_cost_usd and dry_run let an agent stay inside a budget. The video tools register only when HF_KEY is set. That is a Higgsfield API key (key_id:key_secret), prepaid and billed apart from a Higgsfield app subscription. Old video_ ids and remix_video, list_videos and delete_video are gone. If you only want Higgsfield video, Higgsfield's own hosted server (higgsfield) is the simpler connection. 0.14.0 (1 Oct) broke installs: the base package is now the agent CLI only, and anything that launches the MCP server must install the mcp extra. `sanzaru[all]` includes it, so the command above works, but a bare `sanzaru[audio]` no longer starts a server. Use `sanzaru[mcp,audio]` for transcription-only work, and add `elevenlabs` for ElevenLabs TTS and scribe_v2 transcription. The README also offers `/plugin marketplace add TJC-LP/sanzaru` (a Claude Code plugin with skills) and `uv tool install sanzaru` for the CLI. A new experimental simulate_podcast has gpt-realtime agents converse unscripted. It is the most expensive tool here, so set its cost ceiling. No local moderation: content guardrails are OpenAI's. For fully offline transcription use jwulff/whisper-mcp or SmartLittleApps/local-stt-mcp (whisper.cpp, Apple Silicon, diarization)."
   },
   {
     "slug": "audiopod",
