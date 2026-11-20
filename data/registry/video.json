@@ -8,17 +8,45 @@
     "featured": false,
     "tagline": "Hosted MCP over a multi-model video roster, with avatars, voices, and brand kits.",
     "description": "Vivideo's official MCP server fronts its generation API with thirteen tools: an auto mode that turns a brief into a finished video, a manual mode for shot-level control, and roster lookups for models, avatars, voices and brand kits. estimate_credits prices a job before you spend, and get_video/wait_for_video/list_videos handle the polling an agent would otherwise hand-roll. Useful when you want one connection covering generation plus voiceover, captions and brand-consistent assembly rather than wiring three servers together.",
-    "capabilities": ["text-to-video", "image-to-video", "multi-model-generation", "voiceover", "captioning", "avatars", "brand-kits", "cost-estimation"],
-    "tools_sample": ["create_auto_video", "create_manual_video", "list_models", "list_avatars", "list_voices", "estimate_credits", "wait_for_video", "render_preview"],
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "multi-model-generation",
+      "voiceover",
+      "captioning",
+      "avatars",
+      "brand-kits",
+      "cost-estimation"
+    ],
+    "tools_sample": [
+      "create_auto_video",
+      "create_manual_video",
+      "list_models",
+      "list_avatars",
+      "list_voices",
+      "estimate_credits",
+      "wait_for_video",
+      "render_preview"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http vivideo https://api.vivideo.ai/mcp -h \"Authorization: Bearer YOUR_API_KEY\"",
       "remote_url": "https://api.vivideo.ai/mcp",
-      "remote_headers": ["Authorization"],
+      "remote_headers": [
+        "Authorization"
+      ],
       "stdio_command": "npx -y @vivideo/mcp"
     },
-    "auth": { "type": "api_key", "env_var": "VIVIDEO_API_KEY", "key_url": "https://app.vivideo.ai/account/api-keys" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "VIVIDEO_API_KEY",
+      "key_url": "https://app.vivideo.ai/account/api-keys"
+    },
     "pricing": "freemium",
-    "links": { "repo": null, "docs": "https://developers.vivideo.ai/mcp", "site": "https://vivideo.ai" },
+    "links": {
+      "repo": null,
+      "docs": "https://developers.vivideo.ai/mcp",
+      "site": "https://vivideo.ai"
+    },
     "added": "2026-08-18",
     "verified": "2026-11-15",
     "caveats": [
@@ -37,16 +65,40 @@
     "featured": false,
     "tagline": "Official hosted MCP: Gen-4.5, Seedance, Kling and Veo video from any agent.",
     "description": "Runway's hosted MCP server connects agents like Claude, ChatGPT and Cursor to Runway's full generation stack. As of September 2026 the marketing page lists Gen-4.5, Gen-4 Turbo, Gen-4 Image, Seedance 2.5, Kling 3.0, Veo 3.1, GPT Image 2 and Nano Banana Pro, routed by plan, making it a one-stop video tool for filmmaker agents with automatic task polling and media URL delivery.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "video-upscaling", "video-editing", "tts"],
-    "tools_sample": ["runway_listModels", "runway_generateVideo", "runway_generateImage", "runway_upscaleVideo", "runway_editVideo", "runway_generateAudio", "runway_getTask", "runway_cancelTask"],
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "text-to-image",
+      "video-upscaling",
+      "video-editing",
+      "tts"
+    ],
+    "tools_sample": [
+      "runway_listModels",
+      "runway_generateVideo",
+      "runway_generateImage",
+      "runway_upscaleVideo",
+      "runway_editVideo",
+      "runway_generateAudio",
+      "runway_getTask",
+      "runway_cancelTask"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http runway https://mcp.runwayml.com/mcp",
       "remote_url": "https://mcp.runwayml.com/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Hosted MCP authenticates with your Runway account (OAuth). Self-hosted repo uses RUNWAYML_API_SECRET from dev.runwayml.com" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Hosted MCP authenticates with your Runway account (OAuth). Self-hosted repo uses RUNWAYML_API_SECRET from dev.runwayml.com"
+    },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/runwayml/runway-api-mcp-server", "docs": "https://help.runwayml.com/hc/en-us/articles/51931843164691-Connecting-to-Runway-MCP", "site": "https://runway.com/mcp" },
+    "links": {
+      "repo": "https://github.com/runwayml/runway-api-mcp-server",
+      "docs": "https://help.runwayml.com/hc/en-us/articles/51931843164691-Connecting-to-Runway-MCP",
+      "site": "https://runway.com/mcp"
+    },
     "added": "2026-06-11",
     "verified": "2026-10-10",
     "caveats": [
@@ -66,16 +118,40 @@
     "featured": false,
     "tagline": "Official MiniMax server: Hailuo video, image gen, TTS and voice cloning.",
     "description": "MiniMax's official MCP server exposes Hailuo video generation, text-to-image, and best-in-class multilingual TTS with voice cloning and voice design. One vendor and one key covers both your shots and your dialogue — rare breadth for a single official server. Music generation was part of that breadth until August 2026, when the tool was retired.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "tts", "voice-cloning", "voice-design"],
-    "tools_sample": ["generate_video", "query_video_generation", "text_to_image", "text_to_audio", "voice_clone", "voice_design", "list_voices", "play_audio"],
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "text-to-image",
+      "tts",
+      "voice-cloning",
+      "voice-design"
+    ],
+    "tools_sample": [
+      "generate_video",
+      "query_video_generation",
+      "text_to_image",
+      "text_to_audio",
+      "voice_clone",
+      "voice_design",
+      "list_voices",
+      "play_audio"
+    ],
     "install": {
       "claude_code": "claude mcp add minimax -e MINIMAX_API_KEY=YOUR_KEY -e MINIMAX_API_HOST=https://api.minimax.io -- uvx minimax-mcp",
       "remote_url": null,
       "stdio_command": "uvx minimax-mcp"
     },
-    "auth": { "type": "api_key", "env_var": "MINIMAX_API_KEY", "key_url": "https://platform.minimax.io — key region must match MINIMAX_API_HOST (api.minimax.io global / api.minimaxi.com mainland) or auth fails" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "MINIMAX_API_KEY",
+      "key_url": "https://platform.minimax.io — key region must match MINIMAX_API_HOST (api.minimax.io global / api.minimaxi.com mainland) or auth fails"
+    },
     "pricing": "paid",
-    "links": { "repo": "https://github.com/MiniMax-AI/MiniMax-MCP", "docs": "https://platform.minimax.io/docs/guides/mcp-guide", "site": "https://www.minimax.io" },
+    "links": {
+      "repo": "https://github.com/MiniMax-AI/MiniMax-MCP",
+      "docs": "https://platform.minimax.io/docs/guides/mcp-guide",
+      "site": "https://www.minimax.io"
+    },
     "added": "2026-06-11",
     "verified": "2026-10-17",
     "caveats": [
@@ -95,16 +171,28 @@
     "featured": false,
     "tagline": "Official hosted OAuth connector to Higgsfield's 30+ image and video models, plus preset creative workflows.",
     "description": "Higgsfield's official hosted MCP puts its generation platform — advertised as 30+ image and video models, no API key required — behind one OAuth endpoint for Claude, OpenClaw, Hermes Agent and any remote-capable MCP client, with a separate ChatGPT plugin. For a filmmaker-agent it is one connection to the model shelf Higgsfield aggregates, billed to an existing Higgsfield account. Around it Higgsfield now sells slash-command workflows: ads and faceless explainers, plus production presets that steer a desktop agent through Blender, After Effects, Premiere Pro, DaVinci Resolve Studio and TouchDesigner on the same machine.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image"],
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "text-to-image"
+    ],
     "tools_sample": null,
     "install": {
       "claude_code": "claude mcp add --transport http higgsfield https://mcp.higgsfield.ai/mcp",
       "remote_url": "https://mcp.higgsfield.ai/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Sign in with your Higgsfield account during connector setup — no API keys" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Sign in with your Higgsfield account during connector setup — no API keys"
+    },
     "pricing": "credits",
-    "links": { "repo": null, "docs": "https://higgsfield.ai/mcp", "site": "https://higgsfield.ai" },
+    "links": {
+      "repo": null,
+      "docs": "https://higgsfield.ai/mcp",
+      "site": "https://higgsfield.ai"
+    },
     "added": "2026-06-11",
     "verified": "2026-10-27",
     "caveats": [
@@ -123,17 +211,31 @@
     "featured": false,
     "tagline": "Hosted OAuth connector to Everygen's model shelf: Seedance 2.5, Kling 3.0, MiniMax H3, Nano Banana Pro.",
     "description": "Everygen, formerly Viewmax, is a credit-based studio fronting Seedance 2.5, Kling 3.0 Turbo and Pro, MiniMax H3 Max, Grok Imagine, Gemini Omni 1.1 Flash, Nano Banana Pro and GPT Image 2. Its hosted MCP lets an agent make videos and images, animate a still, or hand a scene to Everygen Director for a cinematic shot with sound. For a filmmaker-agent it is one connector to a short-form-leaning shelf of UGC ads, faceless stories and cinematic shots, billed to an Everygen plan rather than to per-provider keys.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "multi-model-generation", "voiceover"],
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "text-to-image",
+      "multi-model-generation",
+      "voiceover"
+    ],
     "tools_sample": null,
     "install": {
       "claude_code": "claude mcp add --transport http everygen https://everygen.ai/api/mcp",
       "remote_url": "https://everygen.ai/api/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Sign in with your Everygen account at everygen.ai during connector setup — no API key" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Sign in with your Everygen account at everygen.ai during connector setup — no API key"
+    },
     "pricing": "paid",
     "pricing_note": "Plans from $24/mo, or $9/mo billed annually, for 200 credits; the pricing page lists no free plan.",
-    "links": { "repo": null, "docs": "https://everygen.ai/mcp", "site": "https://everygen.ai" },
+    "links": {
+      "repo": null,
+      "docs": "https://everygen.ai/mcp",
+      "site": "https://everygen.ai"
+    },
     "added": "2026-10-27",
     "verified": "2026-10-27",
     "caveats": [
@@ -152,16 +254,31 @@
     "featured": false,
     "tagline": "Pika's hosted media toolkit: 57 apps and models for video, image, audio and edit, from mcp.pika.art.",
     "description": "Pika's official hosted MCP connects its creative suite — video, image, music, speech and editing — to Claude and other MCP clients, routing to Pika 2.5, Seedance 2.5, Wan 3.0, Kling 3.0, Veo 3.1, GPT Image 2.5, Nano Banana, Seedream 5 and Grok Imagine among others. Alongside raw models it exposes app-level steps such as Character Studio, Product Ad, Motion Transfer, Extend Video, Upscale and Relight Media, and an official plugin bundle adds 20 curated short-form production skills.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "audio-generation", "voiceover", "video-editing"],
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "text-to-image",
+      "audio-generation",
+      "voiceover",
+      "video-editing"
+    ],
     "tools_sample": null,
     "install": {
       "claude_code": "claude mcp add --transport http pika https://mcp.pika.art/mcp",
       "remote_url": "https://mcp.pika.art/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Complete Pika sign-in and authorization when the connector first connects" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Complete Pika sign-in and authorization when the connector first connects"
+    },
     "pricing": "credits",
-    "links": { "repo": null, "docs": "https://pika.art/mcp", "site": "https://pika.art" },
+    "links": {
+      "repo": null,
+      "docs": "https://pika.art/mcp",
+      "site": "https://pika.art"
+    },
     "added": "2026-06-11",
     "verified": "2026-10-19",
     "caveats": [
@@ -180,16 +297,41 @@
     "featured": false,
     "tagline": "Generate captioned, lip-synced UGC videos and publish them to social from an agent.",
     "description": "AgentMedia's official MCP package turns scripts, app screenshots, product images, actors, or saved characters into finished UGC-style videos with captions, lip sync, music, and optional b-roll. For filmmaker-agents working on product promos and social ads, it is less a raw model endpoint than a useful ad-format machine: script in, vertical video URL out, with social publishing tools when accounts are connected.",
-    "capabilities": ["ugc-video", "talking-head", "product-video", "app-demo", "captions", "lip-sync", "social-publishing"],
-    "tools_sample": ["create_video", "show_your_app", "product_acting_ugc", "list_actors", "get_video_status", "social_connect", "social_channels", "social_publish"],
+    "capabilities": [
+      "ugc-video",
+      "talking-head",
+      "product-video",
+      "app-demo",
+      "captions",
+      "lip-sync",
+      "social-publishing"
+    ],
+    "tools_sample": [
+      "create_video",
+      "show_your_app",
+      "product_acting_ugc",
+      "list_actors",
+      "get_video_status",
+      "social_connect",
+      "social_channels",
+      "social_publish"
+    ],
     "install": {
       "claude_code": "claude mcp add agent-media -e AGENT_MEDIA_API_KEY=YOUR_KEY -- npx -y -p @agentmedia/mcp-server@latest agent-media-mcp",
       "remote_url": null,
       "stdio_command": "npx -y -p @agentmedia/mcp-server@latest agent-media-mcp"
     },
-    "auth": { "type": "api_key", "env_var": "AGENT_MEDIA_API_KEY", "key_url": "https://agent-media.ai — sign in, generate an ma_* API token, and keep credits on the account" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "AGENT_MEDIA_API_KEY",
+      "key_url": "https://agent-media.ai — sign in, generate an ma_* API token, and keep credits on the account"
+    },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/gitroomhq/agent-media", "docs": "https://agent-media.ai/skills", "site": "https://agent-media.ai" },
+    "links": {
+      "repo": "https://github.com/gitroomhq/agent-media",
+      "docs": "https://agent-media.ai/skills",
+      "site": "https://agent-media.ai"
+    },
     "added": "2026-06-29",
     "verified": "2026-10-18",
     "caveats": [
@@ -208,16 +350,43 @@
     "featured": false,
     "tagline": "Official PixVerse video MCP: text/video, image animation, transitions, lip-sync and SFX.",
     "description": "PixVerse's vendor-owned MCP server exposes its video-generation API through uvx for Claude, Cursor and other MCP clients. It covers text-to-video, image-to-video, video extension, two-image transitions, lip-sync, generated sound effects, and v4.5 fusion scenes, giving filmmaker agents a direct route to PixVerse's shot tools without browser automation.",
-    "capabilities": ["text-to-video", "image-to-video", "video-extension", "transitions", "lip-sync", "sound-effects", "asset-upload"],
-    "tools_sample": ["capabilities_overview", "text_to_video", "image_to_video", "transition_video", "extend_video", "lip_sync_video", "sound_effect_video", "fusion_video", "upload_image", "get_video_status"],
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "video-extension",
+      "transitions",
+      "lip-sync",
+      "sound-effects",
+      "asset-upload"
+    ],
+    "tools_sample": [
+      "capabilities_overview",
+      "text_to_video",
+      "image_to_video",
+      "transition_video",
+      "extend_video",
+      "lip_sync_video",
+      "sound_effect_video",
+      "fusion_video",
+      "upload_image",
+      "get_video_status"
+    ],
     "install": {
       "claude_code": "claude mcp add pixverse -e PIXVERSE_API_KEY=YOUR_KEY -- uvx pixverse-mcp",
       "remote_url": null,
       "stdio_command": "uvx pixverse-mcp"
     },
-    "auth": { "type": "api_key", "env_var": "PIXVERSE_API_KEY", "key_url": "https://platform.pixverse.ai" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "PIXVERSE_API_KEY",
+      "key_url": "https://platform.pixverse.ai"
+    },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/PixVerseAI/PixVerse-MCP", "docs": "https://docs.platform.pixverse.ai/how-to-get-api-key-882968m0", "site": "https://platform.pixverse.ai" },
+    "links": {
+      "repo": "https://github.com/PixVerseAI/PixVerse-MCP",
+      "docs": "https://docs.platform.pixverse.ai/how-to-get-api-key-882968m0",
+      "site": "https://platform.pixverse.ai"
+    },
     "added": "2026-06-28",
     "verified": "2026-10-20",
     "caveats": [
@@ -236,16 +405,44 @@
     "featured": false,
     "tagline": "Google Cloud's MCP servers for Veo, Gemini Omni, Lyria, Chirp TTS and ffmpeg compositing.",
     "description": "A suite of Go-based MCP servers from Google Cloud's GenMedia Creative Studio repo: Veo text/image-to-video plus extension, first/last-frame, reference and ingredients tools, a Gemini Omni video server, Nano Banana and Gemini stills, Gemini transcription, Lyria music, Chirp 3 TTS, and an AVTool server wrapping ffmpeg for compositing. The closest thing to an official Veo MCP, and a full agentic production toolchain on Vertex AI.",
-    "capabilities": ["text-to-video", "image-to-video", "video-extension", "text-to-image", "music", "tts", "transcription", "av-compositing"],
-    "tools_sample": ["veo_t2v", "veo_i2v", "veo_extend_video", "veo_first_last_to_video", "veo_ingredients_to_video", "omni_video_generation", "lyria_generate_music", "gemini_transcribe", "chirp_tts", "list_chirp_voices"],
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "video-extension",
+      "text-to-image",
+      "music",
+      "tts",
+      "transcription",
+      "av-compositing"
+    ],
+    "tools_sample": [
+      "veo_t2v",
+      "veo_i2v",
+      "veo_extend_video",
+      "veo_first_last_to_video",
+      "veo_ingredients_to_video",
+      "omni_video_generation",
+      "lyria_generate_music",
+      "gemini_transcribe",
+      "chirp_tts",
+      "list_chirp_voices"
+    ],
     "install": {
       "claude_code": null,
       "remote_url": null,
       "stdio_command": "One binary per model. Install them all with the repo's script — curl -sL https://raw.githubusercontent.com/GoogleCloudPlatform/genmedia-creative-studio/main/experiments/mcp-genmedia/mcp-genmedia-go/install-online.sh | bash — or build from source with go work sync && go install ./mcp-avtool-go ./mcp-chirp3-go ./mcp-gemini-go ./mcp-gemini-transcribe-go ./mcp-nanobanana-go ./mcp-lyria-go ./mcp-veo-go ./mcp-omni-go, then point your client at each binary (mcp-veo-go for Veo) with GOOGLE_CLOUD_PROJECT set"
     },
-    "auth": { "type": "api_key", "env_var": "GOOGLE_CLOUD_PROJECT", "key_url": "Google Cloud project with Vertex AI enabled; uses Application Default Credentials (gcloud auth application-default login)" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "GOOGLE_CLOUD_PROJECT",
+      "key_url": "Google Cloud project with Vertex AI enabled; uses Application Default Credentials (gcloud auth application-default login)"
+    },
     "pricing": "paid",
-    "links": { "repo": "https://github.com/GoogleCloudPlatform/genmedia-creative-studio/tree/main/experiments/mcp-genmedia", "docs": "https://github.com/GoogleCloudPlatform/genmedia-creative-studio/blob/main/experiments/mcp-genmedia/mcp-genmedia-go/README.md", "site": "https://ai.google.dev/gemini-api/docs/video" },
+    "links": {
+      "repo": "https://github.com/GoogleCloudPlatform/genmedia-creative-studio/tree/main/experiments/mcp-genmedia",
+      "docs": "https://github.com/GoogleCloudPlatform/genmedia-creative-studio/blob/main/experiments/mcp-genmedia/mcp-genmedia-go/README.md",
+      "site": "https://ai.google.dev/gemini-api/docs/video"
+    },
     "added": "2026-06-11",
     "verified": "2026-10-19",
     "caveats": [
@@ -265,16 +462,37 @@
     "status": "dead",
     "tagline": "Dead: OpenAI's shutdown date for the Videos API and every sora-2 model was 2026-09-24.",
     "description": "OpenAI announced the deprecation of the Videos API and the sora-2 family on 2026-03-24 and set 2026-09-24 as the shutdown date; the consumer Sora app was discontinued on 2026-04-26. This community server was the most-starred Sora MCP, and it is a thin wrapper over that one endpoint, so it has nothing left to call. Kept listed so agents that ask for Sora get an explanation and a migration path instead of a blank page.",
-    "capabilities": ["text-to-video", "remix", "job-management", "auto-download"],
-    "tools_sample": ["create-video", "get-video-status", "list-videos", "download-video", "save-video", "remix-video", "delete-video"],
+    "capabilities": [
+      "text-to-video",
+      "remix",
+      "job-management",
+      "auto-download"
+    ],
+    "tools_sample": [
+      "create-video",
+      "get-video-status",
+      "list-videos",
+      "download-video",
+      "save-video",
+      "remix-video",
+      "delete-video"
+    ],
     "install": {
       "claude_code": null,
       "remote_url": null,
       "stdio_command": null
     },
-    "auth": { "type": "api_key", "env_var": "OPENAI_API_KEY", "key_url": null },
+    "auth": {
+      "type": "api_key",
+      "env_var": "OPENAI_API_KEY",
+      "key_url": null
+    },
     "pricing": "paid",
-    "links": { "repo": "https://github.com/Doriandarko/sora-mcp", "docs": "https://developers.openai.com/api/docs/deprecations", "site": null },
+    "links": {
+      "repo": "https://github.com/Doriandarko/sora-mcp",
+      "docs": "https://developers.openai.com/api/docs/deprecations",
+      "site": null
+    },
     "added": "2026-06-11",
     "verified": "2026-10-05",
     "caveats": [
@@ -286,31 +504,49 @@
   },
   {
     "slug": "kling-official",
-    "name": "Kling MCP (Official)",
+    "name": "Kling AI Global Plugin",
     "vendor": "Kling AI (Kuaishou)",
     "official": true,
     "category": "video-generation",
     "featured": false,
-    "tagline": "Kling's own hosted MCP: text and image to video or stills, over OAuth on your Kling credits.",
-    "description": "Kuaishou now fronts Kling with a first-party remote MCP at kling.ai/mcp, replacing the key-and-secret dance the community servers require with browser OAuth. Eight tools cover text-to-image, image-to-image, text-to-video, image-to-video, file upload, task polling and credit balance, with the available models declared by the server at runtime rather than pinned in a README. For a filmmaker-agent this is the shortest verified path to current Kling models without going through a hub and paying a hub's markup.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "image-to-image", "asset-upload", "job-polling"],
-    "tools_sample": ["text_to_image", "image_to_image", "text_to_video", "image_to_video", "query_tasks", "file_upload", "account", "tool_list"],
+    "tagline": "Kling's official Claude plugin connects to the Global MCP endpoint for image and video creation.",
+    "description": "Kling's official Claude plugin connects to the Global hosted MCP with browser OAuth and the user's Global Kling account. Its bundled Skills guide image and video generation, Elements, motion-library browsing, uploads, credit checks and task status; the host discovers live tools and models at connection time. Generation uses the account's Kling credits.",
+    "capabilities": [
+      "text-to-image",
+      "image-to-image",
+      "text-to-video",
+      "image-to-video",
+      "elements",
+      "motion-control",
+      "asset-upload",
+      "job-polling",
+      "remote-mcp"
+    ],
+    "tools_sample": null,
     "install": {
-      "claude_code": "claude mcp add --transport http kling https://kling.ai/mcp",
-      "remote_url": "https://kling.ai/mcp",
+      "claude_code": "claude plugin install kling-ai --marketplace klingai-tech/claude-plugin",
+      "remote_url": "https://kling.ai/mcp/plugin",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser OAuth against https://kling.ai/auth — PKCE plus Dynamic Client Registration, scopes generation.create, generation.read and account.credit.read. No API key to paste." },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Authorize in the browser with a Global Kling account; generation uses that account’s credits."
+    },
     "pricing": "credits",
-    "links": { "repo": null, "docs": "https://kling.ai/app/mcp/guide", "site": "https://kling.ai" },
+    "links": {
+      "repo": "https://github.com/klingai-tech/claude-plugin",
+      "docs": "https://kling.ai/app/mcp/guide",
+      "site": "https://kling.ai"
+    },
     "added": "2026-09-06",
-    "verified": "2026-10-20",
+    "verified": "2026-11-20",
     "caveats": [
-      "Narrower than the community kling server: no effects, virtual try-on or KOLORS tools, and no documented model list, so call tool_list.",
-      "Closed source with no public repo, and it spends the same Kling credits as the consumer platform.",
-      "Expect a browser authorization on first connect; the CLI line is the standard HTTP form, not a vendor one-liner."
+      "The HTTP endpoint requires OAuth; an unauthenticated request returned 401 on 20 Nov 2026.",
+      "The plugin docs do not publish a fixed tool list or model roster; let the MCP host discover current tools.",
+      "Generation spends credits in the connected Global Kling account."
     ],
-    "notes": "First verified 2026-09-06 from primary sources only; re-checked 2026-10-20, when the protected-resource metadata still named https://kling.ai/mcp behind https://kling.ai/auth with the same three scopes. https://kling.ai/mcp answers 401, and /.well-known/oauth-protected-resource/mcp names it as the resource behind authorization server https://kling.ai/auth; that server's metadata publishes authorization_code and refresh_token grants, S256 PKCE and a registration_endpoint, so DCR works and no pre-shared credential is needed. Tool names come from Kling's own npm package @klingai/cli-global (0.1.3 at first check, 0.2.3 published 2026-10-16 so it is actively shipped; published by klingai-fe off a Kuaishou corp git remote), which calls itself a thin MCP client whose commands map 1:1 to backend MCP tools. Kling's setup page is a client-rendered app that returns nothing readable to a fetcher, so the CLI line above is the standard streamable-HTTP form of the documented endpoint, not a copy of a vendor one-liner — expect a browser authorization on first connect. Narrower than the community `kling` server: no effects, no virtual try-on, no KOLORS-specific tools, and no documented model list — call tool_list. Closed source, no public repo, and it spends the same Kling credits as the consumer platform."
+    "notes": "Checked 20 Nov 2026 against Kling’s official Global plugin README and .mcp.json. The plugin declares https://kling.ai/mcp/plugin and installs through the Claude marketplace; its Skills describe image/video generation, Elements, motion-library browsing, uploads, credit checks and task status. We did not authenticate or call tools/list, so tool names and model availability are intentionally not listed. A direct unauthenticated request to the declared endpoint returned HTTP 401, consistent with an OAuth-protected service; this does not verify an authenticated MCP handshake. Use a Global Kling account; generation consumes its credits."
   },
   {
     "slug": "kling",
@@ -321,16 +557,39 @@
     "featured": false,
     "tagline": "Fullest direct Kling API MCP: video, extend, lip-sync, effects, KOLORS images.",
     "description": "Community server hitting Kuaishou's official Kling API directly, with tools spanning text/image-to-video, video extension, lip-sync with TTS voices, effects, KOLORS image generation and virtual try-on. The most complete option if you want Kling on your own API account rather than via a hub.",
-    "capabilities": ["text-to-video", "image-to-video", "video-extension", "lip-sync", "video-effects", "text-to-image"],
-    "tools_sample": ["generate_video", "generate_image_to_video", "extend_video", "create_lipsync", "apply_video_effect", "generate_image", "get_account_balance"],
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "video-extension",
+      "lip-sync",
+      "video-effects",
+      "text-to-image"
+    ],
+    "tools_sample": [
+      "generate_video",
+      "generate_image_to_video",
+      "extend_video",
+      "create_lipsync",
+      "apply_video_effect",
+      "generate_image",
+      "get_account_balance"
+    ],
     "install": {
       "claude_code": "claude mcp add kling -e KLING_ACCESS_KEY=YOUR_KEY -e KLING_SECRET_KEY=YOUR_SECRET -- npx -y mcp-kling@latest",
       "remote_url": null,
       "stdio_command": "npx -y mcp-kling@latest"
     },
-    "auth": { "type": "api_key", "env_var": "KLING_ACCESS_KEY", "key_url": "https://app.klingai.com/global/dev/api-key" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "KLING_ACCESS_KEY",
+      "key_url": "https://app.klingai.com/global/dev/api-key"
+    },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/199-mcp/mcp-kling", "docs": null, "site": null },
+    "links": {
+      "repo": "https://github.com/199-mcp/mcp-kling",
+      "docs": null,
+      "site": null
+    },
     "added": "2026-06-11",
     "verified": "2026-10-19",
     "caveats": [
@@ -349,16 +608,40 @@
     "featured": false,
     "tagline": "Community MCP with the widest tool surface on Luma's legacy Dream Machine API.",
     "description": "Community Python server for Luma's Dream Machine API v1: text/image-to-video on ray-2 and ray-flash-2, video extension and interpolation, Photon image generation, upscaling, audio addition and credit checks. Luma has since moved its platform to the Agents API — uni-1 and uni-1-max for images, ray-3.2 for video, a new base URL and a new key name — which this server does not speak and for which no MCP exists. Its reason to exist next to Luma's own `luma-official` server is breadth: extension, interpolation, upscaling and credit checks that the first-party two-tool server never shipped.",
-    "capabilities": ["text-to-video", "image-to-video", "video-extension", "interpolation", "text-to-image", "upscaling"],
-    "tools_sample": ["create_generation", "get_generation", "list_generations", "upscale_generation", "add_audio", "generate_image", "get_credits", "get_camera_motions"],
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "video-extension",
+      "interpolation",
+      "text-to-image",
+      "upscaling"
+    ],
+    "tools_sample": [
+      "create_generation",
+      "get_generation",
+      "list_generations",
+      "upscale_generation",
+      "add_audio",
+      "generate_image",
+      "get_credits",
+      "get_camera_motions"
+    ],
     "install": {
       "claude_code": null,
       "remote_url": null,
       "stdio_command": "uv run --project /path/to/luma-ai-mcp-server -m luma_ai_mcp_server"
     },
-    "auth": { "type": "api_key", "env_var": "LUMA_API_KEY", "key_url": "https://lumalabs.ai/dream-machine/api — the Agents API uses a different key under LUMA_AGENTS_API_KEY at agents.lumalabs.ai/v1" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "LUMA_API_KEY",
+      "key_url": "https://lumalabs.ai/dream-machine/api — the Agents API uses a different key under LUMA_AGENTS_API_KEY at agents.lumalabs.ai/v1"
+    },
     "pricing": "paid",
-    "links": { "repo": "https://github.com/bobtista/luma-ai-mcp-server", "docs": "https://docs.agents.lumalabs.ai", "site": null },
+    "links": {
+      "repo": "https://github.com/bobtista/luma-ai-mcp-server",
+      "docs": "https://docs.agents.lumalabs.ai",
+      "site": null
+    },
     "added": "2026-06-11",
     "verified": "2026-10-21",
     "caveats": [
@@ -377,16 +660,34 @@
     "featured": false,
     "tagline": "Luma's own two-tool MCP server for Ray video and Photon stills.",
     "description": "Luma Labs' first-party MCP server, published from the lumalabs GitHub org, exposing exactly two tools: create_image on photon-1 and photon-flash-1, and create_video on ray-2, ray-flash-2 and ray-1-6. create_video takes frame0 and frame1 references, so an agent can pin both ends of a shot and chain continuity across a sequence; create_image accepts image, style, character and modify references for consistent looks. Narrow by design — no polling, extension or upscaling tools — but it is the only Luma-maintained MCP that exists.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "keyframe-control", "style-reference", "character-reference"],
-    "tools_sample": ["create_image", "create_video"],
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "text-to-image",
+      "keyframe-control",
+      "style-reference",
+      "character-reference"
+    ],
+    "tools_sample": [
+      "create_image",
+      "create_video"
+    ],
     "install": {
       "claude_code": null,
       "remote_url": null,
       "stdio_command": "Clone github.com/lumalabs/luma-api-mcp and run `sh setup.sh`, which installs jq, uv and Python 3.10, prompts for LUMA_API_KEY, and registers the server in claude_desktop_config.json as `uv run --python python3.10 --with mcp[cli] --with aiohttp mcp run` against server.py."
     },
-    "auth": { "type": "api_key", "env_var": "LUMA_API_KEY", "key_url": "https://lumalabs.ai/api/keys" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "LUMA_API_KEY",
+      "key_url": "https://lumalabs.ai/api/keys"
+    },
     "pricing": "paid",
-    "links": { "repo": "https://github.com/lumalabs/luma-api-mcp", "docs": "https://github.com/lumalabs/luma-api-mcp#readme", "site": "https://lumalabs.ai/api" },
+    "links": {
+      "repo": "https://github.com/lumalabs/luma-api-mcp",
+      "docs": "https://github.com/lumalabs/luma-api-mcp#readme",
+      "site": "https://lumalabs.ai/api"
+    },
     "added": "2026-09-08",
     "verified": "2026-10-21",
     "caveats": [
@@ -405,16 +706,52 @@
     "featured": false,
     "tagline": "Exposes whole ad-creative workflows over MCP rather than individual model endpoints.",
     "description": "Wireflow is a hosted ad-creative platform that fans a single brief out into hundreds of static, carousel, video and UGC variants, with brand kits, compositing, colour grading and publishing to social. Its MCP connector exposes the workflow layer rather than raw models: an agent searches recipes, clones a template or authors a workflow from a prompt, runs it, polls the execution and schedules automations. Since the August check the connector has grown a timeline surface — read the cut, edit it, preview frames — so an agent can inspect and adjust the assembled video rather than only trigger a render. For a filmmaker-agent, that means one call produces a finished, brand-consistent deliverable instead of a shot you still have to assemble.",
-    "capabilities": ["workflow-automation", "text-to-video", "text-to-image", "ugc-video", "batch-generation", "social-publishing", "timeline-editing"],
-    "tools_sample": ["get_guidelines", "list_workflows", "search_recipes", "list_models", "clone_template", "create_workflow_from_prompt", "build_starter_board", "get_video_timeline", "edit_video_timeline", "preview_video_frames", "check_video", "run_workflow", "run_app", "get_execution", "create_automation", "publish_post", "get_post_insights", "list_voices", "get_credit_balance"],
+    "capabilities": [
+      "workflow-automation",
+      "text-to-video",
+      "text-to-image",
+      "ugc-video",
+      "batch-generation",
+      "social-publishing",
+      "timeline-editing"
+    ],
+    "tools_sample": [
+      "get_guidelines",
+      "list_workflows",
+      "search_recipes",
+      "list_models",
+      "clone_template",
+      "create_workflow_from_prompt",
+      "build_starter_board",
+      "get_video_timeline",
+      "edit_video_timeline",
+      "preview_video_frames",
+      "check_video",
+      "run_workflow",
+      "run_app",
+      "get_execution",
+      "create_automation",
+      "publish_post",
+      "get_post_insights",
+      "list_voices",
+      "get_credit_balance"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http wireflow https://www.wireflow.ai/api/mcp",
       "remote_url": "https://www.wireflow.ai/api/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth 2.1 with PKCE and Dynamic Client Registration (RFC 7591) — sign in with a Wireflow account, no pre-shared credentials" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "OAuth 2.1 with PKCE and Dynamic Client Registration (RFC 7591) — sign in with a Wireflow account, no pre-shared credentials"
+    },
     "pricing": "freemium",
-    "links": { "repo": null, "docs": "https://www.wireflow.ai/docs/mcp", "site": "https://www.wireflow.ai" },
+    "links": {
+      "repo": null,
+      "docs": "https://www.wireflow.ai/docs/mcp",
+      "site": "https://www.wireflow.ai"
+    },
     "added": "2026-08-11",
     "verified": "2026-10-21",
     "caveats": [
@@ -433,16 +770,45 @@
     "featured": false,
     "tagline": "Hosted MCP that generates, renders, voices, and publishes short-form video end to end.",
     "description": "Revid's first-party remote MCP puts its whole short-form pipeline behind 30 tools: generate media, render a project or a whole series episode, clone a voice, define reusable characters, export the cut, and schedule or immediately publish to connected social accounts. calculate_credits prices a render before you spend on it. The draw for an agent is that generation and distribution sit on one OAuth connection, so a scripted campaign can go from prompt to posted without a human touching a timeline.",
-    "capabilities": ["text-to-video", "video-rendering", "voice-cloning", "character-consistency", "project-management", "scheduled-publishing", "credit-estimation"],
-    "tools_sample": ["generate_media", "render_video", "create_episode", "search_viral_videos", "get_project_status", "calculate_credits", "export_video", "clone_voice", "create_character", "list_social_accounts", "schedule_publish", "publish_now"],
+    "capabilities": [
+      "text-to-video",
+      "video-rendering",
+      "voice-cloning",
+      "character-consistency",
+      "project-management",
+      "scheduled-publishing",
+      "credit-estimation"
+    ],
+    "tools_sample": [
+      "generate_media",
+      "render_video",
+      "create_episode",
+      "search_viral_videos",
+      "get_project_status",
+      "calculate_credits",
+      "export_video",
+      "clone_voice",
+      "create_character",
+      "list_social_accounts",
+      "schedule_publish",
+      "publish_now"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http revid https://www.revid.ai/api/mcp",
       "remote_url": "https://www.revid.ai/api/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth 2.1 from https://www.revid.ai/mcp; clients that cannot do OAuth may send an API key as Authorization Bearer, x-revid-api-key, x-api-key or key" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "OAuth 2.1 from https://www.revid.ai/mcp; clients that cannot do OAuth may send an API key as Authorization Bearer, x-revid-api-key, x-api-key or key"
+    },
     "pricing": "credits",
-    "links": { "repo": null, "docs": "https://www.revid.ai/mcp", "site": "https://www.revid.ai" },
+    "links": {
+      "repo": null,
+      "docs": "https://www.revid.ai/mcp",
+      "site": "https://www.revid.ai"
+    },
     "added": "2026-08-12",
     "verified": "2026-10-24",
     "caveats": [
@@ -462,16 +828,42 @@
     "featured": false,
     "tagline": "Hosted short-form studio for AI avatars, product scenes, UGC videos, and social delivery.",
     "description": "ReelsFarm is a hosted short-form content studio for agent-driven production: one MCP connection covers AI avatar generation, product scenes, UGC videos, slideshows, asset libraries, and social delivery. For short-form filmmakers and ad teams, creation, scheduling, and publishing share one authenticated workflow instead of separate model endpoints.",
-    "capabilities": ["ugc-video", "avatar-generation", "product-video", "slideshow-video", "asset-management", "workflow-automation", "social-publishing", "scheduled-publishing"],
-    "tools_sample": ["reelsfarm_prepare_generate_avatar", "reelsfarm_prepare_generate_ugc_video", "reelsfarm_list_gallery", "reelsfarm_list_slideshows", "reelsfarm_prepare_create_automation", "reelsfarm_prepare_schedule_post", "reelsfarm_prepare_publish_now", "reelsfarm_get_video_job_status"],
+    "capabilities": [
+      "ugc-video",
+      "avatar-generation",
+      "product-video",
+      "slideshow-video",
+      "asset-management",
+      "workflow-automation",
+      "social-publishing",
+      "scheduled-publishing"
+    ],
+    "tools_sample": [
+      "reelsfarm_prepare_generate_avatar",
+      "reelsfarm_prepare_generate_ugc_video",
+      "reelsfarm_list_gallery",
+      "reelsfarm_list_slideshows",
+      "reelsfarm_prepare_create_automation",
+      "reelsfarm_prepare_schedule_post",
+      "reelsfarm_prepare_publish_now",
+      "reelsfarm_get_video_job_status"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http reelsfarm https://mcp.reelsfarm.com/mcp",
       "remote_url": "https://mcp.reelsfarm.com/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "https://reelsfarm.com/docs/mcp — sign in with a ReelsFarm account and authorize the MCP client, or paste an rfmcp_ API key from the account MCP tab as an Authorization: Bearer header" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "https://reelsfarm.com/docs/mcp — sign in with a ReelsFarm account and authorize the MCP client, or paste an rfmcp_ API key from the account MCP tab as an Authorization: Bearer header"
+    },
     "pricing": "freemium",
-    "links": { "repo": "https://github.com/mateohysa/reelsfarm-mcp", "docs": "https://reelsfarm.com/docs/mcp", "site": "https://reelsfarm.com" },
+    "links": {
+      "repo": "https://github.com/mateohysa/reelsfarm-mcp",
+      "docs": "https://reelsfarm.com/docs/mcp",
+      "site": "https://reelsfarm.com"
+    },
     "added": "2026-08-16",
     "verified": "2026-11-06",
     "caveats": [
@@ -490,16 +882,43 @@
     "featured": false,
     "tagline": "Hosted motion-design agent: a prompt in, a finished animated MP4 out, refined by follow-ups.",
     "description": "Mosaic Motion is an agent that turns a brief into a finished motion-design video — typography, layout, animation, voiceover — and its official hosted MCP exposes that as a job queue: create a video from a prompt with up to 100 attachments, poll the session, then refine the result with follow-up prompts instead of re-rolling. It renders 16:9, 9:16, 1:1, 4:5 and 21:9 at lengths from under ten seconds to a few minutes. For a film pipeline this is not shot generation; it is the graphics department — title cards, logo stings, explainer inserts, launch and festival promo pieces — handed to an agent that can iterate on notes.",
-    "capabilities": ["motion-graphics", "text-to-video", "logo-animation", "explainer-video", "voiceover", "iterative-refinement", "asset-upload", "credit-management", "remote-mcp"],
-    "tools_sample": ["create_video", "create_followup", "upload_asset", "get_session_status", "get_credit_balance", "purchase_credits", "set_auto_topup", "whoami"],
+    "capabilities": [
+      "motion-graphics",
+      "text-to-video",
+      "logo-animation",
+      "explainer-video",
+      "voiceover",
+      "iterative-refinement",
+      "asset-upload",
+      "credit-management",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "create_video",
+      "create_followup",
+      "upload_asset",
+      "get_session_status",
+      "get_credit_balance",
+      "purchase_credits",
+      "set_auto_topup",
+      "whoami"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http motion https://mcp.motion.so/mcp",
       "remote_url": "https://mcp.motion.so/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth 2.1 on first connect (sign up at https://motion.so); headless agents can use the device flow at https://motion.so/device, email registration, or a Motion API key sent as Authorization: Bearer" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "OAuth 2.1 on first connect (sign up at https://motion.so); headless agents can use the device flow at https://motion.so/device, email registration, or a Motion API key sent as Authorization: Bearer"
+    },
     "pricing": "credits",
-    "links": { "repo": null, "docs": "https://docs.motion.so/guides/mcp", "site": "https://motion.so" },
+    "links": {
+      "repo": null,
+      "docs": "https://docs.motion.so/guides/mcp",
+      "site": "https://motion.so"
+    },
     "added": "2026-09-27",
     "verified": "2026-11-15",
     "caveats": [
@@ -519,16 +938,45 @@
     "featured": false,
     "tagline": "Brief or script in, narrated and captioned MP4 out, over one OAuth endpoint.",
     "description": "MakeAIVideo's official hosted MCP turns a one-line brief, a supplied script, or a still image into a finished video — script, neural voiceover, generated scenes, caption timing, music bed and MP4 export in a single pass. The docs now enumerate 44 tools: format-specific creators (explainer, listicle, story, UGC, demo, article, spokesperson, from-script), planning and cost estimates, scene and voice regeneration, captions and share links, characters, voices and music, social publishing, and webhooks. For a filmmaker-agent this is the assembly end of the pipeline: explainers, spokesperson cuts and vertical social edits where finishing speed matters more than shot-level control.",
-    "capabilities": ["text-to-video", "script-generation", "voiceover", "captions", "avatar-video", "image-to-video", "background-music", "brand-kits", "webhooks", "social-publishing", "remote-mcp"],
-    "tools_sample": ["create_explainer_video", "create_video_from_script", "estimate_video_cost", "regenerate_scene", "get_video_status", "get_download_url", "publish_video", "get_credits"],
+    "capabilities": [
+      "text-to-video",
+      "script-generation",
+      "voiceover",
+      "captions",
+      "avatar-video",
+      "image-to-video",
+      "background-music",
+      "brand-kits",
+      "webhooks",
+      "social-publishing",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "create_explainer_video",
+      "create_video_from_script",
+      "estimate_video_cost",
+      "regenerate_scene",
+      "get_video_status",
+      "get_download_url",
+      "publish_video",
+      "get_credits"
+    ],
     "install": {
       "claude_code": "claude mcp add --scope user --transport http makeaivideo https://mcp.makeaivideo.ai",
       "remote_url": "https://mcp.makeaivideo.ai",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Browser approval during connector setup (dynamic client registration + PKCE), or a mav_* key from Settings → Advanced → API keys" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Browser approval during connector setup (dynamic client registration + PKCE), or a mav_* key from Settings → Advanced → API keys"
+    },
     "pricing": "credits",
-    "links": { "repo": null, "docs": "https://makeaivideo.ai/docs/mcp", "site": "https://makeaivideo.ai" },
+    "links": {
+      "repo": null,
+      "docs": "https://makeaivideo.ai/docs/mcp",
+      "site": "https://makeaivideo.ai"
+    },
     "added": "2026-09-05",
     "verified": "2026-10-18",
     "caveats": [
@@ -614,16 +1062,50 @@
     "featured": false,
     "tagline": "Seedance video, Seedream stills, and Seed Audio behind one typed BytePlus MCP server.",
     "description": "A FastMCP server that fronts BytePlus ModelArk and Seed Speech: Seedance text- and image-to-video (including Seedance 2.5, which takes up to 30 reference images and 10 reference videos), Seedream image generation and editing, Seed Audio full-scene speech, ASR, video understanding, and the VOD AI MediaKit tools for enhancement, transcode, subtitle burn-in or removal, and voice/music/sfx separation. Every long job runs in the background — native MCP task augmentation where the client supports it, ordinary ark_job_* tools where it does not — and finished media is copied into a local artifact store, which matters because BytePlus output URLs expire after 2 hours for audio and 24 for image and video. The only route to Seedance in this directory, and the only one that also carries the finishing tools around it.",
-    "capabilities": ["text-to-video", "image-to-video", "video-reference", "text-to-image", "image-editing", "tts", "speech-to-text", "video-understanding", "video-enhancement", "subtitles", "audio-separation", "async-jobs"],
-    "tools_sample": ["seedance_create_task", "seedance_get_task", "seedance_create_task_variations", "seedream_generate_image", "seedream_edit_image", "seed_audio_generate", "speech_to_text", "seed_understand", "vod_enhance_video", "vod_separate_audio", "media_upload", "ark_job_submit"],
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "video-reference",
+      "text-to-image",
+      "image-editing",
+      "tts",
+      "speech-to-text",
+      "video-understanding",
+      "video-enhancement",
+      "subtitles",
+      "audio-separation",
+      "async-jobs"
+    ],
+    "tools_sample": [
+      "seedance_create_task",
+      "seedance_get_task",
+      "seedance_create_task_variations",
+      "seedream_generate_image",
+      "seedream_edit_image",
+      "seed_audio_generate",
+      "speech_to_text",
+      "seed_understand",
+      "vod_enhance_video",
+      "vod_separate_audio",
+      "media_upload",
+      "ark_job_submit"
+    ],
     "install": {
       "claude_code": null,
       "remote_url": null,
       "stdio_command": "Clone and run locally — git clone https://github.com/byteplus-sa/ark-mcp, then uv sync, then point the client at: uv run --directory /path/to/ark-mcp python -m ark_mcp (BytePlus keys go in the client's env block). Release wheels and a ghcr.io/byteplus-sa/ark-mcp image exist from v0.2.0; there is no npm or PyPI package."
     },
-    "auth": { "type": "api_key", "env_var": "BYTEPLUS_MODELARK_API_KEY", "key_url": "https://console.byteplus.com — ModelArk > API Key covers Seedream and Seedance; Seed Speech and VOD AI MediaKit each issue a separate key, and the server only registers the tool groups whose keys you set" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "BYTEPLUS_MODELARK_API_KEY",
+      "key_url": "https://console.byteplus.com — ModelArk > API Key covers Seedream and Seedance; Seed Speech and VOD AI MediaKit each issue a separate key, and the server only registers the tool groups whose keys you set"
+    },
     "pricing": "paid",
-    "links": { "repo": "https://github.com/byteplus-sa/ark-mcp", "docs": "https://github.com/byteplus-sa/ark-mcp/blob/main/docs/getting-started.md", "site": "https://docs.byteplus.com/en/docs/ModelArk/1520757" },
+    "links": {
+      "repo": "https://github.com/byteplus-sa/ark-mcp",
+      "docs": "https://github.com/byteplus-sa/ark-mcp/blob/main/docs/getting-started.md",
+      "site": "https://docs.byteplus.com/en/docs/ModelArk/1520757"
+    },
     "added": "2026-09-16",
     "verified": "2026-10-28",
     "caveats": [
@@ -643,16 +1125,50 @@
     "featured": false,
     "tagline": "Hosted MCP for a story-to-video studio: multi-shot narrated films, labs, and shorts.",
     "description": "Clip Studio is a hosted generation platform whose public product line is exposed over one OAuth'd MCP endpoint: Story turns a script into a multi-shot narrated film, Character Films plan and continue character-led pieces, Video Lab and Image Lab run prompt- or image-driven jobs across a multi-model roster, Audio Lab does voiceover, and Topic Shorts, Talking Shorts and Ad Studio assemble captioned social and ad cuts. For an agent the useful shape is the storyboard loop — create a storyboard, generate the next part, render — which lets a film accrete shot by shot under review rather than arriving as one opaque clip. Every paid job quotes its cost before it runs and draws on the same monthly allowance a human would spend on the website.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "multi-model-generation", "storyboarding", "character-consistency", "tts", "captions", "talking-head", "cost-estimation", "remote-mcp"],
-    "tools_sample": ["create_storyboard", "generate_storyboard_part", "render_storyboard", "plan_character_film", "generate_character_film", "generate_video_lab", "list_video_lab_models", "quote_video_lab", "generate_image_lab", "generate_audio_lab", "create_topic_short_story", "publish_generation", "get_account"],
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "text-to-image",
+      "multi-model-generation",
+      "storyboarding",
+      "character-consistency",
+      "tts",
+      "captions",
+      "talking-head",
+      "cost-estimation",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "create_storyboard",
+      "generate_storyboard_part",
+      "render_storyboard",
+      "plan_character_film",
+      "generate_character_film",
+      "generate_video_lab",
+      "list_video_lab_models",
+      "quote_video_lab",
+      "generate_image_lab",
+      "generate_audio_lab",
+      "create_topic_short_story",
+      "publish_generation",
+      "get_account"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http clipstudio https://clipstudio.ai/api/mcp",
       "remote_url": "https://clipstudio.ai/api/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "https://clipstudio.ai/mcp — OAuth 2.1 sign-in with a Clip Studio account; the docs say to leave the OAuth client id empty and paste no API key" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "https://clipstudio.ai/mcp — OAuth 2.1 sign-in with a Clip Studio account; the docs say to leave the OAuth client id empty and paste no API key"
+    },
     "pricing": "paid",
-    "links": { "repo": null, "docs": "https://clipstudio.ai/mcp", "site": "https://clipstudio.ai" },
+    "links": {
+      "repo": null,
+      "docs": "https://clipstudio.ai/mcp",
+      "site": "https://clipstudio.ai"
+    },
     "added": "2026-09-21",
     "verified": "2026-11-05",
     "caveats": [
@@ -673,17 +1189,56 @@
     "featured": false,
     "tagline": "Script, voiceover or storyboard to finished video, plus clip, image, music and avatar generation.",
     "description": "VideoGen's official server wraps its whole API: four workflow tools turn a script, voiceover, slideshow or storyboard into an assembled video, and a media toolbox generates images, clips, speech, SFX, music and avatars, upscales stills and video, and strips backgrounds. Projects can be remixed and exported, and reusable entities keep a character or brand consistent across runs. For an agent it is a one-call rough cut for explainers and social pieces, not a narrative-film tool.",
-    "capabilities": ["script-to-video", "storyboard-to-video", "text-to-image", "text-to-video", "tts", "sfx", "music", "avatars", "upscaling", "background-removal", "project-export", "file-upload", "async-jobs"],
-    "tools_sample": ["script_to_video", "voiceover_to_video", "storyboard_to_video", "generate_video_clip", "generate_image", "text_to_speech", "generate_music", "generate_avatar", "upscale_video", "remove_video_background", "remix_project", "export_project", "get_workflow_run", "list_tts_voices"],
+    "capabilities": [
+      "script-to-video",
+      "storyboard-to-video",
+      "text-to-image",
+      "text-to-video",
+      "tts",
+      "sfx",
+      "music",
+      "avatars",
+      "upscaling",
+      "background-removal",
+      "project-export",
+      "file-upload",
+      "async-jobs"
+    ],
+    "tools_sample": [
+      "script_to_video",
+      "voiceover_to_video",
+      "storyboard_to_video",
+      "generate_video_clip",
+      "generate_image",
+      "text_to_speech",
+      "generate_music",
+      "generate_avatar",
+      "upscale_video",
+      "remove_video_background",
+      "remix_project",
+      "export_project",
+      "get_workflow_run",
+      "list_tts_voices"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http videogen https://mcp.videogen.io/mcp --header \"Authorization: Bearer YOUR_VIDEOGEN_API_KEY\"",
       "remote_url": "https://mcp.videogen.io/mcp",
-      "remote_headers": ["Authorization"],
+      "remote_headers": [
+        "Authorization"
+      ],
       "stdio_command": "npx -y @videogen/mcp"
     },
-    "auth": { "type": "api_key", "env_var": "VIDEOGEN_API_KEY", "key_url": "https://app.videogen.io/api (keys start sk_videogen_live_)" },
+    "auth": {
+      "type": "api_key",
+      "env_var": "VIDEOGEN_API_KEY",
+      "key_url": "https://app.videogen.io/api (keys start sk_videogen_live_)"
+    },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/video-gen/videogen-mcp", "docs": "https://docs.videogen.io/use-with-ai-agents", "site": "https://videogen.io/videogen-mcp" },
+    "links": {
+      "repo": "https://github.com/video-gen/videogen-mcp",
+      "docs": "https://docs.videogen.io/use-with-ai-agents",
+      "site": "https://videogen.io/videogen-mcp"
+    },
     "added": "2026-10-02",
     "verified": "2026-10-10",
     "caveats": [
@@ -703,16 +1258,37 @@
     "featured": false,
     "tagline": "Animates an old portrait or family photo into a short, subtle HD clip; one tool, one credit per photo.",
     "description": "Incarn does one thing: it takes an archival still and returns a few seconds of natural motion (breathing, blinking, a small smile) tuned for black-and-white and sepia faces that general image-to-video models tend to refuse or over-animate. The hosted server wraps that pipeline with upload, animate and status tools. For documentary and memorial work it is a narrower but more predictable option than prompting a general model.",
-    "capabilities": ["image-to-video", "archival-footage", "restoration", "file-upload", "async-jobs", "remote-mcp"],
-    "tools_sample": ["list_examples", "create_upload", "confirm_upload", "animate_photo", "get_animation_status"],
+    "capabilities": [
+      "image-to-video",
+      "archival-footage",
+      "restoration",
+      "file-upload",
+      "async-jobs",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "list_examples",
+      "create_upload",
+      "confirm_upload",
+      "animate_photo",
+      "get_animation_status"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http incarn https://api.incarn.co/mcp",
       "remote_url": "https://api.incarn.co/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "https://www.incarn.co/developers (OAuth 2.1 on first call; a funded account is required to animate)" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "https://www.incarn.co/developers (OAuth 2.1 on first call; a funded account is required to animate)"
+    },
     "pricing": "credits",
-    "links": { "repo": null, "docs": "https://www.incarn.co/en/developers/docs", "site": "https://www.incarn.co" },
+    "links": {
+      "repo": null,
+      "docs": "https://www.incarn.co/en/developers/docs",
+      "site": "https://www.incarn.co"
+    },
     "added": "2026-10-10",
     "verified": "2026-10-10",
     "caveats": [
@@ -731,16 +1307,42 @@
     "featured": false,
     "tagline": "Brief to narrated short film or storyboard animatic from a chat client, rendered on rented GPUs with Seedance.",
     "description": "Kleo turns a brief into a narrated film: the assistant writes a treatment and storyboard with Kleo's intake tools, then kleo_create_video renders every shot with Seedance 2.5 image-to-video from frames drawn by Nano Banana Pro, adds Kokoro narration and optional Suno music, and returns MP4, SRT and thumbnail links. A cheaper animatic mode moves the camera over the drawn frames with the same narration, which is a sensible way to check a story before paying for generated footage.",
-    "capabilities": ["text-to-video", "storyboarding", "script-to-video", "previz", "voiceover", "music", "captions", "async-jobs", "remote-mcp"],
-    "tools_sample": ["kleo_adapt_prompt", "kleo_list_templates", "kleo_storyboard_guide", "kleo_create_video", "kleo_wait_for_video", "kleo_get_job", "kleo_get_result"],
+    "capabilities": [
+      "text-to-video",
+      "storyboarding",
+      "script-to-video",
+      "previz",
+      "voiceover",
+      "music",
+      "captions",
+      "async-jobs",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "kleo_adapt_prompt",
+      "kleo_list_templates",
+      "kleo_storyboard_guide",
+      "kleo_create_video",
+      "kleo_wait_for_video",
+      "kleo_get_job",
+      "kleo_get_result"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http kleo https://mcp.kleooai.com/mcp",
       "remote_url": "https://mcp.kleooai.com/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "https://kleooai.com/connect/ (one-button sign-in,  no email or card)" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "https://kleooai.com/connect/ (one-button sign-in,  no email or card)"
+    },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/tonnooooo/kleo-mcp", "docs": "https://kleooai.com/connect/", "site": "https://kleooai.com" },
+    "links": {
+      "repo": "https://github.com/tonnooooo/kleo-mcp",
+      "docs": "https://kleooai.com/connect/",
+      "site": "https://kleooai.com"
+    },
     "added": "2026-10-10",
     "verified": "2026-10-10",
     "caveats": [
@@ -759,16 +1361,43 @@
     "featured": false,
     "tagline": "Brief-to-ad video agent over 100+ models, with a cost estimate before every render.",
     "description": "varg's hosted MCP puts its multi-model gateway — Seedance, Kling, Veo, FLUX, MiniMax, Nano Banana, GPT Image and ElevenLabs among 100+ models — behind one OAuth connector, with about 30 tools across video, image, speech, music, transcription, ffmpeg and a TSX-to-MP4 renderer. For a filmmaker-agent the useful part is the accounting: estimate_cost and check_balance let an agent price a shot list before committing credits, and get_lineage traces how a finished asset was built.",
-    "capabilities": ["text-to-video", "image-to-video", "text-to-image", "text-to-speech", "music-generation", "transcription", "ffmpeg", "programmatic-render", "cost-estimation", "remote-mcp"],
-    "tools_sample": ["generate_video", "generate_speech", "render_video", "estimate_cost", "check_balance", "get_lineage", "transcription"],
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "text-to-image",
+      "text-to-speech",
+      "music-generation",
+      "transcription",
+      "ffmpeg",
+      "programmatic-render",
+      "cost-estimation",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "generate_video",
+      "generate_speech",
+      "render_video",
+      "estimate_cost",
+      "check_balance",
+      "get_lineage",
+      "transcription"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http varg https://mcp.varg.ai/mcp",
       "remote_url": "https://mcp.varg.ai/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "https://varg.ai/mcp (OAuth 2.1 with PKCE and dynamic client registration; no API key)" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "https://varg.ai/mcp (OAuth 2.1 with PKCE and dynamic client registration; no API key)"
+    },
     "pricing": "credits",
-    "links": { "repo": "https://github.com/vargHQ/sdk", "docs": "https://varg.ai/mcp", "site": "https://varg.ai" },
+    "links": {
+      "repo": "https://github.com/vargHQ/sdk",
+      "docs": "https://varg.ai/mcp",
+      "site": "https://varg.ai"
+    },
     "added": "2026-10-18",
     "verified": "2026-10-18",
     "caveats": [
@@ -787,17 +1416,48 @@
     "featured": false,
     "tagline": "Hosted MCP that turns a brief into a narrated stock-footage or motion-graphics video, with preview before render.",
     "description": "Pictory's first-party remote server puts its script-to-video product behind 25 tools: build a Standard video from text, preview it, edit individual scene elements, swap in stock or AI-generated clips, pick voices and music, then render; Pictory 3.0 accounts get a separate motion-graphics path with brand kits and transitions. Sign-in is your ordinary Pictory account over OAuth, with no API subscription. For a film agent it is an explainer, promo and social-cut assembler rather than a shot generator — useful for the marketing deliverables around a film, not the film.",
-    "capabilities": ["text-to-video", "script-to-video", "stock-search", "music-search", "tts", "motion-graphics", "brand-kits", "media-upload", "video-rendering", "remote-mcp"],
-    "tools_sample": ["create_video_from_text", "preview_video_from_text", "update_preview_elements", "render_preview", "search_media", "search_music", "generate_ai_video_asset", "create_motion_project", "render_motion_video", "get_job_status", "get_quota"],
+    "capabilities": [
+      "text-to-video",
+      "script-to-video",
+      "stock-search",
+      "music-search",
+      "tts",
+      "motion-graphics",
+      "brand-kits",
+      "media-upload",
+      "video-rendering",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "create_video_from_text",
+      "preview_video_from_text",
+      "update_preview_elements",
+      "render_preview",
+      "search_media",
+      "search_music",
+      "generate_ai_video_asset",
+      "create_motion_project",
+      "render_motion_video",
+      "get_job_status",
+      "get_quota"
+    ],
     "install": {
       "claude_code": "claude mcp add --transport http --callback-port 3118 pictory-ai-video https://mcp.pictory.ai/mcp",
       "remote_url": "https://mcp.pictory.ai/mcp",
       "stdio_command": null
     },
-    "auth": { "type": "oauth", "env_var": null, "key_url": "Sign in with your Pictory account (email/password or Google) — run claude mcp login pictory-ai-video after adding; no API key or API subscription needed" },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Sign in with your Pictory account (email/password or Google) — run claude mcp login pictory-ai-video after adding; no API key or API subscription needed"
+    },
     "pricing": "paid",
     "pricing_note": "Starter $29/month ($25 billed annually) with 2,000 AI credits a month; a 14-day trial gives 300 credits, 3 videos and 720p exports.",
-    "links": { "repo": null, "docs": "https://docs.pictory.ai/claude-mcp/overview", "site": "https://pictory.ai" },
+    "links": {
+      "repo": null,
+      "docs": "https://docs.pictory.ai/claude-mcp/overview",
+      "site": "https://pictory.ai"
+    },
     "added": "2026-10-31",
     "verified": "2026-10-31",
     "caveats": [
@@ -866,5 +1526,51 @@
       "Spends your normal DomoAI credits, and some long-form features are PRO-only."
     ],
     "notes": "New, and official: DomoAI announced its MCP and CLI on 6 Nov 2026, and npm @domoai/cli first appeared on 29 Oct 2026 (0.2.1 on 30 Oct). The MCP server is the CLI itself (`domoai mcp`, stdio); `domoai setup <host>` writes the config for Claude Code, Codex, Cursor or Claude Desktop, and other local-MCP clients can be wired by hand. The vendor says it has not tested those individually. There is no remote URL, so ChatGPT on the web is out. Sign-in uses the two-step `domoai login --start` / `--finish` flow, and the docs warn that plain `domoai login` can outlast an agent's command timeout. The code is valid for 10 minutes. The README counts 16 fixed tools plus one creation tool per capability, 28 in all at launch, so trust tools/list over this sample. Generation is gated by plan_creation and an approved plan_digest, which is the right shape for an agent that should not spend unattended. Results can render in an MCP Apps player. The MCP docs name no underlying models, so you cannot pick or pin one from here. Closed source, UNLICENSED, no public repo. Credits are shared with the website, and the announcement says some long-form features are PRO-only. For an open multi-model hub, compare fal or Replicate."
+  },
+  {
+    "slug": "kling-china-official",
+    "name": "Kling AI China Plugin",
+    "vendor": "Kling AI (Kuaishou)",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Kling's official China Claude plugin connects to its regional MCP endpoint for image and video creation.",
+    "description": "Kling's official China Claude plugin connects to a hosted MCP with browser OAuth and a China Kling account. Its bundled Skills guide image and video generation, Elements, motion-library browsing, uploads, credit checks and task status; the host discovers live tools and models at connection time. Generation uses the account's Kling credits.",
+    "capabilities": [
+      "text-to-image",
+      "image-to-image",
+      "text-to-video",
+      "image-to-video",
+      "elements",
+      "motion-control",
+      "asset-upload",
+      "job-polling",
+      "remote-mcp"
+    ],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude plugin marketplace add klingai-tech/claude-plugin-cn && claude plugin install kling-ai-cn@klingai-cn",
+      "remote_url": "https://klingai.com/mcp/plugin",
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Authorize in the browser with a China Kling account; generation uses that account’s credits."
+    },
+    "pricing": "credits",
+    "links": {
+      "repo": "https://github.com/klingai-tech/claude-plugin-cn",
+      "docs": "https://klingai.com/app/mcp/guide",
+      "site": "https://klingai.com"
+    },
+    "added": "2026-11-20",
+    "verified": "2026-11-20",
+    "caveats": [
+      "The HTTP endpoint requires OAuth; an unauthenticated request returned 401 on 20 Nov 2026.",
+      "The plugin docs do not publish a fixed tool list or model roster; let the MCP host discover current tools.",
+      "Generation spends credits in the connected China Kling account."
+    ],
+    "notes": "Checked 20 Nov 2026 against Kling’s official China plugin README and .mcp.json. The plugin declares https://klingai.com/mcp/plugin and installs through the Kling AI CN Claude marketplace; its Skills describe image/video generation, Elements, motion-library browsing, uploads, credit checks and task status. We did not authenticate or call tools/list, so tool names and model availability are intentionally not listed. A direct unauthenticated request to the declared endpoint returned HTTP 401, consistent with an OAuth-protected service; this does not verify an authenticated MCP handshake. Use a China Kling account; generation consumes its credits."
   }
 ]
