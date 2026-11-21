@@ -77,13 +77,13 @@
     "pricing": "freemium",
     "links": { "repo": "https://github.com/muxinc/mux-ts/tree/main/packages/mcp-server", "docs": "https://www.mux.com/docs/integrations/mcp-server", "site": "https://www.mux.com" },
     "added": "2026-06-11",
-    "verified": "2026-09-30",
+    "verified": "2026-11-21",
     "caveats": [
       "Two tools only: search_docs and execute, which runs TypeScript against the SDK in a sandbox, so you are writing code, not calling named tools.",
-      "Local execute needs Deno, and the desktop bundle ships without it, so point DENO_PATH at one.",
-      "v15.0 was a breaking release (@mux/mux-node became @mux/ts), so code written against v14 needs MIGRATION.md."
+      "v16.0 (27 Oct 2026) is breaking: Robots v1 GA is the default, the beta API is now v0, and Data real-time methods are gone. See MIGRATION.md.",
+      "npx -y @mux/mcp stopped starting the server before v16.2.0 fixed it on 11 Nov, so keep @latest or pin 16.2.0 or newer."
     ],
-    "notes": "npm @mux/mcp v15.3.0 (released 2026-09-23), Apache-2.0, source at muxinc/mux-ts under packages/mcp-server, and the repo is still pushed weekly. The tool is named search_docs, per both the source and Mux's docs; earlier listings here called it docs_search. The other tool is execute, which runs TypeScript against the @mux/ts SDK in an isolated sandbox. That two-tool 'Code Mode' design is unchanged and covers the whole API without hundreds of per-endpoint tools. Since v15.0 the package ships a second binary, mcp-code-runner, which v15.2 made resolve Deno via DENO_PATH or a bundled binary. The desktop bundle ships without Deno, so point DENO_PATH at one if local execute fails. v15.3 dropped the 'Experimental' label from Mux Robots (captions, chapters). The hosted remote falls back to Basic auth (base64 token ID:secret in the Authorization header) for clients without OAuth. v15.0 remains the breaking release: @mux/mux-node became @mux/ts (the old name is an alias), client.robotsPreview became client.robots, and the deprecated Data filters/exports endpoints are gone. Code written against v14 needs MIGRATION.md."
+    "notes": "npm @mux/mcp v16.2.0 (released 2026-11-11), Apache-2.0, source at muxinc/mux-ts under packages/mcp-server, and the repo is still pushed weekly. The two-tool 'Code Mode' design is unchanged: search_docs queries the docs, and execute runs TypeScript against the @mux/ts SDK in an isolated sandbox, which covers the whole API without hundreds of per-endpoint tools. v16.2.0's only MCP change is a fix that makes `npx -y @mux/mcp` run the server again, plus bumped vulnerable MCP dependencies. If an older pinned version exits on start, that is why. v16.0 (2026-10-27) is the second breaking release in two months. Robots v1 GA became the default, the Robots beta API moved to v0, and the deprecated Data real-time methods and global_value were removed. v16.1 added transcript moderation to Robots and a skipped-track field on video. Code written against v15 needs MIGRATION.md, as v14 code did for the v15 rename (@mux/mux-node to @mux/ts). Deno: local execute now installs Deno itself through an optional npm dependency. Set DENO_PATH to Deno 2.9+ only where that cannot install (blocked downloads, --omit=optional, Alpine), and always for the .mcpb desktop bundle, which never includes it. Set --code-execution-mode=remote to send code to your own sandbox service instead. The hosted remote at mcp.mux.com uses OAuth and falls back to Basic auth (base64 token ID:secret in the Authorization header) for clients without OAuth."
   },
   {
     "slug": "youtube-yutu",
@@ -93,7 +93,7 @@
     "category": "distribution",
     "featured": false,
     "tagline": "Automate your whole YouTube channel — including real video uploads — via OAuth.",
-    "description": "A Go-based CLI, MCP server, and agent toolkit for YouTube that automates the full workflow: uploading videos, editing metadata, managing playlists, comments, captions, and thumbnails. Still the only well-maintained MCP option that does real YouTube uploads via OAuth — Google ships no official YouTube MCP as of August 2026.",
+    "description": "A Go-based CLI, MCP server, and agent toolkit for YouTube that automates the full workflow: uploading videos, editing metadata, managing playlists, comments, captions, and thumbnails. Still the only well-maintained MCP option that does real YouTube uploads via OAuth — Google ships no official YouTube MCP as of November 2026.",
     "capabilities": ["video-upload", "metadata-editing", "playlists", "comments", "captions", "thumbnails", "channel-management"],
     "tools_sample": null,
     "install": {
@@ -105,14 +105,14 @@
     "pricing": "free",
     "links": { "repo": "https://github.com/eat-pray-ai/yutu", "docs": null, "site": "https://yutu.ifor.dev" },
     "added": "2026-06-11",
-    "verified": "2026-09-30",
+    "verified": "2026-11-21",
     "caveats": [
-      "videos.insert costs 1,600 quota units, which is about 6 uploads a day on the default 10k quota.",
+      "Uploads have their own bucket of 100 videos.insert calls a day; the rest of the API shares the default 10k units.",
       "Unverified API projects can only upload private videos until Google audits them.",
       "You must create a Desktop-app OAuth client in Google Cloud Console and run yutu auth once before yutu mcp works.",
-      "The v0.11.0-rc1 prerelease changes behaviour: OAuth becomes mandatory for HTTP mode and MCP output defaults to JSON."
+      "v0.11 changed behaviour: OAuth is mandatory for HTTP mode, MCP output defaults to JSON, and destructive tools now ask for confirmation."
     ],
-    "notes": "696 stars, Apache-2.0, pushed 2026-09-28. v0.10.10 (2026-07-25) is still the stable release on Homebrew, winget and npm (@eat-pray-ai/yutu). The newest build is the v0.11.0-rc1 prerelease (2026-09-21), and it changes things you will notice. OAuth becomes mandatory for HTTP mode, and the HTTP endpoint is pinned to localhost:8216. MCP output now defaults to JSON. The multi-agent mode is merged into a single 'Miffy' agent that accepts OpenAI-compatible providers as well as Gemini. There are also Docker images on Docker Hub and GHCR. Install first (brew install yutu), then authenticate, then run yutu mcp over stdio. The quota caveat is unchanged: videos.insert costs 1,600 units, which is about 6 uploads a day on the default 10k quota. Unverified API projects can only upload private videos until Google audits them. Lighter upload-only alternative: anwerj/youtube-uploader-mcp (50 stars)."
+    "notes": "729 stars, Apache-2.0, pushed 2026-11-20. v0.11.1 (2026-11-15) is the current stable release on npm (@eat-pray-ai/yutu), with Homebrew and winget also listed. v0.11.0 (2026-10-02) promoted the September prerelease to stable, and it changes things you will notice. OAuth is mandatory for HTTP mode, MCP output defaults to compact JSON, destructive MCP tools sit behind a confirmation gate, and upload tools refuse sensitive files. The four agents are merged into a single 'Miffy' agent that accepts OpenAI-compatible providers as well as Gemini. v0.11.1 adds `yutu mcp setup --agents claude,...`, which writes the MCP config for the chosen agents with absolute credential and token paths. The claude mcp add command here does the same thing by hand. It also renamed the bundled skill to youtube-automation and hardened the OAuth callback. There are Docker images on Docker Hub and GHCR. Install first (brew install yutu), then authenticate, then run yutu mcp over stdio. Quota has changed in your favour. Google's quota page now gives videos.insert and search.list their own buckets of 100 calls a day at 1 unit each. Everything else shares the default 10,000 units, so the old 1,600-unit upload cost and the six-a-day ceiling no longer apply. Unverified API projects can still only upload private videos until Google audits them. Lighter upload-only alternative: anwerj/youtube-uploader-mcp."
   },
   {
     "slug": "youtube-data",
