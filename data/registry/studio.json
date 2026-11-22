@@ -158,7 +158,7 @@
     "category": "studio",
     "featured": false,
     "tagline": "Hosted film lab: storyboard, generate, review, and export, with the price shown before each run.",
-    "description": "FilmLab is the generative workbench attached to TheFilmRadar, a German-language industry platform for DACH film and TV crews, and it exposes its whole ten-stage pipeline over one OAuth-gated remote MCP. Thirty-seven tools cover project and pipeline context, auto-storyboarding, image and clip generation in batches, a review queue with contact sheets and continuity checks, a full location board that can generate variants and panoramas from a reference image, and sequence assembly through to export profiles and render jobs. The two things that distinguish it from the rest of the studio tier are the review stage — assets get a verdict before they reach a sequence — and cost preflight, which quotes credits before a run rather than after. Reading, browsing, and project creation cost nothing, so an agent can survey a project before anything is spent.",
+    "description": "FilmLab is the generative workbench attached to TheFilmRadar, a German-language industry platform for DACH film and TV crews, and it now exposes nearly the whole studio over one remote MCP: 158 tools on 22 Nov 2026, up from 37 in October. Alongside storyboarding, image and clip generation, a review queue with contact sheets and continuity checks, locations, characters and sequence assembly, it now covers music, sound effects, mixing, dubbing, voice cloning, grading, VFX, relighting and upscaling. Two things still set it apart from the rest of the studio tier. Assets get a verdict before they reach a sequence, and every paid run is priced first. Its model catalogue, with a credit price for each model, can be read with no account, so an agent can see which engine renders a shot before anything is spent.",
     "capabilities": [
       "storyboarding",
       "image-generation",
@@ -168,21 +168,30 @@
       "continuity",
       "location-scouting",
       "video-assembly",
+      "music-generation",
+      "sound-effects",
+      "dubbing",
+      "color-grading",
+      "upscaling",
       "export",
       "cost-estimation",
       "asset-management",
       "remote-mcp"
     ],
     "tools_sample": [
+      "lab_list_models",
       "lab_get_context",
       "lab_auto_storyboard",
       "lab_generate",
       "lab_animate_batch",
+      "lab_verkettung",
+      "lab_auto_lauf",
       "lab_review_queue",
       "lab_contact_sheet",
       "lab_continuity_check",
-      "lab_generate_location_variants",
-      "lab_create_sequence",
+      "lab_generate_music",
+      "lab_mix",
+      "lab_grade",
       "lab_start_export"
     ],
     "install": {
@@ -193,23 +202,23 @@
     "auth": {
       "type": "oauth",
       "env_var": null,
-      "key_url": "OAuth against a FilmRadar account at https://lab.thefilmradar.com — no API key and no token to paste"
+      "key_url": "No key: connecting and the read-only catalogue tools are anonymous; every other tool triggers OAuth sign-in to a FilmRadar account at https://lab.thefilmradar.com (device authorization for agents without a browser)"
     },
     "pricing": "credits",
     "links": {
       "repo": null,
-      "docs": "https://lab.thefilmradar.com/mcp",
+      "docs": "https://mcp-lab.thefilmradar.com/mcp/agents.md",
       "site": "https://lab.thefilmradar.com"
     },
     "added": "2026-08-22",
-    "verified": "2026-10-01",
+    "verified": "2026-11-22",
     "caveats": [
-      "Closed source, one operator, German-first docs and MCP page, and no registry release since Aug 2026.",
-      "It does not name the models behind lab_generate and lab_animate, so you buy credits without knowing which engine renders them.",
-      "lab_delete_location is destructive, so scope the agent's permissions; credits expire after three months.",
-      "There is no anonymous access, so the tool names come from the docs, not a live tools/list."
+      "Closed source with one operator. The live server reports v1.30.0 and 158 tools, but its registry entry is still 1.1.1 from Aug 2026, so trust tools/list.",
+      "Most tool names and replies are German (lab_verkettung, lab_freigeben, fehler), which is friction for an agent or crew that does not read it.",
+      "Reservations are never refunded and credits expire after three months. lab_delete_location, lab_shots_setzen and lab_fassungen are flagged destructive.",
+      "Most video models are flagged as processed outside the EU. Set a project to EU mode if that matters, and it refuses the rest."
     ],
-    "notes": "New and unproven: published to the official MCP registry on 2026-08-17 as com.thefilmradar/filmlab, with three versions shipped that same day and 1.1.1 still current as of 2026-10-01 — no registry release since. Endpoint re-checked 2026-10-01: https://mcp-lab.thefilmradar.com/.well-known/oauth-protected-resource returns resource metadata naming itself the authorization server, header bearer only. The vendor docs now list 37 tools in six groups (up from 34 in August), including location management — create, delete, restyle, panorama, image analysis — and lab_delete_location is a destructive tool, so scope your agent's permissions accordingly. Tool names come from those docs, not from a tools/list this directory could read, because there is no anonymous access. Closed source, no repo, one operator, and the docs and UI are German-first — the MCP page is entirely in German, which is friction if your agent or your crew is not. It also does not name the models behind lab_generate and lab_animate ('Soul Cinema' is a house label, not an engine), so you are buying credits without knowing which engine renders them; Martini and Nomi both publish their model rosters. Billing is per run with the price quoted first: reads, browsing, previews and project creation are free, while generation, animation, locations and exports draw on credits bought in the Composer. Correction to earlier notes here: the MCP page now states credits are valid for three months (AGB § 7), so do not stockpile them."
+    "notes": "Grew fast and quietly. Published to the official MCP registry on 2026-08-17 as com.thefilmradar/filmlab, and 1.1.1 is still the latest registry version. The live server, checked by hand on 22 Nov 2026, reports filmlab-mcp 1.30.0 and lists 158 tools, against the 37 the docs counted in October. The German MCP page at lab.thefilmradar.com/mcp still describes the 37, so the English agents.md at mcp-lab.thefilmradar.com/mcp/agents.md and a live tools/list are the sources to trust. Corrections to earlier notes here: connecting and tools/list are now anonymous. Seven read-only tools work without an account: lab_playbook, lab_wissen, lab_list_models, lab_search_catalog, lab_regie_techniken, lab_whoami and lab_flow_vorlagen. Everything else answers 401 and triggers OAuth sign-in, with device authorization documented for browserless agents. The person approves per device which projects it may touch and whether it may spend credits. The model roster is no longer hidden. lab_list_models returned 72 video models in six classes and 15 image models with a credit price each, among them Veo 3.1 Lite, Kling 2.5 Turbo Pro, Hailuo 2.3, Seedance 2.0 Mini, Vidu Q3, PixVerse V6 Max via Replicate, Hedra Character-3, Nano Banana 2 Lite, Krea 2 and Flux 1.1 Pro. Each model is flagged for whether its data path stays in the EU. Many are marked as processed in China or the US, or as having an unknown EU data agreement. A project created in EU mode refuses those before anything is spent. The scope now reaches well past generation: music, SFX, mixing and stems, dubbing, voice cloning (get consent from whoever you clone), grading, including import from Resolve, scopes, VFX, relighting, upscaling, rights-licensing tools, auto runs with a credit cap, and clip chains that check each clip before the next starts. Tool names and many fields are German (lab_verkettung, lab_freigeben, fehler), which is friction if your agent or crew does not read German. Money rules from the server's own instructions: the price is named before a paid call and should wait for a yes, reservations are never refunded, and videos must never be auto-retried. lab_delete_location, lab_shots_setzen and lab_fassungen carry destructive annotations, so scope your agent's permissions. For Claude Code the vendor recommends its plugin (claude plugin marketplace add thefilmradar/claude-plugins, then claude plugin install filmlab@thefilmradar), which bundles the server with two skills. That repo is public but has no stars. The plain claude mcp add command above still works. After adding it, sign in from /mcp. Closed source and one operator. The MCP page still states credits are valid for three months (AGB § 7), so do not stockpile them."
   },
   {
     "slug": "cinegenta",
