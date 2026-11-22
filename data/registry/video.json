@@ -866,5 +866,34 @@
       "Spends your normal DomoAI credits, and some long-form features are PRO-only."
     ],
     "notes": "New, and official: DomoAI announced its MCP and CLI on 6 Nov 2026, and npm @domoai/cli first appeared on 29 Oct 2026 (0.2.1 on 30 Oct). The MCP server is the CLI itself (`domoai mcp`, stdio); `domoai setup <host>` writes the config for Claude Code, Codex, Cursor or Claude Desktop, and other local-MCP clients can be wired by hand. The vendor says it has not tested those individually. There is no remote URL, so ChatGPT on the web is out. Sign-in uses the two-step `domoai login --start` / `--finish` flow, and the docs warn that plain `domoai login` can outlast an agent's command timeout. The code is valid for 10 minutes. The README counts 16 fixed tools plus one creation tool per capability, 28 in all at launch, so trust tools/list over this sample. Generation is gated by plan_creation and an approved plan_digest, which is the right shape for an agent that should not spend unattended. Results can render in an MCP Apps player. The MCP docs name no underlying models, so you cannot pick or pin one from here. Closed source, UNLICENSED, no public repo. Credits are shared with the website, and the announcement says some long-form features are PRO-only. For an open multi-model hub, compare fal or Replicate."
+  },
+  {
+    "slug": "motionvid",
+    "name": "MotionVid",
+    "vendor": "MotionVid (motionvid.ai)",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Hosted MCP that turns a prompt into a narrated motion-graphics or explainer video, previewed before render.",
+    "description": "MotionVid's first-party remote MCP drives its prompt-to-video pipeline: script, animated scenes, voiceover, music and sound effects, rendered to an MP4. Nineteen tools cover creating and editing a video, previewing scenes and approving them before the render, picking animation styles, voices and brand kits, and estimating credits up front. For a film pipeline it is a finishing-department shortcut for title cards, explainer inserts, pitch-deck animatics and promo cutdowns, not a camera. It belongs next to the social-video factories rather than the cinematic generators.",
+    "capabilities": ["text-to-video", "motion-graphics", "explainer-video", "voiceover", "music-generation", "sound-effects", "brand-kits", "credit-estimation", "remote-mcp"],
+    "tools_sample": ["create_video", "edit_video", "preview_video", "approve_video", "render_video", "get_video_status", "enhance_prompt", "suggest_animation_styles", "suggest_voices", "list_brand_kits", "list_models", "estimate_video", "get_credit_balance"],
+    "install": {
+      "claude_code": "claude mcp add --transport http motionvid https://motionvid.ai/mcp",
+      "remote_url": "https://motionvid.ai/mcp",
+      "stdio_command": null
+    },
+    "auth": { "type": "oauth", "env_var": null, "key_url": "OAuth 2.1 (PKCE, dynamic client registration) against a paid MotionVid account; headless clients can send an mvk_ API key as Authorization: Bearer, but keys need the Ultimate or Creator plan (https://motionvid.ai/api-docs)" },
+    "pricing": "credits",
+    "pricing_note": "MCP is on every paid plan, from $9 a month billed annually (500 credits); API keys need Ultimate ($19) or Creator ($87).",
+    "links": { "repo": null, "docs": "https://motionvid.ai/mcp", "site": "https://motionvid.ai" },
+    "added": "2026-11-22",
+    "verified": "2026-11-22",
+    "caveats": [
+      "Explainers and motion graphics, not cinematic footage. Use it for title cards, inserts and promos, not shots.",
+      "Paid plans only for MCP. Research steps cost a credit per page read or web search, on top of render credits.",
+      "Tool names come from the vendor's MCP page, not a live tools/list (the endpoint needs auth), and it is not in the official MCP registry."
+    ],
+    "notes": "New to the directory. The vendor page gives no launch date, and the earliest public mention found is MotionVid's own 8 Nov 2026 blog roundup of video MCP servers, which ranks MotionVid itself. Treat that page as marketing, not a review. Endpoint checked 22 Nov 2026: an anonymous initialize at https://motionvid.ai/mcp gets a 401 with OAuth protected-resource metadata naming MotionVid MCP, so it is live and auth-gated. The 19 tool names come from the vendor's MCP page, not from a tools/list this directory could read. The output is motion graphics, explainers, infographics and logo animation with some AI footage in the mix. It is useful for title cards, pitch animatics and promo cutdowns, and wrong for shot-level cinematic work. MCP access needs a paid plan: Starter $9, Pro $13, Ultimate $19 and Creator $87 a month on annual billing, per the pricing page. The page mentions free accounts but documents no free MCP allowance. Agent-started renders draw the same credits as the web app. Research is metered too, at one credit per page read or web search the agent runs. Saved bring-your-own-model keys cover their parts at no credit cost. Headless API keys (mvk_ prefix) are only on Ultimate and Creator. Adding the server in Claude Code does not start OAuth, so sign in from /mcp afterwards. A connected client can see your videos, brand kits and credit balance. Closed source, no public repo, and no entry in the official MCP registry as of 22 Nov 2026. Revid is the closer fit for social shorts with publishing built in."
   }
 ]
