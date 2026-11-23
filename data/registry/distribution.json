@@ -163,13 +163,13 @@
     "pricing": "freemium",
     "links": { "repo": null, "docs": "https://developer.vimeo.com/api/mcp-server", "site": "https://www.vimeo.com" },
     "added": "2026-06-11",
-    "verified": "2026-10-01",
+    "verified": "2026-11-23",
     "caveats": [
       "Public beta, subject to change without notice, and tool names are unpublished because the docs page is a client-rendered SPA.",
       "Read the six OAuth scopes before you consent: the write surface is genuine, and the scopes decide how much of your library an agent can change.",
       "Vimeo recommends Pro or above because API rate limits scale with plan."
     ],
-    "notes": "Public beta as of the current docs, upgraded from the private beta announced at REFRAME in Oct 2025 — Vimeo says all of it is subject to change without notice. Endpoint is https://mcp.vimeo.com/mcp; https://mcp.vimeo.com/.well-known/oauth-protected-resource still answers (re-checked 2026-10-01), names mcp.vimeo.com as its own authorization server, accepts the bearer in the header only, and advertises six scopes — public, private, stats, upload, edit, create. Read that list before you consent: the write surface is genuine, and the scopes you grant decide how much of your library an agent can change. ChatGPT clients use https://mcp.vimeo.com/sse instead, same tools. Destructive actions such as deleting videos are deliberately excluded. Vimeo recommends Pro or above because API rate limits scale with plan, so expect a thin experience on free. The docs page is still a client-rendered SPA and invisible to crawlers (re-checked 2026-10-01), so tool names remain unpublished."
+    "notes": "Public beta as of the current docs, upgraded from the private beta announced at REFRAME in Oct 2025 — Vimeo says all of it is subject to change without notice. Endpoint is https://mcp.vimeo.com/mcp; https://mcp.vimeo.com/.well-known/oauth-protected-resource still answers (re-checked 2026-11-23), names mcp.vimeo.com as its own authorization server, accepts the bearer in the header only, and advertises six scopes — public, private, stats, upload, edit, create. Read that list before you consent: the write surface is genuine, and the scopes you grant decide how much of your library an agent can change. ChatGPT clients use https://mcp.vimeo.com/sse instead, same tools. Destructive actions such as deleting videos are deliberately excluded. Vimeo recommends Pro or above because API rate limits scale with plan, so expect a thin experience on free. The docs page is still a client-rendered SPA and invisible to crawlers (re-checked 2026-11-23), so tool names remain unpublished."
   },
   {
     "slug": "frameio",
