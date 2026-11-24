@@ -146,17 +146,14 @@
       "recommend_model"
     ],
     "install": {
-      "claude_code": "claude mcp add --transport http fal-ai https://mcp.fal.ai/mcp --header \"Authorization: Bearer YOUR_FAL_KEY\"",
-      "remote_url": "https://mcp.fal.ai/mcp",
-      "remote_headers": [
-        "Authorization"
-      ],
+      "claude_code": "claude mcp add --transport http --scope user fal https://mcp.fal.ai/mcp-relay",
+      "remote_url": "https://mcp.fal.ai/mcp-relay",
       "stdio_command": null
     },
     "auth": {
-      "type": "api_key",
-      "env_var": "FAL_KEY",
-      "key_url": "fal.ai dashboard → API Keys (sent as Authorization: Bearer header, never stored server-side); ChatGPT and Codex connect by OAuth through the fal plugin instead"
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Browser sign-in to your fal account (run /mcp in Claude Code after adding); no API key or Authorization header needed. Pick the billing account under 'Use for MCP' in fal account settings"
     },
     "pricing": "credits",
     "links": {
@@ -165,13 +162,13 @@
       "site": "https://fal.ai"
     },
     "added": "2026-06-11",
-    "verified": "2026-10-02",
+    "verified": "2026-11-24",
     "caveats": [
-      "For Claude the documented route is Claude Code with the key in an Authorization header; OAuth exists only for ChatGPT and Codex.",
-      "The MCP itself is free, but you pay standard fal per-run pricing on every model call.",
-      "Hosted and fully stateless, so there is nothing to self-host."
+      "Endpoint moved to mcp.fal.ai/mcp-relay with browser OAuth in Nov 2026; the old key-in-header setup is no longer documented.",
+      "No documented headless or CI route: every client needs an interactive sign-in. Scripts should use the SDK or genmedia CLI with a key.",
+      "The MCP itself is free, but every model run bills standard fal credits."
     ],
-    "notes": "Hosted and fully stateless; the MCP itself is free, you pay standard fal per-run pricing, and there are no rate limits beyond your normal account concurrency. OAuth has finally shipped, but only for ChatGPT and Codex via the fal plugin (you pick which fal account it bills under 'Use for MCP' in account settings). The docs no longer mention Claude Desktop or claude.ai custom connectors at all, so for Claude the documented route is still Claude Code with the key in an Authorization header; Cursor and Windsurf work the same way. Eleven tools, unchanged since August. Arguably the best single 'everything' server for a generative film pipeline, and the practical MCP route to models with no first-party server (LTX-2, Stable Audio, CassetteAI, Beatoven)."
+    "notes": "Re-checked 24 Nov 2026, and the connection story changed: fal's docs now point every client at https://mcp.fal.ai/mcp-relay over Streamable HTTP with OAuth browser sign-in — 'You don't need to create an API key or add an authorization header.' Claude Code is a documented client (add the server, then authenticate with /mcp), as are the Claude connector (Team/Enterprise owners add it under Organization settings → Connectors), ChatGPT, Codex CLI, Cursor, VS Code, Gemini CLI, opencode and others. The old https://mcp.fal.ai/mcp still answers, now advertising OAuth metadata, but the docs no longer mention it or the Bearer-key route, so do not build on the header setup this entry used to list. There is no documented headless or CI option; for unattended pipelines use the fal SDK or the genmedia CLI with an API key. The MCP itself is free; you pay standard fal per-run pricing and share your account's normal concurrency limits. Eleven tools, unchanged since August. A separate docs-only server lives at https://fal.ai/docs/mcp and cannot generate media. Arguably the best single 'everything' server for a generative film pipeline, and the practical MCP route to models with no first-party server (LTX-2, Stable Audio, CassetteAI, Beatoven)."
   },
   {
     "slug": "krea",
