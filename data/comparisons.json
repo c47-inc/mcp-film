@@ -38,14 +38,14 @@
   {
     "id": "fal-vs-replicate",
     "title": "fal MCP vs Replicate MCP",
-    "summary": "Two official hosted model hubs: fal's stateless, key-in-header endpoint against Replicate's OAuth remote.",
+    "summary": "Two official hosted model hubs, both now behind browser OAuth: fal's stateless relay against Replicate's remote.",
     "slugs": ["fal", "replicate"],
-    "verdict": "Both put many video, image and audio models behind one connection. fal is hosted and stateless with eleven published tools — model search, schemas, pricing, runs, async jobs, uploads — and for Claude the documented route is Claude Code with your FAL_KEY in an Authorization header; every model call bills at fal's per-run pricing. Replicate's remote runs an OAuth flow and stores the token for you, but its tool names are generated from the HTTP API rather than published, and the npm package's latest tag is a year-old build, so prefer the remote. fal's listing names audio models (Stable Audio, CassetteAI, Beatoven); Replicate's points to upscalers such as Real-ESRGAN.",
+    "verdict": "Both put many video, image and audio models behind one connection. fal is hosted and stateless with eleven published tools — model search, schemas, pricing, runs, async jobs, uploads — and since Nov 2026 every client, Claude Code included, connects to https://mcp.fal.ai/mcp-relay by browser OAuth, with no documented key-in-header or headless route; every model call bills at fal's per-run pricing. Replicate's remote also runs an OAuth flow and stores the token for you, but its tool names are generated from the HTTP API rather than published, and the npm package's latest tag is a year-old build, so prefer the remote. fal's listing names audio models (Stable Audio, CassetteAI, Beatoven); Replicate's points to upscalers such as Real-ESRGAN.",
     "choose_if": {
-      "fal": "Your client can send an Authorization header (Claude Code, Cursor) and you want pricing and schema lookups before you spend, or audio models alongside video.",
-      "replicate": "You want browser OAuth instead of pasting a key, or the model you need lives on Replicate, and you can work from generated tool names."
+      "fal": "You want published tools with pricing and schema lookups before you spend, or audio models alongside video.",
+      "replicate": "The model you need lives on Replicate and you can work from generated tool names."
     },
-    "reviewed": "2026-10-27"
+    "reviewed": "2026-11-24"
   },
   {
     "id": "topaz-vs-magnific-vs-avclabs",
@@ -90,12 +90,12 @@
     "title": "Unreal MCP: Epic's server vs Unreal Engine MCP (Flopperam / Aura)",
     "summary": "Epic's in-editor server for UE 5.8 against the third-party server that covers UE 5.5 to 5.7 and offers a hosted endpoint.",
     "slugs": ["unreal-mcp-epic", "unreal-engine"],
-    "verdict": "Engine version decides it. Epic's server ships inside UE 5.8 as an Experimental plugin, binds to loopback only with no authentication layer, and discovers toolsets at runtime through three meta-tools, so studios can register their own. The Flopperam server covers UE 5.5 through 5.7 and has a hosted, key-gated endpoint with 50+ tools including Blueprint authoring, plus a local mode that needs its C++ plugin compiled. Its open-source half has had no code commit since June 2026, and the company now belongs to Aura, whose Unreal plugin on Fab ships its own local MCP servers but never mentions this endpoint. As of 23 Nov 2026 that hosted endpoint has been returning HTTP 503 for twenty-four days running, with no shutdown notice, so do not plan around it until it answers again.",
+    "verdict": "Engine version decides it. Epic's server ships inside UE 5.8 as an Experimental plugin, binds to loopback only with no authentication layer, and discovers toolsets at runtime through three meta-tools, so studios can register their own. The Flopperam server covers UE 5.5 through 5.7 and has a hosted, key-gated endpoint with 50+ tools including Blueprint authoring, plus a local mode that needs its C++ plugin compiled. Its open-source half has had no code commit since June 2026, and the company now belongs to Aura, whose Unreal plugin on Fab ships its own local MCP servers but never mentions this endpoint. As of 24 Nov 2026 that hosted endpoint has been returning HTTP 503 for twenty-five days running, with no shutdown notice, so do not plan around it until it answers again.",
     "choose_if": {
       "unreal-mcp-epic": "You are on UE 5.8 and want the server that moves with the engine, on one machine.",
       "unreal-engine": "You are on UE 5.5 to 5.7 or need Blueprint authoring depth, and accept a parked open-source repo and a hosted endpoint that is currently down."
     },
-    "reviewed": "2026-11-23"
+    "reviewed": "2026-11-24"
   },
   {
     "id": "frameio-official-vs-community",

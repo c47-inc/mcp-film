@@ -272,23 +272,23 @@
     "capabilities": ["music-search", "music-licensing", "stems", "sfx-search", "similarity-search", "reference-matching", "music-editing", "tts", "voice-library", "asset-download"],
     "tools_sample": ["SearchRecordings", "SearchSimilarToRecording", "SearchExternalReferences", "SearchSoundEffects", "SearchSimilarToSoundEffect", "EditRecording", "PollEditRecordingJob", "DownloadRecordingEdit", "ListVoices", "ListUserGeneratedVoices", "GenerateVoiceover", "PollVoiceoverGenerationStatus", "GetVoiceover", "DownloadVoiceover", "DownloadRecording", "DownloadSoundEffect"],
     "install": {
-      "claude_code": "claude mcp add -s user --transport http epidemic-sound https://www.epidemicsound.com/a/mcp-service/mcp --header 'Authorization: Bearer ${EPIDEMIC_SOUND_API_KEY}'",
+      "claude_code": "claude mcp add -s user --transport http epidemic-sound https://www.epidemicsound.com/a/mcp-service/mcp --header 'Authorization: Bearer ${EPIDEMIC_SOUND_MCP_API_KEY}'",
       "remote_url": "https://www.epidemicsound.com/a/mcp-service/mcp",
       "remote_headers": ["Authorization"],
       "stdio_command": null
     },
-    "auth": { "type": "api_key", "env_var": "EPIDEMIC_SOUND_API_KEY", "key_url": "https://www.epidemicsound.com/account/api-keys (signed-in account page; one key per person, not shareable). Claude Desktop, Claude Code and Cursor can use the OAuth flow instead" },
+    "auth": { "type": "api_key", "env_var": "EPIDEMIC_SOUND_MCP_API_KEY", "key_url": "https://www.epidemicsound.com/account/api-keys (signed-in account page; one key per person, not shareable, valid one year). Claude Desktop, ChatGPT, Cursor and Antigravity can use OAuth instead; Claude Code is key-only" },
     "pricing": "paid",
     "links": { "repo": null, "docs": "https://developers.epidemicsite.com/docs/mcp/", "site": "https://www.epidemicsound.com/blog/mcp-server/" },
     "added": "2026-08-23",
-    "verified": "2026-10-02",
+    "verified": "2026-11-24",
     "caveats": [
-      "Still beta, and every tool was renamed to PascalCase in Oct 2026, so update any saved prompts.",
-      "Keys are personal, cannot be shared and expire after a year; OAuth is restricted to Claude and Cursor.",
-      "Rights follow your Epidemic Sound plan, not the API, so confirm the subscription covers commercial use before you deliver an ad.",
+      "Still beta. Claude Code needs an API key (no OAuth yet); Claude Desktop, ChatGPT, Cursor and Antigravity can use OAuth.",
+      "Keys are personal, cannot be shared and expire after a year.",
+      "Downloads need an active paid subscription, and rights follow your plan, not the API, so confirm it covers commercial use before you deliver an ad.",
       "No published rate limits."
     ],
-    "notes": "Hosted Streamable HTTP and still labelled beta. Re-checked 2 Oct 2026, and the docs changed underneath this entry: every tool was renamed to PascalCase (search_music is now SearchRecordings, and so on — update any saved prompts), the count went from twelve to sixteen with an EditRecording/PollEditRecordingJob/DownloadRecordingEdit trio that adapts a track to a target duration, and API keys are now self-serve from your account's API Keys page rather than gated behind a partnership agreement. Keys are personal, cannot be shared, and expire after a year. OAuth uses Dynamic Client Registration but is restricted to vetted clients — the docs name Claude (Desktop and Code) and Cursor and say Epidemic Sound will not add redirect URIs on request, so anything else needs a key. The MCP docs say nothing about licensing; rights follow your Epidemic Sound plan, not the API, so confirm the subscription covers commercial use before you deliver an ad. No published rate limits. Use it where cleared recordings beat generated score; for generative alternatives see the ElevenLabs, Mureka and Sonilo entries."
+    "notes": "Hosted Streamable HTTP and still labelled beta. Re-checked 24 Nov 2026: endpoint unchanged and answering, sixteen PascalCase tools unchanged (the Oct 2026 rename from search_music to SearchRecordings and friends still applies to saved prompts). The docs now name the key variable EPIDEMIC_SOUND_MCP_API_KEY; the command above uses it, in single quotes so the shell leaves it unexpanded. Keys are self-serve from your account's API Keys page, tied to one account, not shareable and valid for a year. Client support is spelled out now: Claude Desktop and ChatGPT use OAuth, Cursor and Antigravity take OAuth or a key, and Claude Code is key-only because it 'doesn't support OAuth to the MCP Server yet'. The Claude directory connector carries every tool except voiceover. OAuth uses Dynamic Client Registration against a fixed redirect allowlist that Epidemic Sound will not extend on request. Use is covered by a separate MCP Server Software License Agreement; the music and effects themselves are licensed through your subscription, a free account can only search and preview, and downloading needs an active paid plan, so confirm the plan covers commercial use before you deliver an ad. No published rate limits; higher limits go through the Help Center. Use it where cleared recordings beat generated score; for generative alternatives see the ElevenLabs, Mureka and Sonilo entries."
   },
   {
     "slug": "sonicmatch",
