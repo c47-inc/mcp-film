@@ -375,6 +375,58 @@
     "notes": "Hosted only: npm @shotstack/shotstack-mcp-server is still frozen at a deprecated 1.1.0 (\"This local stdio server is deprecated. Use the hosted Shotstack MCP server instead\"), so stdio-only clients must bridge through mcp-remote, which the docs list as the fallback. Re-checked 11 Oct 2026: the docs now list 15 tools, up from 10 — `update_template` plus a generation set (`list_models`, `quote_generation`, `generate_asset`, `get_generation_status`) that makes single image, video or audio assets from a prompt, and an asset with `prompt` and `model` inside an Edit generates at render time. The docs name neither the models nor the credit prices, so have the agent call `list_models` and `quote_generation` and get a human yes before `generate_asset`. The beta / tools-may-change warning from August is no longer on the page. There is still no readable source: npm points at github.com/shotstack/shotstack-mcp-server, which 404s to both an anonymous fetch and the GitHub API, so there are no stars or commits to judge — trust the vendor docs and the live endpoint, not GitHub signals. Agents should call `get_shotstack_guide` before composing Edit JSON, prefer `studio` over `render_video` when a human is watching, and pass real public HTTPS asset URLs rather than inventing them."
   },
   {
+    "slug": "creatomate",
+    "name": "Creatomate MCP",
+    "vendor": "Creatomate",
+    "official": true,
+    "category": "editing-post",
+    "featured": false,
+    "tagline": "Hosted MCP for Creatomate's template video API: write RenderScript templates, then render variants from chat.",
+    "description": "Creatomate's official hosted MCP gives an agent its template-based render API. The agent can list, read, create, edit and delete templates written in RenderScript, Creatomate's JSON video format, and then render from a template or from raw source and poll for the result. A get_guide tool teaches the agent RenderScript before it writes any, so it does not have to guess the schema. In a film pipeline this is the versioning lane: trailers cut to a dozen aspect ratios, social cutdowns with swapped titles and end cards, and festival-laurel variants that should not tie up an editor.",
+    "capabilities": [
+      "cloud-render",
+      "template-rendering",
+      "programmatic-video",
+      "json-timeline",
+      "remote-mcp"
+    ],
+    "tools_sample": [
+      "get_guide",
+      "list_templates",
+      "get_template",
+      "create_template",
+      "update_template",
+      "delete_template",
+      "create_render",
+      "get_render"
+    ],
+    "install": {
+      "claude_code": "claude mcp add creatomate --transport http https://api.creatomate.com/mcp",
+      "remote_url": "https://api.creatomate.com/mcp",
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "https://creatomate.com — browser OAuth by default; headless clients can send the project API key as a bearer token instead"
+    },
+    "pricing": "credits",
+    "pricing_note": "50 free credits with no card, rendered as previews up to 480px; Essential is $45/month for 2,000 credits.",
+    "links": {
+      "repo": null,
+      "docs": "https://creatomate.com/docs/fundamentals/getting-started/mcp-integration",
+      "site": "https://creatomate.com"
+    },
+    "added": "2026-11-25",
+    "verified": "2026-11-25",
+    "caveats": [
+      "One connection reaches one project; for a second project use https://api.creatomate.com/mcp/PROJECT-ID, since Claude allows one connection per URL.",
+      "Renders spend plan credits like API renders. Use a free dry run to validate, and half-scale renders cost a quarter of the credits.",
+      "delete_template is in the toolset, so gate destructive calls yourself."
+    ],
+    "notes": "Endpoint verified 25 Nov 2026: https://api.creatomate.com/mcp answers an anonymous initialize with a 401 and an OAuth protected-resource pointer, which is the expected sign-in challenge. The docs page gives setup for Claude Code, Codex, Cursor, VS Code and ChatGPT and carries no publication date, so we cannot say when it launched. Hosted only: there is no source repo and no stdio package. Headless clients can skip OAuth by sending the project API key as a bearer token. A connection is scoped to one project. To reach another, use https://api.creatomate.com/mcp/PROJECT-ID, and because Claude allows only one connection per URL, each project needs its own URL. Renders started by the agent spend plan credits exactly as API renders do. A dry run validates a render for free, and a half-scale render costs a quarter of the credits, so have the agent proof at half scale. Free accounts get 50 credits with no card and no time limit, but free renders come out as small previews of up to 480 pixels. Essential is $45/month for 2,000 credits; the pricing page's calculator puts a 30-second HD video at 6.91 credits. Clients cache the tool list when they connect, so reconnect after Creatomate adds tools. delete_template is reachable, so gate it yourself. Closest alternatives here are Shotstack (also hosted, adds prompt-to-asset generation and a Studio preview canvas) and JSON2Video's official server. Creatomate is the template-first option: it is the better fit when a designer has already built the templates in its editor. Community wrappers exist (war10ck222/creatomate-mcp-server), but use the vendor endpoint."
+  },
+  {
     "slug": "davinci-resolve",
     "name": "DaVinci Resolve MCP",
     "vendor": "Community (samuelgursky)",

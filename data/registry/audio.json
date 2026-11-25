@@ -327,10 +327,10 @@
     "official": true,
     "category": "sound-design",
     "featured": false,
-    "tagline": "Foley generated against the picture, then extended or patched region by region.",
-    "description": "Mirelo's official remote MCP exposes its SFX V1 video-to-audio model: hand it a clip and it reads the on-screen action, motion and pacing and generates effects synced to what it sees, with an optional text prompt to steer the character of the sound. Text-to-sound covers the cues with no plate, and two repair tools matter more than they sound — extend a bed that came back short, or inpaint one region of a clip while leaving the rest untouched, so a single bad hit does not cost the whole pass. A preflight estimate returns credits and runtime before it generates, which is what makes batching a folder of shots safe.",
-    "capabilities": ["sfx", "video-to-sfx", "audio-extension", "audio-inpainting", "batch-generation", "cost-estimation"],
-    "tools_sample": null,
+    "tagline": "Foley, music beds, dubbing and cleanup for a cut, from one hosted Mirelo endpoint.",
+    "description": "Mirelo's official remote MCP started as video-to-SFX and now covers most of a temp sound pass. Hand it a clip and it generates effects and ambience synced to the on-screen action, extends a bed that came back short, or regenerates one section without redoing the rest. It also cleans audio (removes music, separates speakers, reduces noise and echo), dubs dialogue into another language with separate dialogue and background stems, generates music beds, transcribes audio to MIDI, and reports which events happen on screen and when. An agent can ask what a job will cost in credits before it runs it, which makes batching a folder of shots safe.",
+    "capabilities": ["sfx", "video-to-sfx", "audio-extension", "audio-inpainting", "music-generation", "midi", "dubbing", "stems", "denoising", "video-analysis", "cost-estimation"],
+    "tools_sample": ["get_account", "text_to_sfx", "video_to_sfx"],
     "install": {
       "claude_code": "claude mcp add --transport http mirelo https://mcp.mirelo.ai/mcp",
       "remote_url": "https://mcp.mirelo.ai/mcp",
@@ -340,14 +340,13 @@
     "pricing": "credits",
     "links": { "repo": null, "docs": "https://mirelo.ai/mcp", "site": "https://mirelo.ai" },
     "added": "2026-08-23",
-    "verified": "2026-10-03",
+    "verified": "2026-11-25",
     "caveats": [
-      "Billed against Mirelo Studio credits, so the account needs balance; call the preflight estimate first.",
-      "Music and multi-stem generation are not in MCP v1, and result download links are temporary.",
-      "In Claude, file uploads fail until studio-project-assets.s3.eu-central-1.amazonaws.com is allowlisted under Settings > Capabilities.",
-      "Tool names are not published, so call tools/list."
+      "Billed against Mirelo Studio credits, so the account needs balance; ask for the credit estimate first.",
+      "In Claude, uploads fail until studio-project-assets.s3.eu-central-1.amazonaws.com is allowlisted; downloads need mirelo.ai allowed too.",
+      "Only three tool names are published (get_account, text_to_sfx, video_to_sfx), so call tools/list for the rest."
     ],
-    "notes": "Announced 30 Jul 2026; hosted endpoint still answering with a 401 challenge on 3 Oct 2026, install command unchanged. Billed against the same Studio credits as the Mirelo web app, so it needs an account with balance — the preflight tool is worth calling first. Limits Mirelo states outright: music generation and multi-stem generation are not exposed in MCP v1, and result download links are temporary, so an agent that generates without saving loses the take. In Claude (web and Desktop), file uploads fail until you allowlist studio-project-assets.s3.eu-central-1.amazonaws.com under Settings → Capabilities — the usual reason a video-to-SFX call never sees the clip. Documented clients are Claude, Claude Code, Cursor, Codex and ChatGPT; Codex has its own `codex mcp add mirelo --url https://mcp.mirelo.ai/mcp` plus `codex mcp login mirelo`. Tool names are not published — call tools/list. Closest comparisons here are ElevenLabs text_to_sound_effects and Sonilo's video_to_sfx; Mirelo is the narrower specialist, and region-level inpainting is the thing neither of those offers."
+    "notes": "Announced 30 Jul 2026. Re-checked 25 Nov 2026: endpoint still answers with a 401 challenge, install command unchanged, but the scope has widened. In August the docs said music and multi-stem generation were not in MCP v1. The docs page now says it generates music beds, transcribes audio to MIDI, dubs speech into another language with separate dialogue and background stems, cleans audio (removes music, separates speakers, reduces noise and echo), and identifies on-screen and audible events with timings. It no longer mentions a v1 limit. Billed against the same Studio credits as the Mirelo web app, so it needs an account with balance. The docs' example prompts include a credit estimate before generating, and that is worth asking for first. In Claude, uploads fail until you allowlist studio-project-assets.s3.eu-central-1.amazonaws.com under Settings → Capabilities → Code execution and start a new chat. Result links redirect from mirelo.ai to that same bucket, so downloads need both domains, and allowlisting mcp.mirelo.ai does nothing. The fallback is uploading at mirelo.ai/studio/mcp-upload and pasting the asset_id back. Result links are temporary, so save the take. Documented clients are Claude, Claude Code, Cursor, Codex and ChatGPT (from its plugin directory). Codex has its own `codex mcp add mirelo --url https://mcp.mirelo.ai/mcp` plus `codex mcp login mirelo`. The docs name only get_account, text_to_sfx and video_to_sfx as example tools, so call tools/list. Closest comparisons here are ElevenLabs (broader voice catalogue, and sound effects from text) and Sonilo's video_to_sfx. Mirelo's edge is regenerating one region of a clip, which neither of them offers."
   },
   {
     "slug": "reaper-mcp",
