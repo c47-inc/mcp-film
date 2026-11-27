@@ -483,5 +483,53 @@
       "A one-developer product in early access: hosted only, closed source, and quotes expire after an hour and work once."
     ],
     "notes": "Checked 7 Nov 2026: the endpoint answers initialize with a 401 Bearer challenge, and the protected-resource and authorization-server metadata on api.reveriemovies.com advertise one scope, agent, with dynamic client registration, S256 PKCE and public clients only. tools/list needs auth, so tools_sample comes from the docs page, which lists 54 tools with readOnly/destructive annotations and promises tools are only ever added, never renamed or removed. 15 tools spend credits, and each one returns a quote (credits_required, quote_id) that must come back with confirm: true. The server enforces this; a quote lasts an hour and works once. Credits are bought on the website, never through the tools. The submission's Veo, Kling and Seedance claim checks out in render_clip's model enum, which also lists MiniMax H3, Wan 3.0 and Gemini Omni Flash; extend_clip is Veo-only. Pricing is the homepage's: 300 free credits on sign-up, then $10/100, $25/300, $50/700 or $100/1,500, framed as about 20 credits per five-second clip and 5 per image; export costs 1 credit, voice-over 1 per 200 characters, and get_credit_balance returns the live per-tier rates. Terms say you own generated outputs subject to the terms and the law; no watermark is mentioned anywhere I checked, but that is unconfirmed without an account. A ChatGPT app exists alongside the Claude connector, and a Claude Code plugin (github.com/justincrosbie/reverie-claude, created 1 Nov 2026) bundles the same endpoint with a filmmaking skill. No MCP Registry entry; the registry's 'Reverie' (ai.knowall/reverie) is an unrelated Neo4j memory server. The founder named on the site is Justin Crosbie, who filed the submission. The footer says Reverie Movies Pty Ltd with ABN 77 215 353 742, but ABN Lookup lists that number as Justin Crosbie, sole trader. Domain registered January 2026."
+  },
+  {
+    "slug": "mstudio",
+    "name": "M Studio MCP",
+    "vendor": "M Studio (ModelsLab)",
+    "official": true,
+    "category": "studio",
+    "featured": false,
+    "tagline": "Hosted film studio over MCP: script, consistent-cast storyboard, clips, voiceover, music and export.",
+    "description": "M Studio's official remote server drives its browser film editor from any MCP client: it writes the script and shot list, builds characters with reference faces, draws a storyboard frame per shot, renders each into a clip, lays voiceover, music and sound effects on the timeline, and exports the cut. Everything lands in a normal M Studio project, so the agent roughs out a film and a human finishes it on the timeline, including an FCPXML/EDL handoff to Premiere, Resolve or Final Cut.",
+    "capabilities": [
+      "script-generation",
+      "storyboarding",
+      "character-consistency",
+      "image-to-video",
+      "voiceover",
+      "music-generation",
+      "sound-effects",
+      "timeline-editing",
+      "export",
+      "remote-mcp"
+    ],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http mstudio https://mstudio.ai/mcp",
+      "remote_url": "https://mstudio.ai/mcp",
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "Browser OAuth 2.1 (PKCE, dynamic client registration, scope mcp:use) with an M Studio account; or an sk_live_ key from https://mstudio.ai/dashboard/settings?tab=developer sent as a Bearer token"
+    },
+    "pricing": "paid",
+    "pricing_note": "$1 for a 24-hour trial (10 video clips, watermarked export), then subscriptions from $99/mo ($79.20/mo billed yearly).",
+    "links": {
+      "repo": null,
+      "docs": "https://mstudio.ai/mcp-server",
+      "site": "https://mstudio.ai"
+    },
+    "added": "2026-11-27",
+    "verified": "2026-11-27",
+    "caveats": [
+      "Subscription only: the $1 trial rolls into a plan from $99/mo after 24 hours unless you cancel, though the MCP page still says plans start at $27/mo.",
+      "Video comes from MiniMax H3 or Gemini Omni Flash only; you pick the picture model per shot, not the video model shelf of a hub.",
+      "No public tool list: tools/list needs auth and the docs describe capabilities, not tool names."
+    ],
+    "notes": "Checked 27 Nov 2026 against mstudio.ai's MCP page, auth.md, API docs and pricing page. The endpoint answers initialize with a 401 Bearer challenge pointing at protected-resource metadata (scope mcp:use), and the server card lists one streamable-HTTP remote supporting protocol revisions up to 2025-11-25. tools_sample is null because tools/list needs an account and no page names the tools; the MCP page lists capabilities only (films, scripts and shot lists, characters, director styles, storyboard pictures, clips, voiceover, music and SFX, timeline re-cuts, export). The vendor's documented setup is a connector URL with OAuth sign-in; the Claude Code command here is the standard HTTP form for that URL, not one the vendor publishes. Clients that cannot open a browser can use an sk_live_ API key as a Bearer token. Pricing does not match across the site: the MCP page says plans from $27/mo, but the pricing page offers only a $1 24-hour trial (script, 10-shot storyboard and 10 clips; exports carry the mstudio.ai watermark) that becomes a $99/mo plan ($79.20 billed yearly, 75 min of AI video a month) unless cancelled, with $199 and $249 tiers above it. MCP generation draws on the same plan quota and wallet as the editor; the vendor says the assistant is instructed to confirm before bulk renders, which is a prompt, not a server-enforced gate. The Unlimited plan has no REST API but does get MCP, capped at 30 create or generate calls a minute. Video comes from MiniMax H3 (self-hosted) or Gemini Omni 1.1 Flash; images from FLUX, GPT Image, Nano Banana 2, Grok Image or Seedream; voice from ElevenLabs, GPULab or OpenAI. Built by ModelsLab, launched June 2026, closed source and hosted only. For a pay-as-you-go alternative with server-enforced spend quotes, see reverie-movies; for a larger model shelf, martini."
   }
 ]
