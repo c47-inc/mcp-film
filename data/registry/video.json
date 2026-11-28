@@ -895,5 +895,52 @@
       "Tool names come from the vendor's MCP page, not a live tools/list (the endpoint needs auth), and it is not in the official MCP registry."
     ],
     "notes": "New to the directory. The vendor page gives no launch date, and the earliest public mention found is MotionVid's own 8 Nov 2026 blog roundup of video MCP servers, which ranks MotionVid itself. Treat that page as marketing, not a review. Endpoint checked 22 Nov 2026: an anonymous initialize at https://motionvid.ai/mcp gets a 401 with OAuth protected-resource metadata naming MotionVid MCP, so it is live and auth-gated. The 19 tool names come from the vendor's MCP page, not from a tools/list this directory could read. The output is motion graphics, explainers, infographics and logo animation with some AI footage in the mix. It is useful for title cards, pitch animatics and promo cutdowns, and wrong for shot-level cinematic work. MCP access needs a paid plan: Starter $9, Pro $13, Ultimate $19 and Creator $87 a month on annual billing, per the pricing page. The page mentions free accounts but documents no free MCP allowance. Agent-started renders draw the same credits as the web app. Research is metered too, at one credit per page read or web search the agent runs. Saved bring-your-own-model keys cover their parts at no credit cost. Headless API keys (mvk_ prefix) are only on Ultimate and Creator. Adding the server in Claude Code does not start OAuth, so sign in from /mcp afterwards. A connected client can see your videos, brand kits and credit balance. Closed source, no public repo, and no entry in the official MCP registry as of 22 Nov 2026. Revid is the closer fit for social shorts with publishing built in."
+  },
+  {
+    "slug": "openart",
+    "name": "OpenArt MCP",
+    "vendor": "OpenArt",
+    "official": true,
+    "category": "video-generation",
+    "featured": false,
+    "tagline": "Official hosted MCP for OpenArt's image and video models, with a reviewable Smart Shot plan before you pay to render.",
+    "description": "OpenArt's remote MCP puts its hosted model menu in front of an agent: Seedance 2.5, Kling, Veo 3.1, Wan 3.0 and MiniMax for video, Nano Banana, GPT Image and Seedream for stills, plus Extend Video, relighting, background replacement and dubbing. The useful part for a film pipeline is Smart Shot, which drafts reference views, a set, a top-down camera map, storyboard frames and lighting notes for review in chat before the clip is billed. It runs on the user's own OpenArt credits and library, so generations land where the rest of the team can find them.",
+    "capabilities": [
+      "text-to-video",
+      "image-to-video",
+      "text-to-image",
+      "shot-planning",
+      "storyboarding",
+      "video-extension",
+      "relighting",
+      "dubbing",
+      "remote-mcp"
+    ],
+    "tools_sample": null,
+    "install": {
+      "claude_code": "claude mcp add --transport http openart https://mcp.openart.ai/mcp",
+      "remote_url": "https://mcp.openart.ai/mcp",
+      "stdio_command": null
+    },
+    "auth": {
+      "type": "oauth",
+      "env_var": null,
+      "key_url": "https://openart.ai/mcp/ (OAuth sign-in with an OpenArt account; no API key)"
+    },
+    "pricing": "credits",
+    "pricing_note": "Generations spend normal OpenArt credits; the vendor says the connector is on every plan from Starter ($14 a month, 4,000 credits) up.",
+    "links": {
+      "repo": "https://github.com/OpenArt-AI/skills",
+      "docs": "https://openart.ai/mcp/",
+      "site": "https://openart.ai"
+    },
+    "added": "2026-11-28",
+    "verified": "2026-11-28",
+    "caveats": [
+      "Tool names are not public: the endpoint needs OAuth before tools/list, and the docs describe features, not tool functions.",
+      "Paid credits from the Starter plan up; new accounts get 40 free credits, and the docs do not say whether a free account can connect.",
+      "Most models stop at about 15 seconds a clip; Seedance 2.5, Kling 4.0 and Wan 3.0 reach 30."
+    ],
+    "notes": "New to the directory. OpenArt's MCP was already covered in an OpenArt blog post dated 20 Aug 2026, and the setup page is current: its model list now names Seedance 2.5, Kling 4.0 and Nano Banana 2.1. Endpoint checked 28 Nov 2026: an anonymous initialize at https://mcp.openart.ai/mcp returned 401 with a protected-resource document naming openart.ai as the authorization server (scope full_access). So it is live and needs sign-in. Because of that, no tool names are listed here, and the vendor pages describe features (Smart Shot, Extend Video, Replace Background, Relight Video, Dub Video, plus ad templates such as UGC Ads and TV Commercial) rather than function names. Smart Shot is the reason to pick it over a bare model hub. It drafts a plan with reference views, set, top-down camera map, storyboard frames and lighting notes, and you are billed for the video only after you approve the plan. Claude Code: the vendor documents the OpenArt-AI/skills plugin (`/plugin marketplace add OpenArt-AI/skills`, then `/plugin install openart@openart`, then sign in from /mcp), which bundles this connector with skills. The `claude mcp add` line above is the plain-connector equivalent and is not on the vendor page. Pricing page, 28 Nov 2026: Starter $14, Plus $34, Pro $56, Wonder $240 a month on monthly billing. The page shows no free plan, and its structured data disagrees with the displayed annual prices. The vendor's pages are inconsistent on model versions (Gemini Omni 1.1 versus 1.2 Flash), so trust what the connected server offers. The MIT CLI at github.com/OpenArt-AI/cli installs through a curl-pipe-to-shell script. For pay-per-call access to most of the same models without a subscription, compare fal or RunAPI."
   }
 ]
