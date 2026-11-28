@@ -2,14 +2,14 @@
   {
     "id": "runway-vs-kling",
     "title": "Runway MCP vs Kling MCP",
-    "summary": "Two official hosted video-generation MCPs on OAuth and credits: Runway's multi-model endpoint against Kling's own narrower server.",
+    "summary": "Two official hosted video-generation MCPs on OAuth and credits: Runway's multi-model endpoint and Kling's first-party Global MCP Plugin.",
     "slugs": ["runway", "kling-official"],
-    "verdict": "Both are vendor-run, hosted, OAuth-only and bill the vendor's own credits, so setup is a wash and the choice is about reach. Runway's endpoint routes several model families by plan — Gen-4.5 alongside Seedance, Kling and Veo, per its marketing page — and adds upscale, edit and TTS tools. Kling's server is the direct line to Kling models without a hub in between, but it is narrower: eight tools, no documented model list, closed source. Runway's hosted endpoint is a black box too, so on either one let the client enumerate the tools before you plan a pipeline around them.",
+    "verdict": "Both are hosted OAuth connections billed to vendor credits, but they serve different workflows. Kling's first-party remote MCP provides direct access to Kling image and video generation, with documented Omni reference, Elements, and motion-control tools; available models and parameters depend on the connected account. Runway offers its hosted path across multiple video-model families. Choose Kling for the first-party Kling tool surface and account, or Runway when you want its multi-model catalog.",
     "choose_if": {
       "runway": "You want several model families plus upscale, edit and TTS tools behind one Runway login and one credit balance.",
-      "kling-official": "You want Kling models straight from the vendor on your Kling credits. For effects, virtual try-on or KOLORS, the community kling server still has tools this one lacks."
+      "kling-official": "You want Kling's first-party image/video MCP and account-specific models, Omni references, reusable Elements, and motion controls."
     },
-    "reviewed": "2026-10-27"
+    "reviewed": "2026-11-22"
   },
   {
     "id": "luma-official-vs-community",
