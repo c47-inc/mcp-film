@@ -282,7 +282,7 @@
     "official": true,
     "category": "model-hub",
     "featured": false,
-    "tagline": "Browse, price, and run 130+ image, video, audio and voice models through one MCP.",
+    "tagline": "Browse, price, and run 160+ image, video, audio and voice models through one MCP.",
     "description": "RunAPI's official MCP server gives agents catalog discovery, input-schema inspection, prompt search, pricing lookup, media task creation, polling and balance checks across its model marketplace. It now ships in two forms: a hosted remote at mcp.runapi.ai and the local stdio npm package. For filmmakers it is a pragmatic aggregator for Flux, Kling, Seedance, Veo, Suno, ElevenLabs and related media endpoints when you want the agent to pick a model from current constraints instead of memorized slugs.",
     "capabilities": [
       "model-search",
@@ -323,14 +323,14 @@
       "site": "https://runapi.ai"
     },
     "added": "2026-06-29",
-    "verified": "2026-10-04",
+    "verified": "2026-11-28",
     "caveats": [
-      "Since 0.15.0 the server no longer validates arguments locally, so a bad call reaches the service and comes back as its error after spend.",
-      "The embedded catalog goes stale between releases; pricing is fetched live but the catalog is not, so call check_pricing.",
-      "create_task requires a caller-supplied idempotency key, and the hosted wait holds an SSE stream for up to 300s before you poll get_task.",
-      "Requires Node 22 or newer."
+      "No local argument validation since 0.15.0, so a bad call reaches the service and comes back as its error after spend.",
+      "0.16.0 broke search_prompts (prm_ string IDs, featured filter removed), but the README tools table still lists featured.",
+      "Retired models now return HTTP 410 for new requests; the embedded catalog goes stale between releases, so call check_pricing.",
+      "create_task requires a caller-supplied idempotency key; requires Node 22 or newer."
     ],
-    "notes": "Apache-2.0, npm @runapi.ai/mcp 0.15.0 published Sep 30 2026, Node >=22, 55 stars — still shipping several releases a month, with the eight-plus-login tool list unchanged. The behaviour change that matters: since 0.15.0 the server no longer validates arguments locally (model, enum, range, required-field or cross-field checks), so a bad call now reaches the service and comes back as its error rather than being caught before spend — tool descriptions still list the known values, so have the agent read get_model_info first. The hosted remote at https://mcp.runapi.ai/mcp is live (POST-only; a plain GET returns 405) and takes OAuth or a bearer key; 0.13.0 also serves the same authenticated transport from https://runapi.ai/.well-known/mcp, but the README still documents the mcp.runapi.ai URL. Hosted exposes the eight business tools; `login` stays local-only. Discovery tools run without a key because the catalog is embedded at build time, so slugs go stale between releases — pricing is fetched live, the catalog is not, and the README tells agents to call check_pricing rather than trust its own examples. create_task requires a caller-supplied idempotency key (1-512 chars), one per logical task; the hosted wait holds an SSE stream for up to 300s, after which you poll get_task instead of resubmitting. `npx @runapi.ai/mcp init claude|cursor|vscode|windsurf|roo` writes client config if you would rather not hand-edit."
+    "notes": "Apache-2.0, npm @runapi.ai/mcp 0.17.0 published Oct 29 2026, Node >=22, 58 stars; the repo was last pushed Nov 24 2026 and the README badge now claims 160+ models. The eight-plus-login tool list is unchanged. Two changes since our last check matter. 0.16.0 (Oct 15) was a breaking release: search_prompts now returns prefixed prm_ string IDs and Prompt Collection summaries, the featured filter and the legacy service/action/runapi_model fields are gone, and retired models return HTTP 410 for new requests with no automatic replacement (old task IDs still resolve). The README tools table still lists `featured` as a search_prompts filter, so trust the changelog over the table. 0.17.0 (Oct 29) adds example images to search_prompts results plus Nano Banana 2.1 and Muse Video endpoints, and drops Zod 3.x for a security advisory. The 0.15.0 behaviour change still applies: the server does not validate arguments locally (model, enum, range, required-field or cross-field checks), so a bad call reaches the service and comes back as its error rather than being caught before spend. Have the agent read get_model_info first. The hosted remote at https://mcp.runapi.ai/mcp is live (an anonymous initialize returned 401 on 28 Nov 2026, as expected) and takes OAuth or a bearer key. Hosted exposes the eight business tools; `login` stays local-only. Discovery tools run without a key because the catalog is embedded at build time, so slugs go stale between releases. Pricing is fetched live but the catalog is not, and the README tells agents to call check_pricing. create_task requires a caller-supplied idempotency key (1-512 chars), one per logical task. The hosted wait holds an SSE stream for up to 300s, after which you poll get_task instead of resubmitting. `npx @runapi.ai/mcp init claude|cursor|vscode|windsurf|roo` writes client config if you would rather not hand-edit."
   },
   {
     "slug": "runware",
@@ -387,13 +387,13 @@
       "site": "https://runware.ai"
     },
     "added": "2026-06-29",
-    "verified": "2026-10-04",
+    "verified": "2026-11-28",
     "caveats": [
-      "npm has sat at 1.3.4 since Jul 2026 and the v1.3.5 tag was never published, so npx installs lag the repo.",
       "Stdio only with no hosted remote, and the older Runware/MCP-Runware repo is archived and should not be used.",
+      "Zero GitHub stars and a single maintainer pipeline, so watch npm publishes rather than repo activity.",
       "Check model_schema before trusting the tool descriptions on newer Runware models."
     ],
-    "notes": "MIT, npm @runware/mcp still 1.3.4 from Jul 31 2026, Node >=18, zero stars. The repo was pushed Sep 4 2026 with a v1.3.5 tag that only bumps dependencies and the lockfile — and that version was never published to npm, so `npx -y @runware/mcp` still resolves 1.3.4. README is unchanged and still documents only stdio configs for Claude Desktop, Cursor and Codex; there is no `claude mcp add` one-liner (the command above is the equivalent) and no hosted remote. The canonical repo is github.com/Runware/mcp — the older Runware/MCP-Runware was archived Oct 2025 and should not be used. Two months without a functional release: treat npm publishes rather than GitHub activity as the health signal, and check model_schema before trusting the tool descriptions on newer Runware models."
+    "notes": "MIT, npm @runware/mcp 1.4.0 published Nov 8 2026, Node >=18, zero stars. The npm stall we flagged in October is over: after 1.3.4 (Jul 31) the project moved to OIDC trusted publishing and shipped 1.3.6/1.3.7 (Oct 13, which also dropped account and model-search parameters the API no longer accepted), 1.3.8 and 1.3.9 (dependency bumps), then 1.4.0, which adds server instructions and idempotency hints to the tools. 1.3.5 was never published to npm. Commits continue on main after 1.4.0: on Nov 23, list_models started showing a starting price from rates, but that is unreleased as of 28 Nov. The twelve-tool list is unchanged. The README says parameters are validated against each model's schema before submission. It still documents only stdio configs for Claude Desktop, Cursor and Codex. There is no `claude mcp add` one-liner (the command above is the equivalent) and no hosted remote. The canonical repo is github.com/Runware/mcp. The older Runware/MCP-Runware was archived Oct 2025 and should not be used. Check model_schema before trusting the tool descriptions on newer Runware models."
   },
   {
     "slug": "kie-ai",
